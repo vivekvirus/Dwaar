@@ -114,9 +114,13 @@ def test_keyed_hash_requires_a_full_length_key_and_is_deterministic() -> None:
     from dwaar_common.crypto import CryptoError
 
     with pytest.raises(CryptoError):
-        keyed_hash("x", b"short")
+        keyed_hash("x", b"short", purpose="p")
     key = generate_key()
-    assert keyed_hash("x", key) == keyed_hash(b"x", key) != keyed_hash("y", key)
+    assert (
+        keyed_hash("x", key, purpose="p")
+        == keyed_hash(b"x", key, purpose="p")
+        != keyed_hash("y", key, purpose="p")
+    )
 
 
 # ------------------------------------------------------------------------------------------------
@@ -156,9 +160,9 @@ def test_phone_lookalikes_are_rejected_not_normalised(raw: str) -> None:
 def test_unicode_digit_phone_cannot_mint_a_second_lookup_token_for_the_same_person() -> None:
     """Same SIM, different token: also lets an attacker rotate the rate-limit bucket key."""
     key = generate_key()
-    canonical = keyed_hash(normalize_phone_in("9999900123"), key)
+    canonical = keyed_hash(normalize_phone_in("9999900123"), key, purpose="phone_token")
     try:
-        lookalike = keyed_hash(normalize_phone_in("9" + "٩" * 9), key)
+        lookalike = keyed_hash(normalize_phone_in("9" + "٩" * 9), key, purpose="phone_token")
     except InvalidPhoneError:
         return
     assert lookalike == canonical, "a second phone_token for the same number was produced"

@@ -1,11 +1,9 @@
-"""W1 verification round 2 (lens INVARIANTS + SECURITY): library-level attacks that need no database.
+"""W1 fix round 2 (lens INVARIANTS + SECURITY): library-level regression tests that need no database.
 
-Not collected by ``make test`` (the file name does not start with ``test_``). Run explicitly:
-
-    uv run --no-sync pytest tests/security/verify_w1_r2_pure.py -p no:cacheprovider
-
-A test that FAILS here is a confirmed defect: it asserts the SECURE behaviour. A test that passes is an
-attack that was tried and did not succeed (regression evidence). Nothing here changes production code.
+Covers R2-01 (money survives masking), R2-05 (route registration fails closed), R2-06 (scrubber and masker),
+R2-07 (tax results carry the binding stamp), R2-08 (verification never raises), R2-09 (money parsing is bounded)
+and the small hygiene findings fixed alongside them. Each test asserts the SECURE behaviour; it was a failing
+repro (``verify_w1_r2_pure.py``) before the root cause was fixed.
 """
 
 # ruff: noqa: PT018, PT011, PT012, S608, E501, SIM117, PLC0415, RUF001, RUF002, RUF003, S603, S607, S310, B017, BLE001, S105, S106, S112
@@ -32,6 +30,7 @@ pytestmark = pytest.mark.req("INV-01", "INV-02", "INV-10", "OBS-01")
 
 _B64_SECRET = base64.urlsafe_b64encode(bytes(range(32))).rstrip(b"=").decode()
 _HEX_SECRET = bytes(range(32)).hex()
+_STRONG_CURSOR_KEY = "Zk3vQ9xL2mPd7RtYb1HnWs8Ue4JgAc6F"  # 32 distinct characters
 
 
 # ------------------------------------------------------------------------------------------------
@@ -315,7 +314,7 @@ def test_cursor_signing_key_must_have_real_entropy_outside_local() -> None:
 
     from dwaar_api.core.config import Settings
 
-    with pytest.raises((ValidationError, ValueError)):
+    with pytest.raises((ValidationError, ValueError), match="CURSOR_SIGNING_KEY"):
         Settings.model_validate(
             {
                 "env": "production",
@@ -383,12 +382,12 @@ def test_jwks_url_must_be_https_outside_local() -> None:
 
     from dwaar_api.core.config import Settings
 
-    with pytest.raises((ValidationError, ValueError)):
+    with pytest.raises((ValidationError, ValueError), match="JWKS"):
         Settings.model_validate(
             {
                 "env": "production",
                 "database_url": "postgresql://dwaar_app:x@db/dwaar",
-                "cursor_signing_key": "k" * 40,
+                "cursor_signing_key": _STRONG_CURSOR_KEY,
                 "oidc_issuer_url": "https://idp.example.invalid",
                 "oidc_jwks_url": "http://idp.example.invalid/jwks",
                 "cors_origins": "https://admin.example.invalid",
@@ -398,13 +397,11 @@ def test_jwks_url_must_be_https_outside_local() -> None:
 
 def test_a_module_route_without_any_permission_requirement_cannot_start(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch
-) -> None:
+) -> None:  # R2-05
     """``check_requirements`` only validates ``require(...)`` dependencies that ARE declared. A feature module
     whose router has a handler with no ``require`` at all (forgotten, or copy-pasted from /healthz) is mounted
     and answers anonymous callers: INV-01 fails OPEN on omission. Startup should refuse any route that has
     neither a requirement nor an explicit public allowlist entry."""
-    from fastapi.testclient import TestClient
-
     from dwaar_api.core.config import Settings
     from dwaar_api.core.db import Database
     from dwaar_api.main import create_app
@@ -427,16 +424,14 @@ def test_a_module_route_without_any_permission_requirement_cannot_start(
             "cursor_signing_key": "k" * 40,
         }
     )
-    try:
-        app = create_app(
+    from dwaar_api.core.config import ConfigError
+
+    with pytest.raises(ConfigError, match=r"GET /v1/leak/everyone"):
+        create_app(
             settings,
             database=Database("postgresql://dwaar_app:x@127.0.0.1:1/x"),
             modules_package="r2_unguarded_pkg",
         )
-    except Exception:
-        return  # refused at startup: secure
-    answer = TestClient(app, raise_server_exceptions=False).get("/v1/leak/everyone")
-    pytest.fail(f"unguarded module route started and answered {answer.status_code} without a token")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -481,3 +476,220 @@ def test_migration_files_cannot_smuggle_transaction_control(tmp_path: Any) -> No
     )
     with pytest.raises(MigrationError):
         discover(tmp_path)
+
+
+# ================================================================================================
+# fix round 2: behaviour added around the repro cases (boundaries, false-positive guards, markers)
+# ================================================================================================
+def _guard_app(*, post: bool = False, **route_kwargs: Any) -> Any:
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    if post:
+        app.post("/t", **route_kwargs)(lambda: {"ok": True})
+    else:
+        app.get("/t", **route_kwargs)(lambda: {"ok": True})
+    return app
+
+
+def _registry() -> Any:
+    from dwaar_api.core.authz import Permission, PermissionRegistry
+
+    return PermissionRegistry([Permission("t.read", frozenset({"committee"}))])
+
+
+def test_route_guard_accepts_require_public_marker_and_authenticated_routes() -> None:
+    from fastapi import Depends
+
+    from dwaar_api.core.authn import current_principal
+    from dwaar_api.core.authz import check_requirements, public_route, require
+
+    reg = _registry()
+    check_requirements(_guard_app(dependencies=[Depends(require("t.read"))]), reg)
+    check_requirements(_guard_app(dependencies=[Depends(public_route("health probe"))]), reg)
+    check_requirements(_guard_app(dependencies=[Depends(current_principal)]), reg)
+    with pytest.raises(ValueError, match="reason"):
+        public_route("   ")
+
+
+def test_route_guard_refuses_a_bare_route_and_a_route_added_through_starlette() -> None:
+    from fastapi import FastAPI
+    from starlette.responses import PlainTextResponse
+    from starlette.routing import Route
+
+    from dwaar_api.core.authz import check_requirements
+    from dwaar_api.core.config import ConfigError
+
+    with pytest.raises(ConfigError, match="GET /t"):
+        check_requirements(_guard_app(), _registry())
+    app = FastAPI()
+    app.router.routes.append(Route("/sneaky", lambda request: PlainTextResponse("hi")))
+    with pytest.raises(ConfigError, match="/sneaky"):
+        check_requirements(app, _registry())
+
+
+def test_route_guard_requires_an_idempotency_key_on_mutating_routes() -> None:
+    from fastapi import Depends
+
+    from dwaar_api.core.authz import check_requirements, idempotency_exempt, public_route, require
+    from dwaar_api.core.config import ConfigError
+    from dwaar_api.core.idempotency import idempotency_required
+
+    reg = _registry()
+    guarded = Depends(require("t.read"))
+    with pytest.raises(ConfigError, match="idempotency"):
+        check_requirements(_guard_app(post=True, dependencies=[guarded]), reg)
+    check_requirements(
+        _guard_app(post=True, dependencies=[guarded, Depends(idempotency_required)]), reg
+    )
+    check_requirements(
+        _guard_app(post=True, dependencies=[guarded, Depends(idempotency_exempt("pure read"))]), reg
+    )
+    check_requirements(  # a public POST (sign-in, OTP request) is not a ledger write
+        _guard_app(post=True, dependencies=[Depends(public_route("otp request"))]), reg
+    )
+
+
+def test_money_parsing_boundaries_and_no_silent_rounding() -> None:
+    assert money.parse_rupees("92233720368547758.07") == money.MAX_PAISE
+    assert money.parse_rupees("-92233720368547758.08") == money.MIN_PAISE
+    for too_big in ("92233720368547758.08", "9" * 5000, "1" + "0" * 17):
+        with pytest.raises(money.MoneyRangeError):
+            money.parse_rupees(too_big)
+    assert money.parse_rupees("0" * 5000 + "5") == 500  # leading zeros are not magnitude
+    # context rounding used to turn a tiny non-zero fraction into exactly Rs 1.00
+    with pytest.raises(money.MoneyError, match="decimal"):
+        money.parse_rupees(Decimal("1." + "0" * 70 + "1"))
+    assert money.parse_rupees(Decimal("1.5E+1")) == 1500
+    assert money.parse_rupees(Decimal("0E+99999")) == 0
+    assert money.percent_to_bp("12.5") == 1250
+    assert money.percent_to_bp(Decimal("1.5E+1")) == 1500
+    assert money.percent_to_bp(Decimal("1e-2")) == 1
+    with pytest.raises(money.MoneyError):
+        money.percent_to_bp(Decimal("1e-3"))
+    with pytest.raises(money.MoneyError):
+        money.parse_rupees(Decimal("NaN"))
+    with pytest.raises(money.MoneyError):
+        money.parse_rupees(Decimal("Infinity"))
+
+
+def test_decimal_parsing_agrees_with_integer_arithmetic() -> None:
+    from hypothesis import given
+    from hypothesis import strategies as st
+
+    @given(st.decimals(min_value=-(10**15), max_value=10**15, places=2, allow_nan=False))
+    def check(value: Decimal) -> None:
+        assert money.parse_rupees(value) == int(value * 100)
+        assert money.percent_to_bp(value) == int(value * 100)
+
+    check()
+
+
+def test_canonical_json_bounds_and_astral_key_order() -> None:
+    from dwaar_common.events import CanonicalJsonError, canonical_json
+
+    ok: Any = 1
+    for _ in range(events.MAX_CANONICAL_DEPTH - 1):  # the surrounding dict is level 0, "x" level 1
+        ok = [ok]
+    assert canonical_json({"x": ok})
+    with pytest.raises(CanonicalJsonError):
+        canonical_json({"x": [ok]})
+    assert canonical_json({"n": 2**64 - 1})
+    with pytest.raises(CanonicalJsonError):
+        canonical_json({"n": 2**64})
+    # RFC 8785: UTF-16 code unit order puts the astral key (surrogate pair D800..) BEFORE U+FFFF
+    assert canonical_json({"￿": 1, "\U00010000": 2}) == '{"\U00010000":2,"￿":1}'.encode()
+    with pytest.raises(CanonicalJsonError):
+        canonical_json({"\ud800": 1})
+
+
+def test_transaction_control_is_found_by_structure_not_by_line_start() -> None:
+    from dwaar_api.core.migrate import has_transaction_control
+
+    bad = [
+        "CREATE TABLE a (id int); COMMIT; CREATE TABLE b (id int);",
+        "BEGIN;",
+        "SELECT 1;\nROLLBACK",
+        "select 1; end",
+        "START TRANSACTION ISOLATION LEVEL SERIALIZABLE;",
+        "SELECT 1;\n  Commit Prepared 'x';",
+    ]
+    good = [
+        "DO $$ BEGIN PERFORM 1; END $$;",
+        "SELECT 'commit; rollback;'; -- COMMIT;\n/* ROLLBACK; /* nested */ END; */ SELECT 1",
+        "CREATE FUNCTION f() RETURNS int AS $body$ BEGIN RETURN 1; END; $body$ LANGUAGE plpgsql;",
+        "SELECT E'it\\'s; COMMIT;'",
+        'SELECT "commit" FROM t',
+        "COMMENT ON TABLE t IS 'begin; commit;'",
+    ]
+    for sql in bad:
+        assert has_transaction_control(sql), sql
+    for sql in good:
+        assert not has_transaction_control(sql), sql
+
+
+@pytest.mark.parametrize(
+    "key",
+    ["Authorization", "x-api-key", "apiKey", "master_key", "pii_keys", "session_id", "sessionId",
+     "sid", "pw", "dsn", "pepper", "DATABASE_URL", "phones", "tokens", "refresh_token", "csrfToken"],
+)  # fmt: skip
+def test_secret_looking_keys_are_sensitive(key: str) -> None:
+    assert is_sensitive_key(key)
+
+
+@pytest.mark.parametrize(
+    "key",
+    ["pass_id", "pass_type", "auth_method", "key_id", "idempotency_key", "public_key", "pin_code",
+     "society_token", "token_type", "request_id", "status", "amount_paise", "code", "version"],
+)  # fmt: skip
+def test_ordinary_keys_are_not_over_redacted(key: str) -> None:
+    assert not is_sensitive_key(key)
+
+
+def test_audit_masks_identifier_numbers_by_key_and_keeps_every_other_number() -> None:
+    masked = mask_payload(
+        {
+            "contact": 9999900123,
+            "mobile_no": 9999900123,
+            "account_number": 123456789012,
+            "payout": 7_500_000_000,  # a money field nobody listed: still data
+            "units": 12,
+            "tds": "250000000",  # digits-only string under a quantity key
+            "ref_note": "call 99999 00123",
+            "phones": [9999900123],
+            "nested": {"tds": 250_000_000, "card": 4111111111111111},
+        }
+    )
+    assert masked["contact"] == "[REDACTED]"
+    assert masked["mobile_no"] == "[REDACTED]"
+    assert masked["account_number"] == "[REDACTED]"
+    assert masked["payout"] == 7_500_000_000
+    assert masked["units"] == 12
+    assert masked["tds"] == "250000000"
+    assert "99999 00123" not in str(masked["ref_note"])
+    assert masked["phones"] == "[REDACTED]"
+    assert masked["nested"] == {"tds": 250_000_000, "card": "[REDACTED]"}
+
+
+def test_scrubber_keeps_labelled_digests_ids_and_dates_but_not_bare_hex_keys() -> None:
+    digest = "sha256:" + "ab" * 32
+    safe = (
+        f"payload_hash={digest} id 0192f300-0000-7000-8000-00000000000a on 2026-10-05 from 10.0.0.7"
+    )
+    assert scrub_text(safe) == safe
+    bare = "ab" * 32
+    assert bare not in scrub_text(f"loaded key {bare} ok")
+    assert "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8" not in scrub_text(
+        f"decrypt failed for {_B64_SECRET}0"
+    )
+    assert scrub_text("sha256 of the file is fine") == "sha256 of the file is fine"
+
+
+def test_scrubber_masks_url_passwords_and_zero_width_split_numbers() -> None:
+    out = scrub_text("connect postgresql://app:p%40ss-w0rd@db.internal:5432/dwaar failed")
+    assert "p%40ss-w0rd" not in out
+    assert "postgresql://app:[REDACTED]@db.internal:5432/dwaar" in out
+    assert "999990012345" not in scrub_text("aadhaar 9999​9001‍2345 here")
+    assert (
+        scrub_text("error code 5000 on page 3") == "error code 5000 on page 3"
+    )  # no over-redaction

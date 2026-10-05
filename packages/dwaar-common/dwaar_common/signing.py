@@ -28,7 +28,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import (
 from dwaar_common.events import EdgeEvent, canonical_json
 
 SIGNATURE_PREFIX: Final = "ed25519:"
-KEY_ID_PATTERN: Final = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+KEY_ID_PATTERN: Final = re.compile(r"^[A-Za-z0-9._-]{1,64}\Z")  # \Z: `$` accepts a trailing newline
 _SIGNATURE_LEN: Final = 64
 
 
@@ -138,9 +138,14 @@ def sign_envelope(private_key: Ed25519PrivateKey, envelope: Mapping[str, Any]) -
 def verify_envelope(
     public_key: Ed25519PublicKey, envelope: Mapping[str, Any], signature: str | None = None
 ) -> bool:
-    body = {k: v for k, v in envelope.items() if k != "signature"}
-    sig = signature if signature is not None else envelope.get("signature")
-    return verify_bytes(public_key, canonical_json(body), sig if isinstance(sig, str) else None)
+    try:
+        body = {k: v for k, v in envelope.items() if k != "signature"}
+        sig = signature if signature is not None else envelope.get("signature")
+        return verify_bytes(public_key, canonical_json(body), sig if isinstance(sig, str) else None)
+    except (
+        Exception
+    ):  # attacker-shaped input (float, lone surrogate, huge int, deep nesting): never raise
+        return False
 
 
 def sign_edge_event(private_key: Ed25519PrivateKey, event: EdgeEvent) -> EdgeEvent:
@@ -151,11 +156,14 @@ def sign_edge_event(private_key: Ed25519PrivateKey, event: EdgeEvent) -> EdgeEve
 def verify_edge_event(public_key: Ed25519PublicKey, event: EdgeEvent) -> bool:
     """Signature valid, payload_hash consistent with payload, and ``occurred_at`` exactly representable in
     the signed (millisecond) form: a sub-millisecond difference would otherwise share one valid signature."""
-    return (
-        event.has_signable_timestamp()
-        and event.payload_hash_matches()
-        and verify_bytes(public_key, event.signing_bytes(), event.signature)
-    )
+    try:
+        return (
+            event.has_signable_timestamp()
+            and event.payload_hash_matches()
+            and verify_bytes(public_key, event.signing_bytes(), event.signature)
+        )
+    except Exception:  # a hostile payload must make ONE event invalid, never poison the whole batch
+        return False
 
 
 @dataclass(frozen=True)

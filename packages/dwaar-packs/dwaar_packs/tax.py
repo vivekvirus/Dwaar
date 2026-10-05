@@ -14,6 +14,8 @@ from typing import Literal
 
 from dwaar_common.money import ensure_paise
 
+from .approvals import ApprovalRegistry
+from .binding import binding_status
 from .errors import PackError, RuleNotConfigured, RuleNotEffective, RuleNotFound
 from .loader import load_typed
 from .paths import tax_packs_dir
@@ -60,6 +62,11 @@ class TdsResult:
     base_paise: int
     tds_paise: int
     explanation: list[str] = field(default_factory=list)
+    # GOV-01 / INV-10: the figure is arithmetic on a pack. ``binding`` is True only if that pack is enabled,
+    # approved WITH registry evidence and effective on the trigger date; otherwise the number is a draft
+    # estimate and must not be posted as final. ``binding_blockers`` says why (codes, never legal values).
+    binding: bool = False
+    binding_blockers: tuple[str, ...] = ()
 
 
 def resolve_tds_category(pack: TdsPack, label: str) -> str:
@@ -72,6 +79,15 @@ def resolve_tds_category(pack: TdsPack, label: str) -> str:
     raise RuleNotFound(f"{pack.pack_id}: unknown TDS category or alias {label!r}")
 
 
+def _note_if_draft(notes: list[str], binding: bool, blockers: tuple[str, ...]) -> None:
+    if not binding:
+        notes.append(
+            "DRAFT: pack is not approved/binding ("
+            + ", ".join(blockers)
+            + "); estimate only, do not post"
+        )
+
+
 def compute_tds(
     pack: TdsPack,
     *,
@@ -82,10 +98,13 @@ def compute_tds(
     cumulative_prior_paise: int = 0,
     pan_available: bool = True,
     certificate: LowerDeductionCertificate | None = None,
+    registry: ApprovalRegistry | None = None,
 ) -> TdsResult:
     """TDS on one credit/payment. ``trigger_date`` is the credit or payment date selecting the rule.
 
     Threshold comparison (strict ``gt`` unless the pack says ``gte``) and the crossing basis come from the pack.
+    The arithmetic runs on any pack; ``result.binding`` says whether the pack was allowed to bind on
+    ``trigger_date`` (approved with evidence, enabled, in range). A non-binding result is a draft estimate.
     """
     amount_paise = ensure_paise(amount_paise, "amount_paise")
     cumulative_prior_paise = ensure_paise(cumulative_prior_paise, "cumulative_prior_paise")
@@ -98,6 +117,7 @@ def compute_tds(
     cat_id = resolve_tds_category(pack, category)
     cat = pack.categories[cat_id]
     rule_id = f"{pack.pack_id}@{pack.version}:{cat_id}:{payee_category}"
+    binding, blockers = binding_status(pack, trigger_date, registry=registry)
     notes: list[str] = []
     if category != cat_id:
         notes.append(f"legacy label {category} treated as {cat_id} (historical alias)")
@@ -116,7 +136,10 @@ def compute_tds(
         agg_hit = over(cumulative_prior_paise + amount_paise, agg)
         if not single_hit and not agg_hit:
             notes.append("below single-payment and cumulative thresholds: no deduction")
-            return TdsResult(rule_id, cat_id, payee_category, False, 0, amount_paise, 0, notes)
+            _note_if_draft(notes, binding, blockers)
+            return TdsResult(
+                rule_id, cat_id, payee_category, False, 0, amount_paise, 0, notes, binding, blockers
+            )
         if agg_hit and not single_hit and cumulative_prior_paise > 0:
             basis = cat.thresholds.aggregate_crossing_basis
             if basis is None:
@@ -147,7 +170,10 @@ def compute_tds(
     unit = pack.rounding.unit_paise
     tds = round_div(base * rate, 10_000 * unit, pack.rounding.mode) * unit
     notes.append(f"{rate} bp on base {base} paise")
-    return TdsResult(rule_id, cat_id, payee_category, tds > 0, rate, base, tds, notes)
+    _note_if_draft(notes, binding, blockers)
+    return TdsResult(
+        rule_id, cat_id, payee_category, tds > 0, rate, base, tds, notes, binding, blockers
+    )
 
 
 # ------------------------------------------------------------------ GST for RWAs (TAX-02)
@@ -160,10 +186,17 @@ class GstRwaAssessment:
     turnover_above_threshold: bool
     requires_ca_classification: bool
     explanation: list[str]
+    binding: bool = False  # see TdsResult: True only for an approved, evidenced, effective pack
+    binding_blockers: tuple[str, ...] = ()
 
 
 def assess_gst_rwa(
-    pack: GstRwaPack, *, per_member_monthly_paise: int, aggregate_turnover_paise: int
+    pack: GstRwaPack,
+    *,
+    per_member_monthly_paise: int,
+    aggregate_turnover_paise: int,
+    on_date: date | None = None,
+    registry: ApprovalRegistry | None = None,
 ) -> GstRwaAssessment:
     """Contribution-limit assessment. Above the limit GST applies to the FULL amount, not the excess.
 
@@ -188,7 +221,14 @@ def assess_gst_rwa(
     ]
     if not exempt and gst is None:
         notes.append("GST rate not configured; CA must configure")
-    return GstRwaAssessment(f"{pack.pack_id}@{pack.version}", exempt, base, gst, above, True, notes)
+    binding, blockers = binding_status(pack, on_date, registry=registry)
+    if not binding:
+        notes.append(
+            "DRAFT: pack is not approved/binding (" + ", ".join(blockers) + "); advisory only"
+        )
+    return GstRwaAssessment(
+        f"{pack.pack_id}@{pack.version}", exempt, base, gst, above, True, notes, binding, blockers
+    )
 
 
 # ------------------------------------------------------------------ e-invoice (TAX-03)

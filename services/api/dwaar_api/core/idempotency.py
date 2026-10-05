@@ -41,6 +41,7 @@ import hashlib
 import json
 import logging
 import re
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
@@ -56,12 +57,13 @@ from dwaar_common.errors import DependencyUnavailable, DuplicatePayloadMismatch
 from dwaar_common.events import canonical_json
 from dwaar_common.ids import uuid7
 
-from .authz import AuthContext
+from .authz import IDEMPOTENCY_ATTR, AuthContext
 
 log = logging.getLogger("dwaar_api.idempotency")
 
 IDEMPOTENCY_HEADER: Final = "Idempotency-Key"
 REPLAY_HEADER: Final = "Idempotent-Replayed"
+ORIGINAL_REQUEST_HEADER: Final = "Idempotent-Original-Request-Id"
 _KEY_PATTERN: Final = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{7,127}$")
 Work = Callable[[Connection], Any]
 _MAX_CLAIM_ATTEMPTS: Final = 3
@@ -77,7 +79,12 @@ def request_hash(method: str, path: str, query: str, body: bytes) -> str:
         body_part = hashlib.sha256(canonical_json(parsed)).hexdigest() if body else ""
     except (ValueError, TypeError):
         body_part = hashlib.sha256(body).hexdigest()
-    pairs = sorted((k, v) for k, _, v in (p.partition("=") for p in query.split("&") if p))
+    # Sort by NAME only (stable): ``?a=1&b=2`` equals ``?b=2&a=1``, but ``?x=1&x=2`` differs from ``?x=2&x=1``
+    # because the framework hands a scalar parameter the LAST value, so those are different requests.
+    pairs = sorted(
+        ((k, v) for k, _, v in (p.partition("=") for p in query.split("&") if p)),
+        key=lambda pair: pair[0],
+    )
     material = "\n".join([method.upper(), path, urlencode(pairs), body_part])
     return "sha256:" + hashlib.sha256(material.encode("utf-8")).hexdigest()
 
@@ -123,7 +130,7 @@ class IdempotentCall:
         with auth.tx() as conn:
             existing = self._claim(conn, auth)
             if existing is not None:
-                return self._replay(existing)
+                return self._replay(existing, auth.request_id)
             value = work(conn)
             body = encode_response(value)
             conn.execute(
@@ -209,13 +216,22 @@ class IdempotentCall:
         raise DependencyUnavailable(retry_after=1)
 
     @staticmethod
-    def _replay(row: dict[str, Any]) -> JSONResponse:
+    def _replay(row: dict[str, Any], request_id: uuid.UUID) -> JSONResponse:
+        """The stored response, with its ``request_id`` member (if the body has one) pointing at THIS request.
+
+        The stored body is the first request's answer, so a ``request_id`` inside it names the first request while
+        the ``X-Request-ID`` header names the replay: support tracing by the body field would land on the wrong
+        request. The original id is kept in ``Idempotent-Original-Request-Id``.
+        """
         log.info("idempotent replay")
-        return JSONResponse(
-            status_code=int(row["response_status"]),
-            content=row["response_body"],
-            headers={REPLAY_HEADER: "true"},
-        )
+        body = row["response_body"]
+        headers = {REPLAY_HEADER: "true"}
+        if isinstance(body, dict) and "request_id" in body:
+            original = body["request_id"]
+            body = {**body, "request_id": str(request_id)}
+            if isinstance(original, str):
+                headers[ORIGINAL_REQUEST_HEADER] = original
+        return JSONResponse(status_code=int(row["response_status"]), content=body, headers=headers)
 
 
 async def idempotency_required(
@@ -237,3 +253,8 @@ async def idempotency_required(
     digest = request_hash(request.method, request.url.path, request.url.query, body)
     ttl = int(getattr(request.app.state.settings, "idempotency_ttl_seconds", 7 * 86_400))
     return IdempotentCall(idempotency_key, f"{request.method.upper()} {template}", digest, ttl)
+
+
+setattr(
+    idempotency_required, IDEMPOTENCY_ATTR, True
+)  # lets check_requirements see mutating routes that are keyed

@@ -8,8 +8,11 @@ ADR-0004 (roles come from infra/db/bootstrap_roles.sql; objects are owned by ``d
 * Ledger: table ``schema_migrations`` (version, name, sha256 checksum, applied_at, applied_by).
 * Tamper detection: an applied file whose checksum changed, or that disappeared, is a hard error and
   NOTHING further is applied. Fix forward with a new migration, never by editing an applied one.
-* Concurrency: a session-level advisory lock serialises runners; the second runner waits, then finds
-  everything applied and does nothing.
+* Concurrency: a second connection holds an ACCESS EXCLUSIVE lock on the owner-only table
+  ``dwaar_migration_lock`` for the whole run; the second runner waits, then finds everything applied and does
+  nothing. It is a TABLE lock, not an advisory lock: advisory lock keys are one global namespace that every
+  database role can take (``dwaar_app`` could hold the key and block every deploy), whereas the runtime roles
+  have no privilege on this table at all (not even LOCK).
 * Atomicity: every migration runs in its own transaction together with its ledger row. Migration files
   must not contain their own BEGIN/COMMIT.
 * Late-arriving versions (a lower number than the highest applied one, added by a parallel branch)
@@ -21,6 +24,7 @@ CLI:  ``python -m dwaar_api.core.migrate up|status [--dsn DSN]``  (DSN defaults 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import os
 import re
@@ -36,11 +40,13 @@ import psycopg
 
 MIGRATIONS_DIR: Final = Path(__file__).resolve().parents[2] / "migrations"
 _FILENAME: Final = re.compile(r"^(\d{4})_([a-z0-9][a-z0-9_]*)\.sql$")
+# A statement that starts with one of these controls the transaction the runner wrapped around the file.
 _TX_CONTROL: Final = re.compile(
-    r"(?im)^\s*(begin|commit|rollback|start\s+transaction|end)\b\s*(;|transaction\b|work\b)"
+    r"(?is)^\s*(begin|commit|rollback|abort|end|start\s+transaction|prepare\s+transaction"
+    r"|commit\s+prepared|rollback\s+prepared)\b"
 )
-# Arbitrary but fixed: pg_advisory_lock key for "dwaar schema migrations".
-ADVISORY_LOCK_KEY: Final = 0x4457_4141_5200_0001
+_DOLLAR_TAG: Final = re.compile(r"\$(?:[A-Za-z_][A-Za-z_0-9]*)?\$")
+LOCK_TABLE: Final = "dwaar_migration_lock"
 REQUIRED_ROLES: Final = ("dwaar_owner", "dwaar_app", "dwaar_worker")
 
 LEDGER_DDL: Final = """
@@ -88,6 +94,65 @@ def checksum_of(sql_bytes: bytes) -> str:
     return hashlib.sha256(sql_bytes).hexdigest()
 
 
+def _strip_literals(sql: str) -> str:
+    """``sql`` with comments, quoted strings and dollar-quoted bodies blanked out (statement structure only).
+
+    So a ``BEGIN`` inside a PL/pgSQL body or a string never counts as transaction control, while a
+    ``...; COMMIT; ...`` smuggled onto one line does.
+    """
+    out: list[str] = []
+    i, n = 0, len(sql)
+    while i < n:
+        ch = sql[i]
+        if sql.startswith("--", i):
+            j = sql.find("\n", i)
+            i = n if j == -1 else j
+        elif sql.startswith("/*", i):
+            depth, i = 1, i + 2
+            while i < n and depth:
+                if sql.startswith("/*", i):
+                    depth, i = depth + 1, i + 2
+                elif sql.startswith("*/", i):
+                    depth, i = depth - 1, i + 2
+                else:
+                    i += 1
+            out.append(" ")
+        elif ch in ("'", '"'):
+            backslash_escapes = ch == "'" and i > 0 and sql[i - 1] in "eE"  # E'...' strings
+            j = i + 1
+            while j < n:
+                if backslash_escapes and sql[j] == "\\":
+                    j += 2
+                    continue
+                if sql[j] == ch:
+                    if sql.startswith(ch * 2, j):  # a doubled quote is an escaped quote
+                        j += 2
+                        continue
+                    break
+                j += 1
+            out.append(ch + ch)
+            i = j + 1
+        elif ch == "$":
+            after_identifier = i > 0 and (sql[i - 1].isalnum() or sql[i - 1] == "_")
+            tag = None if after_identifier else _DOLLAR_TAG.match(sql, i)
+            if tag is None:
+                out.append(ch)
+                i += 1
+                continue
+            end = sql.find(tag.group(0), tag.end())
+            out.append("$$")
+            i = n if end == -1 else end + len(tag.group(0))
+        else:
+            out.append(ch)
+            i += 1
+    return "".join(out)
+
+
+def has_transaction_control(sql: str) -> bool:
+    """True if any top-level statement of ``sql`` is BEGIN/COMMIT/ROLLBACK/END/ABORT/START TRANSACTION ..."""
+    return any(_TX_CONTROL.match(statement) for statement in _strip_literals(sql).split(";"))
+
+
 def discover(directory: Path | None = None) -> list[Migration]:
     """Read and validate the migration files, ordered by version."""
     root = directory or MIGRATIONS_DIR
@@ -116,7 +181,7 @@ def discover(directory: Path | None = None) -> list[Migration]:
             raise MigrationError(f"{path.name} is not valid UTF-8") from exc
         if not sql.strip():
             raise MigrationError(f"{path.name} is empty")
-        if _TX_CONTROL.search(sql):
+        if has_transaction_control(sql):
             raise MigrationError(
                 f"{path.name} contains its own transaction control; the runner wraps each file in a transaction"
             )
@@ -172,8 +237,8 @@ def run_migrations(
     migrations = discover(migrations_dir)
     applied_now: list[str] = []
     conn = psycopg.connect(owner_dsn, autocommit=True)
+    lock_conn = _hold_migration_lock(owner_dsn)
     try:
-        conn.execute("SELECT pg_advisory_lock(%s)", (ADVISORY_LOCK_KEY,))
         try:
             _check_roles(conn)
             conn.execute(LEDGER_DDL)
@@ -188,10 +253,29 @@ def run_migrations(
                 _apply_one(conn, migration)
                 applied_now.append(migration.label)
         finally:
-            conn.execute("SELECT pg_advisory_unlock(%s)", (ADVISORY_LOCK_KEY,))
+            lock_conn.close()  # rolls back its transaction: the table lock is released
     finally:
         conn.close()
     return applied_now
+
+
+def _hold_migration_lock(owner_dsn: str) -> psycopg.Connection[Any]:
+    """Serialise runners: hold ACCESS EXCLUSIVE on the owner-only ``dwaar_migration_lock`` table on a SECOND
+    connection (open transaction) until it is closed. Blocks while another runner holds it."""
+    lock_conn = psycopg.connect(owner_dsn, autocommit=True)
+    try:
+        # two first-ever runners can race to create it; the loser simply uses the winner's table
+        with contextlib.suppress(psycopg.errors.UniqueViolation, psycopg.errors.DuplicateTable):
+            lock_conn.execute(
+                f"CREATE TABLE IF NOT EXISTS {LOCK_TABLE} (id integer PRIMARY KEY CHECK (id = 1))"
+            )
+        lock_conn.execute(f"REVOKE ALL ON TABLE {LOCK_TABLE} FROM PUBLIC")
+        lock_conn.autocommit = False
+        lock_conn.execute(f"LOCK TABLE {LOCK_TABLE} IN ACCESS EXCLUSIVE MODE")
+    except BaseException:
+        lock_conn.close()
+        raise
+    return lock_conn
 
 
 def _apply_one(conn: psycopg.Connection[Any], migration: Migration) -> None:

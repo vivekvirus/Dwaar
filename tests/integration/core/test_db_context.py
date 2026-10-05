@@ -170,6 +170,11 @@ def test_startup_survives_an_unreachable_database_and_readyz_says_so(db: DbHandl
         assert res.status_code == 503
         assert res.json() == {
             "status": "not_ready",
-            "checks": {"database": "fail", "migrations": "unknown"},
+            "checks": {
+                "database": "fail",
+                "role": "unknown",
+                "role_defaults": "unknown",
+                "migrations": "unknown",
+            },
         }
         assert client.get("/healthz").status_code == 200  # liveness does not depend on the database

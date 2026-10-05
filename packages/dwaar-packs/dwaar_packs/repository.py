@@ -46,6 +46,8 @@ class InMemoryPackRepository:
         """Latest-effective pack for a jurisdiction and entity type; ``any`` entity packs are a fallback.
 
         Disabled packs (e.g. a pending Bill variant) are never selected unless explicitly requested.
+        An approved pack always outranks an unapproved one, whatever their dates: dropping a newer draft
+        file next to an approved pack must not silently switch every caller to a non-binding pack (GOV-01).
         """
         cands = [
             p
@@ -59,7 +61,7 @@ class InMemoryPackRepository:
         pool = exact or [p for p in cands if p.entity_type == "any"]
         if not pool:
             raise RuleNotFound(f"no legal pack for {jurisdiction}/{entity_type} on {at_date}")
-        return sorted(pool, key=lambda p: p.effective_from)[-1]
+        return sorted(pool, key=lambda p: (p.is_approved, p.effective_from))[-1]
 
 
 log = logging.getLogger("dwaar_packs")

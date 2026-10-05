@@ -118,7 +118,7 @@ def make_settings(db: DbHandle, **overrides: Any) -> Settings:
         "env": "test",
         "database_url": db.app_dsn,
         "database_worker_url": db.worker_dsn,
-        "cursor_signing_key": "test-cursor-key-for-pytest-only",
+        "cursor_signing_key": "test-cursor-Key-9fA3kQ7zLm2XpR8vT1bY",  # passes the entropy rule of staging/production
     }
     values.update(overrides)
     return Settings.model_validate(values)

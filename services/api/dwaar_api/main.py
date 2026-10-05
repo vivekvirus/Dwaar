@@ -71,9 +71,11 @@ def create_app(
         summary="Dwaar community operating platform, cloud API",
         description="Versioned under /v1. Errors follow PRD 12.2. Authorisation is derived on the server.",
         lifespan=lifespan,
-        docs_url=None
-        if not settings.simulation and settings.env.value == "production"
-        else "/docs",
+        # The interactive docs and the schema document are a map of every route: served ONLY by the labelled
+        # local/test simulators, never by staging or production (export the schema offline with
+        # tools/export_openapi.py instead).
+        docs_url="/docs" if settings.simulation else None,
+        openapi_url="/openapi.json" if settings.simulation else None,
         redoc_url=None,
         responses=ERROR_RESPONSES,
     )

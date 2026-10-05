@@ -190,8 +190,11 @@ def bounded_range(
     for label, value in (("from", start), ("to", end)):
         if value is not None and (value.tzinfo is None or value.utcoffset() is None):
             raise InvalidSchema.for_fields([(label, "timezone_required")])
-    end_utc = end.astimezone(dt.UTC) if end else moment
-    start_utc = start.astimezone(dt.UTC) if start else end_utc - dt.timedelta(days=max_days)
+    try:  # year 1 / year 9999 plus an offset or the default window overflows datetime arithmetic
+        end_utc = end.astimezone(dt.UTC) if end else moment
+        start_utc = start.astimezone(dt.UTC) if start else end_utc - dt.timedelta(days=max_days)
+    except OverflowError:
+        raise InvalidSchema.for_fields([("from" if start else "to", "out_of_range")]) from None
     if start_utc >= end_utc:
         raise InvalidSchema.for_fields([("from", "must_precede_to")])
     if end_utc - start_utc > dt.timedelta(days=max_days):

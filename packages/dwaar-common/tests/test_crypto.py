@@ -139,24 +139,34 @@ def test_build_aad() -> None:
 
 def test_keyed_hash_is_deterministic_keyed_and_hex() -> None:
     k1, k2 = generate_key(), generate_key()
-    h = keyed_hash("+919999900123", k1)
-    assert h == keyed_hash("+919999900123", k1)
-    assert h != keyed_hash("+919999900123", k2)
-    assert h != keyed_hash("+919999900124", k1)
+    h = keyed_hash("+919999900123", k1, purpose="phone_token")
+    assert h == keyed_hash("+919999900123", k1, purpose="phone_token")
+    assert h != keyed_hash("+919999900123", k2, purpose="phone_token")
+    assert h != keyed_hash("+919999900124", k1, purpose="phone_token")
     assert len(h) == 64
     assert all(c in "0123456789abcdef" for c in h)
-    assert keyed_hash("x", k1) == keyed_hash(b"x", k1)
+    assert keyed_hash("x", k1, purpose="p") == keyed_hash(b"x", k1, purpose="p")
     with pytest.raises(CryptoError):
-        keyed_hash("x", b"short")
+        keyed_hash("x", b"short", purpose="p")
+
+
+def test_keyed_hash_is_domain_separated_by_purpose() -> None:
+    key = generate_key()
+    assert keyed_hash("x", key, purpose="phone_token") != keyed_hash("x", key, purpose="otp_hash")
+    for bad in ("", "Phone", "a b", "x\n", "1abc", "a" * 65):
+        with pytest.raises(CryptoError):
+            keyed_hash("x", key, purpose=bad)
 
 
 def test_keyed_hash_known_vector() -> None:
-    # RFC 4231 test case 2 style check with a 32-byte key
+    """Known answer: HMAC(HMAC(key, b'dwaar-keyed-hash/v1|' + purpose), data), computed independently."""
     import hashlib
     import hmac
 
     key = bytes(range(32))
-    assert keyed_hash("data", key) == hmac.new(key, b"data", hashlib.sha256).hexdigest()
+    subkey = hmac.new(key, b"dwaar-keyed-hash/v1|phone_token", hashlib.sha256).digest()
+    expected = hmac.new(subkey, b"data", hashlib.sha256).hexdigest()
+    assert keyed_hash("data", key, purpose="phone_token") == expected
 
 
 @pytest.mark.parametrize(

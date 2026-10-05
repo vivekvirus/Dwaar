@@ -1,11 +1,8 @@
-"""W1 verification round 2 (lens INVARIANTS + SECURITY): attacks against a real ephemeral PostgreSQL.
+"""W1 fix round 2 (lens INVARIANTS + SECURITY): regression tests for the database-level findings R2-02, R2-03,
+R2-04, R2-10, R2-11 and R2-01 end to end, against a real ephemeral PostgreSQL with the real restricted roles.
 
-Not collected by ``make test`` (the file name does not start with ``test_``). Run explicitly:
-
-    uv run --no-sync pytest tests/security/verify_w1_r2_db.py -p no:cacheprovider
-
-A test that FAILS here is a confirmed defect: it asserts the SECURE behaviour. A test that passes is an
-attack that was tried and did not succeed (regression evidence). Nothing here changes production code.
+Each test asserts the SECURE behaviour; it was written as a failing repro first (``verify_w1_r2_db.py``) and
+moved here when the root cause was fixed.
 """
 
 # ruff: noqa: PT018, PT011, PT012, S608, E501, SIM117, PLC0415, RUF001, RUF002, RUF003, S603, S607, S310, B017, BLE001
@@ -22,7 +19,7 @@ from psycopg import errors
 from sqlalchemy import text
 
 from dwaar_api.core.db import Database, RequestContext
-from dwaar_api.core.migrate import ADVISORY_LOCK_KEY
+from dwaar_api.core.migrate import LOCK_TABLE, run_migrations
 from tests._harness.pgfixtures import DbHandle
 from tests.integration.core._support import (
     COMMITTEE_A,
@@ -37,6 +34,8 @@ from tests.security.test_core_rls_isolation import find_rls_violations
 pytestmark = pytest.mark.req("INV-01", "ARCH-01", "ARCH-03", "DB-02", "INV-02")
 
 HASH = "sha256:" + "0" * 64
+#: the advisory-lock key the migration runner USED to serialise on (public in the old source)
+OLD_PUBLIC_LOCK_KEY = 0x4457_4141_5200_0001
 
 
 def _seed(db: DbHandle, society: uuid.UUID, *names: str) -> None:
@@ -182,40 +181,67 @@ def test_outbox_refuses_two_events_for_the_same_aggregate_version(two: DbHandle)
 # (1b) pooled connections: what survives the pool reset
 # ------------------------------------------------------------------------------------------------
 def test_pool_reset_releases_session_level_advisory_locks(two: DbHandle) -> None:
-    """``_reset_session`` runs ``ROLLBACK`` + ``RESET ALL``. Neither releases session-level advisory locks (or
-    LISTEN registrations), so a lock taken in one request stays held by the pooled connection. The migration
-    runner serialises on the constant ``ADVISORY_LOCK_KEY`` which is public in the source: one statement from
-    any ``dwaar_app`` SQL blocks every future migration/deploy until the process restarts."""
+    """R2-11. ``RESET ALL`` neither releases session-level advisory locks nor LISTEN registrations nor temp
+    state, so a lock taken in one request stayed held by the pooled connection. The pool reset is now
+    ``DISCARD ALL``: the next borrower inherits nothing."""
     database = Database(two.app_dsn, pool_size=1, max_overflow=0)
     try:
         with database.app_engine.connect() as conn:
-            conn.execute(text("SELECT pg_advisory_lock(:k)"), {"k": ADVISORY_LOCK_KEY})
+            conn.execute(text("SELECT pg_advisory_lock(:k)"), {"k": OLD_PUBLIC_LOCK_KEY})
+            conn.execute(text("LISTEN dwaar_probe_channel"))
             conn.commit()
         # connection returned to the pool: the next borrower must not inherit the lock
         with psycopg.connect(two.owner_dsn, autocommit=True) as other:
-            got = other.execute("SELECT pg_try_advisory_lock(%s)", (ADVISORY_LOCK_KEY,)).fetchone()
+            got = other.execute(
+                "SELECT pg_try_advisory_lock(%s)", (OLD_PUBLIC_LOCK_KEY,)
+            ).fetchone()
             if got and got[0]:
-                other.execute("SELECT pg_advisory_unlock(%s)", (ADVISORY_LOCK_KEY,))
-        assert got == (True,), "advisory lock survived the pool reset and blocks the migrator"
+                other.execute("SELECT pg_advisory_unlock(%s)", (OLD_PUBLIC_LOCK_KEY,))
+        assert got == (True,), "advisory lock survived the pool reset"
+        with (
+            database.app_engine.connect() as conn
+        ):  # the SAME pooled connection is handed out again
+            held = conn.execute(
+                text(
+                    "SELECT count(*) FROM pg_locks WHERE locktype = 'advisory' AND pid = pg_backend_pid()"
+                )
+            ).scalar_one()
+            listening = conn.execute(
+                text("SELECT count(*) FROM pg_listening_channels()")
+            ).scalar_one()
+        assert (held, listening) == (0, 0)
     finally:
         database.dispose()
 
 
-def test_runtime_roles_cannot_take_the_migration_advisory_lock(two: DbHandle) -> None:
-    """Even if the pool is fixed, the lock key is a shared global namespace: dwaar_app may take ANY advisory
-    lock. Reported with the test above; here the direct attack from a fresh connection."""
+def _run_migrations_within(owner_dsn: str, seconds: float) -> list[str]:
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(run_migrations, owner_dsn).result(timeout=seconds)
+
+
+def test_runtime_roles_cannot_block_the_migration_runner(two: DbHandle) -> None:
+    """R2-11. Advisory lock keys are ONE global namespace that every role can take, so a runner that serialises
+    on an advisory key can be blocked by one statement from dwaar_app. The runner now serialises on an
+    owner-only TABLE lock: the runtime roles hold every advisory key they like (including the one the old
+    runner used) and cannot even LOCK the runner's table."""
     with psycopg.connect(two.app_dsn, autocommit=True) as attacker:
-        taken = attacker.execute("SELECT pg_try_advisory_lock(%s)", (ADVISORY_LOCK_KEY,)).fetchone()
-        assert taken is not None
-        with psycopg.connect(two.owner_dsn, autocommit=True) as migrator:
-            free = migrator.execute(
-                "SELECT pg_try_advisory_lock(%s)", (ADVISORY_LOCK_KEY,)
-            ).fetchone()
-            if free and free[0]:
-                migrator.execute("SELECT pg_advisory_unlock(%s)", (ADVISORY_LOCK_KEY,))
-        assert free == (True,) or taken == (False,), (
-            "dwaar_app can block migrations with one statement"
-        )
+        for key in (OLD_PUBLIC_LOCK_KEY, 1, 0x4457_4141_5200_0001 + 1):
+            row = attacker.execute("SELECT pg_try_advisory_lock(%s)", (key,)).fetchone()
+            assert row == (
+                True,
+            )  # the attacker really holds them (nothing in PostgreSQL stops that)
+        assert (
+            _run_migrations_within(two.owner_dsn, 30) == []
+        )  # everything applied: a no-op, and not blocked
+        for role_dsn in (two.app_dsn, two.worker_dsn):
+            with psycopg.connect(role_dsn) as conn:
+                with pytest.raises(errors.InsufficientPrivilege):
+                    conn.execute(f"LOCK TABLE {LOCK_TABLE} IN ACCESS EXCLUSIVE MODE NOWAIT")  # type: ignore[call-overload]
+                conn.rollback()
+                with pytest.raises(errors.InsufficientPrivilege):
+                    conn.execute(f"SELECT * FROM {LOCK_TABLE}")  # type: ignore[call-overload]
 
 
 # ------------------------------------------------------------------------------------------------
@@ -387,11 +413,13 @@ def test_error_responses_never_contain_the_sql_or_the_exception_text(core: CoreH
         assert needle not in body, needle
 
 
-def test_request_context_actor_role_with_newline_cannot_reach_a_guc(two: DbHandle) -> None:
-    """Regression check for the trailing-newline validator gap: the GUC value is stored verbatim, so a
-    role string with a newline would break any ``current_setting('app.actor_role') = 'committee'`` policy
-    in the OPPOSITE direction (fails closed here), proving the value is not normalised."""
-    ctx = RequestContext(SOCIETY_A, COMMITTEE_A, "committee\n", uuid.uuid4())
+def test_request_context_actor_role_with_newline_is_refused_not_stored(two: DbHandle) -> None:
+    """The validator used ``$``, which Python's ``re`` lets match before a trailing newline, so a role string with
+    a newline reached ``set_config`` verbatim. It is refused at construction now (``\\Z``), and a valid role is
+    stored exactly."""
+    with pytest.raises(ValueError, match="actor_role"):
+        RequestContext(SOCIETY_A, COMMITTEE_A, "committee\n", uuid.uuid4())
+    ctx = RequestContext(SOCIETY_A, COMMITTEE_A, "committee", uuid.uuid4())
     database = Database(two.app_dsn, pool_size=1, max_overflow=0)
     try:
         with database.app_tx(ctx) as conn:
@@ -420,11 +448,16 @@ def test_clock_is_not_trusted_for_expiry_reclaim_across_actors(two: DbHandle) ->
         )
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "PostgreSQL 16 lets every role change its OWN password and offers no privilege, GUC or event trigger "
+        "(event triggers do not fire for roles) to forbid it; R2-02 residual risk, documented in ADR-0004. "
+        "Compensating controls are tested below. strict: if PostgreSQL ever closes this, the XPASS turns the "
+        "build red so the control can be tightened."
+    ),
+)
 def test_runtime_role_cannot_change_its_own_password(two: DbHandle) -> None:
-    """``ALTER ROLE <self> PASSWORD`` is allowed for any role. One injected statement locks the API out of
-    its own database (new connections fail under scram auth) until a superuser resets it. The harness cluster
-    uses trust auth, so the lock-out itself cannot be shown here; the privilege is. The password is restored
-    afterwards so other tests keep working."""
     changed = False
     try:
         try:
@@ -438,6 +471,73 @@ def test_runtime_role_cannot_change_its_own_password(two: DbHandle) -> None:
         if changed:
             with two.admin_conn() as admin:
                 admin.execute("ALTER ROLE dwaar_app PASSWORD 'test-only-app-pw'")
+
+
+def _run_role_bootstrap(db: DbHandle) -> None:
+    import subprocess
+
+    from tests._harness.pgcluster import find_psql
+    from tests._harness.pgfixtures import BOOTSTRAP_ROLES_SQL, TEST_PASSWORDS
+
+    cmd = [find_psql(), "-X", "-q", "-v", "ON_ERROR_STOP=1"]
+    for var, role in (
+        ("owner_pw", "dwaar_owner"),
+        ("app_pw", "dwaar_app"),
+        ("worker_pw", "dwaar_worker"),
+    ):
+        cmd += ["-v", f"{var}={TEST_PASSWORDS[role]}"]
+    cmd += ["-d", db.admin_dsn, "-f", str(BOOTSTRAP_ROLES_SQL)]
+    done = subprocess.run(  # noqa: S603
+        cmd, check=False, capture_output=True, text=True, timeout=60, stdin=subprocess.DEVNULL
+    )
+    assert done.returncode == 0, done.stderr
+
+
+def test_self_service_role_tampering_is_detected_and_recoverable_by_the_role_bootstrap(
+    two: DbHandle,
+) -> None:
+    """Compensating control for the residual risk above (a role can change its OWN password and defaults).
+    The attacker plants role defaults and a password; ``/readyz`` reports the role-level drift (the instance
+    leaves rotation) and re-running the idempotent ``infra/db/bootstrap_roles.sql`` clears the defaults and
+    re-asserts the password from the secret store."""
+    from fastapi.testclient import TestClient
+
+    from dwaar_api.core.config import Settings
+    from dwaar_api.main import create_app
+
+    settings = Settings.model_validate(
+        {
+            "env": "test",
+            "database_url": two.app_dsn,
+            "database_worker_url": two.worker_dsn,
+            "cursor_signing_key": "k" * 40,
+        }
+    )
+    database = Database(two.app_dsn, two.worker_dsn, pool_size=1, max_overflow=0)
+    app = create_app(settings, database=database, modules_package=None)
+    try:
+        with TestClient(app, raise_server_exceptions=False) as client:
+            assert client.get("/readyz").json()["checks"]["role_defaults"] == "ok"
+            with psycopg.connect(two.app_dsn, autocommit=True) as attacker:
+                attacker.execute("ALTER ROLE dwaar_app SET statement_timeout = '1ms'")
+                attacker.execute("ALTER ROLE dwaar_app PASSWORD 'attacker-chosen-pw'")
+            try:
+                drifted = client.get("/readyz")
+                assert drifted.status_code == 503
+                assert drifted.json()["checks"]["role_defaults"] == "drift"
+            finally:
+                _run_role_bootstrap(two)
+            recovered = client.get("/readyz")
+            assert recovered.json()["checks"]["role_defaults"] == "ok"
+            assert recovered.status_code == 200
+    finally:
+        database.dispose()
+    with two.admin_conn() as admin:
+        left = admin.execute(
+            "SELECT count(*) FROM pg_db_role_setting s JOIN pg_roles r ON r.oid = s.setrole"
+            " WHERE r.rolname LIKE 'dwaar\\_%'"
+        ).fetchone()
+    assert left == (0,)
 
 
 def test_large_money_amounts_survive_the_outbox_and_audit_path(core: CoreHarness) -> None:
@@ -465,18 +565,12 @@ def test_large_money_amounts_survive_the_outbox_and_audit_path(core: CoreHarness
 
 
 def test_a_superuser_database_role_with_an_innocent_name_never_serves_traffic(db: DbHandle) -> None:
-    """ARCH-03: the API must never run as a superuser / BYPASSRLS role. Two gaps:
-
-    * ``Settings`` only blocks four role NAMES (dwaar_owner, postgres, postgresql, root); any other
-      superuser (``platform_admin``, ``rdsadmin``, ``supabase_admin`` ...) passes configuration.
-    * The real check (``assert_restricted_role``) runs once in the lifespan and is SKIPPED, with only a
-      warning, when the database is unreachable at boot. Nothing ever re-runs it, ``/readyz`` does not
-      look at it, so an API that boots while the database is briefly down serves every request as a
-      superuser with RLS bypassed.
-    """
+    """R2-03 / ARCH-03: the API must never run as a superuser / BYPASSRLS role. ``Settings`` only blocks a few role
+    NAMES, and the boot-time check is skipped (warning only) when the database is unreachable at boot. The role
+    is therefore verified on EVERY new pooled connection (the connection is refused) and on every ``/readyz``."""
     from fastapi.testclient import TestClient
 
-    from dwaar_api.core.config import Settings
+    from dwaar_api.core.config import ConfigError, Settings
     from dwaar_api.main import create_app
     from tests._harness.pgfixtures import make_dsn
 
@@ -502,16 +596,50 @@ def test_a_superuser_database_role_with_an_innocent_name_never_serves_traffic(db
         try:
             with TestClient(app, raise_server_exceptions=False) as client:
                 ready = client.get("/readyz")
-                with database.app_engine.connect() as conn:
-                    is_super = conn.execute(
-                        text("SELECT rolsuper FROM pg_roles WHERE rolname = current_user")
-                    ).scalar_one()
-            assert is_super is True  # the premise: this API process runs as a superuser
-            assert ready.status_code != 200, (
-                "API reports ready while connected as a superuser (RLS bypassed)"
-            )
+                with pytest.raises(ConfigError, match="superuser or BYPASSRLS"):
+                    database.app_engine.connect()  # not one pooled connection ever serves a request
+                with pytest.raises(ConfigError):
+                    database.ping()
+            assert ready.status_code == 503, "API reports ready while configured as a superuser"
+            assert ready.json()["checks"]["database"] == "fail"
         finally:
             database.dispose()
     finally:
         with db.admin_conn() as admin:
             admin.execute("DROP ROLE platform_admin")
+
+
+def test_a_role_promoted_to_superuser_after_the_pool_filled_fails_readiness(db: DbHandle) -> None:
+    """The connect-time check cannot see a promotion that happens later; ``/readyz`` re-checks the live role."""
+    from fastapi.testclient import TestClient
+
+    from dwaar_api.core.config import Settings
+    from dwaar_api.main import create_app
+    from tests._harness.pgfixtures import make_dsn
+
+    with db.admin_conn() as admin:
+        admin.execute("CREATE ROLE promoted_later LOGIN NOSUPERUSER NOBYPASSRLS")
+        admin.execute("GRANT USAGE ON SCHEMA public TO promoted_later")
+        admin.execute("GRANT SELECT ON schema_migrations TO promoted_later")
+        admin.execute(f"GRANT CONNECT ON DATABASE {db.name} TO promoted_later")  # type: ignore[call-overload]
+    try:
+        dsn = make_dsn(db.admin_dsn, user="promoted_later")
+        settings = Settings.model_validate(
+            {"env": "test", "database_url": dsn, "cursor_signing_key": "k" * 40}
+        )
+        database = Database(dsn)
+        app = create_app(settings, database=database, modules_package=None)
+        try:
+            with TestClient(app, raise_server_exceptions=False) as client:
+                assert client.get("/readyz").status_code == 200
+                with db.admin_conn() as admin:
+                    admin.execute("ALTER ROLE promoted_later BYPASSRLS")
+                after = client.get("/readyz")
+            assert after.status_code == 503
+            assert after.json()["checks"]["role"] == "fail"
+        finally:
+            database.dispose()
+    finally:
+        with db.admin_conn() as admin:
+            admin.execute("DROP OWNED BY promoted_later")
+            admin.execute("DROP ROLE promoted_later")

@@ -29,7 +29,8 @@ from contextvars import ContextVar
 from datetime import UTC, datetime
 from typing import IO, Any, Final
 
-from dwaar_common.keynames import ALLOWED_KEYS, is_quantity_key, is_sensitive_key
+from dwaar_common.keynames import ALLOWED_KEYS, is_quantity_key
+from dwaar_common.keynames import is_sensitive_key as is_sensitive_key  # re-exported
 
 REDACTED: Final = "[REDACTED]"
 

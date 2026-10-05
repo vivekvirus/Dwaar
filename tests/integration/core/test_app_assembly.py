@@ -106,7 +106,10 @@ def test_ops_endpoints(core: CoreHarness) -> None:
         assert client.get("/healthz").json() == {"status": "ok"}
         ready = client.get("/readyz")
         assert ready.status_code == 200
-        assert ready.json() == {"status": "ready", "checks": {"database": "ok", "migrations": "ok"}}
+        assert ready.json() == {
+            "status": "ready",
+            "checks": {"database": "ok", "role": "ok", "role_defaults": "ok", "migrations": "ok"},
+        }
         meta = client.get("/v1/meta")
         body = meta.json()
         assert body["api_version"] == "v1"

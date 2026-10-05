@@ -25,6 +25,14 @@ ALTER ROLE dwaar_owner  NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPA
 ALTER ROLE dwaar_app    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
 ALTER ROLE dwaar_worker NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
 
+-- Any role may change its OWN role-level defaults (ALTER ROLE <self> SET ...) and its OWN password, and PostgreSQL
+-- offers no way to forbid either. The API therefore pins every setting that matters in its connection options
+-- (startup options outrank role defaults) and /readyz fails on any role-level default; this script is the
+-- recovery path: re-running it clears planted defaults and resets the passwords from the secret store.
+ALTER ROLE dwaar_owner  RESET ALL;
+ALTER ROLE dwaar_app    RESET ALL;
+ALTER ROLE dwaar_worker RESET ALL;
+
 SELECT format('ALTER ROLE dwaar_owner  PASSWORD %L', :'owner_pw')  \gexec
 SELECT format('ALTER ROLE dwaar_app    PASSWORD %L', :'app_pw')    \gexec
 SELECT format('ALTER ROLE dwaar_worker PASSWORD %L', :'worker_pw') \gexec

@@ -144,7 +144,7 @@ def _scaled_int(value: Decimal, what: str, too_precise: str) -> int:
         raise MoneyError(too_precise)
     if len(trimmed) + shift > 19:  # 2**63 has 19 digits; anything longer cannot fit a bigint
         raise MoneyRangeError(f"{what} outside signed 64-bit paise range")
-    magnitude = int("".join(map(str, trimmed))) * 10**shift
+    magnitude: int = int("".join(map(str, trimmed))) * (10**shift)
     return -magnitude if sign else magnitude
 
 

@@ -8,11 +8,12 @@ from dwaar_api.core.config import ConfigError, Environment, Settings, get_settin
 
 pytestmark = pytest.mark.req("ARCH-03", "ARCH-04")
 
+CURSOR_KEY = "Zk3vQ9xL2mPd7RtYb1HnWs8Ue4JgAc6F"  # 32 distinct characters: passes the entropy rule
 APP_URL = "postgresql://dwaar_app:s3cr3t-pw@db.example.invalid:5432/dwaar"
 FULL: dict[str, str] = {
     "DWAAR_ENV": "production",
     "DWAAR_DATABASE_URL": APP_URL,
-    "DWAAR_CURSOR_SIGNING_KEY": "prod-cursor-key-value",
+    "DWAAR_CURSOR_SIGNING_KEY": CURSOR_KEY,
     "DWAAR_OIDC_ISSUER_URL": "https://idp.example.invalid",
     "DWAAR_OIDC_JWKS_URL": "https://idp.example.invalid/.well-known/jwks.json",
     "DWAAR_CORS_ORIGINS": "https://admin.example.invalid, https://app.example.invalid",
@@ -92,12 +93,12 @@ def test_secrets_never_appear_in_repr_or_errors() -> None:
     settings = load_settings(FULL)
     assert "s3cr3t-pw" not in repr(settings)
     assert "s3cr3t-pw" not in str(settings)
-    assert "prod-cursor-key-value" not in repr(settings)
+    assert CURSOR_KEY not in repr(settings)
     broken = {**FULL, "DWAAR_OIDC_ALGORITHMS": "HS256", "DWAAR_LOG_LEVEL": "loud"}
     with pytest.raises(ConfigError) as exc:
         load_settings(broken)
     assert "s3cr3t-pw" not in str(exc.value)
-    assert "prod-cursor-key-value" not in str(exc.value)
+    assert CURSOR_KEY not in str(exc.value)
 
 
 @pytest.mark.parametrize("user", ["dwaar_owner", "postgres", "root"])
@@ -173,3 +174,28 @@ def test_get_settings_reads_the_process_environment_and_caches(
             get_settings()
     finally:
         get_settings.cache_clear()
+
+
+def test_cursor_signing_key_must_have_real_entropy_outside_local() -> None:
+    """Cursors are HMAC-signed with it: ``DWAAR_CURSOR_SIGNING_KEY=a`` must not boot in production."""
+    for weak in ("a", "k" * 40, "short-key-value", "ab" * 20):
+        with pytest.raises(ConfigError, match="DWAAR_CURSOR_SIGNING_KEY") as exc:
+            load_settings({**FULL, "DWAAR_CURSOR_SIGNING_KEY": weak})
+        assert weak not in str(exc.value)  # never echoed
+    assert load_settings(FULL).require_cursor_key()  # the strong key is fine
+    # local and test keep their convenience defaults and short test keys
+    assert load_settings({"DWAAR_ENV": "local"}).require_cursor_key()
+    assert load_settings(
+        {"DWAAR_ENV": "test", "DWAAR_DATABASE_URL": APP_URL, "DWAAR_CURSOR_SIGNING_KEY": "k"}
+    )
+
+
+def test_jwks_url_must_be_https_outside_local() -> None:
+    """The issuer URL was checked but the JWKS URL was not: an http JWKS lets anyone on the path swap the
+    signing keys and mint tokens for any person id."""
+    with pytest.raises(ConfigError, match="DWAAR_OIDC_JWKS_URL must be https"):
+        load_settings({**FULL, "DWAAR_OIDC_JWKS_URL": "http://idp.example.invalid/jwks"})
+    local = load_settings(
+        {"DWAAR_ENV": "local", "DWAAR_OIDC_JWKS_URL": "http://127.0.0.1:9000/jwks"}
+    )
+    assert local.simulation  # plain http is fine for the labelled local/test simulators

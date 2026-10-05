@@ -69,6 +69,7 @@ class Settings(BaseSettings):
     db_pool_size: int = Field(default=5, ge=1, le=50)
     db_max_overflow: int = Field(default=10, ge=0, le=100)
     db_statement_timeout_ms: int = Field(default=30_000, ge=100, le=600_000)
+    db_lock_timeout_ms: int = Field(default=15_000, ge=100, le=600_000)
 
     cors_origins: str = ""
 
@@ -141,6 +142,15 @@ class Settings(BaseSettings):
             and not self.env.allows_simulators
         ):
             raise ValueError("DWAAR_OIDC_ISSUER_URL must be https outside local/test")
+        if (
+            self.oidc_jwks_url
+            and not self.oidc_jwks_url.startswith("https://")
+            and not self.env.allows_simulators
+        ):
+            # Whoever can alter the JWKS fetch can swap the signing keys and mint tokens for any person.
+            raise ValueError("DWAAR_OIDC_JWKS_URL must be https outside local/test")
+        if not self.env.allows_simulators and self.cursor_signing_key is not None:
+            _check_cursor_key(self.cursor_signing_key.get_secret_value())
         if "*" in self.cors_origin_list:
             raise ValueError("DWAAR_CORS_ORIGINS must list explicit origins, never '*'")
         return self
@@ -162,6 +172,22 @@ class Settings(BaseSettings):
         if self.cursor_signing_key is None:  # unreachable after validation; belt and braces
             raise ConfigError("DWAAR_CURSOR_SIGNING_KEY is required")
         return self.cursor_signing_key.get_secret_value().encode("utf-8")
+
+
+MIN_CURSOR_KEY_CHARS: Final = 32
+MIN_CURSOR_KEY_DISTINCT: Final = 12
+
+
+def _check_cursor_key(value: str) -> None:
+    """Cursors are HMAC-signed with this key: a short or repetitive key can be brute-forced and cursors forged.
+
+    The message never contains the value. Generate one with ``python -c "import secrets; print(secrets.token_urlsafe(32))"``.
+    """
+    if len(value) < MIN_CURSOR_KEY_CHARS or len(set(value)) < MIN_CURSOR_KEY_DISTINCT:
+        raise ValueError(
+            f"DWAAR_CURSOR_SIGNING_KEY must be at least {MIN_CURSOR_KEY_CHARS} random characters "
+            "outside local/test (for example secrets.token_urlsafe(32))"
+        )
 
 
 def _check_app_role(label: str, url: str) -> None:

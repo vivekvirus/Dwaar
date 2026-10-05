@@ -23,7 +23,7 @@ from typing import Annotated, Any, Final, NoReturn, Protocol, runtime_checkable
 import jwt
 from fastapi import Request, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jwt import PyJWK, PyJWKClient, PyJWKClientConnectionError, PyJWKClientError, PyJWKSet
+from jwt import PyJWK, PyJWKClient, PyJWKClientConnectionError, PyJWKSet
 
 from dwaar_common.errors import DependencyUnavailable, Unauthenticated
 
@@ -104,6 +104,26 @@ class JwksSource(Protocol):
         ...
 
 
+_ASYMMETRIC_KEY_TYPES: Final = frozenset({"RSA", "EC", "OKP"})
+
+
+def may_verify_signatures(use: object, key_ops: object, key_type: object) -> bool:
+    """RFC 7517: a JWK is a signature-verification key only if it is asymmetric, ``use`` is absent or ``sig`` and
+    ``key_ops`` (when present) lists ``verify``. A key published for ``enc`` (or for another operation) must never
+    be accepted for signatures, and a symmetric (``oct``) key is never a verification key here."""
+    if key_type not in _ASYMMETRIC_KEY_TYPES:
+        return False
+    if use not in (None, "sig"):
+        return False
+    return key_ops is None or (isinstance(key_ops, list) and "verify" in key_ops)
+
+
+def _jwk_may_verify(jwk: PyJWK) -> bool:
+    data = getattr(jwk, "_jwk_data", None)
+    key_ops = data.get("key_ops") if isinstance(data, Mapping) else None
+    return may_verify_signatures(jwk.public_key_use, key_ops, jwk.key_type)
+
+
 class StaticJwks:
     """A fixed JWK set (local simulator issuer, tests). Keys are selected by ``kid`` only."""
 
@@ -112,7 +132,9 @@ class StaticJwks:
             self._set = PyJWKSet.from_dict(dict(jwks))
         except Exception as exc:  # malformed JWKS is a configuration error
             raise ConfigError("invalid JWKS document") from exc
-        self._by_kid: dict[str, PyJWK] = {k.key_id: k for k in self._set.keys if k.key_id}
+        self._by_kid: dict[str, PyJWK] = {
+            k.key_id: k for k in self._set.keys if k.key_id and _jwk_may_verify(k)
+        }
 
     def signing_key(self, token: str, header: Mapping[str, Any]) -> Any:
         kid = header.get("kid")
@@ -138,12 +160,23 @@ class RemoteJwks:
         if not isinstance(header.get("kid"), str):
             raise Unauthenticated()
         try:
-            return self._client.get_signing_key_from_jwt(token).key
+            jwk = self._client.get_signing_key_from_jwt(token)
         except PyJWKClientConnectionError as exc:
             log.warning("jwks fetch failed", extra={"exc_type": type(exc).__name__})
             raise DependencyUnavailable(retry_after=5) from None
-        except (PyJWKClientError, jwt.PyJWTError):
+        except (
+            Exception
+        ) as exc:  # unknown kid, a document that is not a JWKS, undecodable bytes, a bad key ...
+            # Every other failure, including a malformed JWKS document from the provider, fails CLOSED as 401:
+            # never a 500, never "accept anyway".
+            log.warning("jwks rejected", extra={"exc_type": type(exc).__name__})
             raise Unauthenticated() from None
+        if not _jwk_may_verify(jwk):
+            log.warning(
+                "jwks key not usable for signature verification", extra={"kid": header.get("kid")}
+            )
+            raise Unauthenticated()
+        return jwk.key
 
 
 # --------------------------------------------------------------------------------------- verifier
@@ -304,6 +337,9 @@ class OidcIdentityProvider:
         person_id: uuid.UUID | None
         try:
             person_id = uuid.UUID(subject)
+            # ONE spelling per person: hex, braces and urn forms all parse to the same UUID, but session
+            # revocation is keyed on the subject string, so a revoked person must not return via another spelling.
+            subject = str(person_id)
         except ValueError:
             person_id = self._mapper(subject, claims) if self._mapper else None
         if person_id is None:

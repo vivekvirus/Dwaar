@@ -111,6 +111,9 @@ def map_db_error(exc: BaseException) -> DwaarError | None:
     if sqlstate is None:
         if isinstance(original, psycopg.OperationalError | psycopg.InterfaceError):
             return DependencyUnavailable(retry_after=2)
+        if isinstance(original, psycopg.DataError):
+            # raised by the DRIVER before the statement is sent, e.g. a NUL (0x00) in a text value: bad input
+            return InvalidSchema()
         return None
     if sqlstate in {"40001", "40P01"}:  # serialization failure, deadlock detected
         return DependencyUnavailable(retry_after=1)
@@ -219,5 +222,11 @@ def _internal(request: Request, exc: BaseException) -> Response:
     return JSONResponse(
         status_code=500,
         content=internal_error_body(rid),
-        headers={REQUEST_ID_HEADER: rid},
+        # The generic Exception handler runs in Starlette's outer ServerErrorMiddleware, OUTSIDE the
+        # RequestContextMiddleware send wrapper that adds these to every other response: add them here.
+        headers={
+            REQUEST_ID_HEADER: rid,
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
     )

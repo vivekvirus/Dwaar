@@ -47,10 +47,16 @@ from .db import Database, RequestContext
 
 log = logging.getLogger("dwaar_api.authz")
 
-_ACTION: Final = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
-_ROLE: Final = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
+_ACTION: Final = re.compile(
+    r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+\Z"
+)  # \Z, not `$`: no trailing newline
+_ROLE: Final = re.compile(r"^[a-z][a-z0-9_]{0,63}\Z")
 SOCIETY_HEADER: Final = "X-Society-Id"
 REQUIREMENT_ATTR: Final = "__dwaar_requirement__"
+PUBLIC_ATTR: Final = "__dwaar_public__"
+IDEMPOTENCY_ATTR: Final = "__dwaar_idempotency__"
+IDEMPOTENCY_EXEMPT_ATTR: Final = "__dwaar_idempotency_exempt__"
+_MUTATING_METHODS: Final = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 
 
 class ScopeKind(StrEnum):
@@ -369,6 +375,35 @@ def require(
     return dependency
 
 
+def public_route(reason: str) -> Callable[[], None]:
+    """Explicitly mark a route as callable WITHOUT a token: ``dependencies=[Depends(public_route("why"))]``.
+
+    Route registration fails closed (``check_requirements``): a route with neither ``require(...)`` nor this
+    marker (nor a bare ``current_principal``) stops the app from starting, so forgetting authorisation can
+    never silently publish an anonymous endpoint (INV-01). The ``reason`` is mandatory documentation.
+    """
+    if not reason.strip():
+        raise ValueError("public_route needs a reason")
+
+    def dependency() -> None:
+        return None
+
+    setattr(dependency, PUBLIC_ATTR, reason)
+    return dependency
+
+
+def idempotency_exempt(reason: str) -> Callable[[], None]:
+    """Mark a mutating route as deliberately NOT idempotency-keyed (for example a pure read via POST)."""
+    if not reason.strip():
+        raise ValueError("idempotency_exempt needs a reason")
+
+    def dependency() -> None:
+        return None
+
+    setattr(dependency, IDEMPOTENCY_EXEMPT_ATTR, reason)
+    return dependency
+
+
 def _target(request: Request, name: str | None) -> uuid.UUID | None:
     if name is None:
         return None
@@ -405,11 +440,103 @@ def declared_requirements(app: FastAPI) -> list[RequirementInfo]:
     return found
 
 
+def _dependency_calls(route: APIRoute) -> list[Any]:
+    calls: list[Any] = []
+
+    def walk(dependant: Any) -> None:
+        if dependant.call is not None:
+            calls.append(dependant.call)
+        for sub in dependant.dependencies:
+            walk(sub)
+
+    walk(route.dependant)
+    return calls
+
+
+def _framework_paths(app: FastAPI) -> set[str]:
+    return {
+        p
+        for p in (
+            app.openapi_url,
+            app.docs_url,
+            app.redoc_url,
+            app.swagger_ui_oauth2_redirect_url,
+        )
+        if p
+    }
+
+
+def unguarded_routes(app: FastAPI) -> list[str]:
+    """``METHOD path`` of every route that has no authorisation decision at all.
+
+    A route is guarded if it carries a ``require(...)`` dependency, an explicit ``public_route(...)`` marker, or
+    at least ``current_principal`` (an authenticated caller). Anything else, including a Starlette ``Route`` or
+    ``Mount`` added by a module's ``register(app)`` hook, is reported (the framework's own docs/openapi routes excepted).
+    """
+    found: list[str] = []
+    framework = _framework_paths(app)
+
+    def walk_owner(owner: Any) -> None:
+        for route in owner.routes:
+            nested = getattr(route, "original_router", None)
+            if nested is not None:
+                walk_owner(nested)
+            elif isinstance(route, APIRoute):
+                calls = _dependency_calls(route)
+                guarded = any(
+                    getattr(c, REQUIREMENT_ATTR, None) is not None
+                    or getattr(c, PUBLIC_ATTR, None) is not None
+                    or c is current_principal
+                    for c in calls
+                )
+                if not guarded:
+                    found.append(f"{','.join(sorted(route.methods or ()))} {route.path}")
+            elif getattr(route, "path", None) not in framework:
+                found.append(f"{type(route).__name__} {getattr(route, 'path', '?')}")
+
+    walk_owner(app)
+    return sorted(found)
+
+
+def non_idempotent_mutations(app: FastAPI) -> list[str]:
+    """``METHOD path`` of mutating routes that neither require an ``Idempotency-Key`` nor opt out explicitly.
+
+    Public routes are exempt (sign-in and OTP requests are not retried against a ledger).
+    """
+    found: list[str] = []
+    for route in iter_api_routes(app):
+        methods = set(route.methods or ()) & _MUTATING_METHODS
+        if not methods:
+            continue
+        calls = _dependency_calls(route)
+        if any(getattr(c, PUBLIC_ATTR, None) is not None for c in calls):
+            continue
+        if any(
+            getattr(c, IDEMPOTENCY_ATTR, False) or getattr(c, IDEMPOTENCY_EXEMPT_ATTR, None)
+            for c in calls
+        ):
+            continue
+        found.append(f"{','.join(sorted(methods))} {route.path}")
+    return sorted(found)
+
+
 def check_requirements(app: FastAPI, registry: PermissionRegistry) -> None:
-    """Fail closed at startup if a route requires an action nobody declared."""
+    """Fail closed at startup: undeclared permissions, routes with no authorisation decision, unkeyed writes."""
     missing = sorted({r.action for r in declared_requirements(app) if r.action not in registry})
     if missing:
         raise ConfigError("routes require undeclared permissions: " + ", ".join(missing))
+    unguarded = unguarded_routes(app)
+    if unguarded:
+        raise ConfigError(
+            "routes with no require(...) permission and no public_route(...) marker: "
+            + ", ".join(unguarded)
+        )
+    unkeyed = non_idempotent_mutations(app)
+    if unkeyed:
+        raise ConfigError(
+            "mutating routes with neither idempotency_required nor idempotency_exempt(...): "
+            + ", ".join(unkeyed)
+        )
 
 
 __all__ = [
@@ -427,6 +554,10 @@ __all__ = [
     "decide",
     "declared_requirements",
     "get_database",
+    "idempotency_exempt",
     "iter_api_routes",
+    "non_idempotent_mutations",
+    "public_route",
     "require",
+    "unguarded_routes",
 ]

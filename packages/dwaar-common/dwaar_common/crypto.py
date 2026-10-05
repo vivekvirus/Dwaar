@@ -26,7 +26,8 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 CIPHERTEXT_VERSION: Final = "v1"
 KEY_BYTES: Final = 32
 NONCE_BYTES: Final = 12
-_KEY_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+_KEY_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}\Z")  # \Z: `$` would accept a trailing newline
+_PURPOSE = re.compile(r"^[a-z][a-z0-9_.:-]{0,63}\Z")
 
 
 class CryptoError(Exception):
@@ -50,9 +51,21 @@ def _b64e(raw: bytes) -> str:
 
 
 def _b64d(text: str) -> bytes:
-    if not re.fullmatch(r"[A-Za-z0-9_-]*", text):
+    """Strict base64url (no padding): impossible lengths and non-canonical spare bits are errors.
+
+    A lenient decoder ignores the unused trailing bits of the last character, so several different strings
+    would authenticate as ONE ciphertext (harmless for confidentiality, harmful for any dedupe or deny
+    list keyed on the stored text). Every failure is a ``DecryptionError``, never a ``binascii.Error``.
+    """
+    if not re.fullmatch(r"[A-Za-z0-9_-]*", text, re.ASCII):
         raise DecryptionError("malformed ciphertext")
-    return base64.urlsafe_b64decode(text + "=" * (-len(text) % 4))
+    try:
+        raw = base64.urlsafe_b64decode(text + "=" * (-len(text) % 4))
+    except ValueError:  # binascii.Error (a 1-mod-4 length) is a ValueError
+        raise DecryptionError("malformed ciphertext") from None
+    if _b64e(raw) != text:
+        raise DecryptionError("malformed ciphertext")
+    return raw
 
 
 def generate_key() -> bytes:
@@ -101,7 +114,14 @@ class KeyRing:
             raise UnknownKeyError("unknown key id") from None
 
     def with_key(self, key_id: str, key: bytes, *, activate: bool = False) -> KeyRing:
-        """New ring with an extra key (rotation step 1: add; step 2: activate)."""
+        """New ring with an extra key (rotation step 1: add; step 2: activate).
+
+        An id that already exists keeps its material: replacing it would make every value encrypted under
+        the old material undecryptable. Use a new id for a new key.
+        """
+        existing = self._keys.get(key_id)
+        if existing is not None and not hmac.compare_digest(existing, key):
+            raise CryptoError(f"key id {key_id!r} already exists with different key material")
         keys = {**self._keys, key_id: key}
         return KeyRing(keys, key_id if activate else self.active_key_id)
 
@@ -115,7 +135,12 @@ class KeyRing:
             key_id, sep, material = part.strip().partition("=")
             if not sep:
                 raise CryptoError("expected id=base64url pairs")
-            keys[key_id.strip()] = key_from_b64(material)
+            key_id = key_id.strip()
+            if (
+                key_id in keys
+            ):  # a copy/paste during rotation must not silently keep the later value
+                raise CryptoError(f"key id {key_id!r} appears more than once")
+            keys[key_id] = key_from_b64(material)
         return cls(keys, active_key_id)
 
     @classmethod
@@ -133,9 +158,15 @@ class KeyRing:
 
 def build_aad(*parts: object) -> bytes:
     """Deterministic AAD from parts, e.g. ``build_aad(society_id, 'person_vault', 'phone', row_id)``."""
-    texts = [str(p) for p in parts]
-    if any("|" in t for t in texts):
-        raise CryptoError("AAD parts must not contain '|'")
+    texts = [
+        "\x00" if p is None else str(p) for p in parts
+    ]  # NUL marks None: it cannot equal "None"
+    if any("|" in t for t in texts) or any(
+        "\x00" in t for t in (str(p) for p in parts if p is not None)
+    ):
+        raise CryptoError("AAD parts must not contain '|' or NUL")
+    if not texts:  # no parts is different from one empty part ("dwaar-aad|")
+        return b"dwaar-aad"
     return ("dwaar-aad|" + "|".join(texts)).encode("utf-8")
 
 
@@ -192,12 +223,22 @@ class EnvelopeCipher:
         return self.encrypt(self.decrypt_bytes(token, aad), aad)
 
 
-def keyed_hash(value: str | bytes, key: bytes) -> str:
-    """HMAC-SHA256 hex digest, for deterministic lookup tokens (e.g. phone_token)."""
+def keyed_hash(value: str | bytes, key: bytes, *, purpose: str) -> str:
+    """HMAC-SHA256 hex digest for deterministic lookup tokens, domain-separated by ``purpose``.
+
+    One master key serves several uses (phone lookup token, OTP hash, rate-limit key, log token ...). The
+    ``purpose`` (for example ``"phone_token"``) is mixed into a derived sub-key, so the same input gives a
+    DIFFERENT value in every domain and a token minted for one use is never a valid token for another.
+    """
     if len(key) < KEY_BYTES:
         raise CryptoError(f"HMAC key must be at least {KEY_BYTES} bytes")
+    if not isinstance(purpose, str) or not _PURPOSE.match(purpose):
+        raise CryptoError("purpose must match [a-z][a-z0-9_.:-]{0,63}")
     data = value.encode("utf-8") if isinstance(value, str) else value
-    return hmac.new(key, data, hashlib.sha256).hexdigest()
+    subkey = hmac.new(
+        key, b"dwaar-keyed-hash/v1|" + purpose.encode("ascii"), hashlib.sha256
+    ).digest()
+    return hmac.new(subkey, data, hashlib.sha256).hexdigest()
 
 
 _PHONE_SEPARATORS = re.compile(r"[\s().-]")

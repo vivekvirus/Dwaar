@@ -15,7 +15,15 @@ from pydantic import BaseModel, Field
 from sqlalchemy import Connection, text
 
 from dwaar_api.core.audit import MutationResult, mutation
-from dwaar_api.core.authz import AuthContext, Permission, ScopeKind, require
+from dwaar_api.core.authz import (
+    AuthContext,
+    Permission,
+    ScopeKind,
+    idempotency_exempt,
+    public_route,
+    require,
+)
+from dwaar_api.core.db import RequestContext
 from dwaar_api.core.idempotency import IdempotentCall, idempotency_required
 from dwaar_api.core.pagination import (
     FilterDef,
@@ -37,6 +45,8 @@ permissions = [
 ]
 
 router = APIRouter(prefix="/v1/probe", tags=["probe"])
+# The error probes below are deliberately anonymous test fixtures; production routers never do this.
+_PROBE_PUBLIC = [Depends(public_route("test-only error probe, no data behind it"))]
 registered: list[str] = []
 
 
@@ -160,7 +170,9 @@ def whoami(auth: Annotated[AuthContext, Depends(require("probe.read"))]) -> dict
     }
 
 
-@router.post("/{society_id}/echo-society")
+@router.post(
+    "/{society_id}/echo-society", dependencies=[Depends(idempotency_exempt("read-only echo"))]
+)
 def echo_society(
     payload: dict[str, Any], auth: Annotated[AuthContext, Depends(require("probe.read"))]
 ) -> dict[str, Any]:
@@ -197,28 +209,29 @@ def sensitive(auth: Annotated[AuthContext, Depends(require("probe.sensitive"))])
     return {"role": auth.scope.role}
 
 
-@router.get("/errors/db-syntax")
+@router.get("/errors/db-syntax", dependencies=_PROBE_PUBLIC)
 def err_db_syntax(request: Request) -> None:
     with request.app.state.db.app_tx() as conn:
         conn.execute(text("SELECT * FROM table_that_does_not_exist_xyz"))
 
 
-@router.get("/errors/db-unique")
+@router.get("/errors/db-unique", dependencies=_PROBE_PUBLIC)
 def err_db_unique(request: Request) -> None:
-    with request.app.state.db.app_tx() as conn:
-        conn.execute(
-            text(
-                "INSERT INTO rate_limit_buckets (key, tokens, updated_at) VALUES ('dup-key', 1, now())"
+    """Two rows with the same primary key inside one society: a unique violation on a key that is NOT registered
+    as society-scoped, so the API must answer with the generic conflict and reveal nothing."""
+    ctx = RequestContext(society_id=uuid.UUID("0192f300-0000-7000-8000-00000000000a"))
+    with request.app.state.db.app_tx(ctx) as conn:
+        for _ in range(2):
+            conn.execute(
+                text(
+                    "INSERT INTO probe_things (id, society_id, name) VALUES"
+                    " ('0192f300-0000-7000-8000-0000000000aa', :s, 'dup')"
+                ),
+                {"s": ctx.society_id},
             )
-        )
-        conn.execute(
-            text(
-                "INSERT INTO rate_limit_buckets (key, tokens, updated_at) VALUES ('dup-key', 1, now())"
-            )
-        )
 
 
-@router.get("/errors/db-rls")
+@router.get("/errors/db-rls", dependencies=_PROBE_PUBLIC)
 def err_db_rls(request: Request) -> None:
     with (
         request.app.state.db.app_tx() as conn
@@ -228,7 +241,7 @@ def err_db_rls(request: Request) -> None:
         )
 
 
-@router.get("/errors/db-param-leak")
+@router.get("/errors/db-param-leak", dependencies=_PROBE_PUBLIC)
 def err_db_param_leak(request: Request) -> None:
     """A failing statement whose BOUND parameter is personal data: it must never reach logs or responses."""
     with request.app.state.db.app_tx() as conn:
@@ -238,7 +251,7 @@ def err_db_param_leak(request: Request) -> None:
         )
 
 
-@router.get("/errors/code/{code}")
+@router.get("/errors/code/{code}", dependencies=_PROBE_PUBLIC)
 def err_code(code: str) -> None:
     """Raise any PRD 12.2 error by code (used to verify the whole error table)."""
     cls = ERROR_BY_CODE[code]
@@ -257,11 +270,11 @@ def header_scoped(
     return {"society_id": str(auth.scope.society_id), "role": auth.scope.role}
 
 
-@router.get("/errors/runtime")
+@router.get("/errors/runtime", dependencies=_PROBE_PUBLIC)
 def err_runtime() -> None:
     raise RuntimeError("secret internal detail: password=hunter2 select * from persons")
 
 
-@router.get("/errors/policy")
+@router.get("/errors/policy", dependencies=_PROBE_PUBLIC)
 def err_policy() -> None:
     raise PolicyViolation(details={"rule": "demo"})

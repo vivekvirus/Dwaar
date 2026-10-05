@@ -85,6 +85,7 @@ def test_empty_context_writes_all_four_settings_as_empty() -> None:
 COMMON_COLUMNS_ALLOWLIST = {
     "schema_migrations": "migration ledger, not data",
     "rate_limit_buckets": "platform-level counters, no personal or society data",
+    "dwaar_migration_lock": "empty lock table held by the migration runner; no data, no runtime privileges",
     "idempotency_keys": "short-lived replay cache; retention is expires_at plus the cleanup job",
     "purge_log": "evidence of purges; must never be purged or held (itself the retention record)",
 }

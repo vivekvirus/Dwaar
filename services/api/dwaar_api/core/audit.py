@@ -23,9 +23,11 @@ from typing import Any, Final
 
 from sqlalchemy import Connection, text
 
+from dwaar_common.errors import InvalidSchema
 from dwaar_common.events import DomainEvent, canonical_json
 from dwaar_common.ids import uuid7
-from dwaar_common.logging import REDACTED, is_sensitive_key, scrub_text, scrub_value
+from dwaar_common.keynames import is_identifier_key, is_quantity_key, is_sensitive_key
+from dwaar_common.logging import REDACTED, scrub_text
 
 from .db import RequestContext
 
@@ -78,8 +80,20 @@ def _is_masked_key(key: str, extra: frozenset[str]) -> bool:
     )
 
 
+def _clean_text(value: str) -> str:
+    """A string that cannot be encoded as UTF-8 (a lone surrogate from a hostile client) is bad INPUT: a controlled
+    400, not a UnicodeEncodeError (500) while the audit/outbox row is being written."""
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        raise InvalidSchema(details={"reason": "invalid_unicode"}) from None
+    return value
+
+
 def _jsonable(value: Any) -> Any:
-    if value is None or isinstance(value, bool | int | str):
+    if isinstance(value, str):
+        return _clean_text(value)
+    if value is None or isinstance(value, bool | int):
         return value
     if isinstance(value, float):
         return value
@@ -92,17 +106,48 @@ def _jsonable(value: Any) -> Any:
     if isinstance(value, bytes | bytearray | memoryview):
         return f"[BYTES len={len(value)}]"
     if isinstance(value, Mapping):
-        return {str(k): _jsonable(v) for k, v in value.items()}
+        return {_clean_text(str(k)): _jsonable(v) for k, v in value.items()}
     if isinstance(value, list | tuple | set | frozenset):
         return [_jsonable(v) for v in value]
-    return str(value)
+    return _clean_text(str(value))
+
+
+# A decimal quantity ("2500000.00", "-12.5"): a point and a short fraction. No identifier looks like this.
+_DECIMAL_QUANTITY: Final = re.compile(r"^[+-]?[0-9]{1,30}\.[0-9]{1,6}\Z")
+_DIGITS_ONLY: Final = re.compile(r"^[+-]?[0-9]{1,40}\Z")
+_LONG_NUMBER: Final = (
+    9  # digits at which a number under an identifier-like key is treated as an identifier
+)
+
+
+def _mask_number(key: str, value: int | float) -> Any:
+    """Numbers are DATA unless the key says they are identifiers.
+
+    Money must survive the audit diff and the outbox payload (INV-02): Rs 10 lakh is 100_000_000 paise, nine
+    digits, which looks exactly like a phone or account number. Digit count therefore never decides. The key
+    does: a number under a phone/account/card/contact/reference name is masked, a number under anything else is
+    kept. (Personal data is masked by key class in ``_is_masked_key`` before a value is looked at.)
+    """
+    if is_quantity_key(key):
+        return value
+    if is_identifier_key(key) and sum(ch.isdigit() for ch in str(value)) >= _LONG_NUMBER:
+        return REDACTED
+    return value
+
+
+def _mask_text(key: str, value: str) -> str:
+    """Strings are content-scrubbed (phone, Aadhaar, OTP ...), except values that are plainly quantities."""
+    if _DECIMAL_QUANTITY.match(value):  # a decimal amount carries a point; a phone number does not
+        return value
+    if _DIGITS_ONLY.match(value) and is_quantity_key(key):  # "250000000" under amount/credit/...
+        return value
+    return scrub_text(value)
 
 
 def _mask(key: str, value: Any, extra: frozenset[str]) -> Any:
-    """Mask a value found under ``key``: by key name, then (for every leaf) by content.
+    """Mask a value found under ``key``: by key name first, then (for strings) by content.
 
-    Strings AND numbers are content-scrubbed (a phone or account number stored as an int under an
-    innocuous key must not survive) and nested lists of any depth are walked.
+    Nested mappings and lists of any depth are walked. Numbers are masked by KEY only (see ``_mask_number``).
     """
     if value is None:
         return None
@@ -113,7 +158,13 @@ def _mask(key: str, value: Any, extra: frozenset[str]) -> Any:
         return {str(k): _mask(str(k), v, extra) for k, v in value.items()}
     if isinstance(value, list):
         return [_mask(key, v, extra) for v in value]
-    return scrub_value(value, key)
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int | float):
+        return _mask_number(key, value)
+    if isinstance(value, str):
+        return _mask_text(key, value)
+    return scrub_text(str(value))
 
 
 def mask_payload(value: Mapping[str, Any], *, redact: Iterable[str] = ()) -> dict[str, Any]:

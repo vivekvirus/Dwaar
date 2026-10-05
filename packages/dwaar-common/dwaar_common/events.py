@@ -23,7 +23,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from dwaar_common.ids import uuid7
 from dwaar_common.timeutil import assert_utc, ensure_utc, format_iso_utc, utc_now
 
-PAYLOAD_HASH_PATTERN: Final = re.compile(r"^sha256:[0-9a-f]{64}\Z")  # \Z: `$` would accept a trailing newline
+PAYLOAD_HASH_PATTERN: Final = re.compile(
+    r"^sha256:[0-9a-f]{64}\Z"
+)  # \Z: `$` would accept a trailing newline
 
 # Domain event names listed in PRD 12.4. Modules may add more; this is a reference set.
 KNOWN_EVENT_TYPES: Final = frozenset(
@@ -58,7 +60,9 @@ class CanonicalJsonError(TypeError):
 
 
 MAX_CANONICAL_DEPTH: Final = 64
-_INT_BITS: Final = 64  # money is bigint paise; anything wider is not a quantity this platform produces
+_INT_BITS: Final = (
+    64  # money is bigint paise; anything wider is not a quantity this platform produces
+)
 
 
 def _canonical(value: Any, path: str, depth: int) -> Any:
@@ -81,7 +85,9 @@ def _canonical(value: Any, path: str, depth: int) -> Any:
         try:
             value.encode("utf-8")
         except UnicodeEncodeError:
-            raise CanonicalJsonError(f"string at {path} is not valid Unicode (lone surrogate)") from None
+            raise CanonicalJsonError(
+                f"string at {path} is not valid Unicode (lone surrogate)"
+            ) from None
         return value
     if isinstance(value, uuid.UUID):
         return str(value)
@@ -99,7 +105,7 @@ def _canonical(value: Any, path: str, depth: int) -> Any:
                 raise CanonicalJsonError(f"key at {path} is not valid Unicode") from None
             items.append((sort_key, key, _canonical(item, f"{path}.{key}", depth + 1)))
         items.sort(key=lambda entry: entry[0])
-        return dict((key, item) for _sort, key, item in items)
+        return {key: item for _sort, key, item in items}
     if isinstance(value, list | tuple):
         return [_canonical(item, f"{path}[{i}]", depth + 1) for i, item in enumerate(value)]
     raise CanonicalJsonError(f"type {type(value).__name__} is not canonical-JSON serialisable")

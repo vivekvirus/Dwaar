@@ -9,18 +9,22 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from dwaar_common.timeutil import format_iso_utc, utc_now
 
 from .. import SERVICE_NAME, __version__
+from .authz import public_route
 from .db import Database
 from .migrate import shipped_versions
 
 log = logging.getLogger("dwaar_api.health")
-router = APIRouter(tags=["ops"])
+router = APIRouter(
+    tags=["ops"],
+    dependencies=[Depends(public_route("liveness, readiness and build info are public by design"))],
+)
 
 
 @router.get("/healthz", summary="Liveness: the process is up (no dependencies checked)")
@@ -39,6 +43,21 @@ def readyz(request: Request) -> JSONResponse:
         log.warning("readiness: database check failed", extra={"exc_type": type(exc).__name__})
         checks["database"] = "fail"
     if checks["database"] == "ok":
+        # Re-run on EVERY readiness probe (not only at boot): a role promoted to superuser/BYPASSRLS, or given
+        # role-level defaults, after the pool filled must take the instance out of rotation (ARCH-03, R2-02/03).
+        try:
+            db.assert_restricted_role()
+            checks["role"] = "ok"
+        except Exception as exc:
+            log.warning("readiness: role check failed", extra={"exc_type": type(exc).__name__})
+            checks["role"] = "fail"
+        try:
+            checks["role_defaults"] = "drift" if db.role_default_settings() else "ok"
+        except Exception as exc:
+            log.warning(
+                "readiness: role defaults check failed", extra={"exc_type": type(exc).__name__}
+            )
+            checks["role_defaults"] = "fail"
         try:
             with db.app_engine.connect() as conn:
                 applied = {
@@ -50,6 +69,8 @@ def readyz(request: Request) -> JSONResponse:
             log.warning("readiness: migration check failed", extra={"exc_type": type(exc).__name__})
             checks["migrations"] = "fail"
     else:
+        checks["role"] = "unknown"
+        checks["role_defaults"] = "unknown"
         checks["migrations"] = "unknown"
     ready = all(v == "ok" for v in checks.values())
     return JSONResponse(

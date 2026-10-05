@@ -536,7 +536,10 @@ def test_worker_can_only_clean_up_expired_idempotency_keys(two_societies: DbHand
                 (SOCIETY_A, COMMITTEE_A, key, "sha256:" + "a" * 64),
             )
     with two_societies.worker_conn() as conn:
-        assert conn.execute("SELECT key FROM idempotency_keys").fetchall() == [("stale-key-0001",)]
+        # column-level SELECT (id, expires_at): enough for cleanup, not enough to read stored responses
+        rows = conn.execute("SELECT id, expires_at < now() FROM idempotency_keys").fetchall()
+        assert len(rows) == 1
+        assert rows[0][1] is True  # only the expired key is visible
         assert conn.execute("DELETE FROM idempotency_keys").rowcount == 1
     with two_societies.app_conn(society_id=SOCIETY_A) as conn:
         assert conn.execute("SELECT key FROM idempotency_keys").fetchall() == [("fresh-key-0001",)]
@@ -562,6 +565,10 @@ CROSS_SOCIETY_POLICY_ALLOWLIST = frozenset(
         ("idempotency_keys", "idempotency_keys_expired_select"),  # expired-key cleanup job
         ("idempotency_keys", "idempotency_keys_expired_delete"),  # expired rows only
         ("purge_log", "purge_log_insert_owner"),  # owner-only logged purge path
+        (
+            "purge_log",
+            "purge_log_owner_read",
+        ),  # the owner (break-glass) reads the whole purge evidence
     }
 )
 _PROBE_SOCIETY = "0192f300-0000-7000-8000-0000000000aa"
@@ -569,29 +576,93 @@ _OTHER_SOCIETY = "0192f300-0000-7000-8000-0000000000bb"
 _PRIV_ANY = "SELECT, INSERT, UPDATE, REFERENCES"
 
 
-def _policy_leaks(conn: psycopg.Connection[Any], expression: str) -> str | None:
+#: GUCs a policy for the API role may depend on. Every OTHER custom setting can be set by the role's own SQL
+#: (``set_config('app.admin_mode', 'on', true)``), so ``... OR current_setting('app.admin_mode') = 'on'`` is an
+#: escape hatch for anyone who can run one statement as dwaar_app. Reviewed additions go here.
+ALLOWED_POLICY_GUCS = frozenset({"app.society_id"})
+_GUC_NAME = re.compile(r"current_setting\(\s*'([^']+)'", re.IGNORECASE)
+_DYNAMIC_GUC = re.compile(r"current_setting\(\s*(?!')", re.IGNORECASE)
+#: expressions that depend on WHO is connected: ``OR current_user = 'dwaar_app'`` exempts exactly the API role.
+_ROLE_DEPENDENT = re.compile(
+    r"\b(current_user|session_user|current_role|user|pg_has_role|has_[a-z_]+_privilege|pg_roles|pg_authid)\b",
+    re.IGNORECASE,
+)
+_ATTACKER_GUC_VALUES = ("on", "true", "t", "1", "yes", "admin", "x")
+_SYSTEM_SCHEMAS = ("pg_catalog", "information_schema")
+
+
+def _evaluate(
+    conn: psycopg.Connection[Any], probe: str, settings: dict[str, str], role: str | None
+) -> bool | str:
+    """True/False for ``probe`` under the settings (and optionally ``SET LOCAL ROLE``), or "unverifiable"."""
+    try:
+        # force_rollback: SET LOCAL ROLE / set_config(..., true) must not outlive the probe (a released
+        # savepoint keeps them for the rest of the surrounding transaction)
+        with conn.transaction(force_rollback=True):
+            for name, value in settings.items():
+                conn.execute("SELECT set_config(%s, %s, true)", (name, value))
+            if role is not None:
+                conn.execute(f"SET LOCAL ROLE {role}")  # type: ignore[call-overload]
+            row = conn.execute(f"SELECT ({probe}) IS TRUE").fetchone()  # type: ignore[call-overload]  # noqa: S608
+    except psycopg.Error:
+        return "unverifiable"
+    return bool(row is not None and row[0])
+
+
+def _policy_leaks(
+    conn: psycopg.Connection[Any], expression: str, roles: tuple[str, ...] = ()
+) -> str | None:
     """Evaluate a policy expression for a row of society P while the session is society Q (and unset).
 
-    Returns ``"leak"`` when it is TRUE for a foreign society or for no society, ``"unverifiable"``
-    when it cannot be evaluated with society_id substituted (it depends on other columns/functions
-    and must use the standard society expression), else None. Semantic, not a substring match.
+    Probed as the connected (super)user AND as every runtime role the policy applies to (``SET LOCAL ROLE``), so a
+    role-name exemption is seen; and again with every other custom GUC the expression names set to attacker values,
+    so a GUC-controlled escape hatch is seen. Returns ``"leak"`` when it is TRUE for a foreign society or for no
+    society, ``"unverifiable"`` when it cannot be evaluated with society_id substituted (it depends on other
+    columns/functions and must use the standard society expression), else None. Semantic, not a substring match.
     """
     probe = re.sub(r"(?<![\w.'])society_id(?![\w'])", f"'{_PROBE_SOCIETY}'::uuid", expression)
-    for context in (_OTHER_SOCIETY, ""):
-        try:
-            with conn.transaction():
-                conn.execute("SELECT set_config('app.society_id', %s, true)", (context,))
-                row = conn.execute(f"SELECT ({probe}) IS TRUE").fetchone()  # type: ignore[call-overload]  # noqa: S608
-        except psycopg.Error:
-            return "unverifiable"
-        if row is not None and row[0]:
-            return "leak"
+    foreign_gucs = sorted(
+        {g for g in _GUC_NAME.findall(expression) if g not in ALLOWED_POLICY_GUCS}
+    )
+    for role in (None, *roles):
+        for context in (_OTHER_SOCIETY, ""):
+            verdict = _evaluate(conn, probe, {"app.society_id": context}, role)
+            if verdict == "unverifiable":
+                return "unverifiable"
+            if verdict:
+                return "leak"
+            for guc in foreign_gucs:
+                for value in _ATTACKER_GUC_VALUES:
+                    if (
+                        _evaluate(conn, probe, {"app.society_id": context, guc: value}, role)
+                        is True
+                    ):
+                        return "leak"
     return None
 
 
 def find_rls_violations(conn: psycopg.Connection[Any]) -> list[str]:
-    """Report every way a runtime role could read or write across societies. Empty list = guard is green."""
+    """Report every way a runtime role could read or write across societies. Empty list = guard is green.
+
+    Covers every non-system schema (a society table in ``reporting`` is as reachable as one in ``public``).
+    """
     problems: list[str] = []
+    for role, schema, database_create in conn.execute(
+        """
+        SELECT r.rolname, n.nspname, false
+        FROM pg_roles r CROSS JOIN pg_namespace n
+        WHERE r.rolname = ANY (%s) AND n.nspname <> ALL (%s) AND n.nspname NOT LIKE 'pg\\_toast%%'
+          AND n.nspname NOT LIKE 'pg\\_temp%%' AND has_schema_privilege(r.oid, n.oid, 'CREATE')
+        UNION ALL
+        SELECT r.rolname, current_database()::name, true FROM pg_roles r
+        WHERE r.rolname = ANY (%s) AND has_database_privilege(r.oid, current_database(), 'CREATE')
+        """,
+        (list(RUNTIME_ROLES), list(_SYSTEM_SCHEMAS), list(RUNTIME_ROLES)),
+    ).fetchall():
+        where = "database" if database_create else f"schema {schema}"
+        problems.append(
+            f"{role} may CREATE objects in {where} (a runtime role must never create objects)"
+        )
     relations = conn.execute(
         """
         SELECT c.oid, c.relname, c.relkind, c.relrowsecurity, c.relforcerowsecurity,
@@ -600,18 +671,20 @@ def find_rls_violations(conn: psycopg.Connection[Any]) -> list[str]:
                EXISTS (SELECT 1 FROM pg_roles r WHERE r.rolname = ANY (%s) AND (
                    has_any_column_privilege(r.oid, c.oid, %s)
                    OR has_table_privilege(r.oid, c.oid, 'DELETE, TRUNCATE, TRIGGER')))
-               OR EXISTS (SELECT 1 FROM aclexplode(c.relacl) x WHERE x.grantee = 0)
+               OR EXISTS (SELECT 1 FROM aclexplode(c.relacl) x WHERE x.grantee = 0),
+               n.nspname
         FROM pg_class c
-        JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname = 'public'
+        JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname <> ALL (%s)
+             AND n.nspname NOT LIKE 'pg\\_toast%%' AND n.nspname NOT LIKE 'pg\\_temp%%'
         LEFT JOIN pg_attribute a ON a.attrelid = c.oid AND a.attname = 'society_id' AND NOT a.attisdropped
         WHERE c.relkind IN ('r', 'p', 'm', 'v', 'f')
-        ORDER BY c.relname
+        ORDER BY n.nspname, c.relname
         """,
-        (list(RUNTIME_ROLES), _PRIV_ANY),
+        (list(RUNTIME_ROLES), _PRIV_ANY, list(_SYSTEM_SCHEMAS)),
     ).fetchall()
     for (
         oid,
-        name,
+        relname,
         kind,
         enabled,
         forced,
@@ -619,7 +692,11 @@ def find_rls_violations(conn: psycopg.Connection[Any]) -> list[str]:
         has_society,
         owner_bypasses,
         reachable,
+        schema,
     ) in relations:
+        name = (
+            relname if schema == "public" else f"{schema}.{relname}"
+        )  # allowlists name public tables bare
         if kind == "m" and reachable and name not in MATVIEW_ALLOWLIST:
             problems.append(
                 f"{name}: materialised view readable by a runtime role (RLS does not apply to matviews)"
@@ -664,13 +741,29 @@ def find_rls_violations(conn: psycopg.Connection[Any]) -> list[str]:
                 problems.append(
                     f"{name}.{polname}: policy for the API role does not use app.society_id"
                 )
+            if not scoped_away and not reviewed:
+                foreign = sorted(
+                    {g for g in _GUC_NAME.findall(expression) if g not in ALLOWED_POLICY_GUCS}
+                )
+                if foreign or _DYNAMIC_GUC.search(expression):
+                    problems.append(
+                        f"{name}.{polname}: policy for a runtime role depends on a setting the role can "
+                        f"set itself ({', '.join(foreign) or 'dynamic current_setting'}): an escape hatch; "
+                        "only app.society_id may appear (see ALLOWED_POLICY_GUCS)"
+                    )
+                if _ROLE_DEPENDENT.search(expression):
+                    problems.append(
+                        f"{name}.{polname}: policy depends on the connected role (current_user, "
+                        "pg_has_role ...): it can exempt the API role by name; scope it with TO <role> instead"
+                    )
             if to_public and (qual or "").strip() == "true":
                 problems.append(f"{name}.{polname}: policy for PUBLIC is USING (true)")
             if permissive and not reviewed:
+                applies_to = tuple(r for r in RUNTIME_ROLES if to_public or r in roles)
                 for part in (qual, check):
                     if not part:
                         continue
-                    verdict = _policy_leaks(conn, part)
+                    verdict = _policy_leaks(conn, part, applies_to)
                     if verdict == "leak":
                         problems.append(
                             f"{name}.{polname}: policy is TRUE for another society or for none "
@@ -689,8 +782,8 @@ def find_rls_violations(conn: psycopg.Connection[Any]) -> list[str]:
             problems.append(f"{name}: no policy references app.society_id")
         grants = conn.execute(
             "SELECT privilege_type FROM information_schema.role_table_grants"
-            " WHERE table_schema = 'public' AND table_name = %s AND grantee = 'PUBLIC'",
-            (name,),
+            " WHERE table_schema = %s AND table_name = %s AND grantee = 'PUBLIC'",
+            (schema, relname),
         ).fetchall()
         if grants:
             problems.append(f"{name}: privileges granted to PUBLIC")
