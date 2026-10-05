@@ -1,0 +1,45 @@
+{
+ "request_id": "01a10dd0-0824-73be-b3e7-2af48f759928",
+ "items": [
+  {
+   "id": "019b76da-a800-739d-a307-bbc63afced93",
+   "block_id": "019b76da-a800-72a9-aa19-bd9181d7480a",
+   "block_name": "A",
+   "label": "101",
+   "floor": 1,
+   "status": "active",
+   "version": 1,
+   "carpet_area_sqft": "675.00",
+   "builtup_area_sqft": "810.00",
+   "undivided_interest_pct": "0.400000",
+   "construction_cost_paise": 405000000
+  },
+  {
+   "id": "019b76da-a800-739d-a307-bbc63b239f1e",
+   "block_id": "019b76da-a800-72a9-aa19-bd9181d7480a",
+   "block_name": "A",
+   "label": "102",
+   "floor": 1,
+   "status": "active",
+   "version": 1,
+   "carpet_area_sqft": "700.00",
+   "builtup_area_sqft": "840.00",
+   "undivided_interest_pct": "0.400000",
+   "construction_cost_paise": 420000000
+  },
+  {
+   "id": "019b76da-a800-739d-a307-bbc63bccde23",
+   "block_id": "019b76da-a800-72a9-aa19-bd9181d7480a",
+   "block_name": "A",
+   "label": "103",
+   "floor": 1,
+   "status": "active",
+   "version": 1,
+   "carpet_area_sqft": "725.00",
+   "builtup_area_sqft": "870.00",
+   "undivided_interest_pct": "0.400000",
+   "construction_cost_paise": 435000000
+  }
+ ],
+ "next_cursor": "eyJ2IjoxLCJiIjoiZmY1NGU3MWMyZGRiM2I1NjQyMDc3OWQyIiwiayI6WyIwMTliNzZkYS1hODAwLTczOWQtYTMwNy1iYmM2M2JjY2RlMjMiXX0.xP-SYstrkRvRArms1ru6_K91fJfzID6WYzzwmNaiNWA"
+}

@@ -1,0 +1,30 @@
+{
+ "request_id": "01a10dd0-0840-723b-a395-631db7b167fa",
+ "items": [
+  {
+   "id": "019b76da-a800-7020-bb03-e503debd14ee",
+   "name": "B",
+   "floors": 8,
+   "has_lift": true,
+   "status": "active",
+   "version": 1
+  },
+  {
+   "id": "019b76da-a800-7077-9434-75f659bf8ecb",
+   "name": "C",
+   "floors": 6,
+   "has_lift": false,
+   "status": "active",
+   "version": 1
+  },
+  {
+   "id": "019b76da-a800-72a9-aa19-bd9181d7480a",
+   "name": "A",
+   "floors": 10,
+   "has_lift": true,
+   "status": "active",
+   "version": 1
+  }
+ ],
+ "next_cursor": null
+}

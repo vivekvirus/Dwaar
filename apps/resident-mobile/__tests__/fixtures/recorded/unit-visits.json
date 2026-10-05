@@ -1,0 +1,112 @@
+{
+  "status": 200,
+  "body": {
+    "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+    "view": "household",
+    "items": [
+      {
+        "id": "01a10dcd-eeef-7016-900f-0ca1bfefee8c",
+        "kind": "guest",
+        "state": "authorised",
+        "visitor_alias": "Fixture Courier",
+        "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+        "people_count": 1,
+        "vehicle_plate": null,
+        "expected_minutes": null,
+        "authorisation_source": "household_approval",
+        "authorised_at": "2026-10-05T20:42:42.357685Z",
+        "authorised_until": "2026-10-05T21:12:42.354180Z",
+        "entry_observed": false,
+        "entered_at": null,
+        "exited_at": null,
+        "exit_basis": null,
+        "exit_reconciled_at": null,
+        "inside_confidence": "none",
+        "closed_reason": null,
+        "stops": [
+          {
+            "id": "01a10dcd-eeef-7016-900f-0ca1c10e85d1",
+            "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+            "block_name": "A",
+            "unit_label": "402",
+            "seq": 1,
+            "authorised": true,
+            "state": "authorised",
+            "approval_request_id": "01a10dcd-eeef-7016-900f-0ca1c029aed4"
+          }
+        ],
+        "version": 2,
+        "created_at": "2026-10-05T20:42:42.288879Z"
+      },
+      {
+        "id": "01a10dcd-d084-72d9-88f4-f25b03edf1d7",
+        "kind": "guest",
+        "state": "authorised",
+        "visitor_alias": "Fixture Courier",
+        "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+        "people_count": 1,
+        "vehicle_plate": null,
+        "expected_minutes": null,
+        "authorisation_source": "household_approval",
+        "authorised_at": "2026-10-05T20:42:34.575461Z",
+        "authorised_until": "2026-10-05T21:12:34.573669Z",
+        "entry_observed": false,
+        "entered_at": null,
+        "exited_at": null,
+        "exit_basis": null,
+        "exit_reconciled_at": null,
+        "inside_confidence": "none",
+        "closed_reason": null,
+        "stops": [
+          {
+            "id": "01a10dcd-d084-72d9-88f4-f25b048a9649",
+            "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+            "block_name": "A",
+            "unit_label": "402",
+            "seq": 1,
+            "authorised": true,
+            "state": "authorised",
+            "approval_request_id": "01a10dcd-d084-72d9-88f4-f25b042c6421"
+          }
+        ],
+        "version": 2,
+        "created_at": "2026-10-05T20:42:34.501164Z"
+      },
+      {
+        "id": "01a10dc3-5146-70df-a9c4-7de443be9392",
+        "kind": "guest",
+        "state": "authorised",
+        "visitor_alias": "Courier Demo",
+        "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+        "people_count": 1,
+        "vehicle_plate": null,
+        "expected_minutes": null,
+        "authorisation_source": "household_approval",
+        "authorised_at": "2026-10-05T20:31:17.142287Z",
+        "authorised_until": "2026-10-05T21:01:17.139380Z",
+        "entry_observed": false,
+        "entered_at": null,
+        "exited_at": null,
+        "exit_basis": null,
+        "exit_reconciled_at": null,
+        "inside_confidence": "none",
+        "closed_reason": null,
+        "stops": [
+          {
+            "id": "01a10dc3-5146-70df-a9c4-7de444ab2bd0",
+            "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+            "block_name": "A",
+            "unit_label": "402",
+            "seq": 1,
+            "authorised": true,
+            "state": "authorised",
+            "approval_request_id": "01a10dc3-5146-70df-a9c4-7de443ead36b"
+          }
+        ],
+        "version": 2,
+        "created_at": "2026-10-05T20:31:06.736992Z"
+      }
+    ],
+    "next_cursor": null
+  }
+}

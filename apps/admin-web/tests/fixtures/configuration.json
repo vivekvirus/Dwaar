@@ -1,0 +1,67 @@
+{
+ "request_id": "01a10dd0-0917-73d6-b758-436c58bbeb2d",
+ "id": "019b76da-a800-713c-a879-90fe5f48356e",
+ "name": "Sahyadri Residency CHS (demo)",
+ "city": "Pune",
+ "state": "Maharashtra",
+ "timezone": "Asia/Kolkata",
+ "status": "active",
+ "version": 1,
+ "org_id": null,
+ "settings": {},
+ "ai_budget_paise": 0,
+ "legal_entity": {
+  "id": "019b76da-a800-7080-91ae-3424a18288ba",
+  "name": "Sahyadri Residency Co-operative Housing Society Ltd (synthetic)",
+  "entity_type": "chs",
+  "registration_no": "SYN/MH/PUN/0001",
+  "pan_masked": null,
+  "tan_masked": null,
+  "gstin_masked": null,
+  "gst_registered": false,
+  "version": 1
+ },
+ "legal_pack": {
+  "id": "01a10dc1-1e71-7068-8c87-77a9005ceae8",
+  "pack_key": "maharashtra-chs",
+  "version": "2026.1.0",
+  "title": "Maharashtra co-operative housing society (MCS Act 1960 Chapter XIII-B)",
+  "pack_status": "unapproved",
+  "approved": false,
+  "enabled": true,
+  "jurisdiction": "IN-MH",
+  "entity_type": "chs"
+ },
+ "tax_pack": {
+  "id": "01a10dc1-1e77-78b2-bf4e-8942a517881d",
+  "pack_key": "gst-rwa",
+  "version": "2026.1.0-draft",
+  "title": "GST context for resident welfare associations",
+  "pack_status": "draft",
+  "approved": false,
+  "enabled": true,
+  "pack_type": "gst-rwa"
+ },
+ "tax_configured": true,
+ "binding_governance": {
+  "enabled": false,
+  "blockers": [
+   "legal_pack_not_approved",
+   "feature_flag_disabled"
+  ]
+ },
+ "feature_flags": [
+  {
+   "flag_key": "binding_governance",
+   "enabled": false,
+   "version": 1
+  }
+ ],
+ "quotas": {
+  "rate_per_minute": 600,
+  "rate_burst": 120,
+  "queue_quota": 1000,
+  "ai_requests_per_day": 0,
+  "version": 1
+ }
+}

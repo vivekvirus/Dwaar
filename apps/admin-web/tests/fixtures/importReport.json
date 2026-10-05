@@ -1,0 +1,23 @@
+{
+ "request_id": "01a10dd0-0988-73c6-81b0-78b2844a96d3",
+ "dry_run": true,
+ "valid": false,
+ "rows_total": 2,
+ "rows_valid": 0,
+ "units_created": 0,
+ "blocks_created": [],
+ "errors": [
+  {
+   "row": 2,
+   "field": "label",
+   "code": "already_exists"
+  },
+  {
+   "row": 3,
+   "field": "block",
+   "code": "unknown_block"
+  }
+ ],
+ "errors_total": 2,
+ "errors_truncated": false
+}

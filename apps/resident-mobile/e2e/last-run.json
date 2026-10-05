@@ -1,0 +1,167 @@
+{
+  "date": "2026-10-05T21:15:07.734Z",
+  "passed": 32,
+  "failed": 0,
+  "results": [
+    {
+      "name": "backend up in local mode with the simulator",
+      "ok": true,
+      "detail": "environment=local simulation=true"
+    },
+    {
+      "name": "web export built against the local API",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sign-in shows the 'Simulator' banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "signed in; active household is visible in the header",
+      "ok": true,
+      "detail": "द्वार | Sahyadri Residency CHS (demo) · युनिट 101"
+    },
+    {
+      "name": "the account's server-side language (Marathi in the seed) drives the UI after sign-in",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "language switched to English through the UI and saved server-side",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "web tokens live in sessionStorage only, never localStorage",
+      "ok": true,
+      "detail": "{\"local\":[],\"session\":[\"dwaar.session.v1\"]}"
+    },
+    {
+      "name": "a request created through the API appears on Home without reload (polling) and is pinned above quick actions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pending approval is pinned at the top (UX-01)",
+      "ok": true,
+      "detail": "[168,194,294]"
+    },
+    {
+      "name": "decision screen shows pending status and 'Not yet at gate / not observed'",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline: the decision is reported as NOT sent and nothing was decided",
+      "ok": true,
+      "detail": "pending|1|"
+    },
+    {
+      "name": "approved: UI says 'Approved; not yet entered' and 'Not yet at gate / not observed', never 'Entered'",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "DB: request approved at version 2, exactly ONE decision row (idempotent retry), no EntryObserved event",
+      "ok": true,
+      "detail": "approved|2|approved decisions=1 entry_events=0"
+    },
+    {
+      "name": "API after approval: status approved, entry_observed false, visit authorised (not inside)",
+      "ok": true,
+      "detail": "authorised"
+    },
+    {
+      "name": "expired: UI shows expiry, 'No entry was allowed', no permission and no Approve button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "DB: request expired, NO decision recorded, visit not authorised, no entry",
+      "ok": true,
+      "detail": "expired|2|expired visit=expired"
+    },
+    {
+      "name": "the other device's denial was accepted by the API",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "already_decided: UI shows the OTHER device's result (Denied), not our approval",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "DB: denied with exactly one decision row",
+      "ok": true,
+      "detail": "denied|2|denied"
+    },
+    {
+      "name": "invitation created: signed QR rendered from the API payload and a one-time 6-digit code shown",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "API agrees: active, 2 people, vehicle recorded, QR payload carries opaque ids only",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "revoked: receipt shown, QR gone, DB state revoked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "visitor history shows the approved visit as 'Approved; not yet entered' with 'Entry not observed'",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "language Hindi saved to the account (DB persons.preferred_language)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Hindi UI renders Devanagari copy and the unit number stays Latin",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "every button/tab/radio on Home and the decision screen is >= 48 px tall",
+      "ok": true,
+      "detail": "10 controls checked"
+    },
+    {
+      "name": "200% browser zoom (195 px wide): no horizontal page scroll and no clipped text on the decision screen",
+      "ok": true,
+      "detail": "{\"docOverflow\":false,\"clippedText\":[]}"
+    },
+    {
+      "name": "200% browser zoom: Home has no horizontal scroll",
+      "ok": true,
+      "detail": "{\"docOverflow\":false,\"clippedText\":[]}"
+    },
+    {
+      "name": "axe-core (wcag2a/aa) reports no critical or serious violations on Home and the decision screen",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "no uncaught page errors during the run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "seed language restored",
+      "ok": true,
+      "detail": "mr"
+    },
+    {
+      "name": "sign out returns to sign-in and clears the stored session",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

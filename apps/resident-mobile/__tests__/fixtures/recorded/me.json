@@ -1,0 +1,85 @@
+{
+  "status": 200,
+  "body": {
+    "person": {
+      "id": "019b76da-a800-7062-9155-bdc5acb94067",
+      "display_name": "Sanjay Deshpande",
+      "preferred_language": "mr",
+      "is_minor": false
+    },
+    "simulation": true,
+    "mfa": {
+      "enrolled": false,
+      "confirmed": false,
+      "session_verified": false,
+      "required_for_roles": false
+    },
+    "societies": [
+      {
+        "society_id": "019b76da-a800-713c-a879-90fe5f48356e",
+        "roles": [
+          {
+            "role": "owner_nr",
+            "source": "membership",
+            "unit_id": "019b76da-a800-739d-a307-bbc68dcdfb1f",
+            "active": true,
+            "valid_now": true,
+            "not_before": "2026-10-04T18:30:00+00:00",
+            "expires_at": null,
+            "requires_mfa": false,
+            "mfa_satisfied": true
+          },
+          {
+            "role": "owner_occ",
+            "source": "membership",
+            "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+            "active": true,
+            "valid_now": true,
+            "not_before": "2026-10-04T18:30:00+00:00",
+            "expires_at": null,
+            "requires_mfa": false,
+            "mfa_satisfied": true
+          }
+        ],
+        "memberships": [
+          {
+            "id": "b11c5ddf-01b9-4f5a-8ab1-d2fd9ec51269",
+            "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+            "kind": "owner",
+            "verification": "verified",
+            "effective_from": "2026-10-05",
+            "effective_to": null,
+            "lives_in_unit": true,
+            "owner_decision": null,
+            "case": {
+              "id": "658cdb5b-1936-4364-b098-ca27cde8ac83",
+              "kind": "ownership_claim",
+              "state": "verified",
+              "reason": null,
+              "decided_at": "2026-10-05T17:45:11.027912+00:00"
+            },
+            "holds": []
+          },
+          {
+            "id": "7741ed6b-9a0c-493a-9b8c-9b26ab566677",
+            "unit_id": "019b76da-a800-739d-a307-bbc68dcdfb1f",
+            "kind": "owner",
+            "verification": "verified",
+            "effective_from": "2026-10-05",
+            "effective_to": null,
+            "lives_in_unit": false,
+            "owner_decision": null,
+            "case": {
+              "id": "e9040fc8-22e5-4685-a92b-917822094f53",
+              "kind": "ownership_claim",
+              "state": "verified",
+              "reason": null,
+              "decided_at": "2026-10-05T17:45:11.061195+00:00"
+            },
+            "holds": []
+          }
+        ]
+      }
+    ]
+  }
+}

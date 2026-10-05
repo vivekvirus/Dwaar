@@ -1,0 +1,48 @@
+{
+ "sessions": [
+  {
+   "id": "01a10dcf-fd7c-72b6-a33a-c573c8cacc36",
+   "device_id": "probe",
+   "device_label": "probe",
+   "platform": null,
+   "created_at": "2026-10-05T20:44:57.084589+00:00",
+   "last_seen_at": "2026-10-05T20:44:57.084589+00:00",
+   "expires_at": "2026-11-04T20:44:57.084589+00:00",
+   "mfa_verified_at": "2026-10-05T20:44:58.314772+00:00",
+   "current": true
+  },
+  {
+   "id": "01a10dcf-131e-70fc-a52a-9984f9b5ab70",
+   "device_id": "probe",
+   "device_label": "probe",
+   "platform": null,
+   "created_at": "2026-10-05T20:43:57.087315+00:00",
+   "last_seen_at": "2026-10-05T20:43:57.087315+00:00",
+   "expires_at": "2026-11-04T20:43:57.087315+00:00",
+   "mfa_verified_at": null,
+   "current": false
+  },
+  {
+   "id": "01a10dce-fa27-7004-b1c7-2b9ed0eee167",
+   "device_id": "4fd969aa-0af7-4870-9881-0013aa20f31e",
+   "device_label": "Committee console (web)",
+   "platform": "web",
+   "created_at": "2026-10-05T20:43:50.695453+00:00",
+   "last_seen_at": "2026-10-05T20:43:50.695453+00:00",
+   "expires_at": "2026-11-04T20:43:50.695453+00:00",
+   "mfa_verified_at": "2026-10-05T20:43:51.880482+00:00",
+   "current": false
+  },
+  {
+   "id": "01a10dc1-82a5-71b7-8c0f-f4d6ac85d312",
+   "device_id": "probe",
+   "device_label": "probe",
+   "platform": null,
+   "created_at": "2026-10-05T20:29:08.133889+00:00",
+   "last_seen_at": "2026-10-05T20:29:08.133889+00:00",
+   "expires_at": "2026-11-04T20:29:08.133889+00:00",
+   "mfa_verified_at": "2026-10-05T20:29:09.280776+00:00",
+   "current": false
+  }
+ ]
+}

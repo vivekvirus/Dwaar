@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "body": {
+    "service": "dwaar_api",
+    "version": "0.1.0",
+    "api_version": "v1",
+    "environment": "local",
+    "simulation": true,
+    "server_time": "2026-10-05T20:42:42.081Z"
+  }
+}

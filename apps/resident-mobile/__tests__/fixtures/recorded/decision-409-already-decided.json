@@ -1,0 +1,20 @@
+{
+  "status": 409,
+  "body": {
+    "request_id": "01a10dcd-ef3e-70bb-a5b2-698aebab278e",
+    "code": "already_decided",
+    "message": "A decision has already been recorded.",
+    "message_key": "errors.already_decided",
+    "details": {
+      "canonical": {
+        "request_id": "01a10dcd-eeef-7016-900f-0ca1c029aed4",
+        "status": "approved",
+        "version": 2,
+        "decision_id": "01a10dcd-ef31-72e1-b1bb-e759aa9b5bb8",
+        "permission_expires_at": "2026-10-05T21:12:42.354180+00:00",
+        "entry_observed": false
+      },
+      "decided_by_role": "owner_occ"
+    }
+  }
+}

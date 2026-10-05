@@ -1,0 +1,10 @@
+{
+  "status": 404,
+  "body": {
+    "request_id": "01a10dcd-ef57-737d-8b89-0b927a8b2f75",
+    "code": "not_found",
+    "message": "We could not find that.",
+    "message_key": "errors.not_found",
+    "details": {}
+  }
+}

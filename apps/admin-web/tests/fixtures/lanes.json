@@ -1,0 +1,20 @@
+{
+ "items": [
+  {
+   "id": "019b76da-a800-71e3-a88e-9355171dbf0f",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "label": "Entry lane",
+   "direction": "in",
+   "status": "active",
+   "version": 1
+  },
+  {
+   "id": "019b76da-a800-727a-b5eb-4a0a8ddc66cd",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "label": "Exit lane",
+   "direction": "out",
+   "status": "active",
+   "version": 1
+  }
+ ]
+}

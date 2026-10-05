@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": {
+    "request_id": "01a10dcd-ee8e-7335-a915-25287d30ba59",
+    "id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+    "block_id": "019b76da-a800-72a9-aa19-bd9181d7480a",
+    "block_name": "A",
+    "label": "402",
+    "floor": 4,
+    "status": "active",
+    "version": 1,
+    "carpet_area_sqft": "700.00",
+    "builtup_area_sqft": "840.00",
+    "undivided_interest_pct": "0.400000",
+    "construction_cost_paise": 420000000
+  }
+}

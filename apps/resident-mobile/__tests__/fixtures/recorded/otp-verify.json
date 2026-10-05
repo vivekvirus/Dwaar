@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "body": {
+    "token_type": "Bearer",
+    "access_token": "REDACTED.ACCESS.TOKEN",
+    "expires_in": 900,
+    "refresh_token": "REDACTED_REFRESH_TOKEN_0000",
+    "session_id": "01a10dcd-ee5b-7334-8b46-8d7d3e368b73",
+    "simulation": true
+  }
+}

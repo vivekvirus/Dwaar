@@ -1,0 +1,32 @@
+{
+  "status": 201,
+  "body": {
+    "id": "01a10dcd-ef76-7326-a9bc-f9d67fd4f468",
+    "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+    "kind": "guest",
+    "purpose": "Fixture lunch",
+    "visitor_alias": null,
+    "people_count": 2,
+    "gate_id": null,
+    "windows": [
+      {
+        "start": "2026-10-05T20:42:42.408000+00:00",
+        "end": "2026-10-05T23:42:42.408000+00:00"
+      }
+    ],
+    "window_start": "2026-10-05T20:42:42.408000+00:00",
+    "window_end": "2026-10-05T23:42:42.408000+00:00",
+    "max_uses": 1,
+    "uses": 0,
+    "vehicle_plate": null,
+    "expected_minutes": null,
+    "state": "active",
+    "revoked_version": null,
+    "has_code": true,
+    "host_is_me": true,
+    "version": 1,
+    "created_at": "2026-10-05T20:42:42.423641+00:00",
+    "qr": "eyJleHAiOjE3OTEyNDM3NjIsImlpZCI6IjAxYTEwZGNkLWVmNzYtNzMyNi1hOWJjLWY5ZDY3ZmQ0ZjQ2OCIsImtpZCI6ImVkLWQyZjQ4ZGNlNjIzZTM0NDkiLCJuIjoiZHdvS05ULVY1YzVoZTIxOUZwY3BiZyIsIm5iZiI6MTc5MTIzMjk2Miwic2lkIjoiMDE5Yjc2ZGEtYTgwMC03MTNjLWE4NzktOTBmZTVmNDgzNTZlIiwidHlwIjoiZHdhYXIucGFzcyIsInYiOjF9.ed25519:REDACTED",
+    "code": "000000"
+  }
+}

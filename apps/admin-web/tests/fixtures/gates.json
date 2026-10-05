@@ -1,0 +1,18 @@
+{
+ "items": [
+  {
+   "id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "name": "Main Gate",
+   "kind": "mixed",
+   "status": "active",
+   "version": 1
+  },
+  {
+   "id": "019b76da-a800-7358-b1cf-1357ba118ce9",
+   "name": "Pedestrian Gate",
+   "kind": "pedestrian",
+   "status": "active",
+   "version": 1
+  }
+ ]
+}

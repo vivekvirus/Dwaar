@@ -1,0 +1,33 @@
+{
+  "status": 200,
+  "body": {
+    "items": [
+      {
+        "id": "01a10dcd-eeef-7016-900f-0ca1c029aed4",
+        "status": "pending",
+        "version": 1,
+        "visit_id": "01a10dcd-eeef-7016-900f-0ca1bfefee8c",
+        "unit_id": "019b76da-a800-739d-a307-bbc64b8d8f4e",
+        "block_name": "A",
+        "unit_label": "402",
+        "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+        "visitor": {
+          "kind": "guest",
+          "alias": "Fixture Courier",
+          "people_count": 1,
+          "vehicle_plate": null
+        },
+        "expires_at": "2026-10-05T20:44:12.289878Z",
+        "expires_in_seconds": 89,
+        "decision": null,
+        "decision_id": null,
+        "permission_expires_at": null,
+        "closed_reason": null,
+        "entry_observed": false,
+        "auto_allow_on_timeout": false,
+        "created_at": "2026-10-05T20:42:42.289878Z"
+      }
+    ],
+    "next_cursor": null
+  }
+}

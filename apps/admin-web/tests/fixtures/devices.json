@@ -1,0 +1,48 @@
+{
+ "items": [
+  {
+   "id": "019b76da-a800-71d7-ba59-c28b9f6a93aa",
+   "kind": "terminal",
+   "name": "Pedestrian gate handheld",
+   "gate_id": "019b76da-a800-7358-b1cf-1357ba118ce9",
+   "state": "pending_approval",
+   "key_id": "ed-8d52c63853548854",
+   "firmware": "demo-0.1",
+   "capabilities": {
+    "qr": true,
+    "nfc": false
+   },
+   "simulation": true,
+   "last_seen_at": null,
+   "requested_by": "019b76da-a800-715b-9713-65382c479bc4",
+   "decided_by": null,
+   "decided_at": null,
+   "decision_reason": null,
+   "revoked_at": null,
+   "version": 1,
+   "created_at": "2026-10-05T20:28:46.926964Z"
+  },
+  {
+   "id": "019b76da-a800-72d6-a954-a3fb95a6130b",
+   "kind": "terminal",
+   "name": "Main gate terminal",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "state": "active",
+   "key_id": "ed-92f25ca77bbc1f6a",
+   "firmware": "demo-0.1",
+   "capabilities": {
+    "qr": true,
+    "nfc": false
+   },
+   "simulation": true,
+   "last_seen_at": null,
+   "requested_by": "019b76da-a800-715b-9713-65382c479bc4",
+   "decided_by": "019b76da-a800-72a5-810c-3ac79796e28b",
+   "decided_at": "2026-10-05T20:28:46.903385Z",
+   "decision_reason": null,
+   "revoked_at": null,
+   "version": 2,
+   "created_at": "2026-10-05T20:28:46.897306Z"
+  }
+ ]
+}

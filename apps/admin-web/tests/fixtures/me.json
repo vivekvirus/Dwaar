@@ -1,0 +1,34 @@
+{
+ "person": {
+  "id": "019b76da-a800-73df-90ea-96483ae0c063",
+  "display_name": "Anita Kulkarni",
+  "preferred_language": "mr",
+  "is_minor": false
+ },
+ "simulation": true,
+ "mfa": {
+  "enrolled": true,
+  "confirmed": true,
+  "session_verified": true,
+  "required_for_roles": true
+ },
+ "societies": [
+  {
+   "society_id": "019b76da-a800-713c-a879-90fe5f48356e",
+   "roles": [
+    {
+     "role": "secretary",
+     "source": "role_grant",
+     "unit_id": null,
+     "active": true,
+     "valid_now": true,
+     "not_before": "2026-10-05T20:28:42.711170+00:00",
+     "expires_at": null,
+     "requires_mfa": true,
+     "mfa_satisfied": true
+    }
+   ],
+   "memberships": []
+  }
+ ]
+}

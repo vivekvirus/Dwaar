@@ -1,0 +1,113 @@
+{
+ "items": [
+  {
+   "id": "019b76da-a800-73b8-9e88-783633dcd0d9",
+   "kind": "delivery",
+   "state": "expired",
+   "visitor_alias": "Courier parcel",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "people_count": 1,
+   "vehicle_plate": null,
+   "expected_minutes": null,
+   "authorisation_source": null,
+   "authorised_at": null,
+   "authorised_until": null,
+   "entry_observed": false,
+   "entered_at": null,
+   "exited_at": null,
+   "exit_basis": null,
+   "exit_reconciled_at": null,
+   "inside_confidence": "none",
+   "closed_reason": "expired",
+   "stops": [
+    {
+     "id": "019b76da-a800-73b8-9e88-783634bec147",
+     "unit_id": "019b76da-a800-739d-a307-bbc640f91b13",
+     "block_name": "A",
+     "unit_label": "203",
+     "seq": 1,
+     "authorised": false,
+     "state": "expired",
+     "approval_request_id": "019b76da-a800-73b8-9e88-78363497fed7"
+    }
+   ],
+   "version": 2,
+   "created_at": "2026-10-05T20:28:47.168107Z",
+   "invitation_id": null,
+   "consent_recorded": true
+  },
+  {
+   "id": "019b76da-a800-7199-8d6b-df55e138532a",
+   "kind": "guest",
+   "state": "cancelled",
+   "visitor_alias": "Unknown sales visitor",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "people_count": 1,
+   "vehicle_plate": null,
+   "expected_minutes": null,
+   "authorisation_source": null,
+   "authorised_at": null,
+   "authorised_until": null,
+   "entry_observed": false,
+   "entered_at": null,
+   "exited_at": null,
+   "exit_basis": null,
+   "exit_reconciled_at": null,
+   "inside_confidence": "none",
+   "closed_reason": "denied",
+   "stops": [
+    {
+     "id": "019b76da-a800-7199-8d6b-df55e255ac5f",
+     "unit_id": "019b76da-a800-739d-a307-bbc6717017e6",
+     "block_name": "B",
+     "unit_label": "205",
+     "seq": 1,
+     "authorised": false,
+     "state": "denied",
+     "approval_request_id": "019b76da-a800-7199-8d6b-df55e1e95604"
+    }
+   ],
+   "version": 2,
+   "created_at": "2026-10-05T20:28:47.137898Z",
+   "invitation_id": null,
+   "consent_recorded": true
+  },
+  {
+   "id": "019b76da-a800-7055-b34f-7e7e3595b32d",
+   "kind": "delivery",
+   "state": "inside",
+   "visitor_alias": "Grocery Basket delivery",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "people_count": 1,
+   "vehicle_plate": null,
+   "expected_minutes": null,
+   "authorisation_source": "household_approval",
+   "authorised_at": "2026-10-05T19:52:47.096233Z",
+   "authorised_until": "2026-10-05T20:58:47.093852Z",
+   "entry_observed": true,
+   "entered_at": "2026-10-05T19:53:47.104619Z",
+   "exited_at": null,
+   "exit_basis": null,
+   "exit_reconciled_at": null,
+   "inside_confidence": "stale",
+   "closed_reason": null,
+   "stops": [
+    {
+     "id": "019b76da-a800-7055-b34f-7e7e3682bc76",
+     "unit_id": "019b76da-a800-739d-a307-bbc63afced93",
+     "block_name": "A",
+     "unit_label": "101",
+     "seq": 1,
+     "authorised": true,
+     "state": "authorised",
+     "approval_request_id": "019b76da-a800-7055-b34f-7e7e35c0f68c"
+    }
+   ],
+   "version": 5,
+   "created_at": "2026-10-05T20:28:47.076291Z",
+   "invitation_id": null,
+   "consent_recorded": true
+  }
+ ],
+ "next_cursor": "eyJ2IjoxLCJiIjoiYWUxYzBjN2UwNThiZjkyNzQ3OWU1OTU5IiwiayI6WyIyMDI2LTEwLTA1VDIwOjI4OjQ3LjA3NjI5MSswMDowMCIsIjAxOWI3NmRhLWE4MDAtNzA1NS1iMzRmLTdlN2UzNTk1YjMyZCJdfQ.WFHsnBgJysbPD3v4O5QXg0qZS45tUy4EbnsO7sNE0pc"
+}

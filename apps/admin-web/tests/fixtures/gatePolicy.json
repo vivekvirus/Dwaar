@@ -1,0 +1,32 @@
+{
+ "approval_expiry_seconds": 90,
+ "permission_validity_minutes": 30,
+ "override_validity_minutes": 240,
+ "overstay_minutes": {
+  "delivery": 20,
+  "cab": 15,
+  "service": 240,
+  "vendor": 240
+ },
+ "overstay_bounds": {
+  "delivery": {
+   "min": 5,
+   "max": 180
+  },
+  "cab": {
+   "min": 5,
+   "max": 120
+  },
+  "service": {
+   "min": 120,
+   "max": 480
+  },
+  "vendor": {
+   "min": 30,
+   "max": 480
+  }
+ },
+ "revocation_version": 1,
+ "auto_allow_on_timeout": false,
+ "version": 1
+}

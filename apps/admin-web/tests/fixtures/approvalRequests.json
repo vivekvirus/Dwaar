@@ -1,0 +1,65 @@
+{
+ "items": [
+  {
+   "id": "019b76da-a800-7055-b34f-7e7e35c0f68c",
+   "status": "approved",
+   "version": 2,
+   "visit_id": "019b76da-a800-7055-b34f-7e7e3595b32d",
+   "unit_id": "019b76da-a800-739d-a307-bbc63afced93",
+   "block_name": "A",
+   "unit_label": "101",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "visitor": {
+    "kind": "delivery",
+    "alias": "Grocery Basket delivery",
+    "people_count": 1,
+    "vehicle_plate": null
+   },
+   "expires_at": "2026-10-05T20:30:17.077594Z",
+   "expires_in_seconds": 0,
+   "decision": {
+    "made": "approve",
+    "by_role": "owner_occ",
+    "at": "2026-10-05T20:28:47.094608Z"
+   },
+   "decision_id": "019b76da-a800-7187-aeec-8ed6893ae6df",
+   "permission_expires_at": "2026-10-05T20:58:47.093852Z",
+   "closed_reason": "approved",
+   "entry_observed": true,
+   "auto_allow_on_timeout": false,
+   "created_at": "2026-10-05T20:28:47.077595Z",
+   "destination_confirmed": true
+  },
+  {
+   "id": "019b76da-a800-70e9-8d9d-1d9873d89cb1",
+   "status": "approved",
+   "version": 2,
+   "visit_id": "019b76da-a800-70e9-8d9d-1d98730057ff",
+   "unit_id": "019b76da-a800-739d-a307-bbc640f91b13",
+   "block_name": "A",
+   "unit_label": "203",
+   "gate_id": "019b76da-a800-70d1-9fe1-1fd3267e36d7",
+   "visitor": {
+    "kind": "guest",
+    "alias": "Vikas (cousin)",
+    "people_count": 1,
+    "vehicle_plate": null
+   },
+   "expires_at": "2026-10-05T20:30:17.017418Z",
+   "expires_in_seconds": 0,
+   "decision": {
+    "made": "approve",
+    "by_role": "owner_occ",
+    "at": "2026-10-05T20:28:47.034103Z"
+   },
+   "decision_id": "019b76da-a800-727f-9bd9-69ce59c7e60b",
+   "permission_expires_at": "2026-10-05T20:58:47.033292Z",
+   "closed_reason": "approved",
+   "entry_observed": true,
+   "auto_allow_on_timeout": false,
+   "created_at": "2026-10-05T20:28:47.017418Z",
+   "destination_confirmed": true
+  }
+ ],
+ "next_cursor": null
+}

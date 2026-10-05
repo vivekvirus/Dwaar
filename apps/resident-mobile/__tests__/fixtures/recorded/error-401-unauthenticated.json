@@ -1,0 +1,10 @@
+{
+  "status": 401,
+  "body": {
+    "request_id": "01a10dcd-ef66-72fe-ab43-c941ac0991e7",
+    "code": "unauthenticated",
+    "message": "Please sign in to continue.",
+    "message_key": "errors.unauthenticated",
+    "details": {}
+  }
+}

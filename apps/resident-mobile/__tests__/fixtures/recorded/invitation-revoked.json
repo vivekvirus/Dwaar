@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "body": {
+    "invitation_id": "01a10dcd-ef76-7326-a9bc-f9d67fd4f468",
+    "state": "revoked",
+    "revoked_version": 4,
+    "version": 2,
+    "already_revoked": false,
+    "cancelled_visits": 0
+  }
+}

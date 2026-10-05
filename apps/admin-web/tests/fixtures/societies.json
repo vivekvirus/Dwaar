@@ -1,0 +1,15 @@
+{
+ "request_id": "01a10dd0-0802-739f-93e4-09e5bc8bfbc2",
+ "items": [
+  {
+   "id": "019b76da-a800-713c-a879-90fe5f48356e",
+   "name": "Sahyadri Residency CHS (demo)",
+   "city": "Pune",
+   "state": "Maharashtra",
+   "timezone": "Asia/Kolkata",
+   "status": "active",
+   "version": 1
+  }
+ ],
+ "next_cursor": null
+}
