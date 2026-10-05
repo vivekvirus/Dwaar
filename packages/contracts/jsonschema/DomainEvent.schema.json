@@ -1,0 +1,92 @@
+{
+  "additionalProperties": false,
+  "description": "Domain event contract (PRD 12.4), written to the outbox in the mutating transaction.",
+  "properties": {
+    "actor_ref": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Actor Ref",
+      "type": "string"
+    },
+    "aggregate_id": {
+      "format": "uuid",
+      "title": "Aggregate Id",
+      "type": "string"
+    },
+    "aggregate_type": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Aggregate Type",
+      "type": "string"
+    },
+    "aggregate_version": {
+      "minimum": 0,
+      "title": "Aggregate Version",
+      "type": "integer"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causation Id"
+    },
+    "correlation_id": {
+      "format": "uuid",
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_type": {
+      "maxLength": 100,
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+      "title": "Event Type",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "schema_version": {
+      "minimum": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "society_id": {
+      "format": "uuid",
+      "title": "Society Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "schema_version",
+    "society_id",
+    "aggregate_type",
+    "aggregate_id",
+    "aggregate_version",
+    "event_type",
+    "occurred_at",
+    "actor_ref",
+    "correlation_id"
+  ],
+  "title": "DomainEvent",
+  "type": "object"
+}

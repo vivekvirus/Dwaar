@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cascade-offline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_type",
+    "pack_id",
+    "version",
+    "status",
+    "approved_by",
+    "approved_at",
+    "effective_from",
+    "effective_to",
+    "labels",
+    "legal_sources",
+    "cascade",
+    "offline",
+    "offline_bounds"
+  ],
+  "properties": {
+    "pack_type": {
+      "const": "cascade-offline"
+    },
+    "pack_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "unapproved",
+        "approved",
+        "retired"
+      ]
+    },
+    "approved_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "approved_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "effective_from": {
+      "$ref": "#/$defs/date"
+    },
+    "effective_to": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next_review": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "labels": {
+      "$ref": "#/$defs/labels"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "legal_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/legal_source"
+      }
+    },
+    "cascade": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps",
+        "auto_allow_on_timeout",
+        "bounds"
+      ],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/step"
+          }
+        },
+        "auto_allow_on_timeout": {
+          "const": false
+        },
+        "bounds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min_seconds_between_steps",
+            "expiry_seconds"
+          ],
+          "properties": {
+            "min_seconds_between_steps": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "expiry_seconds": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "min",
+                "max",
+                "default"
+              ],
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "default": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "offline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resident_credential_validity_hours",
+        "guest_pass_max_hours",
+        "clock_uncertainty_disable_auto_approvals_seconds",
+        "supervisor_override_validity",
+        "policy_age_guard_assisted_verification_hours",
+        "edge_event_buffer_hours",
+        "terminal_standalone_min_hours"
+      ],
+      "properties": {
+        "resident_credential_validity_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "guest_pass_max_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "guest_pass_bound_to_assigned_gate": {
+          "type": "boolean"
+        },
+        "clock_uncertainty_disable_auto_approvals_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "supervisor_override_validity": {
+          "type": "string"
+        },
+        "policy_age_guard_assisted_verification_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "edge_event_buffer_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "terminal_standalone_min_hours": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "offline_bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resident_credential_validity_hours",
+        "clock_uncertainty_disable_auto_approvals_seconds",
+        "policy_age_guard_assisted_verification_hours",
+        "edge_event_buffer_hours"
+      ],
+      "properties": {
+        "resident_credential_validity_hours": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max"
+          ],
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "clock_uncertainty_disable_auto_approvals_seconds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max"
+          ],
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "policy_age_guard_assisted_verification_hours": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max"
+          ],
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "edge_event_buffer_hours": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max"
+          ],
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      },
+      "description": "Upper bounds for the safety-relevant offline settings: a society may tighten them, never relax them (D-13, EDGE-05)."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "approved"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "approved_by": {
+            "type": "string"
+          },
+          "approved_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "not": {
+              "const": "approved"
+            }
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "approved_by": {
+            "type": "null"
+          },
+          "approved_at": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "LEGAL",
+          "VERIFY",
+          "CA",
+          "TBD"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "legal_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref_id",
+        "citation",
+        "prd_ref",
+        "labels",
+        "url"
+      ],
+      "properties": {
+        "ref_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "citation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prd_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "LEGAL",
+              "VERIFY",
+              "CA",
+              "TBD"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "at_seconds",
+        "action",
+        "condition"
+      ],
+      "properties": {
+        "step": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "at_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "action": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "guard_options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

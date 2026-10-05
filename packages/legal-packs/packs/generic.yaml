@@ -1,0 +1,48 @@
+# Generic legal pack: every value is configurable by the secretary. Each configured value needs a
+# mandatory legal_reference, and the pack needs counsel approval before binding use (PRD Appendix A, GOV-01).
+pack_type: legal-pack
+pack_id: generic
+jurisdiction: IN
+entity_type: any
+version: 2026.1.0
+title: Generic pack (all values secretary-configured, counsel approval required)
+status: unapproved
+enabled: true
+labels: [LEGAL]
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+configuration:
+  configurable_by: secretary
+  legal_reference_required: true
+  counsel_approval_required: true
+legal_sources:
+  - ref_id: prd-appendix-a-generic
+    citation: "PRD Appendix A, Generic pack"
+    prd_ref: "Appendix A"
+    labels: [LEGAL]
+    url: null
+rules:
+  charges.service.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  charges.lift.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  charges.insurance.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  charges.lease_rent.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  charges.water.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  interest.max_simple_pct_pa: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  charges.non_occupancy: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  funds.sinking.min_pct_construction_cost_pa: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  funds.repair_maintenance.min_pct_construction_cost_pa: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  funds.major_repair.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  funds.election.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  funds.education.per_member_per_month: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  agm.deadline: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  notice.agm_clear_days: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  notice.sgm_clear_days: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  notice.redevelopment_clear_days: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  quorum.ordinary: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  quorum.redevelopment: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  voting.basis: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  meetings.video_participation: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  committee.one_time_repair_limit: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}
+  recovery.route: {value: null, configurable: true, labels: [LEGAL, TBD], legal_source_ref: prd-appendix-a-generic}

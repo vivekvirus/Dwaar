@@ -1,0 +1,14 @@
+{
+  "action.pay_now": "अभी भुगतान करें",
+  "bill.due": "{amount} {date} तक देय",
+  "bill.title": "बिल",
+  "essential_services.note": "बकाया के कारण आवश्यक सेवाएँ कभी नहीं रोकी जातीं।",
+  "receipt.number": "रसीद क्रमांक {number}",
+  "receipt.title": "रसीद",
+  "settlement.failed": "निपटान विफल रहा; सहायता आपसे संपर्क करेगी",
+  "settlement.pending": "भुगतान प्राप्त हुआ; निपटान लंबित",
+  "settlement.settled": "निपटान हो गया",
+  "status.paid": "भुगतान किया गया",
+  "status.partially_paid": "आंशिक भुगतान: {total} में से {paid}",
+  "status.unpaid": "अदत्त"
+}

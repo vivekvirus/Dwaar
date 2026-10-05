@@ -1,0 +1,21 @@
+{
+  "approval.approve": "Approve",
+  "approval.deny": "Deny",
+  "approval.not_entered_note": "Approval does not mean the visitor has entered.",
+  "approval.visitor_at_gate": "{visitor} is at the gate",
+  "fallback.call_guard": "Call the gate",
+  "fallback.call_note": "If the app is not working, the guard will call you.",
+  "home.action.approve": "Approve",
+  "home.action.invite": "Invite",
+  "home.action.pay_dues": "Pay dues",
+  "home.action.report_issue": "Report an issue",
+  "home.operational_messages": "Society notices",
+  "home.pending_approval": "Waiting for your approval",
+  "home.title": "Home",
+  "state.empty": "Nothing here yet",
+  "state.expired": "This has expired",
+  "state.loading": "Loading...",
+  "state.offline": "You are offline. Showing saved information.",
+  "state.permission_denied": "You do not have permission to see this",
+  "support.raise": "Raise a support or privacy issue"
+}

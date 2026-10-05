@@ -1,0 +1,21 @@
+{
+  "approval.approve": "स्वीकृत करें",
+  "approval.deny": "अस्वीकार करें",
+  "approval.not_entered_note": "स्वीकृति का मतलब यह नहीं कि मेहमान अंदर आ गया है।",
+  "approval.visitor_at_gate": "{visitor} गेट पर हैं",
+  "fallback.call_guard": "गेट को फ़ोन करें",
+  "fallback.call_note": "अगर ऐप काम न करे तो गार्ड आपको फ़ोन करेगा।",
+  "home.action.approve": "स्वीकृत करें",
+  "home.action.invite": "आमंत्रित करें",
+  "home.action.pay_dues": "बकाया चुकाएँ",
+  "home.action.report_issue": "समस्या बताएँ",
+  "home.operational_messages": "सोसायटी सूचनाएँ",
+  "home.pending_approval": "आपकी स्वीकृति की प्रतीक्षा में",
+  "home.title": "होम",
+  "state.empty": "यहाँ अभी कुछ नहीं है",
+  "state.expired": "यह समाप्त हो चुका है",
+  "state.loading": "लोड हो रहा है...",
+  "state.offline": "आप ऑफ़लाइन हैं। सहेजी हुई जानकारी दिख रही है।",
+  "state.permission_denied": "इसे देखने की आपको अनुमति नहीं है",
+  "support.raise": "सहायता या गोपनीयता समस्या दर्ज करें"
+}

@@ -1,0 +1,44 @@
+version: 1
+note: 'Semantic id -> icon name. Allow/deny must never rely on colour alone (UX-02):
+  every control pairs icon + text, and allow/deny use different shapes (circle with
+  tick vs octagon with cross).'
+colour_independent:
+- guard.decision.allow
+- guard.decision.deny
+icons:
+  guard.tile.guest: person-badge
+  guard.tile.delivery: package-delivery
+  guard.tile.service: wrench
+  guard.nav.scan: qr-scan
+  guard.nav.parcels: parcel-box
+  guard.nav.inside: people-inside
+  guard.nav.incident: alert-triangle
+  guard.nav.shift: clock-shift
+  guard.decision.allow: check-circle
+  guard.decision.deny: x-octagon
+  guard.banner.offline: wifi-off
+  guard.banner.online: wifi
+  guard.banner.policy_age: shield-clock
+  guard.banner.policy_stale: shield-alert
+  guard.queue.pending: cloud-upload-pending
+  guard.queue.empty: cloud-check
+  guard.commit.saved: device-saved
+  guard.visitor.call_resident: phone-call
+  guard.visitor.waiting_approval: hourglass
+  guard.visitor.no_response: phone-missed
+  guard.handover.title: hand-parcel
+  guard.handover.confirm: check-circle
+  guard.handover.check_unit: home-check
+  guard.handover.check_person: person-check
+  guard.handover.check_parcel: seal-check
+  guard.incident.report: clipboard-alert
+  guard.incident.emergency: siren
+  guard.shift.start: play-circle
+  guard.shift.end: stop-circle
+  guard.training.banner: graduation-cap
+  guard.training.complete: award
+  guard.training.scenario.invited_visitor: graduation-cap
+  guard.training.scenario.unannounced_guest: graduation-cap
+  guard.training.scenario.no_response: graduation-cap
+  guard.training.scenario.outage: graduation-cap
+  guard.training.scenario.emergency: graduation-cap

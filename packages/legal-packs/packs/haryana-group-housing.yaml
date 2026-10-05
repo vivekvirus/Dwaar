@@ -1,0 +1,73 @@
+# Haryana group housing: RERA promoter period, then the Haryana Apartment Ownership Act 1983.
+pack_type: legal-pack
+pack_id: haryana-group-housing
+jurisdiction: IN-HR
+entity_type: apartment_assoc
+version: 2026.1.0
+title: Haryana group housing (RERA promoter period; Haryana Apartment Ownership Act 1983)
+status: unapproved
+enabled: true
+labels: [LEGAL, VERIFY]
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+notes: >-
+  Associations are often registered societies. Quorum, voting and notice come from the declaration
+  and bye-laws and must be configured with a legal reference.
+legal_sources:
+  - ref_id: rera-act-s11-4-e
+    citation: "RERA Act section 11(4)(e) (association formation)"
+    prd_ref: "Appendix A; Appendix F (Haryana RERA Act and rules)"
+    labels: [LEGAL, VERIFY]
+    url: null
+  - ref_id: rera-act-s17
+    citation: "RERA Act section 17 (conveyance and handover)"
+    prd_ref: "Appendix A"
+    labels: [LEGAL, VERIFY]
+    url: null
+  - ref_id: haryana-aoa-1983
+    citation: "Haryana Apartment Ownership Act 1983, with declaration and bye-laws"
+    prd_ref: "Appendix A; Appendix F"
+    labels: [LEGAL, VERIFY]
+    url: null
+rules:
+  promoter_period.association_formation:
+    value: {statutory_ref: "RERA Act section 11(4)(e)"}
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: rera-act-s11-4-e
+  promoter_period.conveyance_handover:
+    value: {statutory_ref: "RERA Act section 17"}
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: rera-act-s17
+  handover.record_ifms_or_corpus_transfer:
+    value: true
+    note: "Record IFMS or corpus transfer at handover."
+    labels: [LEGAL]
+    legal_source_ref: rera-act-s17
+  voting.basis:
+    value: null
+    configurable: true
+    note: "Per declaration and bye-laws."
+    labels: [LEGAL, TBD]
+    legal_source_ref: haryana-aoa-1983
+  quorum.ordinary:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: haryana-aoa-1983
+  quorum.redevelopment:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: haryana-aoa-1983
+  notice.agm_clear_days:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: haryana-aoa-1983
+  interest.max_simple_pct_pa:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: haryana-aoa-1983

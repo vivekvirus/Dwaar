@@ -1,0 +1,12 @@
+{
+  "helpdesk.state.assigned": "नियुक्त केले",
+  "helpdesk.state.closed": "बंद",
+  "helpdesk.state.in_progress": "प्रगतीत",
+  "helpdesk.state.open": "उघडे",
+  "helpdesk.state.reopened": "पुन्हा उघडले",
+  "helpdesk.state.resolved": "निराकरण झाले",
+  "helpdesk.state.waiting_resident": "रहिवाशाच्या प्रतीक्षेत",
+  "sla.breached": "{hours} तास उशीर",
+  "sla.due_in": "{hours} तासांत देय",
+  "sla.on_track": "वेळेत"
+}

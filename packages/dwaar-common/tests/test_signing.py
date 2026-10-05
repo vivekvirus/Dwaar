@@ -171,3 +171,73 @@ def test_signer_repr_hides_private_key() -> None:
     signer = Signer.generate()
     assert "Ed25519PrivateKey" not in repr(signer)
     assert signer.key_id in repr(signer)
+
+
+# ------------------------------------------------------------------ fix round 1 (F24)
+
+
+def _event(society: uuid.UUID, device: uuid.UUID) -> EdgeEvent:
+    return EdgeEvent.build(
+        society_id=society,
+        device_id=device,
+        seq=1,
+        entity_id=uuid.uuid4(),
+        entity_version=1,
+        type="EntryObserved",
+        policy_version=1,
+        payload={"lane": "l1"},
+        occurred_at=datetime(2026, 10, 5, 8, 0, 0, 123456, tzinfo=UTC),
+    )
+
+
+def test_ring_binds_a_key_to_its_society_and_device() -> None:
+    society, device, other = uuid.uuid4(), uuid.uuid4(), uuid.uuid4()
+    signer = Signer.generate("dev-a")
+    ring = VerifierRing()
+    ring.add("dev-a", signer.public_key, society_id=society, device_id=device)
+    assert ring.verify_event("dev-a", signer.sign_event(_event(society, device)))
+    assert not ring.verify_event(
+        "dev-a", signer.sign_event(_event(other, device))
+    )  # another tenant
+    assert not ring.verify_event(
+        "dev-a", signer.sign_event(_event(society, other))
+    )  # another device
+    with pytest.raises(SigningError):
+        ring.add("dev-b", signer.public_key, device_id=device)  # a device binding needs its society
+
+
+def test_require_binding_refuses_unbound_keys_for_events_but_not_envelopes() -> None:
+    signer = Signer.generate("platform")
+    event = signer.sign_event(_event(uuid.uuid4(), uuid.uuid4()))
+    lax = VerifierRing({"platform": signer.public_key})
+    strict = VerifierRing({"platform": signer.public_key}, require_binding=True)
+    assert lax.verify_event("platform", event)
+    assert not strict.verify_event("platform", event)
+    envelope = {"a": 1}
+    assert strict.verify_envelope("platform", envelope, signer.sign_envelope(envelope))
+
+
+def test_occurred_at_is_millisecond_precision_and_tampering_below_it_is_detected() -> None:
+    signer = Signer.generate("k1")
+    signed = signer.sign_event(_event(uuid.uuid4(), uuid.uuid4()))
+    assert signed.occurred_at.microsecond == 123000  # normalised to what the signature covers
+    tampered = signed.model_copy(
+        update={"occurred_at": signed.occurred_at.replace(microsecond=123999)}
+    )
+    assert not tampered.has_signable_timestamp()
+    assert not VerifierRing({"k1": signer.public_key}).verify_event("k1", tampered)
+
+
+def test_signature_strings_are_canonical() -> None:
+    signer = Signer.generate("k2")
+    signed = signer.sign_event(_event(uuid.uuid4(), uuid.uuid4()))
+    assert signed.signature is not None
+    head, last = signed.signature[:-1], signed.signature[-1]
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+    ring = VerifierRing({"k2": signer.public_key})
+    accepted = [c for c in alphabet if ring.verify_event("k2", signed.with_signature(head + c))]
+    assert accepted == [last]
+    with pytest.raises(SigningError):
+        parse_signature(
+            "ed25519:" + head + ("B" if last != "B" else "C")
+        )  # non-canonical trailing bits

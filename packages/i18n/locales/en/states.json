@@ -1,0 +1,15 @@
+{
+  "local.saved_awaiting_sync": "Saved on this device; awaiting sync",
+  "local.synced": "Synced",
+  "parcel.at_gate": "At gate until collected",
+  "parcel.handed_over": "Handed over",
+  "payment.paid": "Paid",
+  "payment.received_settlement_pending": "Payment received; settlement pending",
+  "payment.settled": "Settled",
+  "visit.approved": "Approved; not yet entered",
+  "visit.denied": "Denied",
+  "visit.entered": "Entered",
+  "visit.expired": "Expired",
+  "visit.no_response": "No response yet",
+  "visit.submitted": "Submitted"
+}

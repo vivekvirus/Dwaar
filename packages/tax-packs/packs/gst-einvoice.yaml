@@ -1,0 +1,25 @@
+# Statutory e-invoicing context (TAX-03). Routine resident bills stay separate from statutory e-invoices.
+# IRP integration only where legally required and configured. Draft: needs CA confirmation.
+pack_type: gst-einvoice
+pack_id: gst-einvoice
+version: 2026.1.0-draft
+title: GST e-invoice applicability and reporting window
+status: draft
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+next_review: null
+labels: [CA, VERIFY]
+legal_sources:
+  - ref_id: einvoice-advisories
+    citation: "E-invoice mandate and 30-day reporting advisories (einvoice6.gst.gov.in), as cited in PRD Appendix F"
+    prd_ref: "TAX-03; Appendix F"
+    labels: [CA, VERIFY]
+    url: null
+irp_integration_turnover_threshold_paise: 5000000000
+reporting_window:
+  aato_threshold_paise: 10000000000
+  comparison: gte
+  limit_days: 30
+integration: {irp_enabled_by_default: false, routine_bills_separate_from_einvoice: true}

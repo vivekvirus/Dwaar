@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "policy": "COM-02: legal or safety-significant strings (namespaces listed in human_review_required) require human review before release. Every hi/mr set below is machine_drafted and has NOT been reviewed by a native speaker or counsel. Do not treat any entry as approved. The English source is authored in-repo and also pending product/legal review.",
+  "human_review_required": [
+    "errors",
+    "states",
+    "guard",
+    "notifications",
+    "visitor",
+    "consent",
+    "finance"
+  ],
+  "locales": {
+    "en": {
+      "common": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "consent": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "errors": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "finance": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "guard": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "notifications": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "ops": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "resident": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "states": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "visitor": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      }
+    },
+    "hi": {
+      "common": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "consent": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "errors": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "finance": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "guard": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "notifications": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "ops": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "resident": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "states": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "visitor": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      }
+    },
+    "mr": {
+      "common": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "consent": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "errors": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "finance": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "guard": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "notifications": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "ops": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "resident": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "states": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "visitor": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      }
+    }
+  }
+}

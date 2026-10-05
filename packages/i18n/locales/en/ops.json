@@ -1,0 +1,12 @@
+{
+  "helpdesk.state.assigned": "Assigned",
+  "helpdesk.state.closed": "Closed",
+  "helpdesk.state.in_progress": "In progress",
+  "helpdesk.state.open": "Open",
+  "helpdesk.state.reopened": "Reopened",
+  "helpdesk.state.resolved": "Resolved",
+  "helpdesk.state.waiting_resident": "Waiting for resident",
+  "sla.breached": "Overdue by {hours} h",
+  "sla.due_in": "Due in {hours} h",
+  "sla.on_track": "On track"
+}

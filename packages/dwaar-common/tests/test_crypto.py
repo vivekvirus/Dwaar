@@ -183,3 +183,20 @@ def test_normalize_phone_invalid(raw: str) -> None:
 def test_normalize_phone_rejects_non_str() -> None:
     with pytest.raises(InvalidPhoneError):
         normalize_phone_in(9999900123)  # type: ignore[arg-type]
+
+
+# ------------------------------------------------------------------ fix round 1 (F22)
+
+
+def test_unicode_digits_never_normalise_to_a_phone_number() -> None:
+    from dwaar_common.crypto import InvalidPhoneError, normalize_phone_in
+
+    for lookalike in (
+        "9" + "\u0669" * 9,
+        "9" + "\u0966" * 9,
+        "+91" + "9" + "\u0669" * 9,
+        "\uff19\uff19\uff19\uff19\uff19\uff10\uff10\uff11\uff12\uff13",
+    ):
+        with pytest.raises(InvalidPhoneError):
+            normalize_phone_in(lookalike)
+    assert normalize_phone_in("99999 00123") == "+919999900123"

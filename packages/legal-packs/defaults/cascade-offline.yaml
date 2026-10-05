@@ -1,0 +1,49 @@
+# Approval cascade (PRD Appendix C / NOTIF-03 / D-15) and offline defaults (D-13). All timings are
+# configurable per society only within the bounds below. A timeout NEVER auto-allows (INV-03, D-14).
+# Operational policy defaults, not law; still unapproved until the owner/security supervisor signs off.
+pack_type: cascade-offline
+pack_id: cascade-offline-defaults
+version: 2026.1.0
+status: unapproved
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+labels: [VERIFY]
+legal_sources:
+  - ref_id: prd-appendix-c
+    citation: "PRD Appendix C, Cascade and Offline Defaults; decisions D-13, D-14, D-15"
+    prd_ref: "Appendix C; D-13; D-14; D-15"
+    labels: [VERIFY]
+    url: null
+cascade:
+  steps:
+    - {step: 1, at_seconds: 0, action: high_priority_push_to_household_approvers_security_channel, condition: always}
+    - {step: 2, at_seconds: 10, action: push_to_configured_alternate_adult, condition: no_app_acknowledgement}
+    - {step: 3, at_seconds: 20, action: masked_ivr_call_to_primary_approver, condition: still_pending, note: "Keypad answer; spoken answer from M2."}
+    - {step: 4, at_seconds: 35, action: whatsapp_utility_template_or_sms_link_to_opted_in_recipients, condition: still_pending}
+    - step: 5
+      at_seconds: 90
+      action: expire_with_guard_assisted_options
+      condition: never_auto_allow
+      guard_options: [hold, leave_at_gate, lobby_only, intercom, deny]
+  auto_allow_on_timeout: false
+  bounds:
+    min_seconds_between_steps: 10
+    expiry_seconds: {min: 60, max: 180, default: 90}
+offline:
+  resident_credential_validity_hours: 72
+  guest_pass_max_hours: 2
+  guest_pass_bound_to_assigned_gate: true
+  clock_uncertainty_disable_auto_approvals_seconds: 60
+  supervisor_override_validity: until_shift_end_or_earlier
+  policy_age_guard_assisted_verification_hours: 72
+  edge_event_buffer_hours: 72
+  terminal_standalone_min_hours: 24
+# Upper bounds for the safety-relevant offline settings above. A society may tighten (lower) them, never relax them:
+# a huge value would disable the very safeguard the setting parameterises.
+offline_bounds:
+  resident_credential_validity_hours: {max: 72}  # D-13: 72 hours, "shorter for elevated access"; never longer
+  clock_uncertainty_disable_auto_approvals_seconds: {max: 60}  # EDGE-05: above 60 s disables auto approvals
+  policy_age_guard_assisted_verification_hours: {max: 72}  # EDGE-05: policy older than 72 h triggers guard-assisted verification
+  edge_event_buffer_hours: {max: 168}  # NFR-09 needs >= 72 h; 168 h is an engineering ceiling for edge disk [TBD owner/security supervisor to confirm]

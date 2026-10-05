@@ -233,3 +233,85 @@ def test_society_log_token_is_stable_and_not_reversible() -> None:
     assert token == society_log_token(str(sid))
     assert token.startswith("soc_")
     assert str(sid)[:8] not in token
+
+
+# ------------------------------------------------------------------ fix round 1 (F01, F02, F03, Q-03)
+
+
+@pytest.mark.parametrize(
+    ("text", "secret"),
+    [
+        ("contact ravi.kumar@example.org about it", "ravi.kumar"),
+        ("deducted TDS for PAN ABCDE1234F yesterday", "ABCDE1234F"),
+        ("IFSC HDFC0001234 branch", "HDFC0001234"),
+        ("pay to ravi@okhdfc now", "ravi@okhdfc"),
+        ("GSTIN 27ABCDE1234F1Z5 registered", "27ABCDE1234F1Z5"),
+        ("Authorization: Token abcdef1234567890", "abcdef1234567890"),
+        ("Cookie: session=abcdef123456; theme=dark", "abcdef123456"),
+        ("GET /x?client_secret=s3cr3tvalue&x=1", "s3cr3tvalue"),
+        ('{"password": "my pass phrase", "ok": 1}', "pass phrase"),
+        ("see https://x.example/cb?token=abc123&y=2", "abc123"),
+    ],
+)
+def test_scrub_text_covers_identity_and_opaque_credentials(text: str, secret: str) -> None:
+    assert secret not in scrub_text(text)
+
+
+def test_scrub_text_handles_unicode_digits_and_keeps_ids_and_dates_readable() -> None:
+    assert "९९९९९००१२३" not in scrub_text("call ९९९९९००१२३ now")
+    kept = "visit 0192f3a1-6b2d-7c00-8e4f-1a2b3c4d5e6f at 2026-10-05 12:30:45 from 203.0.113.145"
+    assert scrub_text(kept) == kept
+    assert (
+        scrub_text("seq 12345 status_code=200 latency_ms=12")
+        == "seq 12345 status_code=200 latency_ms=12"
+    )
+
+
+def test_scrub_text_is_linear_on_hostile_input() -> None:
+    import time
+
+    started = time.perf_counter()
+    for hostile in ("a" * 200_000, "token" * 40_000, "a=b:" * 40_000, "1 " * 80_000, "a@" * 80_000):
+        scrub_text(hostile)
+    assert time.perf_counter() - started < 5
+
+
+def test_scrub_value_scrubs_numbers_but_keeps_quantities() -> None:
+    out = scrub_value(
+        {
+            "contact": 9999900123,
+            "nested": [[9999900123]],
+            "amount_paise": 1_500_000_000,
+            "retry_count": 3,
+        }
+    )
+    assert out["contact"] == REDACTED
+    assert out["nested"] == [[REDACTED]]
+    assert out["amount_paise"] == 1_500_000_000
+    assert out["retry_count"] == 3
+
+
+def test_uvicorn_loggers_are_rerouted_through_the_scrubbing_handler() -> None:
+    from dwaar_common.logging import harden_server_loggers
+
+    access = logging.getLogger("uvicorn.access")
+    saved = (list(access.handlers), access.propagate, list(access.filters))
+    try:
+        access.handlers = [logging.StreamHandler(io.StringIO())]
+        access.propagate = False
+        harden_server_loggers()
+        harden_server_loggers()  # idempotent
+        assert access.handlers == []
+        assert access.propagate is True
+        assert len([f for f in access.filters if type(f).__name__ == "StripQueryStringFilter"]) == 1
+        record = logging.LogRecord(
+            "uvicorn.access", logging.INFO, __file__, 1, '%s - "%s %s HTTP/%s" %d',
+            ("127.0.0.1:1", "GET", "/v1/x?otp=482913&phone=9999900123", "1.1", 200), None,
+        )  # fmt: skip
+        assert access.filter(record)  # Logger.filter runs every logger-level filter
+        assert record.getMessage() == '127.0.0.1:1 - "GET /v1/x HTTP/1.1" 200'
+    finally:
+        access.handlers, access.propagate = saved[0], saved[1]
+        for f in list(access.filters):
+            if f not in saved[2]:
+                access.removeFilter(f)

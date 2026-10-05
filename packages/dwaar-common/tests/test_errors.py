@@ -65,14 +65,14 @@ def test_codes_and_statuses_match_prd_12_2_exactly() -> None:
 def test_each_error_class(cls: type[DwaarError], code: str, status: int) -> None:
     exc = cls(details={"field": "x"})
     assert (exc.code, exc.status) == (code, status)
-    assert exc.message_key == f"error.{code}"
+    assert exc.message_key == f"errors.{code}"
     assert exc.message
     body = exc.to_body("req-1")
     assert body == {
         "request_id": "req-1",
         "code": code,
         "message": exc.message,
-        "message_key": f"error.{code}",
+        "message_key": f"errors.{code}",
         "details": {"field": "x"},
     }
     json.dumps(body)  # JSON-safe

@@ -1,0 +1,6 @@
+# Inherits the workspace ruff config; adds package-local per-file ignores (CLI prints, test idioms).
+extend = "../../pyproject.toml"
+
+[lint.per-file-ignores]
+"tests/**" = ["S101", "S603", "S607", "S105", "S106", "S311", "PT018", "T20"]
+"dwaar_packs/__main__.py" = ["T20"]

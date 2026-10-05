@@ -1,0 +1,21 @@
+{
+  "approval.approve": "मंजूर करा",
+  "approval.deny": "नाकारा",
+  "approval.not_entered_note": "मंजुरीचा अर्थ पाहुणा आत आला असा नाही.",
+  "approval.visitor_at_gate": "{visitor} गेटवर आहेत",
+  "fallback.call_guard": "गेटला फोन करा",
+  "fallback.call_note": "अॅप चालत नसल्यास गार्ड तुम्हाला फोन करेल.",
+  "home.action.approve": "मंजूर करा",
+  "home.action.invite": "आमंत्रित करा",
+  "home.action.pay_dues": "थकबाकी भरा",
+  "home.action.report_issue": "समस्या नोंदवा",
+  "home.operational_messages": "सोसायटी सूचना",
+  "home.pending_approval": "तुमच्या मंजुरीची प्रतीक्षा",
+  "home.title": "मुख्यपृष्ठ",
+  "state.empty": "इथे अजून काही नाही",
+  "state.expired": "हे कालबाह्य झाले आहे",
+  "state.loading": "लोड होत आहे...",
+  "state.offline": "तुम्ही ऑफलाइन आहात. जतन केलेली माहिती दाखवत आहे.",
+  "state.permission_denied": "हे पाहण्याची तुम्हाला परवानगी नाही",
+  "support.raise": "मदत किंवा गोपनीयता समस्या नोंदवा"
+}

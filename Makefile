@@ -38,8 +38,8 @@ migrate: ## apply SQL migrations as dwaar_owner (dwaar_api.core.migrate)
 seed: ## load synthetic demo data (DWAAR_ENV=local); says so if not implemented yet
 	$(UV_RUN) python -m tools.dev.seed
 
-api: ## run the API with reload on $(API_PORT) (foreground; Ctrl-C to stop)
-	$(UV_RUN) python tools/dev/devenv.py exec -- uvicorn dwaar_api.main:app --reload --host 127.0.0.1 --port $(API_PORT)
+api: ## run the API with reload on $(API_PORT); no raw uvicorn access log (OBS-01); Ctrl-C to stop
+	$(UV_RUN) python tools/dev/devenv.py exec -- uvicorn dwaar_api.main:app --reload --no-access-log --host 127.0.0.1 --port $(API_PORT)
 
 lint: ## ruff check + format check
 	$(UV_RUN) ruff check .

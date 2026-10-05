@@ -324,3 +324,36 @@ def test_module_contains_no_float_arithmetic() -> None:
             assert node.func.id not in {"float", "round"}, f"{node.func.id}() at line {node.lineno}"
         if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
             assert node.value.id != "math", f"math.{node.attr} at line {node.lineno}"
+
+
+# ------------------------------------------------------------------ fix round 1 (F22, F26)
+
+
+@pytest.mark.parametrize("mode", ["banana", "HALF_UP", "", "round", None, 0, ["half_up"]])
+def test_unknown_rounding_mode_is_an_error_even_for_exact_divisions(mode: object) -> None:
+    for amount, bp in ((100, 100), (1, 1), (7, 5000)):
+        with pytest.raises(money.MoneyError):
+            money.apply_bp(amount, bp, mode)  # type: ignore[arg-type]
+    with pytest.raises(money.MoneyError):
+        money.div_round(4, 2, mode)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("mode", sorted(money.ROUNDING_MODES))
+def test_every_known_rounding_mode_is_accepted(mode: str) -> None:
+    assert money.apply_bp(100, 100, mode) == 1  # type: ignore[arg-type]
+
+
+def test_parsers_reject_non_ascii_digits() -> None:
+    for text in (
+        "\u0661\u0662\u0663.\u0665\u0660",
+        "\u0967\u0968\u0969",
+        "\uff11\uff12\u0969",
+        "\u09e7\u09e8",
+        "₹\u0665\u0660\u0660",
+    ):
+        with pytest.raises(money.MoneyError):
+            money.parse_rupees(text)
+    with pytest.raises(money.MoneyError):
+        money.percent_to_bp("\u0661\u0662.\u0665")
+    with pytest.raises(money.MoneyError):
+        money.group_indian("²³")

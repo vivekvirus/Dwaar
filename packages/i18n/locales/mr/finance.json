@@ -1,0 +1,14 @@
+{
+  "action.pay_now": "आता भरा",
+  "bill.due": "{amount} {date} पर्यंत देय",
+  "bill.title": "बिल",
+  "essential_services.note": "थकबाकीमुळे अत्यावश्यक सेवा कधीही थांबवल्या जात नाहीत.",
+  "receipt.number": "पावती क्रमांक {number}",
+  "receipt.title": "पावती",
+  "settlement.failed": "सेटलमेंट अयशस्वी; मदत पथक तुमच्याशी संपर्क करेल",
+  "settlement.pending": "पेमेंट मिळाले; सेटलमेंट प्रलंबित",
+  "settlement.settled": "सेटलमेंट झाले",
+  "status.paid": "भरले",
+  "status.partially_paid": "अंशतः भरले: {total} पैकी {paid}",
+  "status.unpaid": "न भरलेले"
+}

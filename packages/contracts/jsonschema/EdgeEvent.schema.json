@@ -1,0 +1,95 @@
+{
+  "additionalProperties": false,
+  "description": "Edge sync event (PRD EDGE-02 / 12.3).\n\n`signature` is `None` until signed. The signed bytes are the canonical JSON of the\nwire form without the `signature` field (see `signing.sign_edge_event`).",
+  "properties": {
+    "clock_uncertainty_ms": {
+      "minimum": 0,
+      "title": "Clock Uncertainty Ms",
+      "type": "integer"
+    },
+    "device_id": {
+      "format": "uuid",
+      "title": "Device Id",
+      "type": "string"
+    },
+    "entity_id": {
+      "format": "uuid",
+      "title": "Entity Id",
+      "type": "string"
+    },
+    "entity_version": {
+      "minimum": 0,
+      "title": "Entity Version",
+      "type": "integer"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "payload_hash": {
+      "title": "Payload Hash",
+      "type": "string"
+    },
+    "policy_version": {
+      "minimum": 0,
+      "title": "Policy Version",
+      "type": "integer"
+    },
+    "seq": {
+      "minimum": 0,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "signature": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Signature"
+    },
+    "society_id": {
+      "format": "uuid",
+      "title": "Society Id",
+      "type": "string"
+    },
+    "type": {
+      "maxLength": 100,
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "society_id",
+    "device_id",
+    "seq",
+    "entity_id",
+    "entity_version",
+    "type",
+    "policy_version",
+    "occurred_at",
+    "clock_uncertainty_ms",
+    "payload_hash",
+    "payload"
+  ],
+  "title": "EdgeEvent",
+  "type": "object"
+}

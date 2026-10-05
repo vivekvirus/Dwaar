@@ -1,0 +1,35 @@
+# UPI merchant discount rate schedule effective 15 October 2026 (PAY-05). VERIFY with acquirer.
+# Source named in PRD Appendix F: Department of Financial Services UPI MDR FAQ of 15 September 2026.
+# The MDR is never passed to the resident; the society cost report shows fees by channel.
+pack_type: fee-schedule
+pack_id: upi-mdr
+version: 2026.10.0-draft
+title: UPI MDR fee schedule (effective 2026-10-15)
+status: draft
+approved_by: null
+approved_at: null
+effective_from: "2026-10-15"
+effective_to: null
+next_review: null
+labels: [VERIFY]
+legal_sources:
+  - ref_id: dfs-upi-mdr-faq-2026-09-15
+    citation: "Department of Financial Services UPI MDR FAQ of 15 September 2026 (financialservices.gov.in), with corroborating reporting"
+    prd_ref: "PAY-05; Appendix F"
+    labels: [VERIFY]
+    url: null
+channel: upi
+acquirer_classification: default
+percentage:
+  applies_above_amount_paise: 200000
+  rate_bp: 40
+cap:
+  applies_from_amount_paise: 7500000
+  max_fee_paise: 30000
+flat_fee_categories:
+  fee_paise: 500
+  # The PRD does not list the specified categories; configure them from the acquirer/DFS notification.
+  categories: []
+p2pm_classification: {applicable: null, note: "P2PM classification where applicable; VERIFY with acquirer."}
+pass_to_resident: false
+default_rounding: half_up

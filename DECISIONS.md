@@ -101,3 +101,53 @@ Format: ID, date, owner, decision, reason / consequence.
   migrations run as the non-superuser `dwaar_owner` and never need elevated rights.
 - Databases are created with `LC_COLLATE 'C'` and `LC_CTYPE 'C.UTF-8'` so ordering is identical on a laptop, in CI and in
   tests; locale-aware ordering for display is done in the application. Revisit if the managed provider cannot offer it.
+
+### B-009 Fix round 1 for W1 verification findings (security and integrity hardening)
+- Date: 2026-10-05. Owner: Viz. Findings F01-F32, Q-01..Q-06 (numbering from the verification report).
+- **Logging (F01-F04, Q-03, Q-04).** `make api` runs uvicorn with `--no-access-log`; the app additionally detaches uvicorn's own
+  handlers and strips query strings from `uvicorn.access`, so a deployment that forgets the flag still logs no secret.
+  The scrubber is deny-by-default for credentials (any key containing token/secret/password/cookie/session/otp ...,
+  whole `Authorization`/`Cookie` header values), folds Unicode digits to ASCII and redacts digit runs of 9+ digits in any grouping,
+  plus email, PAN, IFSC, UPI VPA and GSTIN. Over-redaction is accepted; UUIDs, ISO dates, IPv4 addresses and long hashes are left
+  readable. Numbers under innocuous keys are scrubbed too except under quantity keys (paise, count, ms ...).
+  Audit masking additionally masks identity fields by key (email, pan, upi/vpa, ifsc, gstin, dob, address, plate, person-name
+  compounds such as `visitor_name`); a bare `name` stays visible (object label). `record_audit(diff=...)` and outbox event
+  payloads go through the same masker (outbox: masked, with a warning naming paths only, not rejected, so a write is never blocked).
+- **Unique violations (F18).** SQLSTATE 23505 maps to 422 `already_exists` only for constraints registered with
+  `register_society_scoped_unique(...)`; any other unique collision is the generic 409 `stale_version`, and 23503 is `not_found`,
+  so a globally unique identifier is never an existence oracle for people of other societies. PRD 12.2 has no generic "conflict" code.
+  Person/identifier endpoints must still be written as upserts (same answer for new and existing identifiers).
+- **RLS (F05-F07).** The catalog guard (`find_rls_violations`) is deny-by-default and semantic: every relation a runtime role can
+  touch needs society_id + FORCE RLS or an allowlist entry; matviews/foreign tables are banned; views owned by a bypassing role are
+  flagged; policies are evaluated against a foreign society (always-true policies fail); cross-society worker/owner policies must be
+  allowlisted by (table, policy). The database itself cannot stop a `GRANT` on a matview (an event trigger needs superuser), so CI is
+  the control. `RequestContext.all_settings()` always writes all four GUCs, and the pool resets sessions (`RESET ALL`) on check-in.
+  Migration 0008 narrows the idempotency policy to dwaar_app/dwaar_owner, makes outbox delivery columns and `audit_log.at`
+  server-set (column-scoped INSERT) and adds `retention_class`/`legal_hold_id` to both tables. Default class `LOG` is a class
+  CODE from the retention pack, no duration is encoded. Placing a hold on an append-only row needs an owner-only exception in the
+  privacy-engine migration (0700 range); not built yet.
+- **Idempotency (F10-F13).** All expiry decisions use the database clock inside SQL and the claim loop is bounded. A retry with the
+  same key AND same payload replays the stored response even after `expires_at` while the row exists (the cleanup job decides
+  when a key disappears); only a different payload may reclaim an expired key. Default TTL is now 7 days (72 h offline buffer,
+  NFR-09). Money-moving endpoints still need a business-level unique key such as `client_action_id`; the HTTP key cannot cover
+  arbitrarily old retries. Responses encode `Decimal` as strings and refuse floats. A 1 MiB default body limit (413,
+  `Settings.max_request_body_bytes`, per-prefix overrides in `app.state.body_limits`) applies before buffering.
+- **Auth (F15, F16).** The verifier requires `iat` and caps `exp - iat` (default 1 h, `DWAAR_ACCESS_TOKEN_MAX_LIFETIME_SECONDS`).
+  `create_app` raises `ConfigError` outside local/test without a `session_store`; a DB-backed store belongs to the identity module.
+- **Crypto/money (F22, F24, F26).** Phone/money/percent parsers accept ASCII digits only. `VerifierRing.add(..., society_id=,
+  device_id=)` binds a key to its tenant/device and `require_binding=True` refuses unbound keys for events; `EdgeEvent.occurred_at`
+  is normalised to milliseconds (what the signature covers) and sub-millisecond tampering fails verification; base64url decoding is
+  strict and canonical. Rounding modes are validated (`money.div_round` is the single implementation, used by `dwaar_packs`).
+- **Packs (F28-F32).** Approval is evidence, not a claim: a pack is binding only if `DWAAR_PACK_APPROVALS` (deployment
+  configuration, `id@version=sha256:<content hash>`, produced by `python -m dwaar_packs pin <file>`) pins its exact content;
+  `FilePackRepository` serves unproven claims as unapproved. `DWAAR_PACKS_ROOT` is honoured only when `DWAAR_ENV` is local/test.
+  Evaluators stamp results with `binding` and `binding_blockers`. Pack data is deeply immutable (`FrozenDict`/`FrozenList`); YAML
+  duplicate keys are rejected; override values are shape/range-validated; four offline safety settings have approved upper
+  bounds in the cascade pack (resident validity 72 h per D-13, clock uncertainty 60 s and policy age 72 h per EDGE-05, event buffer
+  168 h as an engineering ceiling [TBD, owner/security supervisor to confirm]); paise inputs must be ints in signed 64-bit range.
+  `dwaar-packs` now depends on `dwaar-common`.
+- **Other.** Keyset pagination is NULL-safe (NULLs sort last in both directions; `SortColumn(nullable=False)` keeps the plain
+  row-value comparison). API `message_key` is `errors.<code>` (`internal_error` -> `errors.unknown`) and the rate-limit
+  placeholder is `{retry_after_seconds}`. Verification tests for fixed findings live in `tests/security/test_w1_*.py`; findings that
+  were not part of this round stay in `tests/security/verify_w1_*.py` (not collected).
+

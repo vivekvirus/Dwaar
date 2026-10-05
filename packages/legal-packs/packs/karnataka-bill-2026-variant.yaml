@@ -1,0 +1,60 @@
+# Variant pack for pending law: Karnataka Apartment (Ownership and Management) Bill, 2026,
+# introduced 19 August 2026. NOT enacted. DISABLED until enactment AND counsel review (PRD App. A).
+pack_type: legal-pack
+pack_id: karnataka-bill-2026-variant
+jurisdiction: IN-KA
+entity_type: apartment_assoc
+version: 2026.1.0-draft
+title: Karnataka Apartment (Ownership and Management) Bill, 2026 (pending, disabled)
+status: unapproved
+enabled: false
+disabled_reason: "Pending enactment of the Bill and counsel review; the Bill is not law."
+labels: [LEGAL, VERIFY]
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+notes: >-
+  Would replace the Karnataka Apartment Ownership Act and Ownership Flats Act of 1972 if enacted.
+  Tenant treatment for community-facility use must be clarified by counsel before any rule is used.
+legal_sources:
+  - ref_id: karnataka-bill-2026
+    citation: "Karnataka Apartment (Ownership and Management) Bill, 2026, introduced 19 August 2026 (LA Bill No. 14 of 2026)"
+    prd_ref: "Appendix A; Appendix F"
+    labels: [LEGAL, VERIFY]
+    url: null
+rules:
+  association.per_project:
+    value: 1
+    unit: associations_per_project
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: karnataka-bill-2026
+  applicability.min_units_exclusive:
+    value: 8
+    note: "Applies to projects above eight units."
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: karnataka-bill-2026
+  quorum.ordinary:
+    value:
+      fraction: {numerator: 1, denominator: 2}
+      of: owners
+      rounding: ceil
+      cap: null
+      adjourn_after_minutes: null
+    note: "General body quorum of at least 50% of owners."
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: karnataka-bill-2026
+  disputes.resolution_tiers:
+    value: 2
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: karnataka-bill-2026
+  community_facilities.non_owner_use:
+    value: barred_from_regular_or_commercial_use
+    note: "Tenant treatment to be clarified by counsel."
+    labels: [LEGAL, VERIFY, TBD]
+    legal_source_ref: karnataka-bill-2026
+  interest.max_simple_pct_pa:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-bill-2026

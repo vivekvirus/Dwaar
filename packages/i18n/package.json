@@ -1,0 +1,24 @@
+{
+  "name": "@dwaar/i18n",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dwaar message catalogs (en, hi, mr), typed keys and t() helper. REQ: UX-08, INV-11",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./keys": "./src/keys.ts"
+  },
+  "files": ["src", "locales", "audio", "icons.yaml", "review_status.json"],
+  "scripts": {
+    "gen": "node ../../tools/gen_i18n_keys.mjs",
+    "gen:check": "node ../../tools/gen_i18n_keys.mjs --check",
+    "typecheck": "tsc --noEmit",
+    "test": "node ../../tools/gen_i18n_keys.mjs --check && vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

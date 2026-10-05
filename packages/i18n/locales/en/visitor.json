@@ -1,0 +1,10 @@
+{
+  "consent.accept": "I agree",
+  "consent.decline": "I do not agree",
+  "consent.title": "Your consent",
+  "notice.body": "The society records your name and visit details for security. Draft text; pending counsel review.",
+  "notice.title": "Visitor notice",
+  "pass.expired": "Your pass has expired",
+  "pass.expiry": "Your pass expires at {time}",
+  "rights.link": "Your data rights"
+}

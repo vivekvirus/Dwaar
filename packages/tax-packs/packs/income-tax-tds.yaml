@@ -1,0 +1,70 @@
+# TDS pack (TAX-01, TAX-04). Events from 1 April 2026 map to the Income-tax Act, 2025 (section 393).
+# Amounts are integer paise, rates are basis points. Draft: requires CA approval ([CA]); no value here is
+# CA-verified. null means "not specified by the PRD; CA must configure"; calculations then block into review (TAX-05).
+pack_type: tds
+pack_id: income-tax-tds
+version: 2026.1.0-draft
+title: TDS under the Income-tax Act, 2025 (section 393)
+status: draft
+approved_by: null
+approved_at: null
+effective_from: "2026-04-01"
+effective_to: null
+next_review: null
+labels: [CA, VERIFY]
+legal_sources:
+  - ref_id: income-tax-act-2025-s393
+    citation: "Income-tax Act, 2025, section 393 (TDS), for events from 1 April 2026"
+    prd_ref: "TAX-04; Appendix F (Income Tax Department TDS transition FAQ and section 393)"
+    labels: [CA, VERIFY]
+    url: null
+  - ref_id: income-tax-act-1961-legacy
+    citation: "Legacy section labels 194C, 194J, 194I kept as historical aliases only"
+    prd_ref: "TAX-04"
+    labels: [CA]
+    url: null
+trigger_date_basis: credit_or_payment
+rounding: {mode: half_up, unit_paise: 1}
+threshold_comparison: gt
+missing_pan: {rate_bp: null, note: "Rate when PAN is missing is not given in the PRD; CA must configure."}
+lower_deduction_certificate:
+  supported: true
+  nil_allowed: true
+  required_fields: [certificate_no, valid_from, valid_to, rate_bp_or_nil, max_amount_paise]
+cumulative_thresholds: {supported: true, scope: financial_year_per_payee_and_category}
+challan_and_returns: {challans: true, quarterly_return_data: true, certificates: true}
+legacy_aliases:
+  - {alias: "194C", category: contractor, historical: true, valid_through: "2026-03-31"}
+  - {alias: "194J", category: professional, historical: true, valid_through: "2026-03-31"}
+  - {alias: "194I", category: rent, historical: true, valid_through: "2026-03-31"}
+categories:
+  contractor:
+    description: Payments to contractors
+    section_ref: "393"
+    legal_source_ref: income-tax-act-2025-s393
+    labels: [CA, VERIFY]
+    payees:
+      individual_huf: {rate_bp: 100}
+      others: {rate_bp: 200}
+    thresholds:
+      single_payment_paise: 3000000
+      aggregate_per_financial_year_paise: 10000000
+      aggregate_crossing_basis: null
+  professional:
+    description: Payments for professional services
+    section_ref: "393"
+    legal_source_ref: income-tax-act-2025-s393
+    labels: [CA, TBD]
+    payees:
+      individual_huf: {rate_bp: null}
+      others: {rate_bp: null}
+    thresholds: {single_payment_paise: null, aggregate_per_financial_year_paise: null, aggregate_crossing_basis: null}
+  rent:
+    description: Rent payments
+    section_ref: "393"
+    legal_source_ref: income-tax-act-2025-s393
+    labels: [CA, TBD]
+    payees:
+      individual_huf: {rate_bp: null}
+      others: {rate_bp: null}
+    thresholds: {single_payment_paise: null, aggregate_per_financial_year_paise: null, aggregate_crossing_basis: null}

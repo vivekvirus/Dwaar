@@ -1,0 +1,15 @@
+{
+  "local.saved_awaiting_sync": "या डिव्हाइसवर जतन केले; सिंकची प्रतीक्षा आहे",
+  "local.synced": "सिंक झाले",
+  "parcel.at_gate": "घेईपर्यंत गेटवर",
+  "parcel.handed_over": "सुपूर्द केले",
+  "payment.paid": "भरले",
+  "payment.received_settlement_pending": "पेमेंट मिळाले; सेटलमेंट प्रलंबित",
+  "payment.settled": "सेटलमेंट झाले",
+  "visit.approved": "मंजूर; अजून प्रवेश झालेला नाही",
+  "visit.denied": "नाकारले",
+  "visit.entered": "आत प्रवेश केला",
+  "visit.expired": "कालबाह्य",
+  "visit.no_response": "अजून प्रतिसाद नाही",
+  "visit.submitted": "सादर केले"
+}

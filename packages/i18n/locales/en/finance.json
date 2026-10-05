@@ -1,0 +1,14 @@
+{
+  "action.pay_now": "Pay now",
+  "bill.due": "{amount} due by {date}",
+  "bill.title": "Bill",
+  "essential_services.note": "Essential services are never stopped for unpaid dues.",
+  "receipt.number": "Receipt no. {number}",
+  "receipt.title": "Receipt",
+  "settlement.failed": "Settlement failed; support will contact you",
+  "settlement.pending": "Payment received; settlement pending",
+  "settlement.settled": "Settled",
+  "status.paid": "Paid",
+  "status.partially_paid": "Partly paid: {paid} of {total}",
+  "status.unpaid": "Unpaid"
+}

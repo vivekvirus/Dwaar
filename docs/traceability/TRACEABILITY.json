@@ -9,24 +9,24 @@
     "digest": "sha256:5b876e55b22f9c5c24193e65f1488abf7ca018df6e370d0b7488db16964cbd77"
   },
   "scan": {
-    "files_scanned": 67,
+    "files_scanned": 184,
     "files_ignored": 0,
-    "annotations": 11
+    "annotations": 191
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 0,
-      "partial": 8,
+      "done": 3,
+      "partial": 22,
       "blocked-external": 0,
-      "not-started": 212
+      "not-started": 195
     },
     "by_priority": {
       "P0": {
         "done": 0,
-        "partial": 5,
+        "partial": 13,
         "blocked-external": 0,
-        "not-started": 133
+        "not-started": 125
       },
       "P1": {
         "done": 0,
@@ -35,17 +35,17 @@
         "not-started": 2
       },
       "none": {
-        "done": 0,
-        "partial": 3,
+        "done": 3,
+        "partial": 9,
         "blocked-external": 0,
-        "not-started": 77
+        "not-started": 68
       }
     },
     "acceptance_in_scope": 35,
     "acceptance_by_status": {
       "done": 0,
-      "partial": 0,
-      "not-started": 35
+      "partial": 2,
+      "not-started": 33
     },
     "reference_items": {
       "decision": 24,
@@ -65,18 +65,47 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/authz.py",
+        "services/api/migrations/0004_audit_log.sql",
+        "services/api/migrations/0008_integrity_hardening.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/api/tests/unit/test_authz_decide.py::<module>",
+        "services/api/tests/unit/test_pagination_unit.py::<module>",
+        "tests/integration/core/test_audit_outbox.py::<module>",
+        "tests/integration/core/test_db_context.py::<module>",
+        "tests/integration/core/test_fix_round1.py:3",
+        "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/integration/core/test_idempotency.py::<module>",
+        "tests/integration/core/test_pagination.py::<module>",
+        "tests/security/test_core_authn.py::<module>",
+        "tests/security/test_core_authz.py::<module>",
+        "tests/security/test_core_errors_logging.py::<module>",
+        "tests/security/test_core_rls_isolation.py::<module>",
+        "tests/security/test_w1_authn.py::<module>",
+        "tests/security/test_w1_crypto_events_money.py::<module>",
+        "tests/security/test_w1_errors_logging.py::<module>",
+        "tests/security/test_w1_history.py::<module>",
+        "tests/security/test_w1_idempotency.py::<module>",
+        "tests/security/test_w1_rls.py::<module>",
+        "tests/security/verify_w1_authn.py::<module>",
+        "tests/security/verify_w1_crypto_events_money.py::<module>",
+        "tests/security/verify_w1_errors_logging.py::<module>",
+        "tests/security/verify_w1_history.py::<module>",
+        "tests/security/verify_w1_idempotency.py::<module>",
+        "tests/security/verify_w1_r2_db.py::<module>",
+        "tests/security/verify_w1_r2_pure.py::<module>",
+        "tests/security/verify_w1_rls.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-01"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-01"
       ]
     },
@@ -94,11 +123,29 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
-        "packages/dwaar-common/dwaar_common/money.py"
+        "packages/dwaar-common/dwaar_common/money.py",
+        "services/api/dwaar_api/core/idempotency.py",
+        "services/api/migrations/0006_idempotency_keys.sql",
+        "services/api/migrations/0008_integrity_hardening.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_fix_round1.py:3",
+        "tests/integration/core/test_audit_outbox.py::<module>",
+        "tests/integration/core/test_fix_round1.py:3",
+        "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/integration/core/test_idempotency.py::<module>",
+        "tests/security/test_w1_crypto_events_money.py::<module>",
+        "tests/security/test_w1_history.py::<module>",
+        "tests/security/test_w1_idempotency.py::<module>",
+        "tests/security/test_w1_packs.py::<module>",
+        "tests/security/verify_w1_crypto_events_money.py::<module>",
+        "tests/security/verify_w1_history.py::<module>",
+        "tests/security/verify_w1_idempotency.py::<module>",
+        "tests/security/verify_w1_r2_db.py::<module>",
+        "tests/security/verify_w1_r2_pure.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-14",
         "AT-15",
@@ -106,7 +153,6 @@
         "AT-17"
       ],
       "gaps": [
-        "no-tests",
         "acceptance-untested:AT-14",
         "acceptance-untested:AT-15",
         "acceptance-untested:AT-16",
@@ -124,12 +170,15 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_fix_round1.py:3",
+        "tests/security/test_w1_packs.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-04",
         "AT-06",
@@ -137,7 +186,6 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-04",
         "acceptance-untested:AT-06",
         "acceptance-untested:AT-40"
@@ -315,20 +363,28 @@
       "slice": 5,
       "module": "services/api/modules/legal_packs",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "packages/dwaar-packs/dwaar_packs/approvals.py",
+        "packages/dwaar-packs/dwaar_packs/frozen.py",
+        "packages/dwaar-packs/dwaar_packs/rule_values.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_fix_round1.py:3",
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_at37_interest_18_pct_exceeds_12_pct_cap",
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_at38_300_members_20_attendees",
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_maharashtra_appendix_a_rule_keys_exact",
+        "packages/dwaar-packs/tests/test_packs_validation.py::<module>",
+        "tests/security/test_w1_packs.py::<module>",
+        "tests/security/verify_w1_r2_pure.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-37"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-37"
-      ]
+      "gaps": []
     },
     {
       "id": "INV-11",
@@ -344,7 +400,9 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
-        "packages/dwaar-common/dwaar_common/i18n.py"
+        "packages/dwaar-common/dwaar_common/i18n.py",
+        "packages/i18n/src/index.ts",
+        "tools/i18n_check.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -396,20 +454,19 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "partial",
+      "status": "not-started",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [
-        "tools/tests/test_trace_check.py:510"
-      ],
+      "tested_by": [],
       "acceptance_gates": [
         "AT-01",
         "AT-02"
       ],
       "gaps": [
         "no-implementation",
+        "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-02"
       ]
@@ -425,20 +482,19 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "partial",
+      "status": "not-started",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [
-        "tools/tests/test_trace_check.py:510"
-      ],
+      "tested_by": [],
       "acceptance_gates": [
         "AT-02",
         "AT-32"
       ],
       "gaps": [
         "no-implementation",
+        "no-tests",
         "acceptance-untested:AT-02",
         "acceptance-untested:AT-32"
       ]
@@ -526,19 +582,25 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:oidc-identity",
         "provider:sms-dlt"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/ratelimit.py",
+        "services/api/migrations/0007_rate_limit_buckets.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/core/test_ratelimit.py::<module>",
+        "tests/integration/core/test_sql_helpers.py::test_token_bucket_allows_capacity_then_denies_without_burning"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter",
+        "no-simulator"
       ]
     },
     {
@@ -578,19 +640,26 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/api/tests/unit/test_authz_decide.py::<module>",
+        "tests/integration/core/test_fix_round1.py:3",
+        "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/security/test_core_authn.py::<module>",
+        "tests/security/test_core_authz.py::<module>",
+        "tests/security/test_w1_authn.py::<module>",
+        "tests/security/verify_w1_authn.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-01",
         "AT-32"
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-32"
       ]
@@ -704,16 +773,20 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/api/tests/unit/test_authz_decide.py::<module>",
+        "tests/security/test_core_authz.py::<module>",
+        "tests/security/test_w1_errors_logging.py::<module>",
+        "tests/security/verify_w1_errors_logging.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-implementation"
       ]
     },
     {
@@ -727,18 +800,24 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:oidc-identity"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/authn.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/security/test_core_authn.py::<module>",
+        "tests/security/test_w1_authn.py::<module>",
+        "tests/security/verify_w1_authn.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter",
+        "no-simulator"
       ]
     },
     {
@@ -775,9 +854,11 @@
       "slice": 4,
       "module": "apps/guard-android",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "tools/i18n_check.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
@@ -785,7 +866,6 @@
         "AT-35"
       ],
       "gaps": [
-        "no-implementation",
         "no-tests",
         "acceptance-untested:AT-35"
       ]
@@ -827,9 +907,11 @@
       "slice": 3,
       "module": "apps/resident-mobile",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "tools/i18n_check.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
@@ -837,7 +919,6 @@
         "AT-11"
       ],
       "gaps": [
-        "no-implementation",
         "no-tests",
         "acceptance-untested:AT-11"
       ]
@@ -925,9 +1006,12 @@
       "slice": 4,
       "module": "apps/guard-android",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "packages/i18n/src/index.ts",
+        "tools/i18n_check.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
@@ -936,7 +1020,6 @@
         "AT-48"
       ],
       "gaps": [
-        "no-implementation",
         "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
@@ -1006,18 +1089,27 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/migrations/0003_rls_and_append_only_helpers.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/core/test_migrations.py::<module>",
+        "tests/integration/core/test_sql_helpers.py::<module>",
+        "tests/security/test_core_rls_isolation.py::<module>",
+        "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
+        "tests/security/test_w1_quality_db.py::<module>",
+        "tests/security/test_w1_rls.py::<module>",
+        "tests/security/verify_w1_r2_db.py::<module>",
+        "tests/security/verify_w1_rls.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-01"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-01"
       ]
     },
@@ -1055,18 +1147,35 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/config.py",
+        "services/api/dwaar_api/core/db.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/api/tests/unit/test_config.py::<module>",
+        "services/api/tests/unit/test_pagination_unit.py::<module>",
+        "tests/integration/core/test_app_assembly.py::<module>",
+        "tests/integration/core/test_db_context.py::<module>",
+        "tests/integration/core/test_migrations.py::<module>",
+        "tests/integration/core/test_openapi_export.py::<module>",
+        "tests/integration/core/test_pagination.py::<module>",
+        "tests/security/test_core_authz.py::<module>",
+        "tests/security/test_core_errors_logging.py::<module>",
+        "tests/security/test_core_rls_isolation.py::<module>",
+        "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
+        "tests/security/test_w1_quality_db.py::<module>",
+        "tests/security/test_w1_rls.py::<module>",
+        "tests/security/verify_w1_r2_db.py::<module>",
+        "tests/security/verify_w1_rls.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-01"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-01"
       ]
     },
@@ -1081,17 +1190,18 @@
       "slice": 1,
       "module": "services/worker",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/config.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/api/tests/unit/test_config.py::<module>"
+      ],
       "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
-      ]
+      "gaps": []
     },
     {
       "id": "ARCH-05",
@@ -1104,18 +1214,20 @@
       "slice": 1,
       "module": "services/api/modules/platform_admin",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/middleware.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/core/test_ratelimit.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-29"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-29"
       ]
     },
@@ -1156,18 +1268,32 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/migrations/0004_audit_log.sql",
+        "services/api/migrations/0008_integrity_hardening.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/core/test_audit_outbox.py::<module>",
+        "tests/integration/core/test_fix_round1.py:3",
+        "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/integration/core/test_migrations.py::<module>",
+        "tests/integration/core/test_sql_helpers.py::<module>",
+        "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
+        "tests/security/test_w1_history.py::<module>",
+        "tests/security/test_w1_quality_db.py::<module>",
+        "tests/security/test_w1_rls.py::<module>",
+        "tests/security/verify_w1_history.py::<module>",
+        "tests/security/verify_w1_r2_db.py::<module>",
+        "tests/security/verify_w1_rls.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-18"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-18"
       ]
     },
@@ -1216,8 +1342,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-37"
+        "no-tests"
       ]
     },
     {
@@ -1554,20 +1679,19 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "partial",
+      "status": "not-started",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [
-        "tools/tests/test_trace_check.py:510"
-      ],
+      "tested_by": [],
       "acceptance_gates": [
         "AT-03",
         "AT-04"
       ],
       "gaps": [
         "no-implementation",
+        "no-tests",
         "acceptance-untested:AT-03",
         "acceptance-untested:AT-04"
       ]
@@ -1583,17 +1707,16 @@
       "slice": 4,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "partial",
+      "status": "not-started",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [
-        "tools/tests/test_trace_check.py:510"
-      ],
+      "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation"
+        "no-implementation",
+        "no-tests"
       ]
     },
     {
@@ -2126,7 +2249,7 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:push",
         "provider:sms-dlt",
@@ -2136,16 +2259,19 @@
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_cascade_defaults"
+      ],
       "acceptance_gates": [
         "AT-11",
         "AT-40"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-11",
-        "acceptance-untested:AT-40"
+        "acceptance-untested:AT-40",
+        "no-adapter",
+        "no-implementation",
+        "no-simulator"
       ]
     },
     {
@@ -2801,15 +2927,16 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "tools/i18n_check.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ]
     },
@@ -2955,8 +3082,7 @@
       "gaps": [
         "no-implementation",
         "no-tests",
-        "acceptance-untested:AT-33",
-        "acceptance-untested:AT-46"
+        "acceptance-untested:AT-33"
       ]
     },
     {
@@ -2981,8 +3107,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-37"
+        "no-tests"
       ]
     },
     {
@@ -3009,8 +3134,7 @@
       "gaps": [
         "no-implementation",
         "no-tests",
-        "acceptance-untested:AT-14",
-        "acceptance-untested:AT-37"
+        "acceptance-untested:AT-14"
       ]
     },
     {
@@ -3024,19 +3148,23 @@
       "slice": 5,
       "module": "services/api/modules/billing",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_at37_interest_18_pct_exceeds_12_pct_cap",
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_interest_at_or_below_cap_ok",
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_interest_cap_comes_from_pack_not_code",
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_interest_unconfigured_cap_fails_closed",
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_at46_rs3000_net_of_mdr"
+      ],
       "acceptance_gates": [
         "AT-37"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-37"
+        "no-implementation"
       ]
     },
     {
@@ -3297,7 +3425,7 @@
       "labels": [
         "VERIFY"
       ],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "VERIFY",
         "approval:acquirer"
@@ -3305,16 +3433,19 @@
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_at46_rs3000_net_of_mdr",
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_mdr_flat_category_when_configured",
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_mdr_rounding_modes",
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_mdr_thresholds_cap_and_effective_date"
+      ],
       "acceptance_gates": [
         "AT-16",
         "AT-46"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-16",
-        "acceptance-untested:AT-46"
+        "no-implementation"
       ]
     },
     {
@@ -3447,8 +3578,7 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-16",
-        "acceptance-untested:AT-36",
-        "acceptance-untested:AT-46"
+        "acceptance-untested:AT-36"
       ]
     },
     {
@@ -3707,7 +3837,7 @@
       "labels": [
         "LEGAL"
       ],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "LEGAL",
         "approval:counsel"
@@ -3715,14 +3845,15 @@
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_retention_classes"
+      ],
       "acceptance_gates": [
         "AT-23"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-23"
+        "acceptance-untested:AT-23",
+        "no-implementation"
       ]
     },
     {
@@ -4839,19 +4970,25 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "packages/dwaar-common/dwaar_common/logging.py",
-        "packages/dwaar-common/dwaar_common/masking.py"
+        "packages/dwaar-common/dwaar_common/masking.py",
+        "services/api/dwaar_api/core/middleware.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/core/test_fix_round1.py:3",
+        "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/security/test_core_errors_logging.py::<module>",
+        "tests/security/test_w1_errors_logging.py::<module>",
+        "tests/security/verify_w1_errors_logging.py::<module>",
+        "tests/security/verify_w1_r2_pure.py::<module>"
+      ],
       "acceptance_gates": [],
-      "gaps": [
-        "no-tests"
-      ]
+      "gaps": []
     },
     {
       "id": "OBS-02",
@@ -4913,9 +5050,11 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/core/migrate.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
@@ -4923,7 +5062,6 @@
         "AT-34"
       ],
       "gaps": [
-        "no-implementation",
         "no-tests",
         "acceptance-untested:AT-34"
       ]
@@ -5982,8 +6120,10 @@
       "id": "AT-37",
       "milestone": "M1",
       "slice": 5,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "packages/dwaar-packs/tests/test_legal_rules.py::test_at37_interest_18_pct_exceeds_12_pct_cap"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "A Maharashtra pack has the general-body interest set to 18 percent"
@@ -6032,8 +6172,10 @@
       "id": "AT-46",
       "milestone": "M1",
       "slice": 5,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_at46_rs3000_net_of_mdr"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "A 3,000 rupee UPI payment settles net of the 0.4 percent MDR"

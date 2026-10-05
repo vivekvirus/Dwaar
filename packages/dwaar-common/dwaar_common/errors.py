@@ -14,6 +14,16 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any, ClassVar, Final
 
+INTERNAL_ERROR_CODE: Final = "internal_error"
+# `internal_error` is not a PRD 12.2 code: its user-facing text is the catalog's generic
+# `errors.unknown`. Every other code resolves to `errors.<code>` in packages/i18n/locales/*/errors.json.
+_CATALOG_KEY_BY_CODE: Final[dict[str, str]] = {INTERNAL_ERROR_CODE: "errors.unknown"}
+
+
+def message_key_for(code: str) -> str:
+    """i18n catalog key for an error code (namespace `errors`, see packages/i18n)."""
+    return _CATALOG_KEY_BY_CODE.get(code, f"errors.{code}")
+
 
 class DwaarError(Exception):
     code: ClassVar[str] = "internal_error"
@@ -28,7 +38,7 @@ class DwaarError(Exception):
         message_key: str | None = None,
     ) -> None:
         self.message = message or self.default_message
-        self.message_key = message_key or f"error.{self.code}"
+        self.message_key = message_key or message_key_for(self.code)
         self.details: dict[str, Any] = dict(details or {})
         super().__init__(self.message)
 
@@ -195,8 +205,6 @@ ERROR_CLASSES: Final[tuple[type[DwaarError], ...]] = (
 STATUS_BY_CODE: Final[dict[str, int]] = {cls.code: cls.status for cls in ERROR_CLASSES}
 ERROR_BY_CODE: Final[dict[str, type[DwaarError]]] = {cls.code: cls for cls in ERROR_CLASSES}
 
-INTERNAL_ERROR_CODE: Final = "internal_error"
-
 
 def internal_error_body(request_id: str) -> dict[str, Any]:
     """Body for an unexpected 500. `internal_error` is not a PRD 12.2 code; it only
@@ -205,6 +213,6 @@ def internal_error_body(request_id: str) -> dict[str, Any]:
         "request_id": request_id,
         "code": INTERNAL_ERROR_CODE,
         "message": DwaarError.default_message,
-        "message_key": f"error.{INTERNAL_ERROR_CODE}",
+        "message_key": message_key_for(INTERNAL_ERROR_CODE),
         "details": {},
     }

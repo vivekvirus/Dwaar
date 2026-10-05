@@ -1,0 +1,175 @@
+# Maharashtra co-operative housing society (CHS) legal pack. INV-10 / GOV-01 / PRD Appendix A.
+# Every value below is a PRD Appendix A starting value labelled [LEGAL]; none is counsel-approved.
+# Binding features stay disabled until approved_by/approved_at are set by counsel (GOV-01).
+pack_type: legal-pack
+pack_id: maharashtra-chs
+jurisdiction: IN-MH
+entity_type: chs
+version: 2026.1.0
+title: Maharashtra co-operative housing society (MCS Act 1960 Chapter XIII-B)
+status: unapproved
+enabled: true
+labels: [LEGAL, VERIFY]
+approved_by: null
+approved_at: null
+# effective_from is the date from which this pack version is proposed for use; it follows the
+# notification date given in PRD Appendix A (18 June 2026, secondary sources, VERIFY Gazette).
+effective_from: "2026-06-18"
+effective_to: null
+notes: >-
+  Model bye-laws are to be issued by the Registrar; a draft listed on the Registrar's site is not
+  enacted law and must not be loaded as a rule.
+legal_sources:
+  - ref_id: prd-appendix-a-maharashtra
+    citation: "PRD Appendix A, Maharashtra co-operative housing society table (starting values, all [LEGAL])"
+    prd_ref: "Appendix A"
+    labels: [LEGAL]
+    url: null
+  - ref_id: mcs-act-1960-ch-xiii-b
+    citation: "Maharashtra Co-operative Societies Act 1960, Chapter XIII-B"
+    prd_ref: "Appendix A"
+    labels: [LEGAL]
+    url: null
+  - ref_id: mcs-rules-amendment-2026
+    citation: "Maharashtra Co-operative Societies (Amendment) Rules, 2026, notified 18 June 2026 per secondary sources [VERIFY Gazette]"
+    prd_ref: "Appendix A; Appendix F (summaries cited there, not primary text)"
+    labels: [LEGAL, VERIFY]
+    url: null
+  - ref_id: mcs-act-154b-29
+    citation: "Section 154B-29 recovery certificate (Form Y-6 application, Form Y-7 certificate)"
+    prd_ref: "Appendix A"
+    labels: [LEGAL, VERIFY]
+    url: null
+rules:
+  charges.service.basis:
+    value: equal_per_unit
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  charges.lift.basis:
+    value: equal_among_units_in_buildings_with_lift
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  charges.insurance.basis:
+    value: carpet_area
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  charges.lease_rent.basis:
+    value: carpet_area
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  charges.water.basis:
+    value:
+      default: inlets_per_sanctioned_plan
+      metered_requires: counsel_confirmed_resolution
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  interest.max_simple_pct_pa:
+    value: 12
+    unit: percent_per_annum_simple
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  charges.non_occupancy:
+    value: {pct_of_service_charges: 10}
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  funds.sinking.min_pct_construction_cost_pa:
+    value: 0.25
+    unit: percent
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  funds.repair_maintenance.min_pct_construction_cost_pa:
+    value: 0.75
+    unit: percent
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  funds.major_repair.basis:
+    value: carpet_area_as_decided_by_general_body
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  funds.election.basis:
+    value: equal_per_member
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  funds.education.per_member_per_month:
+    value: 1000
+    unit: paise
+    note: "Rs 10 per member per month, stored as integer paise (INV-02)."
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  agm.deadline:
+    value:
+      months_after_financial_year_end: 6
+      financial_year_end_label: "30 September"
+      audit_months_after_financial_year_end: 4
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  notice.agm_clear_days:
+    value: 14
+    unit: clear_days
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  notice.sgm_clear_days:
+    value: 5
+    unit: clear_days
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  notice.redevelopment_clear_days:
+    value: 14
+    unit: clear_days
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  quorum.ordinary:
+    # min(ceil(2/3 x members), 20); adjourn after 30 minutes per rules.
+    value:
+      fraction: {numerator: 2, denominator: 3}
+      of: members
+      rounding: ceil
+      cap: 20
+      adjourn_after_minutes: 30
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  quorum.redevelopment:
+    value:
+      fraction: {numerator: 2, denominator: 3}
+      of: total_members
+      rounding: ceil
+      cap: null
+      registrar_representative_required: true
+      video_recording_mandatory: true
+      developer_selection_pct_of_total_members: 51
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  voting.basis:
+    value:
+      vote_weight: one_member_one_vote
+      resolution_pct_of_members_present: 51
+      include_video_participants: true
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  meetings.video_participation:
+    value:
+      permitted: true
+      conditions:
+        - system_records_and_recognises_participation
+        - proceedings_stored_with_date_and_time
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  committee.one_time_repair_limit:
+    # Rs 1 lakh = 10,000,000 paise. Tiers by number of members; max_members null = no upper bound.
+    value:
+      tiers:
+        - {min_members: 1, max_members: 25, limit_paise: 10000000}
+        - {min_members: 26, max_members: 50, limit_paise: 20000000}
+        - {min_members: 51, max_members: 100, limit_paise: 30000000}
+        - {min_members: 101, max_members: 1000, limit_paise: 40000000}
+        - {min_members: 1001, max_members: null, limit_paise: 50000000}
+    unit: paise
+    labels: [LEGAL]
+    legal_source_ref: mcs-rules-amendment-2026
+  recovery.route:
+    value:
+      section: "154B-29"
+      application_form: Y-6
+      certificate_form: Y-7
+    labels: [LEGAL, VERIFY]
+    legal_source_ref: mcs-act-154b-29

@@ -1,0 +1,21 @@
+[project]
+name = "dwaar-packs"
+version = "0.1.0"
+description = "Dwaar law-as-configuration packs: loaders, JSON-Schema validation, quorum/interest/cascade/retention/tax/fee evaluators (INV-10)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "dwaar-common",
+  "pydantic>=2.7",
+  "pyyaml>=6.0",
+  "jsonschema>=4.21",
+]
+
+[tool.uv.sources]
+dwaar-common = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["dwaar_packs"]

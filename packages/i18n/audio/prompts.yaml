@@ -1,0 +1,477 @@
+version: 1
+note: 'Audio prompt manifest for guard flows (INV-11, UX-08). Nothing is recorded yet: every clip is ''unrecorded''.
+  Spoken text is machine-drafted for hi/mr and needs native-speaker review and studio recording. Spoken
+  text must contain no placeholders.'
+statuses:
+- unrecorded
+- recorded
+- reviewed
+prompts:
+  guard.banner.offline:
+    en:
+      spoken: No connection. Gate works offline.
+      duration_hint_s: 3.0
+      status: unrecorded
+    hi:
+      spoken: इंटरनेट नहीं है। गेट ऑफ़लाइन चलता है।
+      duration_hint_s: 4.0
+      status: unrecorded
+    mr:
+      spoken: इंटरनेट नाही. गेट ऑफलाइन चालतो.
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.banner.online:
+    en:
+      spoken: Connected
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: जुड़ा हुआ
+      duration_hint_s: 1.7
+      status: unrecorded
+    mr:
+      spoken: जोडलेले
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.banner.policy_age:
+    en:
+      spoken: Gate rules were updated recently.
+      duration_hint_s: 3.0
+      status: unrecorded
+    hi:
+      spoken: गेट के नियम हाल ही में अपडेट हुए।
+      duration_hint_s: 4.4
+      status: unrecorded
+    mr:
+      spoken: गेटचे नियम नुकतेच अपडेट झाले.
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.banner.policy_stale:
+    en:
+      spoken: Rules are old. Reconnect when you can.
+      duration_hint_s: 4.0
+      status: unrecorded
+    hi:
+      spoken: नियम पुराने हैं। जब हो सके तब दोबारा जुड़ें।
+      duration_hint_s: 4.8
+      status: unrecorded
+    mr:
+      spoken: नियम जुने आहेत. शक्य होईल तेव्हा पुन्हा जोडा.
+      duration_hint_s: 4.4
+      status: unrecorded
+  guard.commit.saved:
+    en:
+      spoken: Saved on this device
+      duration_hint_s: 2.6
+      status: unrecorded
+    hi:
+      spoken: इस डिवाइस पर सहेजा गया
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: या डिव्हाइसवर जतन केले
+      duration_hint_s: 2.6
+      status: unrecorded
+  guard.decision.allow:
+    en:
+      spoken: Allow entry
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: प्रवेश दें
+      duration_hint_s: 1.7
+      status: unrecorded
+    mr:
+      spoken: प्रवेश द्या
+      duration_hint_s: 1.7
+      status: unrecorded
+  guard.decision.deny:
+    en:
+      spoken: Do not allow
+      duration_hint_s: 2.2
+      status: unrecorded
+    hi:
+      spoken: प्रवेश न दें
+      duration_hint_s: 2.2
+      status: unrecorded
+    mr:
+      spoken: प्रवेश देऊ नका
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.handover.check_parcel:
+    en:
+      spoken: Check the parcel is sealed
+      duration_hint_s: 3.0
+      status: unrecorded
+    hi:
+      spoken: जाँचें कि पार्सल सील है
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: पार्सल सीलबंद असल्याचे तपासा
+      duration_hint_s: 2.6
+      status: unrecorded
+  guard.handover.check_person:
+    en:
+      spoken: Check who is collecting
+      duration_hint_s: 2.6
+      status: unrecorded
+    hi:
+      spoken: लेने वाले की पहचान जाँचें
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: घेणाऱ्याची ओळख तपासा
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.handover.check_unit:
+    en:
+      spoken: Check the unit
+      duration_hint_s: 2.2
+      status: unrecorded
+    hi:
+      spoken: यूनिट जाँचें
+      duration_hint_s: 1.7
+      status: unrecorded
+    mr:
+      spoken: युनिट तपासा
+      duration_hint_s: 1.7
+      status: unrecorded
+  guard.handover.confirm:
+    en:
+      spoken: Confirm handover
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: सौंपना पुष्ट करें
+      duration_hint_s: 2.2
+      status: unrecorded
+    mr:
+      spoken: सुपूर्दगीची पुष्टी करा
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.handover.title:
+    en:
+      spoken: Hand over parcel
+      duration_hint_s: 2.2
+      status: unrecorded
+    hi:
+      spoken: पार्सल सौंपें
+      duration_hint_s: 1.7
+      status: unrecorded
+    mr:
+      spoken: पार्सल सुपूर्द करा
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.incident.emergency:
+    en:
+      spoken: Emergency
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: आपात स्थिति
+      duration_hint_s: 1.7
+      status: unrecorded
+    mr:
+      spoken: आणीबाणी
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.incident.report:
+    en:
+      spoken: Report incident
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: घटना दर्ज करें
+      duration_hint_s: 2.2
+      status: unrecorded
+    mr:
+      spoken: घटनेची नोंद करा
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.nav.incident:
+    en:
+      spoken: Incident
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: घटना
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: घटना
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.nav.inside:
+    en:
+      spoken: Inside
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: अंदर
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: आत
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.nav.parcels:
+    en:
+      spoken: Parcels
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: पार्सल
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: पार्सल
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.nav.scan:
+    en:
+      spoken: Scan
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: स्कैन
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: स्कॅन
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.nav.shift:
+    en:
+      spoken: Shift
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: शिफ़्ट
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: शिफ्ट
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.queue.empty:
+    en:
+      spoken: Everything is synced
+      duration_hint_s: 2.2
+      status: unrecorded
+    hi:
+      spoken: सब कुछ सिंक हो गया है
+      duration_hint_s: 3.5
+      status: unrecorded
+    mr:
+      spoken: सर्व काही सिंक झाले आहे
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.queue.pending:
+    en:
+      spoken: Some entries are waiting to sync.
+      duration_hint_s: 3.5
+      status: unrecorded
+    hi:
+      spoken: कुछ प्रविष्टियाँ सिंक की प्रतीक्षा में हैं।
+      duration_hint_s: 4.0
+      status: unrecorded
+    mr:
+      spoken: काही नोंदी सिंकच्या प्रतीक्षेत आहेत.
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.shift.end:
+    en:
+      spoken: End shift
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: शिफ़्ट खत्म करें
+      duration_hint_s: 2.2
+      status: unrecorded
+    mr:
+      spoken: शिफ्ट संपवा
+      duration_hint_s: 1.7
+      status: unrecorded
+  guard.shift.start:
+    en:
+      spoken: Start shift
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: शिफ़्ट शुरू करें
+      duration_hint_s: 2.2
+      status: unrecorded
+    mr:
+      spoken: शिफ्ट सुरू करा
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.tile.delivery:
+    en:
+      spoken: Delivery
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: डिलीवरी
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: डिलिव्हरी
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.tile.guest:
+    en:
+      spoken: Guest
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: मेहमान
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: पाहुणा
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.tile.service:
+    en:
+      spoken: Service
+      duration_hint_s: 1.2
+      status: unrecorded
+    hi:
+      spoken: सेवा
+      duration_hint_s: 1.2
+      status: unrecorded
+    mr:
+      spoken: सेवा
+      duration_hint_s: 1.2
+      status: unrecorded
+  guard.training.banner:
+    en:
+      spoken: Practice mode. No real entry is recorded.
+      duration_hint_s: 4.0
+      status: unrecorded
+    hi:
+      spoken: अभ्यास मोड। कोई असली प्रवेश दर्ज नहीं होता।
+      duration_hint_s: 4.4
+      status: unrecorded
+    mr:
+      spoken: सराव मोड. कोणतीही खरी नोंद होत नाही.
+      duration_hint_s: 4.0
+      status: unrecorded
+  guard.training.complete:
+    en:
+      spoken: Practice complete
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: अभ्यास पूरा हुआ
+      duration_hint_s: 2.2
+      status: unrecorded
+    mr:
+      spoken: सराव पूर्ण झाला
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.training.scenario.emergency:
+    en:
+      spoken: 'Practice: emergency at the gate'
+      duration_hint_s: 3.0
+      status: unrecorded
+    hi:
+      spoken: 'अभ्यास: गेट पर आपात स्थिति'
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: 'सराव: गेटवर आणीबाणी'
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.training.scenario.invited_visitor:
+    en:
+      spoken: 'Practice: invited visitor arrives'
+      duration_hint_s: 2.6
+      status: unrecorded
+    hi:
+      spoken: 'अभ्यास: आमंत्रित मेहमान आया है'
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: 'सराव: आमंत्रित पाहुणा आला आहे'
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.training.scenario.no_response:
+    en:
+      spoken: 'Practice: resident does not answer'
+      duration_hint_s: 3.0
+      status: unrecorded
+    hi:
+      spoken: 'अभ्यास: निवासी उत्तर नहीं देता'
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: 'सराव: रहिवासी उत्तर देत नाही'
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.training.scenario.outage:
+    en:
+      spoken: 'Practice: internet is down'
+      duration_hint_s: 2.6
+      status: unrecorded
+    hi:
+      spoken: 'अभ्यास: इंटरनेट बंद है'
+      duration_hint_s: 2.6
+      status: unrecorded
+    mr:
+      spoken: 'सराव: इंटरनेट बंद आहे'
+      duration_hint_s: 2.6
+      status: unrecorded
+  guard.training.scenario.unannounced_guest:
+    en:
+      spoken: 'Practice: guest without invitation'
+      duration_hint_s: 2.6
+      status: unrecorded
+    hi:
+      spoken: 'अभ्यास: बिना निमंत्रण का मेहमान'
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: 'सराव: निमंत्रणाशिवाय आलेला पाहुणा'
+      duration_hint_s: 2.6
+      status: unrecorded
+  guard.visitor.call_resident:
+    en:
+      spoken: Call resident
+      duration_hint_s: 1.7
+      status: unrecorded
+    hi:
+      spoken: निवासी को फ़ोन करें
+      duration_hint_s: 2.6
+      status: unrecorded
+    mr:
+      spoken: रहिवाशाला फोन करा
+      duration_hint_s: 2.2
+      status: unrecorded
+  guard.visitor.no_response:
+    en:
+      spoken: No response. Call the resident.
+      duration_hint_s: 3.0
+      status: unrecorded
+    hi:
+      spoken: कोई उत्तर नहीं। निवासी को फ़ोन करें।
+      duration_hint_s: 4.0
+      status: unrecorded
+    mr:
+      spoken: प्रतिसाद नाही. रहिवाशाला फोन करा.
+      duration_hint_s: 3.0
+      status: unrecorded
+  guard.visitor.waiting_approval:
+    en:
+      spoken: Waiting for resident
+      duration_hint_s: 2.2
+      status: unrecorded
+    hi:
+      spoken: निवासी के उत्तर की प्रतीक्षा
+      duration_hint_s: 3.0
+      status: unrecorded
+    mr:
+      spoken: रहिवाशाच्या उत्तराची प्रतीक्षा
+      duration_hint_s: 2.2
+      status: unrecorded

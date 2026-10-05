@@ -1,0 +1,15 @@
+{
+  "approval.decided.body": "{visitor} साठी {decision}.",
+  "approval.decided.title": "निर्णय नोंदवला",
+  "approval.escalation.body": "एक पाहुणा {minutes} मिनिटे वाट पाहत आहे. गार्ड तुम्हाला फोन करू शकतो.",
+  "approval.escalation.title": "तुमची प्रतीक्षा अजूनही आहे",
+  "approval.expired.body": "पाहुण्याची विनंती निर्णयाशिवाय कालबाह्य झाली.",
+  "approval.expired.title": "विनंती कालबाह्य झाली",
+  "approval.request.body": "{visitor} यांना {unit} मध्ये यायचे आहे. मंजूर किंवा नाकारा.",
+  "approval.request.lockscreen.body": "उत्तर देण्यासाठी द्वार उघडा.",
+  "approval.request.lockscreen.title": "गेटवर पाहुणा",
+  "approval.request.title": "गेटवर पाहुणा",
+  "channel.emergency.title": "आणीबाणी सूचना",
+  "channel.security.description": "सुरक्षा आणि आणीबाणी सूचना. यांत कधीही जाहिराती नसतात.",
+  "setting.show_identity_lockscreen": "लॉक स्क्रीनवर पाहुण्याचे नाव आणि युनिट दाखवा"
+}

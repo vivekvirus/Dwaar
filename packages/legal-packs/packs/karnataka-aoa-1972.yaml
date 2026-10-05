@@ -1,0 +1,84 @@
+# Karnataka apartment association, current law: Karnataka Apartment Ownership Act 1972 with the
+# registered declaration and bye-laws. PRD Appendix A names few concrete values; the rest are null
+# and must be configured from the adopted declaration/bye-laws with a legal reference (GOV-01).
+pack_type: legal-pack
+pack_id: karnataka-aoa-1972
+jurisdiction: IN-KA
+entity_type: apartment_assoc
+version: 2026.1.0
+title: Karnataka apartment association (Apartment Ownership Act 1972, current law)
+status: unapproved
+enabled: true
+labels: [LEGAL, VERIFY]
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+notes: >-
+  Many associations are registered under the Karnataka Societies Registration Act 1960; confirm the
+  registration route before choosing this pack. Statutory majorities follow declared voting
+  percentages, not automatically one flat one vote.
+legal_sources:
+  - ref_id: prd-appendix-a-karnataka-aoa
+    citation: "PRD Appendix A, Karnataka apartment association (current law)"
+    prd_ref: "Appendix A"
+    labels: [LEGAL]
+    url: null
+  - ref_id: karnataka-aoa-1972
+    citation: "Karnataka Apartment Ownership Act 1972, with registered declaration and bye-laws (Section 16 addresses meetings and quorum)"
+    prd_ref: "Appendix A; Appendix F"
+    labels: [LEGAL, VERIFY]
+    url: null
+rules:
+  voting.basis:
+    value:
+      vote_weight: declared_voting_percentage
+      flat_one_vote_default: false
+    labels: [LEGAL]
+    legal_source_ref: karnataka-aoa-1972
+  quorum.ordinary:
+    value: null
+    configurable: true
+    note: "Set from the declaration/bye-laws (Section 16 addresses quorum)."
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  quorum.redevelopment:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  interest.max_simple_pct_pa:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: prd-appendix-a-karnataka-aoa
+  notice.agm_clear_days:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  notice.sgm_clear_days:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  meetings.video_participation:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  charges.service.basis:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  charges.insurance.basis:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972
+  recovery.route:
+    value: null
+    configurable: true
+    labels: [LEGAL, TBD]
+    legal_source_ref: karnataka-aoa-1972

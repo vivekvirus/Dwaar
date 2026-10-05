@@ -1,0 +1,17 @@
+{
+  "already_decided": "A decision was already recorded for this request.",
+  "dependency_unavailable": "The service is temporarily unavailable. Your work is safe; please try again shortly.",
+  "duplicate_payload_mismatch": "This request was already sent with different details. Start a new request.",
+  "invalid_schema": "Some details are missing or not in the right format. Please check and try again.",
+  "legal_pack_not_approved": "This feature is not available until the required approval is complete.",
+  "missing_tax_config": "Tax settings are not ready yet. Please contact your society office.",
+  "not_authorised": "You cannot do this action.",
+  "not_found": "We could not find what you asked for.",
+  "policy_violation": "This action is not allowed by the current rules.",
+  "rate_limited": "Too many attempts. Please try again in {retry_after_seconds} seconds.",
+  "request_expired": "This request has expired.",
+  "request_id.label": "Request ID: {request_id}",
+  "stale_version": "This item changed while you were looking at it. Reload and try again.",
+  "unauthenticated": "Please sign in to continue.",
+  "unknown": "Something went wrong. Please try again. Quote request ID {request_id} if you contact support."
+}

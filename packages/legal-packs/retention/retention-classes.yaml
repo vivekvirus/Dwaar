@@ -1,0 +1,120 @@
+# Retention classes from PRD Appendix B (defaults, all [LEGAL]); versioned objects per PRIV-06.
+# Operational removal and final erasure are different events. Not counsel-approved (approved_by null).
+# Durations are integer days. null means "not fixed by the PRD default; configure with a legal source".
+pack_type: retention
+pack_id: retention-classes
+version: 2026.1.0
+status: unapproved
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+jurisdiction: IN
+labels: [LEGAL]
+legal_sources:
+  - ref_id: prd-appendix-b
+    citation: "PRD Appendix B, Retention Classes (defaults, [LEGAL])"
+    prd_ref: "Appendix B; PRIV-06; D-16"
+    labels: [LEGAL]
+    url: null
+  - ref_id: dpdp-rule-8-3
+    citation: "DPDP Rules 2025 Rule 8(3) (once in force), as referenced in PRD Appendix B and PRIV-07"
+    prd_ref: "Appendix B; Appendix F"
+    labels: [LEGAL, VERIFY]
+    url: null
+  - ref_id: dpdp-rule-6
+    citation: "DPDP Rules 2025 Rule 6 (log retention of one year), as referenced in PRD Appendix B"
+    prd_ref: "Appendix B"
+    labels: [LEGAL, VERIFY]
+    url: null
+  - ref_id: cert-in-directions-2022
+    citation: "CERT-In Directions of 28 April 2022 (logs retained at least 180 days in India)"
+    prd_ref: "Appendix B; Appendix F"
+    labels: [LEGAL, VERIFY]
+    url: null
+classes:
+  VIS:
+    name: Visitor identity and visit records
+    purpose: gate_access_and_visit_audit
+    operational: {days: 30, extendable_to_days: 90, extension_requires_justification: true, visibility: operational}
+    archive: {scope: segregated_archive, min_days: 365, expiry_basis: from_processing, legal_source_ref: dpdp-rule-8-3, note: "Through at least one year from processing."}
+    erasure: {method: crypto_shred, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  VISPH:
+    name: Optional visitor photos
+    purpose: visitor_verification
+    operational: {days: 30, extendable_to_days: null, extension_requires_justification: false, visibility: thumbnail_only}
+    archive: {scope: per_counsel, min_days: null, expiry_basis: null, legal_source_ref: prd-appendix-b, note: "Per counsel (open question Q4)."}
+    erasure: {method: crypto_shred, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  DEL:
+    name: Delivery entries
+    purpose: delivery_audit
+    operational: {days: 7, extendable_to_days: null, extension_requires_justification: false, visibility: operational}
+    archive: {scope: minimal_record, min_days: 365, expiry_basis: from_processing, legal_source_ref: prd-appendix-b, note: "Minimal record for one year."}
+    erasure: {method: crypto_shred, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  ANPR:
+    name: Plate images
+    purpose: vehicle_access_audit
+    operational: {days: 7, extendable_to_days: null, extension_requires_justification: false, visibility: operational}
+    archive: {scope: plate_text_and_event_only, min_days: null, expiry_basis: null, legal_source_ref: prd-appendix-b, note: "Plate text and event only; no images."}
+    erasure: {method: crypto_shred, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  CRED:
+    name: Gate credentials and OTP secrets
+    purpose: gate_authentication
+    operational: {days: null, until: expiry_or_consumption, extendable_to_days: null, extension_requires_justification: false, visibility: operational}
+    archive: {scope: decision_evidence_only_never_reusable_secrets, min_days: null, expiry_basis: null, legal_source_ref: prd-appendix-b}
+    erasure: {method: erase, trigger: on_expiry, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  RES:
+    name: Resident profiles
+    purpose: residency_administration
+    operational: {days: null, until: duration_of_residence, extendable_to_days: null, extension_requires_justification: false, visibility: operational}
+    archive: {scope: restricted_archive, min_days: 365, expiry_basis: from_exit, legal_source_ref: prd-appendix-b, note: "One year after exit, or longer where other law requires."}
+    erasure: {method: erase, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  STF:
+    name: Staff profiles and attendance
+    purpose: staff_engagement_and_attendance
+    operational: {days: null, until: duration_of_engagement, extendable_to_days: null, extension_requires_justification: false, visibility: operational}
+    archive: {scope: restricted_archive, min_days: 365, expiry_basis: from_last_engagement, legal_source_ref: prd-appendix-b, note: "One year after last engagement."}
+    erasure: {method: erase, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  FIN:
+    name: Financial vouchers and statutory books
+    purpose: statutory_accounting
+    operational: {days: null, until: statutory_period_role_based, extendable_to_days: null, extension_requires_justification: false, visibility: role_based}
+    archive: {scope: not_subject_to_visitor_ttl, min_days: null, expiry_basis: statutory_period, legal_source_ref: prd-appendix-b, note: "Statutory period set by the CA-approved schedule."}
+    erasure: {method: per_ca_approved_schedule, trigger: per_ca_approved_schedule, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  LOG:
+    name: Security and ICT logs
+    purpose: security_and_ict_audit
+    operational: {days: null, until: security_team_only, extendable_to_days: null, extension_requires_justification: false, visibility: security_team_only}
+    # CERT-In: at least 180 days in India; DPDP Rule 6: one year. The longer (365) governs the archive minimum.
+    archive:
+      scope: restricted_archive_in_india
+      min_days: 365
+      expiry_basis: from_processing
+      legal_source_ref: dpdp-rule-6
+      components:
+        - {min_days: 180, legal_source_ref: cert-in-directions-2022}
+        - {min_days: 365, legal_source_ref: dpdp-rule-6}
+    erasure: {method: erase, trigger: after_archive_period, unless_hold: true}
+    legal_source_ref: prd-appendix-b
+  BKP:
+    name: Backups
+    purpose: disaster_recovery
+    operational: {days: null, until: no_interactive_access, extendable_to_days: null, extension_requires_justification: false, visibility: none}
+    archive: {scope: rotation, min_days: 35, expiry_basis: rotation, legal_source_ref: prd-appendix-b, note: "35-day rotation."}
+    erasure: {method: restore_filtered_by_tombstones, trigger: on_restore, unless_hold: false}
+    legal_source_ref: prd-appendix-b
+  HOLD:
+    name: Records under legal hold
+    purpose: legal_hold
+    operational: {days: null, until: case_owner_only, extendable_to_days: null, extension_requires_justification: false, visibility: case_owner_only}
+    archive: {scope: held_records, min_days: null, expiry_basis: until_hold_release, legal_source_ref: prd-appendix-b}
+    erasure: {method: normal_schedule, trigger: after_hold_release, unless_hold: false}
+    legal_source_ref: prd-appendix-b

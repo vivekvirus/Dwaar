@@ -27,7 +27,9 @@ from tools import trace_check as tc
 REPO = Path(__file__).resolve().parents[2]
 TRACE_DIR = REPO / "docs" / "traceability"
 PRD = REPO / "docs" / "prd" / "Dwaar_Master_PRD_v2.0.txt"
-needs_prd = pytest.mark.skipif(not PRD.is_file(), reason="PRD text is local-only (git-ignored); not present")
+needs_prd = pytest.mark.skipif(
+    not PRD.is_file(), reason="PRD text is local-only (git-ignored); not present"
+)
 
 EXPECTED_FAMILY_COUNTS = {
     "INV": 12, "D": 28, "IAM": 14, "UX": 10, "ARCH": 5, "DB": 8, "SOC": 9, "GATE": 14, "EDGE": 10, "NOTIF": 9,
@@ -53,7 +55,9 @@ M1_AI_FEATURES = {"AI-R02", "AI-R07", "AI-F01", "AI-R06", "AI-C01", "AI-C05", "A
 # Printed release differs from the milestone of the build slice only here (see release_notes in the register).
 RELEASE_SLICE_EXCEPTIONS = {"PRIV-10"}
 # Labels not printed on the item's own row: inherited from a section heading or a cited decision (documented).
-INHERITED_LABELS = {f"PRIV-{n:02d}" for n in range(1, 16)} | {f"RIGHTS-{n:02d}" for n in range(1, 4)}
+INHERITED_LABELS = {f"PRIV-{n:02d}" for n in range(1, 16)} | {
+    f"RIGHTS-{n:02d}" for n in range(1, 4)
+}
 INHERITED_LABELS |= {"AMEN-02", "OPS-11", "AI-D01"}
 
 
@@ -115,11 +119,14 @@ def test_pay04_hw06_veh04_releases_keep_the_extra_text(reg: tc.Registry) -> None
     assert (pay04["priority"], pay04["release"]) == ("P0", "M1")
     assert "M2: AutoPay and BBPS" in pay04["release_notes"]
     hw06 = reg.by_id["HW-06"]
-    assert hw06["release"] == "M1" and "M2" in hw06["release_notes"]
+    assert hw06["release"] == "M1"
+    assert "M2" in hw06["release_notes"]
     veh04 = reg.by_id["VEH-04"]
-    assert veh04["release"] == "M2" and "M3" in veh04["release_notes"]
+    assert veh04["release"] == "M2"
+    assert "M3" in veh04["release_notes"]
     s01 = reg.by_id["AI-S01"]
-    assert s01["release"] == "M3" and "M3+" in s01["release_notes"]
+    assert s01["release"] == "M3"
+    assert "M3+" in s01["release_notes"]
 
 
 def test_known_labels(reg: tc.Registry) -> None:
@@ -144,7 +151,8 @@ def test_acceptance_matrix_count_and_milestone_coverage(reg: tc.Registry) -> Non
     assert sum(len(v) for v in by_ms.values()) == 48
     for a in ats:
         assert set(a) == {"id", "milestone", "scenario", "expected", "prd_page"}
-        assert a["scenario"].strip() and a["expected"].strip()
+        assert a["scenario"].strip()
+        assert a["expected"].strip()
         assert a["prd_page"] in (46, 47)
         assert reg.by_id[a["id"]]["release"] == a["milestone"]
         assert reg.by_id[a["id"]]["kind"] == "acceptance"
@@ -158,9 +166,13 @@ def test_release_and_slice_are_consistent(reg: tc.Registry) -> None:
         if i["release"] == "M4":
             assert i["slice"] is None, i["id"]
         elif i["release"] and i["slice"]:
-            assert ms[i["slice"]] == i["release"], f"{i['id']}: {i['release']} vs slice {i['slice']}"
+            assert ms[i["slice"]] == i["release"], (
+                f"{i['id']}: {i['release']} vs slice {i['slice']}"
+            )
     prd10 = reg.by_id["PRIV-10"]
-    assert prd10["release"] == "M2" and prd10["slice"] == 6 and "AT-23" in prd10["release_notes"]
+    assert prd10["release"] == "M2"
+    assert prd10["slice"] == 6
+    assert "AT-23" in prd10["release_notes"]
 
 
 def test_slice_gates_match_prd_build_slices(reg: tc.Registry) -> None:
@@ -169,17 +181,31 @@ def test_slice_gates_match_prd_build_slices(reg: tc.Registry) -> None:
     for sid, gates in SLICE_GATES.items():
         for at in gates:
             assert reg.by_id[at]["slice"] == sid, at
-    assert reg.milestone_of_slice == {1: "M0", 2: "M0", 3: "M1", 4: "M1", 5: "M1", 6: "M1", 7: "M2", 8: "M2", 9: "M3"}
+    assert reg.milestone_of_slice == {
+        1: "M0",
+        2: "M0",
+        3: "M1",
+        4: "M1",
+        5: "M1",
+        6: "M1",
+        7: "M2",
+        8: "M2",
+        9: "M3",
+    }
 
 
 def test_module_map_covers_every_requirement(reg: tc.Registry) -> None:
     assert set(reg.assignments) == set(reg.by_id)
     paths = {m["path"] for m in reg.module_map["modules"]}
-    used = {i["module"] for i in reg.items} | {s for a in reg.assignments.values() for s in a["surfaces"]}
+    used = {i["module"] for i in reg.items} | {
+        s for a in reg.assignments.values() for s in a["surfaces"]
+    }
     assert paths <= used, f"unused modules: {sorted(paths - used)}"
     for m in reg.module_map["modules"]:
         if m["path"].startswith("services/api/modules/"):
-            assert m["physical_path"] == m["path"].replace("services/api/modules/", "services/api/dwaar_api/modules/")
+            assert m["physical_path"] == m["path"].replace(
+                "services/api/modules/", "services/api/dwaar_api/modules/"
+            )
     # every AT gates something; AT-01..04 (M0) gate their M0 requirements
     gated = {g for a in reg.assignments.values() for g in a["gates"]}
     assert gated == {a["id"] for a in reg.acceptance}
@@ -195,7 +221,9 @@ def test_external_dependencies_are_catalogued_and_spot_checked(reg: tc.Registry)
     assert "partner:delivery-partner" in ext["PAR-07"]["external"]
     assert ext["GATE-02"]["external"] == []
     kinds = reg.external_kinds
-    assert {kinds[e] for a in ext.values() for e in a["external"]} <= tc.INTEGRATION_KINDS | tc.APPROVAL_KINDS
+    assert {
+        kinds[e] for a in ext.values() for e in a["external"]
+    } <= tc.INTEGRATION_KINDS | tc.APPROVAL_KINDS
 
 
 def test_m0_scope_is_small_and_p0(reg: tc.Registry) -> None:
@@ -226,7 +254,9 @@ class Prd:
         self.text = text
         self.lines = text.split("\n")
         self.footers = [
-            (i, int(m.group(1))) for i, line in enumerate(self.lines) if (m := re.search(r"Page (\d+) of 61", line))
+            (i, int(m.group(1)))
+            for i, line in enumerate(self.lines)
+            if (m := re.search(r"Page (\d+) of 61", line))
         ]
         self.heads: list[tuple[int, str]] = []
         for i, line in enumerate(self.lines):
@@ -280,18 +310,22 @@ def prd() -> Prd:
 def test_every_prd_id_token_is_in_the_register(reg: tc.Registry, prd: Prd) -> None:
     tokens = tc.extract_prd_ids(prd.text)
     aliases = reg.aliases()
-    unregistered = sorted(t for t in tokens if t not in reg.by_id and t not in aliases and t not in tc.PRD_NON_REQUIREMENT_TOKENS)
+    unregistered = sorted(
+        t
+        for t in tokens
+        if t not in reg.by_id and t not in aliases and t not in tc.PRD_NON_REQUIREMENT_TOKENS
+    )
     assert unregistered == []
     assert tc.check_prd_completeness(reg, prd.text) == []
     # no invented IDs: every register ID occurs in the PRD
     assert sorted(set(reg.by_id) - tokens) == []
     # the ignore list is exactly the non-requirement tokens that occur (no stale entries)
-    assert tc.PRD_NON_REQUIREMENT_TOKENS <= tokens
+    assert tokens >= tc.PRD_NON_REQUIREMENT_TOKENS
 
 
 @needs_prd
 def test_draft_b_aliases_match_section_11_6(reg: tc.Registry, prd: Prd) -> None:
-    start = next(i for i, line in enumerate(prd.lines) if line.strip().startswith("11.6 Mapping"))
+    start = [i for i, line in enumerate(prd.lines) if line.strip().startswith("11.6 Mapping")][-1]
     pairs = {}
     for line in prd.lines[start + 1 : start + 30]:
         for old, new in re.findall(r"(AI-\d\d)\s+(AI-[A-Z]\d\d)", line):
@@ -322,7 +356,8 @@ def test_priority_release_page_and_section_match_the_prd(reg: tc.Registry, prd: 
             checked["ai"] += 1
         elif it["kind"] == "acceptance":
             m2 = re.match(r"^\s{3}AT-\d\d\s+(M[0-4])\s", first)
-            assert m2 and it["release"] == m2.group(1), it["id"]
+            assert m2, it["id"]
+            assert it["release"] == m2.group(1), it["id"]
             checked["at"] += 1
         elif (m3 := table_row.search(first)) and it["kind"] == "requirement":
             assert (it["priority"], it["release"]) == (m3.group(1), m3.group(2)), it["id"]
@@ -331,8 +366,11 @@ def test_priority_release_page_and_section_match_the_prd(reg: tc.Registry, prd: 
             assert it["priority"] is None, it["id"]
             if it["kind"] == "requirement":  # OBS rows print neither priority nor release
                 assert it["release"] is None, it["id"]
-    assert checked["ai"] == 65 and checked["at"] == 48
-    assert checked["req"] == sum(1 for i in reg.items if i["kind"] == "requirement" and i["priority"])
+    assert checked["ai"] == 65
+    assert checked["at"] == 48
+    assert checked["req"] == sum(
+        1 for i in reg.items if i["kind"] == "requirement" and i["priority"]
+    )
 
 
 @needs_prd
@@ -344,7 +382,9 @@ def test_labels_match_the_prd_rows(reg: tc.Registry, prd: Prd) -> None:
             assert not printed or sorted(it["labels"]) == printed, it["id"]
             assert it["labels"], it["id"]
         else:
-            assert sorted(it["labels"]) == printed, f"{it['id']}: register {it['labels']} vs PRD {printed}"
+            assert sorted(it["labels"]) == printed, (
+                f"{it['id']}: register {it['labels']} vs PRD {printed}"
+            )
 
 
 @needs_prd
@@ -353,7 +393,9 @@ def test_titles_are_paraphrases_not_prd_copies(reg: tc.Registry, prd: Prd) -> No
     grams: dict[int, set[tuple[str, ...]]] = {}
 
     def has(g: tuple[str, ...]) -> bool:
-        grams.setdefault(len(g), {tuple(words[i : i + len(g)]) for i in range(len(words) - len(g) + 1)})
+        grams.setdefault(
+            len(g), {tuple(words[i : i + len(g)]) for i in range(len(words) - len(g) + 1)}
+        )
         return g in grams[len(g)]
 
     worst = 0.0
@@ -419,7 +461,14 @@ def mini_items() -> list[dict[str, Any]]:
         item("HW-01", rel="M2", slc=8),
         item("INV-01", "invariant", pri=None, rel=None, slc=1),
         item("DB-05", "db-invariant", pri=None, rel=None, slc=4),
-        item("AI-R02", "ai-feature", pri=None, rel="M1", slc=4, notes="class=B; alias=AI-01; target: x"),
+        item(
+            "AI-R02",
+            "ai-feature",
+            pri=None,
+            rel="M1",
+            slc=4,
+            notes="class=B; alias=AI-01; target: x",
+        ),
         item("AI-F04", "ai-feature", pri=None, rel="M4", slc=None, notes="class=B; target: x"),
         item("D-14", "decision", pri=None, rel=None, slc=2),
         item("Q4", "open-question", pri=None, rel=None, slc=None),
@@ -450,24 +499,45 @@ def make_repo(
 ) -> Path:
     items = items if items is not None else mini_items()
     assign = assign if assign is not None else MINI_ASSIGN
-    full = {i["id"]: assign.get(i["id"], {"surfaces": [], "gates": [], "external": []}) for i in items}
+    full = {
+        i["id"]: assign.get(i["id"], {"surfaces": [], "gates": [], "external": []}) for i in items
+    }
     ats = [
-        {"id": i["id"], "milestone": i["release"], "scenario": f"scenario {i['id']}", "expected": "x", "prd_page": 46}
+        {
+            "id": i["id"],
+            "milestone": i["release"],
+            "scenario": f"scenario {i['id']}",
+            "expected": "x",
+            "prd_page": 46,
+        }
         for i in items
         if i["kind"] == "acceptance"
     ]
     mm = {
         "version": 1,
-        "milestone_of_slice": {1: "M0", 2: "M0", 3: "M1", 4: "M1", 5: "M1", 6: "M1", 7: "M2", 8: "M2", 9: "M3"},
+        "milestone_of_slice": {
+            1: "M0",
+            2: "M0",
+            3: "M1",
+            4: "M1",
+            5: "M1",
+            6: "M1",
+            7: "M2",
+            8: "M2",
+            9: "M3",
+        },
         "external_dependencies": MINI_EXTERNALS,
         "assignments": full,
     }
     d = root / "docs" / "traceability"
     d.mkdir(parents=True, exist_ok=True)
     (d / "requirements.yaml").write_text(
-        yaml.safe_dump({"version": 1, "source": "fixture", "items": items}, sort_keys=False), encoding="utf-8"
+        yaml.safe_dump({"version": 1, "source": "fixture", "items": items}, sort_keys=False),
+        encoding="utf-8",
     )
-    (d / "acceptance_matrix.yaml").write_text(yaml.safe_dump({"version": 1, "items": ats}), encoding="utf-8")
+    (d / "acceptance_matrix.yaml").write_text(
+        yaml.safe_dump({"version": 1, "items": ats}), encoding="utf-8"
+    )
     (d / "module_map.yaml").write_text(yaml.safe_dump(mm), encoding="utf-8")
     for rel, text in (files or {}).items():
         write(root, rel, text)
@@ -503,20 +573,30 @@ def test_comment_annotations_in_every_language() -> None:
 
 
 def test_python_docstring_line_and_multiple_ids_and_id_forms() -> None:
-    text = f'"""Module.\n\n{ann("REQ", "GATE-03", "AI-SYS-04", "AI-R02", "G7", "Q4", "D-14")}\n"""\n'
+    text = (
+        f'"""Module.\n\n{ann("REQ", "GATE-03", "AI-SYS-04", "AI-R02", "G7", "Q4", "D-14")}\n"""\n'
+    )
     got = tc.scan_file("services/api/x.py", text)
     assert [a.ident for a in got] == ["GATE-03", "AI-SYS-04", "AI-R02", "G7", "Q4", "D-14"]
     assert {a.line for a in got} == {3}
-    text2 = f"# REQS: GATE-03 GATE-04; IAM-01 / IAM-02 and not-an-id\nx = 1\n".replace("REQS", "REQS")
-    assert [a.ident for a in tc.scan_file("a.py", text2)] == ["GATE-03", "GATE-04", "IAM-01", "IAM-02"]
+    text2 = f"# {ann('REQS', 'GATE-03 GATE-04; IAM-01 / IAM-02 and not-an-id')}\nx = 1\n"
+    assert [a.ident for a in tc.scan_file("a.py", text2)] == [
+        "GATE-03",
+        "GATE-04",
+        "IAM-01",
+        "IAM-02",
+    ]
 
 
 def test_keywords_map_to_kinds() -> None:
-    text = "\n".join(
-        f"# {ann(k, i)}"
-        for k, i in (("REQ", "GATE-01"), ("AT", "AT-03"), ("ADAPTER", "HW-06"), ("SIMULATOR", "HW-06"),
-                     ("SIM", "HW-07"))  # fmt: skip
+    pairs = (
+        ("REQ", "GATE-01"),
+        ("AT", "AT-03"),
+        ("ADAPTER", "HW-06"),
+        ("SIMULATOR", "HW-06"),
+        ("SIM", "HW-07"),
     )
+    text = "\n".join(f"# {ann(k, i)}" for k, i in pairs)
     got = tc.scan_file("services/edge/x.py", text)
     assert [(a.kind, a.ident) for a in got] == [
         ("req", "GATE-01"), ("at", "AT-03"), ("adapter", "HW-06"), ("simulator", "HW-06"), ("simulator", "HW-07"),
@@ -553,7 +633,10 @@ def test_markdown_ignores_fences_headings_and_prose_but_keeps_bare_lines() -> No
 def test_ignore_file_marker_skips_the_file() -> None:
     text = f"# trace-check: ignore-file\n# {ann('REQ', 'GATE-03')}\n"
     assert tc.scan_file("tests/fixtures/x.py", text) == []
-    assert tc.scan_file("tests/fixtures/x.py", f"# {ann('REQ', 'GATE-03')}\n" + "\n" * 12 + f"# {tc.IGNORE_FILE_MARKER}\n")
+    assert tc.scan_file(
+        "tests/fixtures/x.py",
+        f"# {ann('REQ', 'GATE-03')}\n" + "\n" * 12 + f"# {tc.IGNORE_FILE_MARKER}\n",
+    )
 
 
 @pytest.mark.parametrize(
@@ -596,7 +679,7 @@ def test_path_role(rel: str, role: str | None) -> None:
 
 
 # ------------------------------------------------------------------------------------------- pytest marks (AST)
-MARK_SOURCE = '''
+MARK_SOURCE = """
 import pytest
 from pytest import mark
 
@@ -639,7 +722,7 @@ def test_bare() -> None:
 @pytest.mark.req()
 def test_nonliteral() -> None:
     other.at("AT-99")
-'''
+"""
 
 
 def test_python_marks_are_found_with_their_scope() -> None:
@@ -655,12 +738,17 @@ def test_python_marks_are_found_with_their_scope() -> None:
         ("req", "EXP-01", "test_bare"), ("at", "AT-33", "test_bare"),
     ])  # fmt: skip
     assert all(a.category == "test" for a in got)
-    assert {a.entry() for a in got if a.ident == "GATE-03"} == {"tests/integration/x/test_marks.py::test_one"}
+    assert {a.entry() for a in got if a.ident == "GATE-03"} == {
+        "tests/integration/x/test_marks.py::test_one"
+    }
 
 
 def test_python_marks_in_implementation_files_and_syntax_errors_are_ignored() -> None:
     assert tc.scan_file("services/api/x.py", MARK_SOURCE) == []
-    assert tc.scan_file("tests/test_broken.py", 'def test_x(:\n    @pytest.mark.req("GATE-03")\n') == []
+    assert (
+        tc.scan_file("tests/test_broken.py", 'def test_x(:\n    @pytest.mark.req("GATE-03")\n')
+        == []
+    )
 
 
 # ------------------------------------------------------------------------------------------- repo scan
@@ -705,7 +793,12 @@ def test_nothing_annotated_is_not_started(tmp_path: Path) -> None:
     rep = report(make_repo(tmp_path))
     assert {r["status"] for r in rep["requirements"]} == {"not-started"}
     assert row(rep, "GATE-02")["gaps"] == ["no-implementation", "no-tests"]
-    assert rep["summary"]["by_status"] == {"done": 0, "partial": 0, "blocked-external": 0, "not-started": 7}
+    assert rep["summary"]["by_status"] == {
+        "done": 0,
+        "partial": 0,
+        "blocked-external": 0,
+        "not-started": 7,
+    }
 
 
 def test_implementation_only_or_tests_only_is_partial(tmp_path: Path) -> None:
@@ -734,7 +827,11 @@ def test_done_needs_implementation_tests_and_acceptance_gates(tmp_path: Path) ->
     g1 = row(rep, "GATE-01")  # gates AT-03 (M0) and AT-12 (M1), neither tagged yet
     assert g1["status"] == "partial"
     assert g1["gaps"] == ["acceptance-untested:AT-03", "acceptance-untested:AT-12"]
-    write(tmp_path, "tests/acceptance/test_at.py", 'import pytest\n\n@pytest.mark.at("AT-03")\ndef test_a(): pass\n')
+    write(
+        tmp_path,
+        "tests/acceptance/test_at.py",
+        'import pytest\n\n@pytest.mark.at("AT-03")\ndef test_a(): pass\n',
+    )
     assert row(report(tmp_path, "M1"), "GATE-01")["gaps"] == ["acceptance-untested:AT-12"]
     write(tmp_path, "tests/acceptance/test_at12.py", f"# {ann('AT', 'AT-12')}\n")
     assert row(report(tmp_path, "M1"), "GATE-01")["status"] == "done"
@@ -757,12 +854,14 @@ def test_label_makes_a_complete_requirement_blocked_external(tmp_path: Path) -> 
     assert row(report(root), "PRIV-08")["status"] == "partial"  # implementation but no test yet
     write(root, "tests/integration/test_p.py", f"# {ann('REQ', 'PRIV-08')}\n")
     r = row(report(root), "PRIV-08")
-    assert r["status"] == "blocked-external" and r["blocked_by"] == ["LEGAL"]
+    assert r["status"] == "blocked-external"
+    assert r["blocked_by"] == ["LEGAL"]
 
 
 def test_external_item_with_no_evidence_stays_not_started(tmp_path: Path) -> None:
     r = row(report(make_repo(tmp_path)), "PAY-04")
-    assert r["status"] == "not-started" and r["blocked_by"] == ["provider:payment-aggregator"]
+    assert r["status"] == "not-started"
+    assert r["blocked_by"] == ["provider:payment-aggregator"]
 
 
 def test_provider_dependency_needs_adapter_and_simulator(tmp_path: Path) -> None:
@@ -774,10 +873,12 @@ def test_provider_dependency_needs_adapter_and_simulator(tmp_path: Path) -> None
         },
     )
     r = row(report(root), "PAY-04")
-    assert r["status"] == "partial" and r["gaps"] == ["no-adapter", "no-simulator"]
+    assert r["status"] == "partial"
+    assert r["gaps"] == ["no-adapter", "no-simulator"]
     write(root, "services/api/payments/adapters/aggregator.py", f"# {ann('REQ', 'PAY-04')}\n")
     r = row(report(root), "PAY-04")
-    assert r["status"] == "partial" and r["gaps"] == ["no-simulator"]
+    assert r["status"] == "partial"
+    assert r["gaps"] == ["no-simulator"]
     write(root, "services/api/payments/simulators/aggregator.py", f"# {ann('REQ', 'PAY-04')}\n")
     r = row(report(root), "PAY-04")
     assert r["status"] == "blocked-external"
@@ -807,7 +908,8 @@ def test_simulator_path_inside_a_test_tree_is_not_a_simulator(tmp_path: Path) ->
         },
     )
     r = row(report(root, "M2"), "HW-01")
-    assert r["status"] == "partial" and "no-simulator" in r["gaps"]
+    assert r["status"] == "partial"
+    assert "no-simulator" in r["gaps"]
     assert r["tested_by"] == ["tests/simulators/fake_barrier.py:1"]
 
 
@@ -821,7 +923,8 @@ def test_milestone_scope_is_cumulative_and_uses_slice_for_unreleased_items(tmp_p
     m0, m1, m2, m4 = (report(root, m) for m in ("M0", "M1", "M2", "M4"))
     assert ids(m0) == {"GATE-01", "INV-01"}  # INV-01: no release, slice 1 -> M0
     assert ids(m1) == {"GATE-01", "GATE-02", "PAY-04", "PRIV-08", "INV-01", "DB-05", "AI-R02"}
-    assert "HW-01" in ids(m2) and "AI-F04" not in ids(m2)
+    assert "HW-01" in ids(m2)
+    assert "AI-F04" not in ids(m2)
     assert "AI-F04" in ids(m4)
     assert [a["id"] for a in m0["acceptance"]] == ["AT-03"]
     assert [a["id"] for a in m1["acceptance"]] == ["AT-03", "AT-12"]
@@ -833,8 +936,12 @@ def test_exact_scope_and_reference_items(tmp_path: Path) -> None:
     assert ids(ex) == {"GATE-02", "PAY-04", "PRIV-08", "DB-05", "AI-R02"}
     assert ex["scope"] == "exact"
     cum = report(root, "M1")
-    assert cum["summary"]["reference_items"] == {"decision": 1, "open-question": 1}  # D-14 (slice 2) and Q4
-    assert "D-14" not in ids(cum) and "Q4" not in ids(cum)
+    assert cum["summary"]["reference_items"] == {
+        "decision": 1,
+        "open-question": 1,
+    }  # D-14 (slice 2) and Q4
+    assert "D-14" not in ids(cum)
+    assert "Q4" not in ids(cum)
 
 
 def test_unknown_milestone_is_rejected(tmp_path: Path) -> None:
@@ -846,17 +953,28 @@ def test_unknown_milestone_is_rejected(tmp_path: Path) -> None:
 # ------------------------------------------------------------------------------------------- acceptance tests
 def test_acceptance_status_needs_a_test_and_passing_evidence(tmp_path: Path) -> None:
     root = make_repo(tmp_path)
-    at = lambda rep: next(a for a in rep["acceptance"] if a["id"] == "AT-03")  # noqa: E731
+
+    def at(rep: dict[str, Any]) -> dict[str, Any]:
+        return next(a for a in rep["acceptance"] if a["id"] == "AT-03")
+
     assert at(report(root, "M0"))["status"] == "not-started"
-    write(root, "tests/acceptance/test_at03.py", 'import pytest\n\n@pytest.mark.at("AT-03")\ndef test_a(): pass\n')
+    write(
+        root,
+        "tests/acceptance/test_at03.py",
+        'import pytest\n\n@pytest.mark.at("AT-03")\ndef test_a(): pass\n',
+    )
     a = at(report(root, "M0"))
-    assert a["status"] == "partial" and a["evidence"] == [] and a["tests"] == ["tests/acceptance/test_at03.py::test_a"]
+    assert a["status"] == "partial"
+    assert a["evidence"] == []
+    assert a["tests"] == ["tests/acceptance/test_at03.py::test_a"]
     write(root, "docs/evidence/M0/AT-03.json", json.dumps({"result": "pass"}))
     a = at(report(root, "M0"))
-    assert a["status"] == "done" and a["evidence"] == ["docs/evidence/M0/AT-03.json"]
+    assert a["status"] == "done"
+    assert a["evidence"] == ["docs/evidence/M0/AT-03.json"]
     write(root, "docs/evidence/M0/AT-03.json", json.dumps({"result": "fail"}))
     a = at(report(root, "M0"))
-    assert a["status"] == "partial" and a["evidence_failed"] is True
+    assert a["status"] == "partial"
+    assert a["evidence_failed"] is True
     # evidence without a test is not done either; markdown evidence mentioning FAIL is read as failed
     (root / "tests" / "acceptance" / "test_at03.py").unlink()
     write(root, "docs/evidence/AT-03-notes.md", "Result: PASS\n")
@@ -879,7 +997,8 @@ def test_orphans_carry_hints_and_locations(tmp_path: Path) -> None:
     assert by_id["AI-01"]["hint"] == "legacy Draft B alias of AI-R02"
     assert by_id["GATE-1"]["hint"] == "did you mean GATE-01"
     assert by_id["GATE-99"]["hint"] is None
-    assert by_id["NOPE-01"]["scope"] == "test_x" and by_id["NOPE-01"]["path"] == "tests/test_o.py"
+    assert by_id["NOPE-01"]["scope"] == "test_x"
+    assert by_id["NOPE-01"]["path"] == "tests/test_o.py"
     assert report(root)["summary"]["orphans"] == 4
 
 
@@ -914,14 +1033,18 @@ def test_markdown_has_sections_and_escapes_cells(tmp_path: Path) -> None:
     assert "Pipes \\| in \\| titles" in md
     assert "`services/api/a.py`" in md
     assert "None." in md  # no orphans
-    assert tc.render_markdown(report(root, "M0")).startswith("# Requirement traceability: M0 (M0 only)")
+    assert tc.render_markdown(report(root, "M0")).startswith(
+        "# Requirement traceability: M0 (M0 only)"
+    )
 
 
 def test_json_report_shape(tmp_path: Path) -> None:
     rep = json.loads(tc.render_json(report(make_repo(tmp_path))))
     assert set(rep) == {"tool", "schema_version", "milestone", "scope", "registry", "scan", "summary",
                         "requirements", "acceptance", "orphans"}  # fmt: skip
-    assert rep["schema_version"] == 1 and rep["milestone"] == "M1" and rep["scope"] == "cumulative"
+    assert rep["schema_version"] == 1
+    assert rep["milestone"] == "M1"
+    assert rep["scope"] == "cumulative"
     assert set(rep["requirements"][0]) == {
         "id", "kind", "area", "title", "priority", "release", "effective_milestone", "slice", "module", "labels",
         "status", "blocked_by", "implemented_in", "adapter_files", "simulator_files", "tested_by",
@@ -935,7 +1058,8 @@ def test_cli_writes_requested_formats(tmp_path: Path, capsys: pytest.CaptureFixt
     root = make_repo(tmp_path)
     out = root / "docs" / "traceability"
     assert tc.main(["--root", str(root), "--format", "md"]) == 0
-    assert (out / "TRACEABILITY.md").is_file() and not (out / "TRACEABILITY.json").exists()
+    assert (out / "TRACEABILITY.md").is_file()
+    assert not (out / "TRACEABILITY.json").exists()
     assert "7 requirements" in capsys.readouterr().out
     assert tc.main(["--root", str(root), "--format", "json", "--milestone", "M0", "--quiet"]) == 0
     assert json.loads((out / "TRACEABILITY.json").read_text())["milestone"] == "M0"
@@ -970,20 +1094,38 @@ def test_cli_fail_on_orphans(tmp_path: Path, capsys: pytest.CaptureFixture[str])
     assert tc.main(["--root", str(root), "--quiet", "--fail-on-orphans"]) == 0
 
 
-def test_cli_exit_2_when_registry_is_missing(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_exit_2_when_registry_is_missing(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     assert tc.main(["--root", str(tmp_path)]) == 2
     assert "cannot read" in capsys.readouterr().err
 
 
-def test_cli_exit_2_when_explicit_prd_is_missing(capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
-    code = tc.main(["--root", str(REPO), "--check-registry", "--format", "none", "--prd", str(tmp_path / "nope.txt")])
+def test_cli_exit_2_when_explicit_prd_is_missing(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    code = tc.main(
+        [
+            "--root",
+            str(REPO),
+            "--check-registry",
+            "--format",
+            "none",
+            "--prd",
+            str(tmp_path / "nope.txt"),
+        ]
+    )
     assert code == 2
     assert "PRD text not found" in capsys.readouterr().err
 
 
 @pytest.fixture
 def broken_repo(tmp_path: Path) -> Path:
-    shutil.copytree(TRACE_DIR, tmp_path / "docs" / "traceability", ignore=shutil.ignore_patterns("TRACEABILITY.*"))
+    shutil.copytree(
+        TRACE_DIR,
+        tmp_path / "docs" / "traceability",
+        ignore=shutil.ignore_patterns("TRACEABILITY.*"),
+    )
     return tmp_path
 
 
@@ -997,38 +1139,95 @@ def mutate(root: Path, name: str, fn: Any) -> None:
 @pytest.mark.parametrize(
     ("file", "mutation", "needle"),
     [
-        ("requirements.yaml", lambda d: d["items"].append(dict(d["items"][0])), "duplicate id INV-01"),
+        (
+            "requirements.yaml",
+            lambda d: d["items"].append(dict(d["items"][0])),
+            "duplicate id INV-01",
+        ),
         ("requirements.yaml", lambda d: d["items"][0].update(kind="bogus"), "unknown kind"),
         ("requirements.yaml", lambda d: d["items"][0].update(slice=12), "slice must be 1..9"),
         ("requirements.yaml", lambda d: d["items"][0].update(title="one " * 15), "title must be"),
-        ("requirements.yaml", lambda d: d["items"][0].update(module="services/nowhere"), "not in module_map"),
+        (
+            "requirements.yaml",
+            lambda d: d["items"][0].update(module="services/nowhere"),
+            "not in module_map",
+        ),
         ("requirements.yaml", lambda d: d["items"][0].update(labels=["MAYBE"]), "bad labels"),
         ("requirements.yaml", lambda d: d["items"][0].pop("area"), "differ from the schema"),
         ("module_map.yaml", lambda d: d["assignments"].pop("GATE-01"), "no assignment for GATE-01"),
-        ("module_map.yaml", lambda d: d["assignments"]["GATE-01"]["gates"].append("GATE-02"), "is not an acceptance"),
-        ("module_map.yaml", lambda d: d["assignments"]["GATE-01"]["external"].append("x:y"), "not in the catalogue"),
-        ("module_map.yaml", lambda d: d["assignments"]["GATE-01"]["surfaces"].append("zzz"), "is not a module"),
+        (
+            "module_map.yaml",
+            lambda d: d["assignments"]["GATE-01"]["gates"].append("GATE-02"),
+            "is not an acceptance",
+        ),
+        (
+            "module_map.yaml",
+            lambda d: d["assignments"]["GATE-01"]["external"].append("x:y"),
+            "not in the catalogue",
+        ),
+        (
+            "module_map.yaml",
+            lambda d: d["assignments"]["GATE-01"]["surfaces"].append("zzz"),
+            "is not a module",
+        ),
         ("module_map.yaml", lambda d: d["slices"].pop(), "slices must be 1..9"),
-        ("acceptance_matrix.yaml", lambda d: d["items"].pop(), "contiguous"),
-        ("acceptance_matrix.yaml", lambda d: d["items"][0].update(milestone="M1"), "disagrees with requirements.yaml"),
+        ("acceptance_matrix.yaml", lambda d: d["items"].pop(5), "contiguous"),
+        (
+            "acceptance_matrix.yaml",
+            lambda d: d["items"][0].update(milestone="M1"),
+            "disagrees with requirements.yaml",
+        ),
     ],
 )
 def test_check_registry_detects_corruption(
     broken_repo: Path, capsys: pytest.CaptureFixture[str], file: str, mutation: Any, needle: str
 ) -> None:
-    assert tc.main(["--root", str(broken_repo), "--check-registry", "--format", "none", "--quiet"]) == 0
+    assert (
+        tc.main(["--root", str(broken_repo), "--check-registry", "--format", "none", "--quiet"])
+        == 0
+    )
     capsys.readouterr()
     mutate(broken_repo, file, mutation)
-    assert tc.main(["--root", str(broken_repo), "--check-registry", "--format", "none", "--quiet"]) == 1
+    assert (
+        tc.main(["--root", str(broken_repo), "--check-registry", "--format", "none", "--quiet"])
+        == 1
+    )
     assert needle in capsys.readouterr().err
 
 
 @needs_prd
-def test_check_registry_detects_prd_drift(broken_repo: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    mutate(broken_repo, "requirements.yaml", lambda d: d["items"].pop(5))  # drop an item the PRD still names
-    code = tc.main(["--root", str(broken_repo), "--check-registry", "--format", "none", "--prd", str(PRD), "--quiet"])
+def test_check_registry_detects_prd_drift(
+    broken_repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    mutate(
+        broken_repo, "requirements.yaml", lambda d: d["items"].pop(5)
+    )  # drop an item the PRD still names
+    code = tc.main(
+        [
+            "--root",
+            str(broken_repo),
+            "--check-registry",
+            "--format",
+            "none",
+            "--prd",
+            str(PRD),
+            "--quiet",
+        ]
+    )
     err = capsys.readouterr().err
-    assert code == 1 and "is not in the register" in err
+    assert code == 1
+    assert "is not in the register" in err
     mutate(broken_repo, "requirements.yaml", lambda d: d["items"][0].update(id="ZZZ-77"))
-    tc.main(["--root", str(broken_repo), "--check-registry", "--format", "none", "--prd", str(PRD), "--quiet"])
+    tc.main(
+        [
+            "--root",
+            str(broken_repo),
+            "--check-registry",
+            "--format",
+            "none",
+            "--prd",
+            str(PRD),
+            "--quiet",
+        ]
+    )
     assert "does not occur in the PRD" in capsys.readouterr().err

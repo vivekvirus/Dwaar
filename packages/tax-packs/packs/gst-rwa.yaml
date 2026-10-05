@@ -1,0 +1,29 @@
+# GST for RWAs as configured by the CA (TAX-02, TAX-01). CBIC Circular 109/28/2019-GST context.
+# GST status and covered supply are never inferred from the maintenance amount alone (TAX-01).
+pack_type: gst-rwa
+pack_id: gst-rwa
+version: 2026.1.0-draft
+title: GST context for resident welfare associations
+status: draft
+approved_by: null
+approved_at: null
+effective_from: "2026-10-05"
+effective_to: null
+next_review: null
+labels: [CA, VERIFY]
+legal_sources:
+  - ref_id: cbic-circular-109-28-2019
+    citation: "CBIC Circular 109/28/2019-GST"
+    prd_ref: "TAX-02; Appendix F"
+    labels: [CA, VERIFY]
+    url: null
+entity_type: rwa
+supply_type: member_contribution
+exemption:
+  per_member_per_month_paise: 750000
+  basis_when_above_threshold: full_amount
+turnover_threshold_paise: 200000000
+gst_rate_bp: null
+reimbursement_and_pure_agent_heads: handled_separately
+requires_ca_classification: true
+rounding: {mode: half_up, unit_paise: 1}

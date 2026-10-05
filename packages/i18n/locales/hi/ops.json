@@ -1,0 +1,12 @@
+{
+  "helpdesk.state.assigned": "सौंपा गया",
+  "helpdesk.state.closed": "बंद",
+  "helpdesk.state.in_progress": "प्रगति में",
+  "helpdesk.state.open": "खुला",
+  "helpdesk.state.reopened": "फिर से खोला गया",
+  "helpdesk.state.resolved": "सुलझाया गया",
+  "helpdesk.state.waiting_resident": "निवासी की प्रतीक्षा में",
+  "sla.breached": "{hours} घंटे देर से",
+  "sla.due_in": "{hours} घंटे में देय",
+  "sla.on_track": "समय पर"
+}

@@ -31,9 +31,10 @@ import json
 import os
 import re
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 try:  # PyYAML is the only third-party dependency.
     import yaml
@@ -292,9 +293,9 @@ def validate_registry(reg: Registry) -> list[str]:
                 f"module_map: slice {s.get('id')} milestone disagrees with milestone_of_slice"
             )
     seen: set[str] = set()
-    ids = [i.get("id") for i in reg.items]
+    ids = [str(i.get("id")) for i in reg.items]
     for i in reg.items:
-        rid = i.get("id")
+        rid = str(i.get("id"))
         if rid in seen:
             errors.append(f"requirements: duplicate id {rid}")
         seen.add(rid)
@@ -324,7 +325,7 @@ def validate_registry(reg: Registry) -> list[str]:
             errors.append(f"{rid}: prd_section must be a non-empty string")
         if i["module"] not in modules:
             errors.append(f"{rid}: module {i['module']!r} is not in module_map.yaml")
-        if i["kind"] == "ai-feature" and not re.match(r"class=", i.get("release_notes") or ""):
+        if i["kind"] == "ai-feature" and not re.match(r"class=", str(i.get("release_notes") or "")):
             errors.append(f"{rid}: AI features must start release_notes with class=")
     assign = reg.assignments
     for rid in ids:
@@ -353,7 +354,7 @@ def validate_registry(reg: Registry) -> list[str]:
             errors.append(f"acceptance_matrix: {a.get('id')} keys differ from the schema")
         if a.get("milestone") not in MILESTONES:
             errors.append(f"acceptance_matrix: {a.get('id')} bad milestone {a.get('milestone')!r}")
-        reg_item = reg.by_id.get(a.get("id"))
+        reg_item = reg.by_id.get(str(a.get("id")))
         if not reg_item or reg_item.get("kind") != "acceptance":
             errors.append(
                 f"acceptance_matrix: {a.get('id')} missing from requirements.yaml as kind acceptance"
@@ -364,14 +365,14 @@ def validate_registry(reg: Registry) -> list[str]:
             errors.append(
                 f"acceptance_matrix: {a.get('id')} disagrees with requirements.yaml on milestone or page"
             )
-    reg_at = sorted(i["id"] for i in reg.items if i.get("kind") == "acceptance")
-    if reg_at != sorted(at_ids):
+    reg_at = sorted(str(i["id"]) for i in reg.items if i.get("kind") == "acceptance")
+    if reg_at != sorted(str(x) for x in at_ids):
         errors.append("requirements.yaml acceptance items differ from acceptance_matrix.yaml")
     # every acceptance test must gate at least one requirement (links come from the AT scenarios)
     linked = {g for a in assign.values() for g in a.get("gates") or []}
-    for a in at_ids:
-        if a not in linked:
-            errors.append(f"module_map: {a} gates no requirement")
+    for at_id in at_ids:
+        if at_id not in linked:
+            errors.append(f"module_map: {at_id} gates no requirement")
     return errors
 
 
@@ -509,7 +510,8 @@ class _MarkVisitor(ast.NodeVisitor):
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:  # noqa: N802
         self._scoped(node, node.name)
 
-    visit_AsyncFunctionDef = visit_FunctionDef  # noqa: N815
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:  # noqa: N802
+        self._scoped(node, node.name)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:  # noqa: N802
         self._scoped(node, node.name)
@@ -644,7 +646,7 @@ def _evidence_failed(path: Path, ext: str) -> bool:
 def effective_milestone(item: dict[str, Any], reg: Registry) -> str | None:
     """Printed release, else the milestone of the item's build slice, else None (cross-cutting)."""
     if item.get("release"):
-        return item["release"]
+        return str(item["release"])
     if item.get("slice"):
         return reg.milestone_of_slice.get(item["slice"])
     return None
@@ -867,15 +869,15 @@ def build_report(
             }
         )
 
-    by_status = {s: 0 for s in ("done", "partial", "blocked-external", "not-started")}
+    by_status = dict.fromkeys(("done", "partial", "blocked-external", "not-started"), 0)
     by_priority: dict[str, dict[str, int]] = {}
     for r in requirements:
         by_status[r["status"]] += 1
-        row = by_priority.setdefault(r["priority"] or "none", {s: 0 for s in by_status})
+        row = by_priority.setdefault(r["priority"] or "none", dict.fromkeys(by_status, 0))
         row[r["status"]] += 1
-    at_status = {s: 0 for s in ("done", "partial", "not-started")}
-    for a in acceptance:
-        at_status[a["status"]] += 1
+    at_status = dict.fromkeys(("done", "partial", "not-started"), 0)
+    for acc in acceptance:
+        at_status[acc["status"]] += 1
     return {
         "tool": "tools/trace_check.py",
         "schema_version": SCHEMA_VERSION,

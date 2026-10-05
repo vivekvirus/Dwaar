@@ -1,0 +1,15 @@
+{
+  "approval.decided.body": "{decision} for {visitor}.",
+  "approval.decided.title": "Decision recorded",
+  "approval.escalation.body": "A visitor has waited {minutes} minutes. The guard may call you.",
+  "approval.escalation.title": "Still waiting for you",
+  "approval.expired.body": "The visitor request expired without a decision.",
+  "approval.expired.title": "Request expired",
+  "approval.request.body": "{visitor} is asking to visit {unit}. Approve or deny.",
+  "approval.request.lockscreen.body": "Open Dwaar to respond.",
+  "approval.request.lockscreen.title": "Visitor at the gate",
+  "approval.request.title": "Visitor at the gate",
+  "channel.emergency.title": "Emergency alert",
+  "channel.security.description": "Security and emergency alerts. These never carry advertisements.",
+  "setting.show_identity_lockscreen": "Show visitor name and unit on the lock screen"
+}

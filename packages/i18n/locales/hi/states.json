@@ -1,0 +1,15 @@
+{
+  "local.saved_awaiting_sync": "इस डिवाइस पर सहेजा गया; सिंक की प्रतीक्षा में",
+  "local.synced": "सिंक हो गया",
+  "parcel.at_gate": "लेने तक गेट पर",
+  "parcel.handed_over": "सौंप दिया गया",
+  "payment.paid": "भुगतान किया गया",
+  "payment.received_settlement_pending": "भुगतान प्राप्त हुआ; निपटान लंबित",
+  "payment.settled": "निपटान हो गया",
+  "visit.approved": "स्वीकृत; अभी प्रवेश नहीं हुआ",
+  "visit.denied": "अस्वीकृत",
+  "visit.entered": "प्रवेश हुआ",
+  "visit.expired": "समय समाप्त",
+  "visit.no_response": "अभी तक कोई उत्तर नहीं",
+  "visit.submitted": "जमा किया गया"
+}

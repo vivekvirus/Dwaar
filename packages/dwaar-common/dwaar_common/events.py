@@ -3,7 +3,7 @@
 REQ: EDGE-02 / PRD 12.3 (edge event envelope), PRD 12.4 (domain event contract),
 EDGE-03 (event IDs are never regenerated on retry: `event_id` is part of the signed bytes).
 
-Canonical JSON = keys sorted, no insignificant whitespace, UTF-8, no floats. Floats are
+Canonical JSON = keys sorted by UTF-16 code unit (RFC 8785), no insignificant whitespace, UTF-8, no floats. Floats are
 rejected on purpose: they have no stable canonical text, so quantities travel as ints or
 strings (paise, Wh, litres as fixed-decimal strings).
 """
@@ -23,7 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from dwaar_common.ids import uuid7
 from dwaar_common.timeutil import assert_utc, ensure_utc, format_iso_utc, utc_now
 
-PAYLOAD_HASH_PATTERN: Final = re.compile(r"^sha256:[0-9a-f]{64}$")
+PAYLOAD_HASH_PATTERN: Final = re.compile(r"^sha256:[0-9a-f]{64}\Z")  # \Z: `$` would accept a trailing newline
 
 # Domain event names listed in PRD 12.4. Modules may add more; this is a reference set.
 KNOWN_EVENT_TYPES: Final = frozenset(
@@ -57,37 +57,61 @@ class CanonicalJsonError(TypeError):
     """Value cannot be represented in canonical JSON."""
 
 
-def _default(value: Any) -> Any:
+MAX_CANONICAL_DEPTH: Final = 64
+_INT_BITS: Final = 64  # money is bigint paise; anything wider is not a quantity this platform produces
+
+
+def _canonical(value: Any, path: str, depth: int) -> Any:
+    """Validate ``value`` and return an equivalent structure whose mappings are in canonical key order.
+
+    One bounded pass (no recursion beyond ``MAX_CANONICAL_DEPTH``), so hostile input raises a
+    ``CanonicalJsonError`` instead of a ``RecursionError``/``UnicodeEncodeError``/digit-limit ``ValueError``.
+    """
+    if depth > MAX_CANONICAL_DEPTH:
+        raise CanonicalJsonError(f"nesting deeper than {MAX_CANONICAL_DEPTH} at {path}")
+    if value is None or isinstance(value, bool):
+        return value
+    if isinstance(value, float):
+        raise CanonicalJsonError(f"float at {path}: use int or string, floats are not canonical")
+    if isinstance(value, int):
+        if value.bit_length() > _INT_BITS:
+            raise CanonicalJsonError(f"integer at {path} is wider than {_INT_BITS} bits")
+        return value
+    if isinstance(value, str):
+        try:
+            value.encode("utf-8")
+        except UnicodeEncodeError:
+            raise CanonicalJsonError(f"string at {path} is not valid Unicode (lone surrogate)") from None
+        return value
     if isinstance(value, uuid.UUID):
         return str(value)
     if isinstance(value, datetime):
         return format_iso_utc(value)
-    raise CanonicalJsonError(f"type {type(value).__name__} is not canonical-JSON serialisable")
-
-
-def _reject_floats(value: Any, path: str = "$") -> None:
-    if isinstance(value, float):
-        raise CanonicalJsonError(f"float at {path}: use int or string, floats are not canonical")
     if isinstance(value, Mapping):
+        items: list[tuple[bytes, str, Any]] = []
         for key, item in value.items():
             if not isinstance(key, str):
                 raise CanonicalJsonError(f"non-string key at {path}")
-            _reject_floats(item, f"{path}.{key}")
-    elif isinstance(value, list | tuple):
-        for index, item in enumerate(value):
-            _reject_floats(item, f"{path}[{index}]")
+            try:
+                # RFC 8785 (JCS): members sort by UTF-16 code units; big-endian UTF-16 bytes compare the same.
+                sort_key = key.encode("utf-16-be")
+            except UnicodeEncodeError:
+                raise CanonicalJsonError(f"key at {path} is not valid Unicode") from None
+            items.append((sort_key, key, _canonical(item, f"{path}.{key}", depth + 1)))
+        items.sort(key=lambda entry: entry[0])
+        return dict((key, item) for _sort, key, item in items)
+    if isinstance(value, list | tuple):
+        return [_canonical(item, f"{path}[{i}]", depth + 1) for i, item in enumerate(value)]
+    raise CanonicalJsonError(f"type {type(value).__name__} is not canonical-JSON serialisable")
 
 
 def canonical_json(value: Any) -> bytes:
-    """Deterministic UTF-8 JSON bytes: sorted keys, `,` and `:` separators, no floats."""
-    _reject_floats(value)
+    """Deterministic UTF-8 JSON bytes (RFC 8785 member order), `,` and `:` separators, no floats."""
     return json.dumps(
-        value,
-        sort_keys=True,
+        _canonical(value, "$", 0),
         separators=(",", ":"),
         ensure_ascii=False,
         allow_nan=False,
-        default=_default,
     ).encode("utf-8")
 
 
@@ -125,6 +149,16 @@ class EdgeEvent(_Envelope):
     payload_hash: str
     payload: dict[str, Any]
     signature: str | None = None
+
+    @field_validator("occurred_at")
+    @classmethod
+    def _millisecond_precision(cls, value: datetime) -> datetime:
+        """The signed wire form carries milliseconds; the stored value must be exactly that."""
+        return value.replace(microsecond=value.microsecond // 1000 * 1000)
+
+    def has_signable_timestamp(self) -> bool:
+        """False if ``occurred_at`` has sub-millisecond precision the signature cannot cover."""
+        return self.occurred_at.microsecond % 1000 == 0
 
     @field_validator("payload_hash")
     @classmethod

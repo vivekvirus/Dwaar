@@ -22,81 +22,194 @@ import logging
 import re
 import sys
 import traceback
+import unicodedata
 import uuid
 from collections.abc import Iterator, Mapping
 from contextvars import ContextVar
 from datetime import UTC, datetime
 from typing import IO, Any, Final
 
+from dwaar_common.keynames import ALLOWED_KEYS, is_quantity_key, is_sensitive_key
+
 REDACTED: Final = "[REDACTED]"
 
 correlation_id_var: ContextVar[str | None] = ContextVar("dwaar_correlation_id", default=None)
 society_token_var: ContextVar[str | None] = ContextVar("dwaar_society_token", default=None)
 
-_SENSITIVE_TOKENS: Final = frozenset(
-    {
-        "authorization", "authorisation", "secret", "secrets", "token", "tokens",
-        "password", "passwd", "pwd", "otp", "cookie", "cookies", "credential",
-        "credentials", "passcode", "aadhaar", "aadhar", "phone", "mobile", "msisdn",
-        "apikey", "privatekey", "jwt", "bearer", "cvv",
-    }
-)  # fmt: skip
-_SENSITIVE_COMPOUNDS: Final = ("apikey", "privatekey", "accountnumber", "bankaccount", "passsecret")
-_SENSITIVE_EXACT: Final = frozenset({"pin", "account_no", "acct_no", "iban", "ifsc_account"})
-_ALLOWED_KEYS: Final = frozenset({"society_token", "correlation_id", "request_id", "token_type"})
-_CAMEL = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
+_ALLOWED_KEYS: Final = ALLOWED_KEYS
 _SPLIT = re.compile(r"[^a-z0-9]+")
 
 
-def is_sensitive_key(key: str) -> bool:
-    """True if a mapping key / log extra name denotes a secret or personal identifier."""
-    lowered = key.lower()
-    if lowered in _ALLOWED_KEYS:
-        return False
-    if lowered in _SENSITIVE_EXACT:
-        return True
-    tokens = {t for t in _SPLIT.split(_CAMEL.sub("_", key).lower()) if t}
-    if tokens & _SENSITIVE_TOKENS:
-        return True
-    squashed = "".join(_SPLIT.split(lowered))
-    return any(c in squashed for c in _SENSITIVE_COMPOUNDS)
-
-
+_SEP_CLASS = r"[ \t.\-()\u2010-\u2015\u2212]"
+# One of these (plus a little spacing) between digit groups also continues a run: "1234,5678,9012",
+# "99999/00123", "99999_00123", non-breaking spaces. Zero-width characters are removed before matching.
+_JOINER = r"[ \t]?[,/_\u00a0\u202f][ \t]{0,2}"
+_ZERO_WIDTH = re.compile("[\u00ad\u200b-\u200f\u202a-\u202e\u2060-\u2064\ufeff]")
 _JWT = re.compile(r"\beyJ[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]*")
-_BEARER = re.compile(r"(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=-]{8,}")
-_KEYVALUE = re.compile(
-    r"(?i)\b(password|passwd|pwd|secret|token|api[_-]?key|authorization|authorisation|"
-    r"otp|passcode|pass[_-]?secret)\b(?P<sep>[\"']?\s*[:=]\s*[\"']?)(?!\[REDACTED\])(?P<val>[^\s,;&\"'}\]]+)"
+_BEARER = re.compile(r"(?i)\b(bearer|basic|digest)\s+[A-Za-z0-9._~+/=-]+")
+# Whole-line header values: scheme word AND credential (Token/ApiKey/Bearer/Basic ...) or cookie jar.
+_HEADER_LINE = re.compile(
+    r"(?i)(?<![\w-])(?P<key>proxy-authori[sz]ation|authori[sz]ation|set-cookie|cookie)"
+    r"(?P<sep>[\"']?[ \t]*(?:[:=]|%3[AD])[ \t]*[\"']?)(?![ \t]*\[REDACTED\])[^\r\n]+"
 )
-_OTP_AFTER = re.compile(
-    r"(?i)\b(otp|one[- ]time (?:password|code)|verification code)\b[^0-9\n]{0,20}\d{4,8}\b"
+# key<sep>value pairs anywhere in free text (query strings, headers, JSON-ish dumps, repr of dicts).
+# The key is anchored at the start of a word run and capped, so the scan stays linear.
+_KV = re.compile(
+    r"(?<![\w.\[\]-])(?P<key>[\w.\[\]-]{1,64})"
+    r"(?P<sep>[\"']?[ \t]*(?:[:=]|%3[AD])[ \t]*[\"']?)"
+)
+_VALUE_END = re.compile(r"[\s,;&\"'}\]]")
+_OTP_PHRASE = re.compile(
+    r"(?i)(?<![a-z])(otp|one[- ]?time[- ](?:password|code|pin)|verification[ _-]?code|passcode|"
+    r"security code|auth(?:entication)? code|login code|"
+    r"ओटीपी|ओ\.?\s?टी\.?\s?पी\.?|वन टाइम पासवर्ड|एक बार का पासवर्ड|सत्यापन कोड|पडताळणी कोड|"
+    r"एकदा वापरायचा पासवर्ड|पासकोड)(?P<gap>[^0-9\n]{0,25})"
+    r"(?P<code>\d(?:[ \t]?\d){3,7})(?!\d)"
 )
 _OTP_BEFORE = re.compile(
-    r"(?i)\b\d{4,8}\b(?=\s+is\s+(?:your|the)\s+(?:otp|one[- ]time|verification|login))"
+    r"(?i)\b\d(?:[ \t]?\d){3,7}(?!\d)(?=\s+(?:is\s+(?:your|the)\s+(?:otp|one[- ]time|verification|login)|"
+    r"to\s+(?:verify|log\s?in|sign\s?in|confirm|continue|proceed|complete|authori[sz]e|reset|activate|"
+    r"access|register|login)))"
 )
-_AADHAAR = re.compile(r"(?<![\w-])\d{4}[\s-]?\d{4}[\s-]?\d{4}(?![\w-]|\.\d)")
-_PHONE = re.compile(r"(?<![\w-])(?:\+?91[\s-]?|0)?[6-9]\d{4}[\s-]?\d{5}(?![\w-]|\.\d)")
-_LONG_DIGITS = re.compile(r"(?<![\w-])\d{9,18}(?![\w-]|\.\d)")
+# ``code=482913``, ``?c=482913``, ``code: 482913``, ``your code is 482913``: a bare code parameter.
+_OTP_CODE_KV = re.compile(
+    r"(?i)(?<![\w])(?P<key>code|c)(?P<sep>[ \t]*(?:[:=]|%3[AD])[ \t]*|[ \t]+is[ \t]+)"
+    r"(?P<value>\d{4,8})(?!\d)"
+)
+# scheme://user:password@host -- the password of a DSN or URL (error messages embed whole URLs).
+_URL_USERINFO = re.compile(
+    r"(?P<scheme>\b[A-Za-z][A-Za-z0-9+.-]*://)(?P<user>[^\s/:@]*):(?P<password>[^\s/]*)@"
+)
+_EMAIL = re.compile(
+    r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]{1,64}@(?:[A-Za-z0-9-]{1,63}\.){1,8}[A-Za-z]{2,24}"
+    r"(?![A-Za-z0-9-])"
+)
+_VPA = re.compile(r"(?<![\w.%+-])[\w.-]{2,64}@[A-Za-z][A-Za-z0-9]{1,30}(?![\w.@-])")
+_GSTIN = re.compile(
+    r"(?<![A-Za-z0-9])\d{2}[A-Za-z]{5}\d{4}[A-Za-z][1-9A-Za-z][Zz][0-9A-Za-z](?![A-Za-z0-9])"
+)
+_PAN = re.compile(r"(?<![A-Za-z0-9])[A-Za-z]{5}[0-9]{4}[A-Za-z](?![A-Za-z0-9])")
+_IFSC = re.compile(r"(?<![A-Za-z0-9])[A-Za-z]{4}0[A-Za-z0-9]{6}(?![A-Za-z0-9])")
+# Digit runs (phone, Aadhaar, bank, card numbers in any grouping) -- with a few shapes that are
+# deliberately left alone so correlation ids and timestamps stay readable.
+_OCTET = r"(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)"
+_DIGIT_RUNS = re.compile(
+    r"(?P<safe>"
+    r"(?<![0-9A-Za-z-])[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+    r"(?![0-9A-Za-z])"
+    r"|(?<![\d.])" + _OCTET + r"(?:\." + _OCTET + r"){3}(?![\d.])"
+    r"|(?<![\d-])\d{4}-\d{2}-\d{2}(?![\d-])"
+    r")"
+    r"|(?P<run>(?<!\d)\d(?:(?:" + _SEP_CLASS + r"{0,6}|" + _JOINER + r")\d)*)"
+)
+# Long opaque strings. A labelled digest (``sha256:<64 hex>``: payload and request hashes) stays readable;
+# any other 32+ hex run (a key, a pepper, a token) and any 40+ character base64-like run that mixes letters
+# and digits is redacted. Hashes look like keys, so an unlabelled one is redacted too: over-redaction is fine.
+_LONG_OPAQUE = re.compile(
+    r"(?P<safe>(?<![0-9A-Za-z])(?:sha256|sha-256|sha512|sha1|md5):[0-9a-f]{32,128}(?![0-9A-Za-z]))"
+    r"|(?P<hex>(?<![0-9A-Za-z])[0-9a-fA-F]{32,}(?![0-9A-Za-z]))"
+    r"|(?P<b64>(?<![0-9A-Za-z_+-])(?=[A-Za-z0-9_+-]*[A-Za-z])(?=[A-Za-z0-9_+-]*\d)"
+    r"[A-Za-z0-9_+-]{40,}={0,2}(?![A-Za-z0-9_+-]))"
+)
+_MIN_SECRET_DIGITS: Final = 9
+
+
+def _fold_digits(text: str) -> str:
+    """Drop zero-width characters, NFKC-fold and map every Unicode decimal digit to ASCII."""
+    if text.isascii():
+        return text
+    text = _ZERO_WIDTH.sub("", unicodedata.normalize("NFKC", text))
+    if text.isascii():
+        return text
+    return "".join(
+        str(unicodedata.digit(ch)) if ch.isdecimal() and not ch.isascii() else ch for ch in text
+    )
+
+
+def _is_secret_text_key(key: str) -> bool:
+    """The same classifier as for mapping keys (``dwaar_common.keynames``): one answer in both places."""
+    return is_sensitive_key(key)
+
+
+def _scrub_key_values(text: str) -> str:
+    out: list[str] = []
+    pos = 0
+    scan = 0
+    while True:
+        m = _KV.search(text, scan)
+        if m is None:
+            break
+        if not _is_secret_text_key(m.group("key")):
+            scan = m.end()  # the value may itself contain more pairs (url=...?token=x)
+            continue
+        value_start = m.end()
+        if text.startswith(REDACTED[:-1], value_start):
+            scan = value_start
+            continue
+        quote = m.group("sep")[-1:] if m.group("sep")[-1:] in "\"'" else ""
+        if quote:
+            close = text.find(quote, value_start)
+            value_end = len(text) if close == -1 else close
+        else:
+            end = _VALUE_END.search(text, value_start)
+            value_end = len(text) if end is None else end.start()
+        if value_end == value_start:
+            scan = value_start
+            continue
+        out.append(text[pos:value_start])
+        out.append(REDACTED)
+        pos = scan = value_end
+    out.append(text[pos:])
+    return "".join(out)
+
+
+def _redact_long_opaque(match: re.Match[str]) -> str:
+    return match.group(0) if match.group("safe") is not None else REDACTED
+
+
+def _redact_digit_run(match: re.Match[str]) -> str:
+    if match.group("safe") is not None:
+        return match.group(0)
+    run = match.group("run")
+    digits = sum(ch.isdigit() for ch in run)
+    return REDACTED if digits >= _MIN_SECRET_DIGITS else run
 
 
 def scrub_text(text: str) -> str:
-    """Remove secrets and personal identifiers from free text."""
+    """Remove secrets and personal identifiers from free text (fail closed; over-redaction is fine)."""
+    text = _fold_digits(text)
+    text = _URL_USERINFO.sub(lambda m: f"{m.group('scheme')}{m.group('user')}:{REDACTED}@", text)
     text = _JWT.sub(REDACTED, text)
+    text = _HEADER_LINE.sub(lambda m: f"{m.group('key')}{m.group('sep')}{REDACTED}", text)
     text = _BEARER.sub(lambda m: f"{m.group(1)} {REDACTED}", text)
-    text = _KEYVALUE.sub(lambda m: f"{m.group(1)}{m.group('sep')}{REDACTED}", text)
-    text = _OTP_AFTER.sub(lambda m: f"{m.group(1)} {REDACTED}", text)
+    text = _scrub_key_values(text)
+    text = _OTP_PHRASE.sub(lambda m: f"{m.group(1)}{m.group('gap')}{REDACTED}", text)
     text = _OTP_BEFORE.sub(REDACTED, text)
-    text = _AADHAAR.sub(REDACTED, text)
-    text = _PHONE.sub(REDACTED, text)
-    return _LONG_DIGITS.sub(REDACTED, text)
+    text = _OTP_CODE_KV.sub(lambda m: f"{m.group('key')}{m.group('sep')}{REDACTED}", text)
+    text = _LONG_OPAQUE.sub(_redact_long_opaque, text)
+    text = _EMAIL.sub(REDACTED, text)
+    text = _VPA.sub(REDACTED, text)
+    text = _GSTIN.sub(REDACTED, text)
+    text = _PAN.sub(REDACTED, text)
+    text = _IFSC.sub(REDACTED, text)
+    return _DIGIT_RUNS.sub(_redact_digit_run, text)
 
 
 def scrub_value(value: Any, key: str | None = None) -> Any:
-    """Recursively scrub a JSON-like value; `key` is the field name it was found under."""
+    """Recursively scrub a JSON-like value; `key` is the field name it was found under.
+
+    Numbers are scrubbed too: a phone or account number stored as an int under an innocuous key
+    ('contact', 'ref') becomes ``[REDACTED]`` unless the key names a quantity (paise, count, ms ...).
+    """
     if key is not None and is_sensitive_key(key) and value is not None:
         return REDACTED
-    if value is None or isinstance(value, bool | int | float):
+    if value is None or isinstance(value, bool):
         return value
+    if isinstance(value, int | float):
+        if is_quantity_key(key):  # money and measured quantities are data, not identifiers
+            return value
+        rendered = str(value)
+        return value if scrub_text(rendered) == rendered else REDACTED
     if isinstance(value, str):
         return scrub_text(value)
     if isinstance(value, bytes | bytearray | memoryview):
@@ -104,7 +217,7 @@ def scrub_value(value: Any, key: str | None = None) -> Any:
     if isinstance(value, Mapping):
         return {str(k): scrub_value(v, str(k)) for k, v in value.items()}
     if isinstance(value, list | tuple | set | frozenset):
-        return [scrub_value(v) for v in value]
+        return [scrub_value(v, key) for v in value]
     if isinstance(value, uuid.UUID):
         return str(value)
     if isinstance(value, datetime):
@@ -233,6 +346,40 @@ def build_handler(
     return handler
 
 
+class StripQueryStringFilter(logging.Filter):
+    """Drops the query string from uvicorn's access-log request target (``%s - "%s %s HTTP/%s" %d``).
+
+    Query strings routinely carry OTPs, tokens and phone numbers; they are never logged.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        args = record.args
+        if isinstance(args, tuple) and len(args) >= 3 and isinstance(args[2], str):
+            record.args = (*args[:2], args[2].split("?", 1)[0], *args[3:])
+        return True
+
+
+_SERVER_LOGGERS: Final = ("uvicorn", "uvicorn.error", "uvicorn.access")
+
+
+def harden_server_loggers() -> None:
+    """Route uvicorn's own loggers through the scrubbing root handler (OBS-01).
+
+    uvicorn installs plain handlers on ``uvicorn``/``uvicorn.access`` with ``propagate=False`` before
+    the application is imported, so without this the raw request line (path AND query string) is
+    written to stderr in clear. We detach those handlers, let records propagate to the root
+    scrubbing JSON handler and strip query strings from access records. ``--no-access-log`` keeps
+    working (it only raises the level of ``uvicorn.access``).
+    """
+    for name in _SERVER_LOGGERS:
+        server_logger = logging.getLogger(name)
+        server_logger.handlers.clear()
+        server_logger.propagate = True
+    access = logging.getLogger("uvicorn.access")
+    if not any(isinstance(f, StripQueryStringFilter) for f in access.filters):
+        access.addFilter(StripQueryStringFilter())
+
+
 def configure_logging(
     service: str = "dwaar",
     level: int | str = "INFO",
@@ -247,4 +394,5 @@ def configure_logging(
     handler = build_handler(service, stream, json_output)
     root.addHandler(handler)
     root.setLevel(level)
+    harden_server_loggers()
     return handler

@@ -18,6 +18,7 @@ dev = [
   "dwaar-worker",
   "dwaar-edge",
   "dwaar-ai-gateway",
+  "dwaar-packs",
   "pytest>=8.3",
   "hypothesis>=6.112",
   "ruff>=0.7",
@@ -25,6 +26,7 @@ dev = [
   "psycopg[binary]>=3.2",
   "pyyaml>=6.0",
   "types-PyYAML",
+  "types-jsonschema",
 ]
 
 [tool.uv.workspace]
@@ -36,6 +38,7 @@ dwaar-api = { workspace = true }
 dwaar-worker = { workspace = true }
 dwaar-edge = { workspace = true }
 dwaar-ai-gateway = { workspace = true }
+dwaar-packs = { workspace = true }
 
 # --------------------------------------------------------------------------- pytest
 [tool.pytest.ini_options]
@@ -73,7 +76,7 @@ ignore = [
 "tests/_harness/**" = ["S103", "S603", "S607", "S101", "T20"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["dwaar_common", "dwaar_api", "dwaar_worker", "dwaar_edge", "dwaar_ai_gateway", "tests"]
+known-first-party = ["dwaar_common", "dwaar_api", "dwaar_worker", "dwaar_edge", "dwaar_ai_gateway", "dwaar_packs", "tests"]
 
 # --------------------------------------------------------------------------- mypy
 [tool.mypy]

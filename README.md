@@ -25,7 +25,7 @@ make setup      # uv sync (flock-guarded), create .env with freshly generated lo
 make db-up      # persistent dev PostgreSQL under .local/pg on port 55432 (roles, database, extensions)
 make migrate    # apply SQL migrations as dwaar_owner (says so if the migration runner is not built yet)
 make seed       # synthetic demo data, DWAAR_ENV=local only (says so if not implemented yet)
-make api        # FastAPI on http://127.0.0.1:8000 (foreground, Ctrl-C to stop)
+make api        # FastAPI on http://127.0.0.1:8000 (foreground, Ctrl-C to stop; uvicorn --no-access-log: request lines never reach the log)
 make db-down    # stop the dev database
 ```
 

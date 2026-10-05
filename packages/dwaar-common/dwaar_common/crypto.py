@@ -222,6 +222,8 @@ def normalize_phone_in(raw: str) -> str:
         text = text[2:]
     elif len(text) == 11 and text.startswith("0"):
         text = text[1:]
-    if not re.fullmatch(r"[6-9]\d{9}", text):
+    # ASCII digits only: Unicode digits (Arabic-Indic, Devanagari ...) would produce a second, different
+    # phone_token / rate-limit key for the same SIM (IAM-06).
+    if not re.fullmatch(r"[6-9][0-9]{9}", text, re.ASCII):
         raise InvalidPhoneError("not a valid Indian mobile number")
     return "+91" + text
