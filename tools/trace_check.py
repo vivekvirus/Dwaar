@@ -17,6 +17,16 @@ Annotation forms (all deterministic, no imports of project code):
 Status per requirement (see ``compute_status``): ``done`` | ``partial`` | ``not-started`` | ``blocked-external``.
 Decisions and open questions are reference items: listed, never statused.
 
+``done`` is an ANNOTATION status, not a verification: it means "implemented and tested by at least one collected,
+function-level test, with every acceptance gate tagged". Whether those tests PASS comes from a run report
+(``docs/evidence/_run.json``, written by ``make acceptance`` / ``pytest --run-json``): when one is present each
+requirement gets a ``verification`` block, a failing test downgrades ``done`` to ``partial``, and without a run
+report the ``verification`` of every requirement is ``null`` (unknown), never "passing".
+
+Only test files that a runner actually COLLECTS are test evidence (``test_*.py``, ``*_test.py``, ``*.test.ts``,
+``*Test.kt``, ``__tests__/``). A file in a test directory that no runner collects (``verify_*.py``, helpers,
+fixtures) is "support": its annotations are never counted as tested-by or implemented-in.
+
 Exit codes: 0 success, 1 check failure (orphans with --fail-on-orphans, registry errors with --check-registry),
 2 usage or I/O error.
 """
@@ -178,7 +188,7 @@ class Annotation:
     ident: str
     path: str  # posix, repo-relative
     line: int
-    category: str  # test | impl
+    category: str  # test (collected) | support (never evidence) | impl
     symbol: str | None = None  # pytest scope for AST marks
 
     def entry(self) -> str:
@@ -434,8 +444,28 @@ def check_prd_completeness(reg: Registry, prd_text: str) -> list[str]:
 
 # --------------------------------------------------------------------------------------------- scanning
 def is_test_path(rel: str) -> bool:
+    """Test CODE of any kind: inside a test directory or named like a test file (collected or not)."""
     parts = rel.split("/")
     return any(p in TEST_DIR_NAMES for p in parts[:-1]) or bool(_TEST_FILE_RE.match(parts[-1]))
+
+
+def is_collected_test(rel: str) -> bool:
+    """A file a test runner actually collects (pytest, jest/vitest/playwright, JUnit): the only test EVIDENCE.
+
+    ``tests/security/verify_w1_x.py`` or ``tests/_harness/helpers.py`` are test code but are never collected.
+    """
+    parts = rel.split("/")
+    name = parts[-1]
+    if _TEST_FILE_RE.match(name):
+        return True
+    return name.endswith((".ts", ".tsx", ".js", ".jsx", ".mjs")) and "__tests__" in parts[:-1]
+
+
+def file_category(rel: str) -> str:
+    """``test`` (collected), ``support`` (test code nobody collects: never evidence) or ``impl``."""
+    if is_collected_test(rel):
+        return "test"
+    return "support" if is_test_path(rel) else "impl"
 
 
 def path_role(rel: str) -> str | None:
@@ -549,7 +579,7 @@ def scan_file(rel: str, text: str) -> list[Annotation]:
     """Annotations in one file (pure function: path + content in, annotations out)."""
     if is_ignored_file(text):
         return []
-    category = "test" if is_test_path(rel) else "impl"
+    category = file_category(rel)
     markdown = rel.endswith(".md")
     out: list[Annotation] = []
     if any(k in text for k in ("REQ", "AT:", "ADAPTER", "SIMULATOR", "SIM:")):
@@ -685,6 +715,8 @@ def _roles_by_id(anns: list[Annotation]) -> dict[str, dict[str, set[str]]]:
         )
 
     for a in anns:
+        if a.category == "support":
+            continue  # test code that no runner collects (verify_*, helpers): never evidence
         s = slot(a.ident)
         if a.category == "impl":
             if a.kind in ("req", "adapter", "simulator"):
@@ -717,7 +749,9 @@ def compute_status(
       hardware, partner, approval, field or data dependency) and its software side exists: for provider, hardware
       and partner dependencies an adapter and a simulator must both exist; for approval-type dependencies an
       implementation and at least one test.
-    * done: no external dependency, implemented, tested, and every acceptance gate in scope has a tagged test.
+    * done: no external dependency, implemented, tested by at least one function-level test of a COLLECTED test
+      file, and every acceptance gate in scope has a tagged test. ``done`` is not "verified": see
+      :func:`verification_by_requirement` for what a run report adds.
     * partial: anything else with evidence.
     """
     ev = ev or {
@@ -728,6 +762,9 @@ def compute_status(
         "at_tests": set(),
     }
     has_impl, has_test = bool(ev["impl"]), bool(ev["tests"])
+    # A module-level ``pytestmark`` says a file's tests evidence the ID but does not say a test exists FOR it:
+    # only a mark on a function (or a class, or a comment in a collected test file) counts as a tested claim.
+    has_fn_test = any(not t.endswith("::<module>") for t in ev["tests"])
     blocked_by = sorted(set(labels) | set(externals))
     integration = [e for e in externals if external_kinds.get(e) in INTEGRATION_KINDS]
     gaps: list[str] = []
@@ -735,6 +772,8 @@ def compute_status(
         gaps.append("no-implementation")
     if not has_test:
         gaps.append("no-tests")
+    elif not has_fn_test:
+        gaps.append("module-level-marks-only")
     missing_gates = [g for g in gates if not gate_tests.get(g)]
     gaps.extend(f"acceptance-untested:{g}" for g in missing_gates)
     if not has_impl and not has_test:
@@ -747,15 +786,20 @@ def compute_status(
                 gaps.append("no-simulator")
             ok = has_impl and bool(ev["adapter"]) and bool(ev["simulator"])
         else:
-            ok = has_impl and has_test
+            ok = has_impl and has_fn_test
         return ("blocked-external" if ok else "partial"), blocked_by, sorted(set(gaps))
-    if has_impl and has_test and not missing_gates:
+    if has_impl and has_fn_test and not missing_gates:
         return "done", blocked_by, []
     return "partial", blocked_by, gaps
 
 
 def build_report(
-    root: Path, reg: Registry, scan: ScanResult, target: str, exact: bool = False
+    root: Path,
+    reg: Registry,
+    scan: ScanResult,
+    target: str,
+    exact: bool = False,
+    run: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if target not in MILESTONE_RANK:
         raise ValueError(f"unknown milestone {target!r}")
@@ -764,6 +808,7 @@ def build_report(
     ext_kinds = reg.external_kinds
     at_tests = {i: sorted(v["at_tests"]) for i, v in per_id.items() if v["at_tests"]}
     evidence = scan_evidence(root)
+    verification = verification_by_requirement(run)
 
     requirements: list[dict[str, Any]] = []
     acceptance: list[dict[str, Any]] = []
@@ -816,6 +861,10 @@ def build_report(
             list(assign.get("external") or []),
             ext_kinds,
         )
+        proof = verification.get(rid)
+        if proof is not None and proof["failed"] and status == "done":
+            status = "partial"
+            gaps = [*gaps, f"failing-tests:{proof['failed']}"]
         requirements.append(
             {
                 "id": rid,
@@ -836,6 +885,11 @@ def build_report(
                 "tested_by": sorted(ev_rec["tests"]) if ev_rec else [],
                 "acceptance_gates": gates,
                 "gaps": gaps,
+                # None = unknown (no run report, or the run did not execute a test tagged with this ID)
+                "verification": proof,
+                "verified": None
+                if proof is None
+                else bool(proof["passed"] and not proof["failed"]),
             }
         )
 
@@ -888,6 +942,13 @@ def build_report(
             "items": len(reg.items),
             "digest": f"sha256:{reg.digest}",
         },
+        "test_run": None
+        if run is None
+        else {
+            "commit": run.get("commit"),
+            "results": len(run.get("results") or []),
+            "milestone_filter": run.get("milestone_filter"),
+        },
         "scan": {
             "files_scanned": scan.files_scanned,
             "files_ignored": scan.files_ignored,
@@ -896,6 +957,11 @@ def build_report(
         "summary": {
             "requirements_in_scope": len(requirements),
             "by_status": by_status,
+            "verified": {
+                "verified": sum(1 for r in requirements if r["verified"] is True),
+                "failing": sum(1 for r in requirements if r["verified"] is False),
+                "unknown": sum(1 for r in requirements if r["verified"] is None),
+            },
             "by_priority": {k: by_priority[k] for k in sorted(by_priority)},
             "acceptance_in_scope": len(acceptance),
             "acceptance_by_status": at_status,
@@ -906,6 +972,43 @@ def build_report(
         "acceptance": acceptance,
         "orphans": orphans,
     }
+
+
+RUN_REPORT = Path("docs") / "evidence" / "_run.json"
+
+
+def load_run_report(path: Path) -> dict[str, Any] | None:
+    """The pytest run report written by the harness (``--run-json`` / ``--evidence``), or None if unusable."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict) or not isinstance(data.get("results"), list):
+        return None
+    return data
+
+
+def verification_by_requirement(run: dict[str, Any] | None) -> dict[str, dict[str, int]]:
+    """Requirement ID -> counts of passed / failed / skipped tests that carry its ``req`` mark in the run report.
+
+    ``xfailed`` and ``skipped`` are never counted as passing; ``error`` counts as failed.
+    """
+    out: dict[str, dict[str, int]] = {}
+    for result in (run or {}).get("results") or []:
+        if not isinstance(result, dict):
+            continue
+        outcome = str(result.get("outcome"))
+        bucket = (
+            "passed"
+            if outcome in ("passed", "xpassed")
+            else "failed"
+            if outcome in ("failed", "error")
+            else "skipped"
+        )
+        for rid in result.get("reqs") or []:
+            row = out.setdefault(str(rid), {"passed": 0, "failed": 0, "skipped": 0})
+            row[bucket] += 1
+    return out
 
 
 def at_tests_as_sets(at_tests: dict[str, list[str]]) -> dict[str, set[str]]:
@@ -946,6 +1049,19 @@ def render_markdown(report: dict[str, Any]) -> str:
     for st in ("done", "partial", "blocked-external", "not-started"):
         lines.append(f"| {st} | {s['by_status'][st]} |")
     lines.append(f"| **in scope** | **{s['requirements_in_scope']}** |")
+    v = s["verified"]
+    lines += [
+        "",
+        "**Status is not verification.** `done` means annotated, implemented and covered by a function-level test "
+        "of a collected test file; it does not say the tests pass. "
+        + (
+            f"Run report ({report['test_run']['results']} tests at commit `{report['test_run']['commit']}`): "
+            f"{v['verified']} requirements verified (every tagged test passed), {v['failing']} failing, "
+            f"{v['unknown']} not executed by that run."
+            if report["test_run"]
+            else "No run report was supplied (`docs/evidence/_run.json`), so every requirement is unverified."
+        ),
+    ]
     lines += [
         "",
         "| Priority | done | partial | blocked-external | not-started |",
@@ -1023,8 +1139,11 @@ def render_markdown(report: dict[str, Any]) -> str:
         "## How status is computed",
         "",
         "- **not-started**: no implementation file and no test mention the ID.",
-        "- **done**: no external dependency; at least one implementation file and one test; every acceptance test "
-        "that gates the requirement (up to this milestone) has a test tagged for it.",
+        "- **done**: no external dependency; at least one implementation file and one FUNCTION-LEVEL test in a "
+        "collected test file (a module-level `pytestmark` alone, or a file no runner collects, does not count); every "
+        "acceptance test that gates the requirement (up to this milestone) has a test tagged for it. `done` is an "
+        "annotation status, NOT a verification: with a run report a failing tagged test downgrades it to partial, "
+        "and `verified` in `TRACEABILITY.json` is true only when a tagged test actually passed in that run.",
         "- **blocked-external**: the requirement carries a LEGAL, CA, VERIFY or TBD label or needs a provider, "
         "hardware, partner, approval, field measurement or baseline data, and its software side exists: for "
         "provider, hardware and partner dependencies an adapter and a simulator both exist; otherwise "
@@ -1083,6 +1202,17 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="PRD text path (default docs/prd/Dwaar_Master_PRD_v2.0.txt)",
     )
+    p.add_argument(
+        "--run-json",
+        type=Path,
+        default=None,
+        help="pytest run report (default docs/evidence/_run.json when present): adds per-requirement verification",
+    )
+    p.add_argument(
+        "--no-run-json",
+        action="store_true",
+        help="ignore any run report (deterministic output that depends on the tree and registry only)",
+    )
     p.add_argument("--quiet", action="store_true", help="suppress the summary line")
     return p
 
@@ -1123,7 +1253,12 @@ def main(argv: list[str] | None = None) -> int:
         return 1 if failed else 0
 
     scan = scan_repo(root)
-    report = build_report(root, reg, scan, args.milestone, args.exact)
+    run_path = args.run_json or (root / RUN_REPORT)
+    run = None if args.no_run_json or not run_path.is_file() else load_run_report(run_path)
+    if args.run_json is not None and not args.no_run_json and run is None:
+        print(f"trace_check: run report not readable: {run_path}", file=sys.stderr)
+        return 2
+    report = build_report(root, reg, scan, args.milestone, args.exact, run)
     if args.stdout:
         sys.stdout.write(render_markdown(report) if args.format == "md" else render_json(report))
     elif args.format != "none":

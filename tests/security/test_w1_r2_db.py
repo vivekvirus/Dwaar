@@ -643,3 +643,99 @@ def test_a_role_promoted_to_superuser_after_the_pool_filled_fails_readiness(db: 
         with db.admin_conn() as admin:
             admin.execute("DROP OWNED BY promoted_later")
             admin.execute("DROP ROLE promoted_later")
+
+
+def test_every_pooled_connection_pins_the_session_settings(two: DbHandle) -> None:
+    """R2-02: the settings that matter ride in the startup options, for the API and the worker engine alike."""
+    database = Database(
+        two.app_dsn,
+        two.worker_dsn,
+        pool_size=1,
+        max_overflow=0,
+        statement_timeout_ms=12_345,
+        lock_timeout_ms=6_789,
+    )
+    expected = {
+        "row_security": "on",
+        "default_transaction_read_only": "off",
+        "lock_timeout": "6789ms",
+        "statement_timeout": "12345ms",
+        "idle_in_transaction_session_timeout": "1min",
+        "search_path": "public",
+    }
+    try:
+        for engine in (database.app_engine, database.worker_engine):
+            with engine.connect() as conn:
+                got = {
+                    name: conn.execute(text("SELECT current_setting(:n)"), {"n": name}).scalar_one()
+                    for name in expected
+                }
+            assert got == expected
+    finally:
+        database.dispose()
+
+
+def test_role_level_defaults_of_the_worker_cannot_poison_it_either(two: DbHandle) -> None:
+    planted = False
+    try:
+        with psycopg.connect(two.worker_dsn, autocommit=True) as conn:
+            conn.execute("ALTER ROLE dwaar_worker SET default_transaction_read_only = on")
+            planted = True
+        database = Database(two.app_dsn, two.worker_dsn, pool_size=1, max_overflow=0)
+        try:
+            with database.worker_tx() as conn:
+                conn.execute(text("UPDATE outbox SET attempts = attempts WHERE false"))
+                got = conn.execute(text("SHOW default_transaction_read_only")).scalar_one()
+            assert got == "off"
+            assert database.role_default_settings() == {"worker": ["default_transaction_read_only"]}
+        finally:
+            database.dispose()
+    finally:
+        if planted:
+            with two.admin_conn() as admin:
+                admin.execute("ALTER ROLE dwaar_worker RESET ALL")
+
+
+def test_the_role_check_also_refuses_a_bypassrls_role(db: DbHandle) -> None:
+    from dwaar_api.core.config import ConfigError
+    from tests._harness.pgfixtures import make_dsn
+
+    with db.admin_conn() as admin:
+        admin.execute("CREATE ROLE rls_bypasser LOGIN NOSUPERUSER BYPASSRLS")
+        admin.execute(f"GRANT CONNECT ON DATABASE {db.name} TO rls_bypasser")  # type: ignore[call-overload]
+    try:
+        database = Database(make_dsn(db.admin_dsn, user="rls_bypasser"))
+        try:
+            with pytest.raises(ConfigError):
+                database.ping()
+        finally:
+            database.dispose()
+    finally:
+        with db.admin_conn() as admin:
+            admin.execute("DROP OWNED BY rls_bypasser")
+            admin.execute("DROP ROLE rls_bypasser")
+
+
+def test_a_session_level_set_does_not_survive_the_pool_and_falls_back_to_the_pinned_value(
+    two: DbHandle,
+) -> None:
+    """DISCARD ALL resets to the PINNED startup value (not to a role default or the compiled-in one)."""
+    database = Database(two.app_dsn, pool_size=1, max_overflow=0)
+    try:
+        with database.app_engine.connect() as conn:
+            backend = conn.execute(text("SELECT pg_backend_pid()")).scalar_one()
+            conn.execute(text("SET row_security = off"))
+            conn.execute(text("SET default_transaction_read_only = on"))
+            conn.execute(text("SET search_path = pg_catalog"))
+            conn.commit()
+        with database.app_engine.connect() as conn:
+            assert (
+                conn.execute(text("SELECT pg_backend_pid()")).scalar_one() == backend
+            )  # same connection
+            got = [
+                conn.execute(text(f"SHOW {name}")).scalar_one()  # noqa: S608
+                for name in ("row_security", "default_transaction_read_only", "search_path")
+            ]
+        assert got == ["on", "off", "public"]
+    finally:
+        database.dispose()

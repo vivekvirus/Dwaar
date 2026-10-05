@@ -24,7 +24,6 @@ CLI:  ``python -m dwaar_api.core.migrate up|status [--dsn DSN]``  (DSN defaults 
 from __future__ import annotations
 
 import argparse
-import contextlib
 import hashlib
 import os
 import re
@@ -38,7 +37,19 @@ from typing import Any, Final
 
 import psycopg
 
-MIGRATIONS_DIR: Final = Path(__file__).resolve().parents[2] / "migrations"
+
+def _default_migrations_dir() -> Path:
+    """Migrations shipped INSIDE the installed package (wheel: ``dwaar_api/migrations``), else the source tree
+    (``services/api/migrations``, also what an editable install sees). ``DWAAR_MIGRATIONS_DIR`` overrides both."""
+    override = os.environ.get("DWAAR_MIGRATIONS_DIR")
+    if override:
+        return Path(override)
+    here = Path(__file__).resolve()
+    bundled = here.parents[1] / "migrations"
+    return bundled if bundled.is_dir() else here.parents[2] / "migrations"
+
+
+MIGRATIONS_DIR: Final = _default_migrations_dir()
 _FILENAME: Final = re.compile(r"^(\d{4})_([a-z0-9][a-z0-9_]*)\.sql$")
 # A statement that starts with one of these controls the transaction the runner wrapped around the file.
 _TX_CONTROL: Final = re.compile(
@@ -264,18 +275,37 @@ def _hold_migration_lock(owner_dsn: str) -> psycopg.Connection[Any]:
     connection (open transaction) until it is closed. Blocks while another runner holds it."""
     lock_conn = psycopg.connect(owner_dsn, autocommit=True)
     try:
-        # two first-ever runners can race to create it; the loser simply uses the winner's table
-        with contextlib.suppress(psycopg.errors.UniqueViolation, psycopg.errors.DuplicateTable):
-            lock_conn.execute(
-                f"CREATE TABLE IF NOT EXISTS {LOCK_TABLE} (id integer PRIMARY KEY CHECK (id = 1))"
-            )
-        lock_conn.execute(f"REVOKE ALL ON TABLE {LOCK_TABLE} FROM PUBLIC")
+        _ensure_lock_table(lock_conn)
         lock_conn.autocommit = False
         lock_conn.execute(f"LOCK TABLE {LOCK_TABLE} IN ACCESS EXCLUSIVE MODE")
     except BaseException:
         lock_conn.close()
         raise
     return lock_conn
+
+
+def _ensure_lock_table(conn: psycopg.Connection[Any]) -> None:
+    """Create the lock table if missing; tolerate concurrent first-ever runners racing to create it.
+
+    New tables carry no privileges for anyone but the owner (no default ACLs, see test_w1_rls), so the runtime
+    roles cannot touch it; the table holds no rows.
+    """
+    for attempt in range(40):
+        row = conn.execute("SELECT to_regclass(%s) IS NOT NULL", (LOCK_TABLE,)).fetchone()
+        if row is not None and row[0]:
+            return
+        try:
+            conn.execute(
+                f"CREATE TABLE {LOCK_TABLE} (id uuid PRIMARY KEY DEFAULT gen_random_uuid())"
+            )
+            return
+        except (
+            psycopg.errors.UniqueViolation,
+            psycopg.errors.DuplicateTable,
+            psycopg.errors.InternalError_,  # "tuple concurrently updated": another runner is creating it
+        ):
+            time.sleep(0.05 * (attempt + 1))
+    raise MigrationError(f"could not create the {LOCK_TABLE} table")
 
 
 def _apply_one(conn: psycopg.Connection[Any], migration: Migration) -> None:

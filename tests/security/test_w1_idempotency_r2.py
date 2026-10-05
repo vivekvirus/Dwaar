@@ -1,11 +1,8 @@
-"""OPEN findings from W1 verification: Idempotency-Key semantics (INV-02, PRD 7.4 / 12).
+"""W1 fix round 2: regression tests for Idempotency-Key semantics (INV-02, PRD 7.4 / 12).
 
-Not collected by ``make test``; run explicitly with
-``uv run --no-sync pytest tests/security/verify_w1_idempotency.py -p no:cacheprovider``.
-
-A FAILING test asserts the secure behaviour and marks a defect that is NOT fixed yet (not part of fix round 1).
-When one is fixed, move it to ``tests/security/test_w1_idempotency.py``. Tests for fixed findings live in
-``tests/security/test_w1_*.py``.
+These started life as failing repros in ``verify_w1_idempotency.py`` (open findings of verification round 1) and were moved
+here when their root causes were fixed; each asserts the SECURE behaviour. Tests that already passed in the
+repro file (attacks that were tried and did not work) are kept as regression evidence.
 """
 
 # ruff: noqa: PT018, PT011, PT012, S608, E501, SIM117, PLC0415, RUF001, RUF002, RUF003, S603, S607, S310, B017, BLE001

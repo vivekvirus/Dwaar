@@ -74,3 +74,14 @@ requires `Idempotency-Key` bound to actor, society, endpoint and request hash. B
   stuck claims after crashes and needs a lease/timeout invented by us. Rejected.
 - Middleware capturing the response body: cannot make the stored response atomic with the domain change. Rejected.
 - Application-level audit through ORM events: invisible to raw SQL writes and easy to skip. Rejected for an explicit helper plus tests.
+
+## Fix round 2 additions (B-010)
+
+- **Masking never decides money by digit count.** Numbers are masked by key (identifier-like names) only; any other number and any
+  decimal string with a point survives, so `payload_hash` is computed over the real amount. Digit-only strings under non-quantity
+  keys are still scrubbed.
+- **One event per aggregate version** (`outbox_aggregate_version_uq`): PRD 12.4 orders events only per aggregate version.
+- **A replay answers with the replaying request's id.** A `request_id` member inside a stored response body is refreshed to the
+  current request; the original id is returned in `Idempotent-Original-Request-Id`. The request hash keeps the order of repeated
+  query parameters (`?x=1&x=2` differs from `?x=2&x=1`) and sorts only by name.
+- **Bad input is a 400.** A lone surrogate in an audited or evented value and a NUL byte in a text field are `invalid_schema`.

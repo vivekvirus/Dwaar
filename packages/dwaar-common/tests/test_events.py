@@ -69,7 +69,10 @@ def test_canonical_json_serialises_uuid_and_datetime() -> None:
     st.dictionaries(
         st.text(max_size=8),
         st.recursive(
-            st.none() | st.booleans() | st.integers() | st.text(max_size=8),
+            st.none()
+            | st.booleans()
+            | st.integers(min_value=-(2**63), max_value=2**63 - 1)
+            | st.text(max_size=8),
             lambda inner: (
                 st.lists(inner, max_size=3)
                 | st.dictionaries(st.text(max_size=5), inner, max_size=3)

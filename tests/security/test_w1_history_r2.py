@@ -1,11 +1,8 @@
-"""OPEN findings from W1 verification: append-only history (audit_log / outbox) and mutation atomicity (DB-02, PRD 12.4).
+"""W1 fix round 2: regression tests for append-only history and mutation atomicity (DB-02, PRD 12.4).
 
-Not collected by ``make test``; run explicitly with
-``uv run --no-sync pytest tests/security/verify_w1_history.py -p no:cacheprovider``.
-
-A FAILING test asserts the secure behaviour and marks a defect that is NOT fixed yet (not part of fix round 1).
-When one is fixed, move it to ``tests/security/test_w1_history.py``. Tests for fixed findings live in
-``tests/security/test_w1_*.py``.
+These started life as failing repros in ``verify_w1_history.py`` (open findings of verification round 1) and were moved
+here when their root causes were fixed; each asserts the SECURE behaviour. Tests that already passed in the
+repro file (attacks that were tried and did not work) are kept as regression evidence.
 """
 
 # ruff: noqa: PT018, PT011, PT012, S608, E501, SIM117, PLC0415, RUF001, RUF002, RUF003, S603, S607, S310, B017, BLE001
@@ -151,3 +148,67 @@ def test_http_nul_byte_in_a_text_field_is_a_400_not_a_500(core: CoreHarness) -> 
         json={"name": "a\u0000b"},
     )
     assert resp.status_code in (400, 422), (resp.status_code, resp.text[:200])
+
+
+# ------------------------------------------------------------------------------------------------
+# fix round 2: every permitted purge leaves evidence, including one that forges the flag (migration 0009)
+# ------------------------------------------------------------------------------------------------
+def test_a_forged_purge_flag_still_leaves_a_purge_log_row(db: DbHandle) -> None:
+    audit_id = _audit(db)
+    with db.owner_conn() as conn:
+        conn.execute(
+            "SELECT set_config('dwaar.purge_table', 'audit_log'::regclass::oid::text, true)"
+        )
+        deleted = conn.execute("DELETE FROM audit_log WHERE id = %s", (audit_id,)).rowcount
+    assert deleted == 1
+    with db.owner_conn() as conn:
+        rows = conn.execute(
+            "SELECT table_name, row_count, society_id, purged_by, reason FROM purge_log"
+        ).fetchall()
+    assert len(rows) == 1
+    table, count, society, by, reason = rows[0]
+    assert (table, count, society, by) == ("audit_log", 1, None, "dwaar_owner")
+    assert "outside dwaar_purge_append_only" in reason
+
+
+def test_a_delete_that_the_guard_refuses_writes_no_purge_log_row(db: DbHandle) -> None:
+    import psycopg
+
+    _audit(db)
+    with pytest.raises(psycopg.Error):
+        with db.admin_conn() as conn:
+            conn.execute("DELETE FROM audit_log")
+    with db.owner_conn() as conn:
+        assert conn.execute("SELECT count(*) FROM purge_log").fetchone() == (0,)
+
+
+def test_the_explicit_purge_path_logs_one_row_with_its_reason_and_society(db: DbHandle) -> None:
+    audit_id = _audit(db)
+    with db.owner_conn() as conn:
+        purged = conn.execute(
+            "SELECT dwaar_purge_append_only('audit_log', ARRAY[%s], 'privacy erasure request', %s)",
+            (audit_id, SOCIETY_A),
+        ).fetchone()
+        assert purged == (1,)
+        assert conn.execute("SELECT current_setting('dwaar.purge_reason', true)").fetchone() == (
+            "",
+        )
+    with db.owner_conn() as conn:
+        rows = conn.execute(
+            "SELECT table_name, row_count, society_id, reason FROM purge_log"
+        ).fetchall()
+    assert rows == [("audit_log", 1, SOCIETY_A, "privacy erasure request")]
+
+
+def test_a_society_context_never_sees_purge_evidence_of_another_scope(db: DbHandle) -> None:
+    _audit(db)
+    audit_id = _audit(db)
+    with db.owner_conn() as conn:
+        conn.execute(
+            "SELECT set_config('dwaar.purge_table', 'audit_log'::regclass::oid::text, true)"
+        )
+        conn.execute("DELETE FROM audit_log WHERE id = %s", (audit_id,))
+    with db.app_conn(
+        society_id=SOCIETY_A
+    ) as conn:  # the forged-path row has no society: invisible here
+        assert conn.execute("SELECT count(*) FROM purge_log").fetchone() == (0,)

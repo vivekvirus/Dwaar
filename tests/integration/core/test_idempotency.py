@@ -71,6 +71,11 @@ def test_header_is_required_and_validated(core: CoreHarness) -> None:
     assert counts(core)["probe_things"] == 0
 
 
+def _stored(body: dict[str, object]) -> dict[str, object]:
+    """The stored response minus its per-request trace id (which names the replaying request, see the replay)."""
+    return {k: v for k, v in body.items() if k != "request_id"}
+
+
 def test_replay_returns_stored_canonical_response_without_a_second_effect(
     core: CoreHarness,
 ) -> None:
@@ -88,10 +93,13 @@ def test_replay_returns_stored_canonical_response_without_a_second_effect(
         replay = post(client, core, k, {"name": "Gate pass"})
     assert replay.status_code == 201
     assert replay.headers["idempotent-replayed"] == "true"
-    assert replay.json() == first.json()
+    assert _stored(replay.json()) == _stored(first.json())  # the stored resource, not recomputed
     assert (
         replay.headers["x-request-id"] != first.headers["x-request-id"]
     )  # transport id is per request
+    # a request_id INSIDE the body names the replay (as the header does); the first request's id is a header
+    assert replay.json()["request_id"] == replay.headers["x-request-id"]
+    assert replay.headers["idempotent-original-request-id"] == first.json()["request_id"]
     assert counts(core) == before  # no new thing, audit row, outbox row or key
 
 
@@ -118,7 +126,7 @@ def test_canonically_equal_json_is_the_same_request(core: CoreHarness) -> None:
         )
     assert a.status_code == 201
     assert b.headers.get("idempotent-replayed") == "true"
-    assert b.json() == a.json()
+    assert _stored(b.json()) == _stored(a.json())
     assert counts(core)["probe_things"] == 1
 
 

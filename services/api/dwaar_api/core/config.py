@@ -89,6 +89,19 @@ class Settings(BaseSettings):
     max_page_size: int = Field(default=100, ge=1, le=100)
     max_date_range_days: int = Field(default=92, ge=1, le=3660)
 
+    @field_validator(
+        "database_url",
+        "database_worker_url",
+        "database_owner_url",
+        "cursor_signing_key",
+        mode="before",
+    )
+    @classmethod
+    def _blank_is_unset(cls, value: Any) -> Any:
+        """``DWAAR_X=`` (an empty line in .env) means "not set", so local defaults apply and other
+        environments report the variable as missing instead of booting with an empty secret."""
+        return None if isinstance(value, str) and not value.strip() else value
+
     @field_validator("log_level")
     @classmethod
     def _log_level(cls, value: str) -> str:

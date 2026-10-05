@@ -6,7 +6,7 @@ Read [`docs/BUILD_BRIEF.md`](docs/BUILD_BRIEF.md) first, then [`DECISIONS.md`](D
 ```
 apps/        admin-web (Next.js), resident-mobile (Expo), guard-android (Kotlin)   [added by later steps]
 services/    api (FastAPI), worker, edge, ai-gateway
-packages/    dwaar-common (shared Python), contracts, i18n, legal-packs, tax-packs, prompts
+packages/    dwaar-common (shared Python), dwaar-packs (law-as-configuration evaluators), contracts, i18n, legal-packs, tax-packs
 infra/       db/ (role + database bootstrap SQL), docker-compose.yml
 tests/       _harness (pytest plugin), harness (its self-tests), integration, acceptance, security ...
 tools/       dev/ (pg.sh, devenv, migrate, seed), trace_check.py
@@ -23,9 +23,9 @@ Python 3.12 and [uv](https://docs.astral.sh/uv/), PostgreSQL 16 server binaries 
 ```bash
 make setup      # uv sync (flock-guarded), create .env with freshly generated local keys, pnpm install if JS projects exist
 make db-up      # persistent dev PostgreSQL under .local/pg on port 55432 (roles, database, extensions)
-make migrate    # apply SQL migrations as dwaar_owner (says so if the migration runner is not built yet)
+make migrate    # apply SQL migrations as dwaar_owner (dwaar_api.core.migrate; checksummed, one transaction per file)
 make seed       # synthetic demo data, DWAAR_ENV=local only (says so if not implemented yet)
-make api        # FastAPI on http://127.0.0.1:8000 (foreground, Ctrl-C to stop; uvicorn --no-access-log: request lines never reach the log)
+make api        # FastAPI on http://127.0.0.1:8000 (foreground, Ctrl-C to stop; uvicorn's own access log is dropped; the JSON access log of the app records the route template, never the raw path or query)
 make db-down    # stop the dev database
 ```
 
@@ -63,8 +63,7 @@ def test_isolation(db):
         ...
 ```
 
-Until `dwaar_api.core.migrate` exists, tests using `db` are skipped with an explanatory message. See
-[ADR-0003](docs/adr/0003-test-harness-and-evidence.md). Tag tests with `@pytest.mark.req("GATE-03")` and
+See [ADR-0003](docs/adr/0003-test-harness-and-evidence.md). Tag tests with `@pytest.mark.req("GATE-03")` and
 `@pytest.mark.at("AT-04")`; evidence appears under `docs/evidence/` after `make acceptance`.
 
 ## Conventions in one place

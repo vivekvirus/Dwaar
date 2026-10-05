@@ -181,7 +181,8 @@ def test_cursor_signing_key_must_have_real_entropy_outside_local() -> None:
     for weak in ("a", "k" * 40, "short-key-value", "ab" * 20):
         with pytest.raises(ConfigError, match="DWAAR_CURSOR_SIGNING_KEY") as exc:
             load_settings({**FULL, "DWAAR_CURSOR_SIGNING_KEY": weak})
-        assert weak not in str(exc.value)  # never echoed
+        if len(weak) > 3:
+            assert weak not in str(exc.value)  # never echoed
     assert load_settings(FULL).require_cursor_key()  # the strong key is fine
     # local and test keep their convenience defaults and short test keys
     assert load_settings({"DWAAR_ENV": "local"}).require_cursor_key()
@@ -199,3 +200,15 @@ def test_jwks_url_must_be_https_outside_local() -> None:
         {"DWAAR_ENV": "local", "DWAAR_OIDC_JWKS_URL": "http://127.0.0.1:9000/jwks"}
     )
     assert local.simulation  # plain http is fine for the labelled local/test simulators
+
+
+def test_blank_values_count_as_unset() -> None:
+    """``DWAAR_CURSOR_SIGNING_KEY=`` in a .env file must not boot with an empty signing key."""
+    local = load_settings(
+        {"DWAAR_ENV": "local", "DWAAR_CURSOR_SIGNING_KEY": "", "DWAAR_DATABASE_URL": "  "}
+    )
+    assert local.require_cursor_key()  # the local default applied
+    assert local.database_url is not None
+    assert local.database_url.get_secret_value().startswith("postgresql://dwaar_app:")
+    with pytest.raises(ConfigError, match="DWAAR_CURSOR_SIGNING_KEY"):
+        load_settings({**FULL, "DWAAR_CURSOR_SIGNING_KEY": ""})

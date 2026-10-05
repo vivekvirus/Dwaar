@@ -105,7 +105,8 @@ Format: ID, date, owner, decision, reason / consequence.
 ### B-009 Fix round 1 for W1 verification findings (security and integrity hardening)
 - Date: 2026-10-05. Owner: Viz. Findings F01-F32, Q-01..Q-06 (numbering from the verification report).
 - **Logging (F01-F04, Q-03, Q-04).** `make api` runs uvicorn with `--no-access-log`; the app additionally detaches uvicorn's own
-  handlers and strips query strings from `uvicorn.access`, so a deployment that forgets the flag still logs no secret.
+  handlers. (Round 1 only stripped the query string from `uvicorn.access` and re-enabled it, so the raw PATH and the client
+  ip:port still reached the log; B-010 drops that logger instead.)
   The scrubber is deny-by-default for credentials (any key containing token/secret/password/cookie/session/otp ...,
   whole `Authorization`/`Cookie` header values), folds Unicode digits to ASCII and redacts digit runs of 9+ digits in any grouping,
   plus email, PAN, IFSC, UPI VPA and GSTIN. Over-redaction is accepted; UUIDs, ISO dates, IPv4 addresses and long hashes are left
@@ -149,5 +150,42 @@ Format: ID, date, owner, decision, reason / consequence.
 - **Other.** Keyset pagination is NULL-safe (NULLs sort last in both directions; `SortColumn(nullable=False)` keeps the plain
   row-value comparison). API `message_key` is `errors.<code>` (`internal_error` -> `errors.unknown`) and the rate-limit
   placeholder is `{retry_after_seconds}`. Verification tests for fixed findings live in `tests/security/test_w1_*.py`; findings that
-  were not part of this round stay in `tests/security/verify_w1_*.py` (not collected).
+  were not part of this round stayed in `tests/security/verify_w1_*.py` (not collected); B-010 fixed and moved them.
 
+### B-010 Fix round 2 for W1 verification findings (R2-01..R2-11, Q2-01..Q2-05, open round-1 findings)
+- Date: 2026-10-05. Owner: Viz.
+- **Money survives masking (R2-01).** Audit diffs and outbox payloads no longer decide by digit count: a number is masked only
+  when its KEY says it is an identifier (`contact`, `*_number`, `*_no`, `ref`, `account`, `card` ...; `dwaar_common.keynames`) and has
+  9+ digits; any other number, and any decimal string with a point, is kept. Rs 10 lakh is 100_000_000 paise, nine digits, the
+  same shape as a phone number, so a settlement or corpus figure under `credit`, `tds`, `payout` ... used to become `[REDACTED]`
+  before `payload_hash` was computed. Digit-only STRINGS under non-quantity keys are still scrubbed (that is how phones travel).
+- **Runtime role cannot poison itself (R2-02).** The pooled connections pin `row_security=on`, `default_transaction_read_only=off`,
+  `lock_timeout`, `statement_timeout`, `idle_in_transaction_session_timeout` and `search_path` in the startup options (they outrank
+  role defaults), and `/readyz` fails (`role_defaults: drift`) if the runtime role has ANY role-level default. PostgreSQL offers no
+  way to forbid `ALTER ROLE <self> PASSWORD`; that residual risk is documented in ADR-0004, with detection (the pool fails,
+  `/readyz` 503) and recovery (`infra/db/bootstrap_roles.sql` is idempotent and also clears role defaults).
+- **Never a superuser (R2-03).** The role is re-verified on EVERY new pooled connection (refused with `ConfigError`) and in every
+  `/readyz` (`role` check), so skipping the boot check when the database is down no longer leaves a superuser API running.
+- **Catalog guard (R2-04).** `find_rls_violations` now covers every non-system schema, rejects policies that depend on a custom GUC
+  other than `app.society_id` or on the connected role, probes policies as each runtime role with attacker-set GUCs, and reports
+  runtime roles holding CREATE on a schema or the database.
+- **Route registration fails closed (R2-05).** `create_app` refuses a route without `require(...)` (or `public_route(reason)`, or
+  at least `current_principal`), a Starlette route added by a hook, and a mutating route with neither `idempotency_required` nor
+  `idempotency_exempt(reason)`.
+- **Scrubber and masker (R2-06).** One key classifier for text and mappings. New: key material (`*_key` with a qualifier, pepper,
+  salt, dsn, database_url ...), URL passwords, bare `code=`/`c=` and "use 482913 to verify", Devanagari OTP phrases, 32+ hex and 40+
+  base64 runs unless labelled `sha256:`, comma/slash/underscore/zero-width separated digit runs. 
+- **Tax results carry `binding` (R2-07).** `TdsResult` and `GstRwaAssessment` say whether the pack that produced them is enabled,
+  approved with registry evidence and effective; a draft figure is labelled in its explanation. `find_legal_pack` prefers an approved pack over a later draft.
+- **Verification never raises (R2-08)** and **money parsing is bounded (R2-09)**: canonical JSON is a bounded single pass in RFC 8785
+  key order (depth 64, 64-bit ints, no lone surrogates); Decimal parsing works on the digit tuple, no `scaleb`/`int()` of a huge exponent.
+- **Worker and API privileges (R2-10, LOCK TABLE, rate limits, purge)** are in migration 0009: column-level grants, a SECURITY DEFINER
+  `dwaar_rate_limit_take` with no table privileges for the runtime roles, stale-bucket-only worker housekeeping, and an AFTER DELETE
+  statement trigger so every permitted purge, including one that forges the flag, writes a `purge_log` row. Outbox events are unique per aggregate version.
+- **Pool and migrations (R2-11).** The pool reset is `DISCARD ALL`; the migration runner serialises on an owner-only table lock
+  instead of an advisory lock key (any role can take any advisory key), and detects transaction control structurally.
+- **Packaging, docs, traceability (Q2-01..Q2-05).** Wheels ship the SQL migrations (`dwaar_api/migrations`) and the i18n catalogues
+  (`dwaar_common/locales`); `uvicorn.access` is dropped; `trace_check` ignores files no runner collects, needs a FUNCTION-level test for
+  `done`, and reads a run report when present (`done` is not `verified`); the hi/mr lock-screen text keeps the brand `Dwaar`;
+  `BLOCKING_DECISIONS.md` lists every D/Q ID and no longer says shipped packs are unbuilt.
+- **Still open (not in this round):** see `tests/security/verify_w1_quality_r2.py` (strict xfail list).

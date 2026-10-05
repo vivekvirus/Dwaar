@@ -347,38 +347,33 @@ def build_handler(
     return handler
 
 
-class StripQueryStringFilter(logging.Filter):
-    """Drops the query string from uvicorn's access-log request target (``%s - "%s %s HTTP/%s" %d``).
-
-    Query strings routinely carry OTPs, tokens and phone numbers; they are never logged.
-    """
+class DropRecordsFilter(logging.Filter):
+    """Drops every record that passes through it."""
 
     def filter(self, record: logging.LogRecord) -> bool:
-        args = record.args
-        if isinstance(args, tuple) and len(args) >= 3 and isinstance(args[2], str):
-            record.args = (*args[:2], args[2].split("?", 1)[0], *args[3:])
-        return True
+        return False
 
 
 _SERVER_LOGGERS: Final = ("uvicorn", "uvicorn.error", "uvicorn.access")
 
 
 def harden_server_loggers() -> None:
-    """Route uvicorn's own loggers through the scrubbing root handler (OBS-01).
+    """Route uvicorn's own loggers through the scrubbing root handler and silence its request lines (OBS-01).
 
-    uvicorn installs plain handlers on ``uvicorn``/``uvicorn.access`` with ``propagate=False`` before
-    the application is imported, so without this the raw request line (path AND query string) is
-    written to stderr in clear. We detach those handlers, let records propagate to the root
-    scrubbing JSON handler and strip query strings from access records. ``--no-access-log`` keeps
-    working (it only raises the level of ``uvicorn.access``).
+    uvicorn installs plain handlers on ``uvicorn``/``uvicorn.access`` with ``propagate=False`` before the
+    application is imported, so without this the raw request line (path AND query string) is written to stderr
+    in clear. We detach those handlers and let ``uvicorn``/``uvicorn.error`` propagate to the root scrubbing JSON
+    handler. ``uvicorn.access`` is DROPPED outright, whatever flags uvicorn was started with: its request line
+    carries the raw path (invitation tokens, ids) and the client ip:port, and the one access log of this
+    service is ``dwaar_api.access`` (method, route TEMPLATE, status, latency, error code; never the raw path).
     """
     for name in _SERVER_LOGGERS:
         server_logger = logging.getLogger(name)
         server_logger.handlers.clear()
         server_logger.propagate = True
     access = logging.getLogger("uvicorn.access")
-    if not any(isinstance(f, StripQueryStringFilter) for f in access.filters):
-        access.addFilter(StripQueryStringFilter())
+    if not any(isinstance(f, DropRecordsFilter) for f in access.filters):
+        access.addFilter(DropRecordsFilter())
 
 
 def configure_logging(

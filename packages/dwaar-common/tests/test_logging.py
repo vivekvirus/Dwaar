@@ -291,27 +291,37 @@ def test_scrub_value_scrubs_numbers_but_keeps_quantities() -> None:
     assert out["retry_count"] == 3
 
 
-def test_uvicorn_loggers_are_rerouted_through_the_scrubbing_handler() -> None:
+def test_uvicorn_loggers_are_rerouted_through_the_scrubbing_handler_and_access_lines_are_dropped() -> (
+    None
+):
     from dwaar_common.logging import harden_server_loggers
 
     access = logging.getLogger("uvicorn.access")
-    saved = (list(access.handlers), access.propagate, list(access.filters))
+    error = logging.getLogger("uvicorn.error")
+    saved = (list(access.handlers), access.propagate, list(access.filters), list(error.handlers))
     try:
         access.handlers = [logging.StreamHandler(io.StringIO())]
+        error.handlers = [logging.StreamHandler(io.StringIO())]
         access.propagate = False
         harden_server_loggers()
         harden_server_loggers()  # idempotent
         assert access.handlers == []
+        assert error.handlers == []
         assert access.propagate is True
-        assert len([f for f in access.filters if type(f).__name__ == "StripQueryStringFilter"]) == 1
+        assert error.propagate is True
+        assert len([f for f in access.filters if type(f).__name__ == "DropRecordsFilter"]) == 1
         record = logging.LogRecord(
             "uvicorn.access", logging.INFO, __file__, 1, '%s - "%s %s HTTP/%s" %d',
-            ("127.0.0.1:1", "GET", "/v1/x?otp=482913&phone=9999900123", "1.1", 200), None,
+            ("127.0.0.1:1", "GET", "/v1/invitations/SECRETPASSTOKEN123/x?otp=482913", "1.1", 404), None,
         )  # fmt: skip
-        assert access.filter(record)  # Logger.filter runs every logger-level filter
-        assert record.getMessage() == '127.0.0.1:1 - "GET /v1/x HTTP/1.1" 200'
+        assert not access.filter(
+            record
+        )  # Logger.filter runs every logger-level filter: the line is dropped
+        server = logging.LogRecord("uvicorn.error", logging.INFO, __file__, 1, "started", (), None)
+        assert error.filter(server)  # the server's own lifecycle messages still flow (scrubbed)
     finally:
         access.handlers, access.propagate = saved[0], saved[1]
+        error.handlers = saved[3]
         for f in list(access.filters):
             if f not in saved[2]:
                 access.removeFilter(f)

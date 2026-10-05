@@ -171,6 +171,14 @@ def test_role_level_custom_guc_default_cannot_be_planted_on_the_worker_either(
 # ------------------------------------------------------------------------------------------------
 # (1c) SECURITY DEFINER functions / views / materialised views
 # ------------------------------------------------------------------------------------------------
+#: SECURITY DEFINER functions the runtime roles MAY execute, each reviewed. Everything else is owner-only.
+#: dwaar_rate_limit_take: the only way to touch rate_limit_buckets (the runtime roles hold no table privileges
+#: there); it takes a caller-chosen key, validates its parameters and never reads or writes anything else.
+REVIEWED_RUNTIME_DEFINERS = frozenset(
+    {"dwaar_rate_limit_take(text,integer,double precision,integer)"}
+)
+
+
 def test_every_security_definer_function_is_locked_down(db: DbHandle) -> None:
     with db.admin_conn() as conn:
         rows = conn.execute(
@@ -185,9 +193,9 @@ def test_every_security_definer_function_is_locked_down(db: DbHandle) -> None:
         ).fetchall()
     assert rows, "expected dwaar_purge_append_only at least"
     for sig, config, app, worker, public in rows:
-        assert not (app or worker or public), (
-            f"{sig} is SECURITY DEFINER and executable by runtime roles"
-        )
+        assert not public, f"{sig} is SECURITY DEFINER and executable by PUBLIC"
+        if sig not in REVIEWED_RUNTIME_DEFINERS:
+            assert not (app or worker), f"{sig} is SECURITY DEFINER and executable by runtime roles"
         assert config and any(c.startswith("search_path=") for c in config), (
             f"{sig}: no pinned search_path"
         )

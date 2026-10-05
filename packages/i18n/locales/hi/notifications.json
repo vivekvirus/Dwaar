@@ -6,7 +6,7 @@
   "approval.expired.body": "मेहमान का अनुरोध बिना निर्णय के समाप्त हो गया।",
   "approval.expired.title": "अनुरोध समाप्त हुआ",
   "approval.request.body": "{visitor} {unit} में आना चाहते हैं। स्वीकृत या अस्वीकृत करें।",
-  "approval.request.lockscreen.body": "जवाब देने के लिए द्वार खोलें।",
+  "approval.request.lockscreen.body": "जवाब देने के लिए Dwaar ऐप खोलें।",
   "approval.request.lockscreen.title": "गेट पर मेहमान",
   "approval.request.title": "गेट पर मेहमान",
   "channel.emergency.title": "आपात सूचना",

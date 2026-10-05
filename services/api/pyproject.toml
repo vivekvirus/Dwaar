@@ -25,3 +25,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["dwaar_api"]
+
+# The SQL migrations live beside the package in the source tree (services/api/migrations) so reviewers see them
+# as files, but a non-editable (production image) install must carry them too: they are copied INTO the package
+# (dwaar_api/migrations) in the wheel. dwaar_api.core.migrate looks there first, then at the source tree.
+[tool.hatch.build.targets.wheel.force-include]
+"migrations" = "dwaar_api/migrations"

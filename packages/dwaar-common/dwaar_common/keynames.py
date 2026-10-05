@@ -71,7 +71,7 @@ _QUANTITY_WORDS: Final = frozenset(
         "mdr", "cr", "dr", "due", "charge", "rent", "price", "cost", "rate", "paid", "refund",
         "deposit", "subtotal", "discount", "surcharge", "levy", "waiver", "advance", "payable",
         "receivable", "payout", "settlement", "collection", "emi", "premium", "rupee", "rupees",
-        "inr", "sum", "value", "dues", "share", "opening", "closing",
+        "inr", "dues", "opening", "closing",
     }
 )  # fmt: skip
 # A number stored under one of these names is an identifier, so long digit strings are redacted.

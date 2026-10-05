@@ -27,10 +27,14 @@ class CatalogError(ValueError):
 
 
 def find_locales_dir() -> Path:
-    """`$DWAAR_LOCALES_DIR`, else the first `packages/i18n/locales` found above this file."""
+    """`$DWAAR_LOCALES_DIR`, else the catalogues bundled in the installed wheel (`dwaar_common/locales`),
+    else the first `packages/i18n/locales` found above this file (source tree / editable install)."""
     override = os.environ.get("DWAAR_LOCALES_DIR")
     if override:
         return Path(override)
+    bundled = Path(__file__).resolve().parent / "locales"
+    if bundled.is_dir():
+        return bundled
     for parent in Path(__file__).resolve().parents:
         candidate = parent / "packages" / "i18n" / "locales"
         if candidate.is_dir():

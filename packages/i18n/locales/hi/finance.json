@@ -10,5 +10,5 @@
   "settlement.settled": "निपटान हो गया",
   "status.paid": "भुगतान किया गया",
   "status.partially_paid": "आंशिक भुगतान: {total} में से {paid}",
-  "status.unpaid": "अदत्त"
+  "status.unpaid": "भुगतान बाकी"
 }

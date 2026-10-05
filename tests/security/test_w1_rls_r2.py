@@ -1,11 +1,8 @@
-"""OPEN findings from W1 verification: RLS, roles, catalog guard (INV-01, ARCH-01/03).
+"""W1 fix round 2: regression tests for RLS, roles and the catalog guard (INV-01, ARCH-01/03).
 
-Not collected by ``make test``; run explicitly with
-``uv run --no-sync pytest tests/security/verify_w1_rls.py -p no:cacheprovider``.
-
-A FAILING test asserts the secure behaviour and marks a defect that is NOT fixed yet (not part of fix round 1).
-When one is fixed, move it to ``tests/security/test_w1_rls.py``. Tests for fixed findings live in
-``tests/security/test_w1_*.py``.
+These started life as failing repros in ``verify_w1_rls.py`` (open findings of verification round 1) and were moved
+here when their root causes were fixed; each asserts the SECURE behaviour. Tests that already passed in the
+repro file (attacks that were tried and did not work) are kept as regression evidence.
 """
 
 # ruff: noqa: PT018, PT011, PT012, S608, E501, SIM117, PLC0415, RUF001, RUF002, RUF003, S603, S607, S310, B017, BLE001
@@ -110,3 +107,71 @@ def test_worker_rate_limit_table_access_is_not_cross_tenant_writable(two: DbHand
 # ------------------------------------------------------------------------------------------------
 # more (1): header-borne selectors over real HTTP, role-scoped policy exemption, worker INSERT rights
 # ------------------------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------------------------
+# fix round 2: rate_limit_buckets is reached only through the SECURITY DEFINER function (migration 0009)
+# ------------------------------------------------------------------------------------------------
+def test_runtime_roles_hold_no_table_privileges_on_rate_limit_buckets(two: DbHandle) -> None:
+    with two.admin_conn() as conn:
+        app_any = conn.execute(
+            "SELECT has_table_privilege('dwaar_app', 'rate_limit_buckets', 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE'),"
+            " has_any_column_privilege('dwaar_app', 'rate_limit_buckets', 'SELECT, INSERT, UPDATE')"
+        ).fetchone()
+        worker = conn.execute(
+            "SELECT has_table_privilege('dwaar_worker', 'rate_limit_buckets', 'SELECT, INSERT, UPDATE, TRUNCATE'),"
+            " has_column_privilege('dwaar_worker', 'rate_limit_buckets', 'tokens', 'SELECT'),"
+            " has_column_privilege('dwaar_worker', 'rate_limit_buckets', 'key', 'SELECT'),"
+            " has_table_privilege('dwaar_worker', 'rate_limit_buckets', 'DELETE')"
+        ).fetchone()
+    assert app_any == (False, False)
+    assert worker == (False, False, True, True)  # housekeeping only: read key/updated_at, delete
+
+
+def test_the_api_role_still_gets_rate_decisions_through_the_function(two: DbHandle) -> None:
+    with two.app_conn() as conn:
+        first = conn.execute(
+            "SELECT allowed FROM dwaar_rate_limit_take('k-fn', 1, 0.001, 1)"
+        ).fetchone()
+    with two.app_conn() as conn:
+        second = conn.execute(
+            "SELECT allowed FROM dwaar_rate_limit_take('k-fn', 1, 0.001, 1)"
+        ).fetchone()
+    assert (first, second) == ((True,), (False,))
+    for statement in (
+        "SELECT * FROM rate_limit_buckets",
+        "UPDATE rate_limit_buckets SET tokens = 1000000",
+        "DELETE FROM rate_limit_buckets",
+        "INSERT INTO rate_limit_buckets (key, tokens, updated_at) VALUES ('x', 1, now())",
+    ):
+        with pytest.raises(errors.InsufficientPrivilege):
+            with two.app_conn() as conn:
+                conn.execute(statement)  # type: ignore[call-overload]
+
+
+def test_worker_housekeeping_removes_only_stale_buckets(two: DbHandle) -> None:
+    with two.owner_conn() as conn:
+        conn.execute(
+            "INSERT INTO rate_limit_buckets (key, tokens, updated_at) VALUES"
+            " ('stale-bucket', 1, now() - interval '3 days'), ('fresh-bucket', 1, now())"
+        )
+    with two.worker_conn() as conn:
+        assert conn.execute("SELECT key FROM rate_limit_buckets").fetchall() == [("stale-bucket",)]
+        assert conn.execute("DELETE FROM rate_limit_buckets").rowcount == 1
+    with two.owner_conn() as conn:
+        assert conn.execute("SELECT key FROM rate_limit_buckets").fetchall() == [("fresh-bucket",)]
+
+
+def test_idempotency_keys_grants_are_column_level_so_no_lock_table_is_possible(
+    two: DbHandle,
+) -> None:
+    with two.admin_conn() as conn:
+        row = conn.execute(
+            "SELECT has_table_privilege('dwaar_app', 'idempotency_keys', 'UPDATE, DELETE, TRUNCATE'),"
+            " has_column_privilege('dwaar_app', 'idempotency_keys', 'response_body', 'UPDATE'),"
+            " has_column_privilege('dwaar_app', 'idempotency_keys', 'society_id', 'UPDATE'),"
+            " has_column_privilege('dwaar_app', 'idempotency_keys', 'actor_id', 'UPDATE'),"
+            " has_column_privilege('dwaar_worker', 'idempotency_keys', 'response_body', 'SELECT')"
+        ).fetchone()
+    # the API role may rewrite a response and nothing that scopes the key (society, actor, key); the worker cannot read bodies
+    assert row == (False, True, False, False, False)

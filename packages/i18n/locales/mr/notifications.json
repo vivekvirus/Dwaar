@@ -6,7 +6,7 @@
   "approval.expired.body": "पाहुण्याची विनंती निर्णयाशिवाय कालबाह्य झाली.",
   "approval.expired.title": "विनंती कालबाह्य झाली",
   "approval.request.body": "{visitor} यांना {unit} मध्ये यायचे आहे. मंजूर किंवा नाकारा.",
-  "approval.request.lockscreen.body": "उत्तर देण्यासाठी द्वार उघडा.",
+  "approval.request.lockscreen.body": "उत्तर देण्यासाठी Dwaar ॲप उघडा.",
   "approval.request.lockscreen.title": "गेटवर पाहुणा",
   "approval.request.title": "गेटवर पाहुणा",
   "channel.emergency.title": "आणीबाणी सूचना",

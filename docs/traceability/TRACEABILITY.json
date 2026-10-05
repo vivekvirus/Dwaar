@@ -8,18 +8,24 @@
     "items": 444,
     "digest": "sha256:5b876e55b22f9c5c24193e65f1488abf7ca018df6e370d0b7488db16964cbd77"
   },
+  "test_run": null,
   "scan": {
-    "files_scanned": 184,
+    "files_scanned": 187,
     "files_ignored": 0,
-    "annotations": 191
+    "annotations": 196
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 3,
-      "partial": 22,
+      "done": 2,
+      "partial": 23,
       "blocked-external": 0,
       "not-started": 195
+    },
+    "verified": {
+      "verified": 0,
+      "failing": 0,
+      "unknown": 220
     },
     "by_priority": {
       "P0": {
@@ -35,8 +41,8 @@
         "not-started": 2
       },
       "none": {
-        "done": 3,
-        "partial": 9,
+        "done": 2,
+        "partial": 10,
         "blocked-external": 0,
         "not-started": 68
       }
@@ -70,7 +76,8 @@
       "implemented_in": [
         "services/api/dwaar_api/core/authz.py",
         "services/api/migrations/0004_audit_log.sql",
-        "services/api/migrations/0008_integrity_hardening.sql"
+        "services/api/migrations/0008_integrity_hardening.sql",
+        "services/api/migrations/0009_runtime_privilege_hardening.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -88,26 +95,28 @@
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_core_rls_isolation.py::<module>",
         "tests/security/test_w1_authn.py::<module>",
+        "tests/security/test_w1_authn_r2.py::<module>",
         "tests/security/test_w1_crypto_events_money.py::<module>",
+        "tests/security/test_w1_crypto_events_money_r2.py::<module>",
         "tests/security/test_w1_errors_logging.py::<module>",
+        "tests/security/test_w1_errors_logging_r2.py::<module>",
         "tests/security/test_w1_history.py::<module>",
+        "tests/security/test_w1_history_r2.py::<module>",
         "tests/security/test_w1_idempotency.py::<module>",
+        "tests/security/test_w1_idempotency_r2.py::<module>",
+        "tests/security/test_w1_r2_db.py::<module>",
+        "tests/security/test_w1_r2_pure.py::<module>",
         "tests/security/test_w1_rls.py::<module>",
-        "tests/security/verify_w1_authn.py::<module>",
-        "tests/security/verify_w1_crypto_events_money.py::<module>",
-        "tests/security/verify_w1_errors_logging.py::<module>",
-        "tests/security/verify_w1_history.py::<module>",
-        "tests/security/verify_w1_idempotency.py::<module>",
-        "tests/security/verify_w1_r2_db.py::<module>",
-        "tests/security/verify_w1_r2_pure.py::<module>",
-        "tests/security/verify_w1_rls.py::<module>"
+        "tests/security/test_w1_rls_r2.py::<module>"
       ],
       "acceptance_gates": [
         "AT-01"
       ],
       "gaps": [
         "acceptance-untested:AT-01"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-02",
@@ -126,7 +135,8 @@
         "packages/dwaar-common/dwaar_common/money.py",
         "services/api/dwaar_api/core/idempotency.py",
         "services/api/migrations/0006_idempotency_keys.sql",
-        "services/api/migrations/0008_integrity_hardening.sql"
+        "services/api/migrations/0008_integrity_hardening.sql",
+        "services/api/migrations/0009_runtime_privilege_hardening.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -137,14 +147,14 @@
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/core/test_idempotency.py::<module>",
         "tests/security/test_w1_crypto_events_money.py::<module>",
+        "tests/security/test_w1_crypto_events_money_r2.py::<module>",
         "tests/security/test_w1_history.py::<module>",
+        "tests/security/test_w1_history_r2.py::<module>",
         "tests/security/test_w1_idempotency.py::<module>",
+        "tests/security/test_w1_idempotency_r2.py::<module>",
         "tests/security/test_w1_packs.py::<module>",
-        "tests/security/verify_w1_crypto_events_money.py::<module>",
-        "tests/security/verify_w1_history.py::<module>",
-        "tests/security/verify_w1_idempotency.py::<module>",
-        "tests/security/verify_w1_r2_db.py::<module>",
-        "tests/security/verify_w1_r2_pure.py::<module>"
+        "tests/security/test_w1_r2_db.py::<module>",
+        "tests/security/test_w1_r2_pure.py::<module>"
       ],
       "acceptance_gates": [
         "AT-14",
@@ -157,7 +167,9 @@
         "acceptance-untested:AT-15",
         "acceptance-untested:AT-16",
         "acceptance-untested:AT-17"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-03",
@@ -189,7 +201,9 @@
         "acceptance-untested:AT-04",
         "acceptance-untested:AT-06",
         "acceptance-untested:AT-40"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-04",
@@ -215,7 +229,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-02"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-05",
@@ -238,7 +254,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-06",
@@ -266,7 +284,9 @@
         "no-tests",
         "acceptance-untested:AT-25",
         "acceptance-untested:AT-26"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-07",
@@ -296,7 +316,9 @@
         "acceptance-untested:AT-03",
         "acceptance-untested:AT-04",
         "acceptance-untested:AT-15"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-08",
@@ -324,7 +346,9 @@
         "no-tests",
         "acceptance-untested:AT-22",
         "acceptance-untested:AT-47"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-09",
@@ -350,7 +374,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-33"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-10",
@@ -379,12 +405,14 @@
         "packages/dwaar-packs/tests/test_legal_rules.py::test_maharashtra_appendix_a_rule_keys_exact",
         "packages/dwaar-packs/tests/test_packs_validation.py::<module>",
         "tests/security/test_w1_packs.py::<module>",
-        "tests/security/verify_w1_r2_pure.py::<module>"
+        "tests/security/test_w1_r2_pure.py::<module>"
       ],
       "acceptance_gates": [
         "AT-37"
       ],
-      "gaps": []
+      "gaps": [],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-11",
@@ -415,7 +443,9 @@
         "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "INV-12",
@@ -441,7 +471,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-34"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-01",
@@ -469,7 +501,9 @@
         "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-02"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-02",
@@ -497,7 +531,9 @@
         "no-tests",
         "acceptance-untested:AT-02",
         "acceptance-untested:AT-32"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-03",
@@ -520,7 +556,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-04",
@@ -543,7 +581,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-05",
@@ -569,7 +609,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-44"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-06",
@@ -601,7 +643,9 @@
       "gaps": [
         "no-adapter",
         "no-simulator"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-07",
@@ -627,7 +671,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-44"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-08",
@@ -652,7 +698,7 @@
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_w1_authn.py::<module>",
-        "tests/security/verify_w1_authn.py::<module>"
+        "tests/security/test_w1_authn_r2.py::<module>"
       ],
       "acceptance_gates": [
         "AT-01",
@@ -662,7 +708,9 @@
         "no-implementation",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-32"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-09",
@@ -685,7 +733,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-10",
@@ -711,7 +761,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-07"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-11",
@@ -734,7 +786,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-12",
@@ -760,7 +814,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-44"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-13",
@@ -782,12 +838,15 @@
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_w1_errors_logging.py::<module>",
-        "tests/security/verify_w1_errors_logging.py::<module>"
+        "tests/security/test_w1_errors_logging_r2.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation"
-      ]
+        "no-implementation",
+        "module-level-marks-only"
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "IAM-14",
@@ -812,13 +871,16 @@
       "tested_by": [
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_w1_authn.py::<module>",
-        "tests/security/verify_w1_authn.py::<module>"
+        "tests/security/test_w1_authn_r2.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [
+        "module-level-marks-only",
         "no-adapter",
         "no-simulator"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-01",
@@ -841,7 +903,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-02",
@@ -868,7 +932,9 @@
       "gaps": [
         "no-tests",
         "acceptance-untested:AT-35"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-03",
@@ -894,7 +960,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-35"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-04",
@@ -921,7 +989,9 @@
       "gaps": [
         "no-tests",
         "acceptance-untested:AT-11"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-05",
@@ -944,7 +1014,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-06",
@@ -967,7 +1039,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-07",
@@ -993,7 +1067,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-23"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-08",
@@ -1023,7 +1099,9 @@
         "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-09",
@@ -1051,7 +1129,9 @@
         "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "UX-10",
@@ -1076,7 +1156,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "ARCH-01",
@@ -1102,16 +1184,18 @@
         "tests/security/test_core_rls_isolation.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_w1_quality_db.py::<module>",
+        "tests/security/test_w1_r2_db.py::<module>",
         "tests/security/test_w1_rls.py::<module>",
-        "tests/security/verify_w1_r2_db.py::<module>",
-        "tests/security/verify_w1_rls.py::<module>"
+        "tests/security/test_w1_rls_r2.py::<module>"
       ],
       "acceptance_gates": [
         "AT-01"
       ],
       "gaps": [
         "acceptance-untested:AT-01"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "ARCH-02",
@@ -1134,7 +1218,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "ARCH-03",
@@ -1151,7 +1237,8 @@
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/core/config.py",
-        "services/api/dwaar_api/core/db.py"
+        "services/api/dwaar_api/core/db.py",
+        "services/api/migrations/0009_runtime_privilege_hardening.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -1168,16 +1255,18 @@
         "tests/security/test_core_rls_isolation.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_w1_quality_db.py::<module>",
+        "tests/security/test_w1_r2_db.py::<module>",
         "tests/security/test_w1_rls.py::<module>",
-        "tests/security/verify_w1_r2_db.py::<module>",
-        "tests/security/verify_w1_rls.py::<module>"
+        "tests/security/test_w1_rls_r2.py::<module>"
       ],
       "acceptance_gates": [
         "AT-01"
       ],
       "gaps": [
         "acceptance-untested:AT-01"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "ARCH-04",
@@ -1190,7 +1279,7 @@
       "slice": 1,
       "module": "services/worker",
       "labels": [],
-      "status": "done",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/core/config.py"
@@ -1201,7 +1290,11 @@
         "services/api/tests/unit/test_config.py::<module>"
       ],
       "acceptance_gates": [],
-      "gaps": []
+      "gaps": [
+        "module-level-marks-only"
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "ARCH-05",
@@ -1228,8 +1321,11 @@
         "AT-29"
       ],
       "gaps": [
+        "module-level-marks-only",
         "acceptance-untested:AT-29"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-01",
@@ -1255,7 +1351,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-14"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-02",
@@ -1272,7 +1370,8 @@
       "blocked_by": [],
       "implemented_in": [
         "services/api/migrations/0004_audit_log.sql",
-        "services/api/migrations/0008_integrity_hardening.sql"
+        "services/api/migrations/0008_integrity_hardening.sql",
+        "services/api/migrations/0009_runtime_privilege_hardening.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -1284,18 +1383,20 @@
         "tests/integration/core/test_sql_helpers.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_w1_history.py::<module>",
+        "tests/security/test_w1_history_r2.py::<module>",
         "tests/security/test_w1_quality_db.py::<module>",
+        "tests/security/test_w1_r2_db.py::<module>",
         "tests/security/test_w1_rls.py::<module>",
-        "tests/security/verify_w1_history.py::<module>",
-        "tests/security/verify_w1_r2_db.py::<module>",
-        "tests/security/verify_w1_rls.py::<module>"
+        "tests/security/test_w1_rls_r2.py::<module>"
       ],
       "acceptance_gates": [
         "AT-18"
       ],
       "gaps": [
         "acceptance-untested:AT-18"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-03",
@@ -1318,7 +1419,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-04",
@@ -1343,7 +1446,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-05",
@@ -1371,7 +1476,9 @@
         "no-tests",
         "acceptance-untested:AT-22",
         "acceptance-untested:AT-47"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-06",
@@ -1397,7 +1504,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-17"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-07",
@@ -1423,7 +1532,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-45"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "DB-08",
@@ -1449,7 +1560,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-24"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-01",
@@ -1472,7 +1585,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-02",
@@ -1495,7 +1610,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-03",
@@ -1518,7 +1635,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-05",
@@ -1541,7 +1660,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-06",
@@ -1564,7 +1685,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-07",
@@ -1587,7 +1710,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SOC-08",
@@ -1610,7 +1735,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-01",
@@ -1636,7 +1763,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-05"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-02",
@@ -1666,7 +1795,9 @@
         "acceptance-untested:AT-03",
         "acceptance-untested:AT-04",
         "acceptance-untested:AT-40"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-03",
@@ -1694,7 +1825,9 @@
         "no-tests",
         "acceptance-untested:AT-03",
         "acceptance-untested:AT-04"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-04",
@@ -1717,7 +1850,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-05",
@@ -1740,7 +1875,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-06",
@@ -1766,7 +1903,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-07",
@@ -1792,7 +1931,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-07"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-08",
@@ -1815,7 +1956,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-09",
@@ -1838,7 +1981,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-11",
@@ -1861,7 +2006,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-13",
@@ -1886,7 +2033,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GATE-14",
@@ -1912,7 +2061,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-01",
@@ -1940,7 +2091,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-02",
@@ -1972,7 +2125,9 @@
         "acceptance-untested:AT-05",
         "acceptance-untested:AT-06",
         "acceptance-untested:AT-08"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-03",
@@ -1998,7 +2153,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-04",
@@ -2021,7 +2178,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-05",
@@ -2049,7 +2208,9 @@
         "no-tests",
         "acceptance-untested:AT-06",
         "acceptance-untested:AT-08"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-06",
@@ -2075,7 +2236,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-07"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-07",
@@ -2103,7 +2266,9 @@
         "no-tests",
         "acceptance-untested:AT-05",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-08",
@@ -2128,7 +2293,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-09",
@@ -2156,7 +2323,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EDGE-10",
@@ -2182,7 +2351,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-24"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-01",
@@ -2208,7 +2379,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-39"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-02",
@@ -2236,7 +2409,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-11"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-03",
@@ -2272,7 +2447,9 @@
         "no-adapter",
         "no-implementation",
         "no-simulator"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-04",
@@ -2298,7 +2475,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-03"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-05",
@@ -2326,7 +2505,9 @@
         "no-tests",
         "acceptance-untested:AT-03",
         "acceptance-untested:AT-04"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-06",
@@ -2352,7 +2533,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-11"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-07",
@@ -2378,7 +2561,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-11"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NOTIF-09",
@@ -2401,7 +2586,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "CALL-01",
@@ -2431,7 +2618,9 @@
         "no-tests",
         "acceptance-untested:AT-11",
         "acceptance-untested:AT-40"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "CALL-02",
@@ -2459,7 +2648,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-40"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAR-01",
@@ -2482,7 +2673,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAR-02",
@@ -2508,7 +2701,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-13"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAR-03",
@@ -2534,7 +2729,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-13"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAR-04",
@@ -2560,7 +2757,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-13"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAR-05",
@@ -2583,7 +2782,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAR-08",
@@ -2606,7 +2807,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "STAFF-01",
@@ -2632,7 +2835,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-12"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "STAFF-02",
@@ -2655,7 +2860,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "STAFF-03",
@@ -2681,7 +2888,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-12"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "STAFF-04",
@@ -2704,7 +2913,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "STAFF-05",
@@ -2727,7 +2938,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SHIFT-01",
@@ -2750,7 +2963,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SHIFT-02",
@@ -2773,7 +2988,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OPS-01",
@@ -2796,7 +3013,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OPS-02",
@@ -2819,7 +3038,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OPS-03",
@@ -2845,7 +3066,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-29"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OPS-04",
@@ -2868,7 +3091,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OPS-09",
@@ -2891,7 +3116,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "COM-01",
@@ -2914,7 +3141,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "COM-02",
@@ -2938,7 +3167,9 @@
       "acceptance_gates": [],
       "gaps": [
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "COM-03",
@@ -2961,7 +3192,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "COM-04",
@@ -2984,7 +3217,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "COM-05",
@@ -3007,7 +3242,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "COM-06",
@@ -3030,7 +3267,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "GOV-09",
@@ -3056,7 +3295,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-32"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-01",
@@ -3083,7 +3324,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-33"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-02",
@@ -3108,7 +3351,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-03",
@@ -3135,7 +3380,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-14"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-04",
@@ -3165,7 +3412,9 @@
       ],
       "gaps": [
         "no-implementation"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-05",
@@ -3193,7 +3442,9 @@
         "no-tests",
         "acceptance-untested:AT-17",
         "acceptance-untested:AT-39"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-06",
@@ -3219,7 +3470,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-18"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-07",
@@ -3249,7 +3502,9 @@
         "acceptance-untested:AT-14",
         "acceptance-untested:AT-18",
         "acceptance-untested:AT-45"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-09",
@@ -3272,7 +3527,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "FIN-10",
@@ -3298,7 +3555,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-22"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-01",
@@ -3323,7 +3582,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-02",
@@ -3349,7 +3610,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-15"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-03",
@@ -3381,7 +3644,9 @@
         "acceptance-untested:AT-15",
         "acceptance-untested:AT-36",
         "acceptance-untested:AT-39"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-04",
@@ -3410,7 +3675,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-39"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-05",
@@ -3446,7 +3713,9 @@
       "gaps": [
         "acceptance-untested:AT-16",
         "no-implementation"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-06",
@@ -3469,7 +3738,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-07",
@@ -3497,7 +3768,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-15"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-08",
@@ -3520,7 +3793,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-09",
@@ -3550,7 +3825,9 @@
         "acceptance-untested:AT-16",
         "acceptance-untested:AT-36",
         "acceptance-untested:AT-39"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-10",
@@ -3579,7 +3856,9 @@
         "no-tests",
         "acceptance-untested:AT-16",
         "acceptance-untested:AT-36"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PAY-11",
@@ -3604,7 +3883,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "EXP-01",
@@ -3632,7 +3913,9 @@
         "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-33"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "HW-06",
@@ -3657,7 +3940,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "VEH-01",
@@ -3680,7 +3965,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-01",
@@ -3708,7 +3995,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-02",
@@ -3736,7 +4025,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-03",
@@ -3764,7 +4055,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-04",
@@ -3794,7 +4087,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-02"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-05",
@@ -3822,7 +4117,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-06",
@@ -3854,7 +4151,9 @@
       "gaps": [
         "acceptance-untested:AT-23",
         "no-implementation"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-07",
@@ -3882,7 +4181,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-08",
@@ -3914,7 +4215,9 @@
         "no-tests",
         "acceptance-untested:AT-23",
         "acceptance-untested:AT-24"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-09",
@@ -3946,7 +4249,9 @@
         "no-tests",
         "acceptance-untested:AT-24",
         "acceptance-untested:AT-34"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-11",
@@ -3973,7 +4278,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-12",
@@ -4003,7 +4310,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-23"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-13",
@@ -4030,7 +4339,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-14",
@@ -4058,7 +4369,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PRIV-15",
@@ -4085,7 +4398,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RIGHTS-01",
@@ -4115,7 +4430,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-22"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RIGHTS-02",
@@ -4142,7 +4459,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RIGHTS-03",
@@ -4172,7 +4491,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-44"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RPT-01",
@@ -4195,7 +4516,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PLAT-01",
@@ -4218,7 +4541,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PLAT-02",
@@ -4243,7 +4568,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "PLAT-03",
@@ -4266,7 +4593,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-01",
@@ -4292,7 +4621,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-02",
@@ -4322,7 +4653,9 @@
         "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-25"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-03",
@@ -4348,7 +4681,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-25"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-04",
@@ -4376,7 +4711,9 @@
         "no-tests",
         "acceptance-untested:AT-25",
         "acceptance-untested:AT-26"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-05",
@@ -4399,7 +4736,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-06",
@@ -4425,7 +4764,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-29"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-07",
@@ -4448,7 +4789,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-SYS-08",
@@ -4474,7 +4817,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-29"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G1",
@@ -4497,7 +4842,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G2",
@@ -4520,7 +4867,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G3",
@@ -4543,7 +4892,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G4",
@@ -4566,7 +4917,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G5",
@@ -4589,7 +4942,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G6",
@@ -4612,7 +4967,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G7",
@@ -4635,7 +4992,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G8",
@@ -4658,7 +5017,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G9",
@@ -4681,7 +5042,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G10",
@@ -4704,7 +5067,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G11",
@@ -4727,7 +5092,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "G12",
@@ -4750,7 +5117,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-G08",
@@ -4775,7 +5144,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-R02",
@@ -4800,7 +5171,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-R06",
@@ -4828,7 +5201,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-11"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-R07",
@@ -4856,7 +5231,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-25"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-C01",
@@ -4881,7 +5258,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-C05",
@@ -4904,7 +5283,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-C12",
@@ -4929,7 +5310,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-F01",
@@ -4957,7 +5340,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-25"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OBS-01",
@@ -4973,6 +5358,7 @@
       "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "packages/dwaar-common/dwaar_common/keynames.py",
         "packages/dwaar-common/dwaar_common/logging.py",
         "packages/dwaar-common/dwaar_common/masking.py",
         "services/api/dwaar_api/core/middleware.py"
@@ -4984,11 +5370,13 @@
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_w1_errors_logging.py::<module>",
-        "tests/security/verify_w1_errors_logging.py::<module>",
-        "tests/security/verify_w1_r2_pure.py::<module>"
+        "tests/security/test_w1_errors_logging_r2.py::<module>",
+        "tests/security/test_w1_r2_pure.py::<module>"
       ],
       "acceptance_gates": [],
-      "gaps": []
+      "gaps": [],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OBS-02",
@@ -5011,7 +5399,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "OBS-03",
@@ -5037,7 +5427,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-45"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RUN-01",
@@ -5064,7 +5456,9 @@
       "gaps": [
         "no-tests",
         "acceptance-untested:AT-34"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RUN-02",
@@ -5087,7 +5481,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "RUN-03",
@@ -5110,7 +5506,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-01",
@@ -5135,7 +5533,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-02",
@@ -5160,7 +5560,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-03",
@@ -5185,7 +5587,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-04",
@@ -5210,7 +5614,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-05",
@@ -5235,7 +5641,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-06",
@@ -5260,7 +5668,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-07",
@@ -5286,7 +5696,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-03"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-08",
@@ -5309,7 +5721,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-09",
@@ -5337,7 +5751,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-10",
@@ -5365,7 +5781,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-11",
@@ -5391,7 +5809,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-34"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-12",
@@ -5414,7 +5834,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-13",
@@ -5442,7 +5864,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-29"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-14",
@@ -5468,7 +5892,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-35"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "NFR-15",
@@ -5491,7 +5917,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-01",
@@ -5514,7 +5942,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-02",
@@ -5537,7 +5967,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-03",
@@ -5560,7 +5992,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-04",
@@ -5586,7 +6020,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-01"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-05",
@@ -5614,7 +6050,9 @@
         "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-02"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-06",
@@ -5639,7 +6077,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-07",
@@ -5664,7 +6104,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-08",
@@ -5687,7 +6129,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "SEC-10",
@@ -5717,7 +6161,9 @@
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-02",
         "acceptance-untested:AT-25"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "MIG-01",
@@ -5740,7 +6186,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "MIG-02",
@@ -5766,7 +6214,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-33"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "MIG-03",
@@ -5792,7 +6242,9 @@
         "no-implementation",
         "no-tests",
         "acceptance-untested:AT-36"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "MIG-04",
@@ -5815,7 +6267,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     },
     {
       "id": "AI-D01",
@@ -5842,7 +6296,9 @@
       "gaps": [
         "no-implementation",
         "no-tests"
-      ]
+      ],
+      "verification": null,
+      "verified": null
     }
   ],
   "acceptance": [

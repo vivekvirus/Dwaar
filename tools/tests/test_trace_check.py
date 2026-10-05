@@ -904,13 +904,127 @@ def test_simulator_path_inside_a_test_tree_is_not_a_simulator(tmp_path: Path) ->
         tmp_path,
         {
             "services/edge/adapters/barrier.py": f"# {ann('REQ', 'HW-01')}\n",
-            "tests/simulators/fake_barrier.py": f"# {ann('REQ', 'HW-01')}\n",
+            "tests/simulators/test_fake_barrier.py": f"# {ann('REQ', 'HW-01')}\n",
         },
     )
     r = row(report(root, "M2"), "HW-01")
     assert r["status"] == "partial"
     assert "no-simulator" in r["gaps"]
-    assert r["tested_by"] == ["tests/simulators/fake_barrier.py:1"]
+    assert r["tested_by"] == ["tests/simulators/test_fake_barrier.py:1"]
+
+
+def test_files_that_no_runner_collects_are_never_test_evidence(tmp_path: Path) -> None:
+    """``verify_*.py`` repro files, helpers and fixtures sit in test directories but nobody runs them."""
+    root = make_repo(
+        tmp_path,
+        {
+            "services/api/visits.py": f"# {ann('REQ', 'GATE-02')}\n",
+            "tests/security/verify_w1_gate.py": (
+                'import pytest\n\n@pytest.mark.req("GATE-02")\ndef test_x() -> None:\n    pass\n'
+            ),
+            "tests/_harness/helpers.py": f"# {ann('REQ', 'GATE-02')}\n",
+            "tests/conftest.py": f"# {ann('REQ', 'GATE-02')}\n",
+        },
+    )
+    r = row(report(root), "GATE-02")
+    assert r["tested_by"] == []
+    assert r["status"] == "partial"
+    assert r["gaps"] == ["no-tests"]
+    assert tc.file_category("tests/security/verify_w1_gate.py") == "support"
+    assert tc.file_category("tests/security/test_w1_gate.py") == "test"
+    assert tc.file_category("apps/web/src/__tests__/a.ts") == "test"
+    assert tc.file_category("apps/web/src/a.ts") == "impl"
+    # annotations in support files still count as orphans when they name an unknown ID
+    write(root, "tests/_harness/typo.py", f"# {ann('REQ', 'NOPE-01')}\n")
+    assert [o["id"] for o in report(root)["orphans"]] == ["NOPE-01"]
+
+
+def test_a_module_level_pytestmark_alone_is_not_a_tested_claim(tmp_path: Path) -> None:
+    root = make_repo(
+        tmp_path,
+        {
+            "services/api/visits.py": f"# {ann('REQ', 'GATE-02')}\n",
+            "tests/unit/test_a.py": (
+                'import pytest\n\npytestmark = pytest.mark.req("GATE-02")\n\n\ndef test_x() -> None:\n    pass\n'
+            ),
+        },
+    )
+    r = row(report(root), "GATE-02")
+    assert r["status"] == "partial"
+    assert r["gaps"] == ["module-level-marks-only"]
+    write(
+        root,
+        "tests/unit/test_b.py",
+        'import pytest\n\n@pytest.mark.req("GATE-02")\ndef test_y() -> None:\n    pass\n',
+    )
+    assert row(report(root), "GATE-02")["status"] == "done"
+
+
+def test_run_report_adds_verification_and_a_failing_test_downgrades_done(tmp_path: Path) -> None:
+    root = make_repo(
+        tmp_path,
+        {
+            "services/api/visits.py": f"# {ann('REQ', 'GATE-02', 'INV-01')}\n",
+            "tests/unit/test_a.py": f"# {ann('REQ', 'GATE-02', 'INV-01')}\n",
+        },
+    )
+    base = row(report(root), "GATE-02")
+    assert base["status"] == "done"
+    assert base["verification"] is None  # no run report: unknown, never "passing"
+    assert base["verified"] is None
+    run = {
+        "commit": "abc",
+        "milestone_filter": None,
+        "results": [
+            {"nodeid": "t::a", "outcome": "passed", "reqs": ["INV-01"]},
+            {"nodeid": "t::b", "outcome": "failed", "reqs": ["GATE-02"]},
+            {"nodeid": "t::c", "outcome": "xfailed", "reqs": ["GATE-02"]},
+            {"nodeid": "t::d", "outcome": "error", "reqs": ["GATE-02"]},
+        ],
+    }
+    rep = tc.build_report(root, tc.load_registry(root), tc.scan_repo(root), "M1", False, run)
+    failing = row(rep, "GATE-02")
+    assert failing["status"] == "partial"
+    assert failing["verification"] == {"passed": 0, "failed": 2, "skipped": 1}
+    assert failing["verified"] is False
+    assert "failing-tests:2" in failing["gaps"]
+    ok = row(rep, "INV-01")
+    assert ok["status"] == "done"
+    assert ok["verified"] is True
+    assert rep["summary"]["verified"] == {
+        "verified": 1,
+        "failing": 1,
+        "unknown": row_count(rep) - 2,
+    }
+    assert rep["test_run"] == {"commit": "abc", "results": 4, "milestone_filter": None}
+    assert "No run report" not in tc.render_markdown(rep)
+    assert "No run report" in tc.render_markdown(report(root))
+
+
+def row_count(rep: dict[str, Any]) -> int:
+    return len(rep["requirements"])
+
+
+def test_cli_reads_the_run_report_when_present_and_rejects_a_broken_one(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = make_repo(tmp_path)
+    bad = tmp_path / "bad.json"
+    bad.write_text("not json", encoding="utf-8")
+    assert (
+        tc.main(["--root", str(root), "--run-json", str(bad), "--format", "none", "--quiet"]) == 0
+    )
+    code = tc.main(["--root", str(root), "--run-json", str(bad), "--format", "json", "--quiet"])
+    assert code == 2
+    assert "run report not readable" in capsys.readouterr().err
+    good = tmp_path / "run.json"
+    good.write_text(json.dumps({"commit": "c", "results": []}), encoding="utf-8")
+    out = tmp_path / "out"
+    assert (
+        tc.main(["--root", str(root), "--run-json", str(good), "--out-dir", str(out), "--quiet"])
+        == 0
+    )
+    assert json.loads((out / "TRACEABILITY.json").read_text())["test_run"]["commit"] == "c"
 
 
 # ------------------------------------------------------------------------------------------- milestones
@@ -1040,15 +1154,16 @@ def test_markdown_has_sections_and_escapes_cells(tmp_path: Path) -> None:
 
 def test_json_report_shape(tmp_path: Path) -> None:
     rep = json.loads(tc.render_json(report(make_repo(tmp_path))))
-    assert set(rep) == {"tool", "schema_version", "milestone", "scope", "registry", "scan", "summary",
-                        "requirements", "acceptance", "orphans"}  # fmt: skip
+    assert set(rep) == {"tool", "schema_version", "milestone", "scope", "registry", "test_run", "scan",
+                        "summary", "requirements", "acceptance", "orphans"}  # fmt: skip
+    assert rep["test_run"] is None  # no run report supplied: verification unknown, never assumed
     assert rep["schema_version"] == 1
     assert rep["milestone"] == "M1"
     assert rep["scope"] == "cumulative"
     assert set(rep["requirements"][0]) == {
         "id", "kind", "area", "title", "priority", "release", "effective_milestone", "slice", "module", "labels",
         "status", "blocked_by", "implemented_in", "adapter_files", "simulator_files", "tested_by",
-        "acceptance_gates", "gaps",
+        "acceptance_gates", "gaps", "verification", "verified",
     }  # fmt: skip
     assert rep["registry"]["digest"].startswith("sha256:")
 

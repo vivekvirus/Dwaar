@@ -74,7 +74,32 @@ deliberately does not protect against.
   bypasses RLS are flagged; policies are evaluated against a foreign society; cross-society worker/owner policies are allowlisted
   by (table, policy name). The database cannot refuse a `GRANT` on a matview (event triggers need a superuser), so CI is the control.
 
+## Fix round 2 additions (B-010)
+
+- **Pinned session settings.** `row_security=on`, `default_transaction_read_only=off`, `lock_timeout`, `statement_timeout`,
+  `idle_in_transaction_session_timeout` and `search_path=public` are connection startup options of every pooled connection.
+  Startup options outrank `ALTER ROLE ... SET` defaults, so one injected `ALTER ROLE dwaar_app SET row_security = off` (any role
+  may alter its OWN settings, and the setting is cluster-wide and survives restarts) cannot take the API down. `/readyz` reports
+  `role_defaults: drift` for any role-level default of a runtime role.
+- **The role is verified on every new connection** (superuser or BYPASSRLS refused) and on every `/readyz`.
+- **Pool reset is `DISCARD ALL`** (advisory locks, LISTEN, temp state, prepared statements and every SET die with the request);
+  the engine disables server-side prepared statements for that reason.
+- **No table-level UPDATE/DELETE where a lock would hurt.** PostgreSQL lets a role holding table-level UPDATE, DELETE or TRUNCATE
+  take ANY lock mode (column-level grants do not count), so one `LOCK TABLE ... ACCESS EXCLUSIVE` stalls every society.
+  `idempotency_keys` grants the API role column-level UPDATE only; `rate_limit_buckets` grants the runtime roles nothing and is
+  reached through a SECURITY DEFINER function (reviewed, owner-pinned `search_path`). The same stall is still possible on every
+  tenant table the API role may UPDATE (it has to, to do its job); `lock_timeout` and `statement_timeout` bound it.
+- **Purge evidence.** An AFTER DELETE statement trigger on audit_log/outbox (and on every table made append-only later) writes a
+  `purge_log` row for every permitted delete, so even an owner who forges the purge flag leaves evidence; the owner role can read
+  all of `purge_log`.
+
 ## Accepted risks (documented, not hidden)
+
+- **A role can change its own password** (`ALTER ROLE dwaar_app PASSWORD ...`) and PostgreSQL has no privilege, setting or event
+  trigger (event triggers do not fire for roles) to forbid it. Consequence: an injected statement can lock the API out of its own
+  database until an operator re-runs `infra/db/bootstrap_roles.sql` with the secret-store password. Compensating controls:
+  detection (new connections fail, `/readyz` goes 503), recovery (the script is idempotent), and, where the platform allows it,
+  certificate or IAM authentication for the runtime roles, where a password change is irrelevant. Not preventable in-database.
 
 - The application role can call `set_config('app.society_id', ...)` itself: RLS defends against forgotten filters and cross-
   tenant bugs, not against SQL injection in the API process. The primary gate stays the permission service plus
