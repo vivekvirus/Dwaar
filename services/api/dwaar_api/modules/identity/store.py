@@ -107,7 +107,9 @@ def otp_consume(conn: Connection, challenge_id: uuid.UUID) -> OtpConsumed | None
 
 def dev_otp_latest(conn: Connection, token: str) -> tuple[uuid.UUID, str, str, datetime] | None:
     row = conn.execute(
-        text("SELECT delivery_id, payload_enc, template_id, created_at FROM iam.dev_otp_latest(:t)"),
+        text(
+            "SELECT delivery_id, payload_enc, template_id, created_at FROM iam.dev_otp_latest(:t)"
+        ),
         {"t": token},
     ).first()
     return None if row is None else (row[0], row[1], row[2], row[3])
@@ -182,7 +184,9 @@ def update_profile(
     )
 
 
-def society_people(conn: Connection, ids: list[uuid.UUID]) -> dict[uuid.UUID, tuple[str, str, bool]]:
+def society_people(
+    conn: Connection, ids: list[uuid.UUID]
+) -> dict[uuid.UUID, tuple[str, str, bool]]:
     rows = _rows(
         conn,
         "SELECT id, display_name, preferred_language, is_minor FROM iam.society_people(:ids)",
@@ -283,7 +287,9 @@ def session_list(conn: Connection, person_id: uuid.UUID) -> list[SessionRow]:
     return [SessionRow(*r) for r in rows]
 
 
-def session_revoke(conn: Connection, person_id: uuid.UUID, session_id: uuid.UUID, reason: str) -> bool:
+def session_revoke(
+    conn: Connection, person_id: uuid.UUID, session_id: uuid.UUID, reason: str
+) -> bool:
     return bool(
         conn.execute(
             text("SELECT iam.session_revoke(:p, :s, :r)"),
@@ -331,7 +337,9 @@ def session_mark_mfa(conn: Connection, person_id: uuid.UUID, session_id: uuid.UU
 
 
 # ------------------------------------------------------------------------------------------------- MFA
-def mfa_enrol(conn: Connection, person_id: uuid.UUID, factor_id: uuid.UUID, secret_enc: str) -> bool:
+def mfa_enrol(
+    conn: Connection, person_id: uuid.UUID, factor_id: uuid.UUID, secret_enc: str
+) -> bool:
     return bool(
         conn.execute(
             text("SELECT iam.mfa_enrol(:p, :f, :s)"),
@@ -388,7 +396,9 @@ def access_overview(conn: Connection, person_id: uuid.UUID) -> list[OverviewRow]
     return [OverviewRow(*r) for r in rows]
 
 
-def locate_membership(conn: Connection, membership_id: uuid.UUID) -> tuple[uuid.UUID, uuid.UUID | None] | None:
+def locate_membership(
+    conn: Connection, membership_id: uuid.UUID
+) -> tuple[uuid.UUID, uuid.UUID | None] | None:
     row = conn.execute(
         text("SELECT society_ref, unit_ref FROM iam.locate_membership(:m)"), {"m": membership_id}
     ).first()

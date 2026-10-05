@@ -105,11 +105,14 @@ def issue_grant(
     }
 
 
-def revoke_grant(conn: Connection, ctx: RequestContext, *, grant_id: uuid.UUID, reason: str) -> dict[str, Any]:
+def revoke_grant(
+    conn: Connection, ctx: RequestContext, *, grant_id: uuid.UUID, reason: str
+) -> dict[str, Any]:
     if len(reason.strip()) < 5:
         raise PolicyViolation(details={"reason": "reason_required"})
     row = conn.execute(
-        text("SELECT person_id, role, revoked_at FROM role_grants WHERE id = :id FOR UPDATE"), {"id": grant_id}
+        text("SELECT person_id, role, revoked_at FROM role_grants WHERE id = :id FOR UPDATE"),
+        {"id": grant_id},
     ).first()
     if row is None:
         raise NotFound()
@@ -125,7 +128,10 @@ def revoke_grant(conn: Connection, ctx: RequestContext, *, grant_id: uuid.UUID, 
             {"by": ctx.person_id, "reason": reason.strip(), "id": grant_id},
         ).one()
         return MutationResult(
-            object_id=grant_id, object_version=int(r[0]), before={"revoked": False}, after={"revoked": True},
+            object_id=grant_id,
+            object_version=int(r[0]),
+            before={"revoked": False},
+            after={"revoked": True},
             event_payload={"grant_id": grant_id, "role": row[1], "person_id": row[0]},
         )
 
@@ -145,11 +151,15 @@ def list_grants(conn: Connection, *, after: uuid.UUID | None, limit: int) -> lis
         ),
         {"after": after, "limit": limit},
     ).mappings()
-    out = []
+    out: list[dict[str, Any]] = []
     for r in rows:
-        item = {k: (str(v) if isinstance(v, uuid.UUID) else v) for k, v in dict(r).items()}
-        for key in ("issued_at", "not_before", "expires_at", "revoked_at"):
-            if item[key] is not None:
-                item[key] = item[key].isoformat()
+        item: dict[str, Any] = {}
+        for key, value in dict(r).items():
+            if isinstance(value, uuid.UUID):
+                item[key] = str(value)
+            elif isinstance(value, datetime):
+                item[key] = value.isoformat()
+            else:
+                item[key] = value
         out.append(item)
     return out

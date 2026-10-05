@@ -56,7 +56,17 @@ ELEVATED_ROLES: Final = frozenset(
 )
 #: Roles a secretary may grant through the role-grant API (IAM-13: platform roles are never assignable here).
 ASSIGNABLE_ROLES: Final = frozenset(
-    {SECRETARY, TREASURER, COMMITTEE, ESTATE_MGR, GUARD, GUARD_SUP, AUDITOR, TECHNICIAN, VENDOR_TECH}
+    {
+        SECRETARY,
+        TREASURER,
+        COMMITTEE,
+        ESTATE_MGR,
+        GUARD,
+        GUARD_SUP,
+        AUDITOR,
+        TECHNICIAN,
+        VENDOR_TECH,
+    }
 )
 PLATFORM_ROLES: Final = frozenset({ORG_ADMIN, PLAT_SUPPORT})
 #: Roles whose grant must carry an expiry (time-bound by PRD 5.1).
@@ -126,12 +136,16 @@ def verbs_of(cell: str, capability: str | None = None) -> tuple[str, ...]:
     verbs = _VERBS.get(cell, ())
     if cell == "F" and capability is not None:
         row = set(MATRIX[capability].values())
-        verbs = verbs + tuple(v for v, marker in (("create", "Create"), ("draft", "Draft")) if marker in row)
+        verbs = verbs + tuple(
+            v for v, marker in (("create", "Create"), ("draft", "Draft")) if marker in row
+        )
     return verbs
 
 
 def roles_for(capability: str, verb: str) -> frozenset[str]:
-    return frozenset(r for r, cell in MATRIX[capability].items() if verb in verbs_of(cell, capability))
+    return frozenset(
+        r for r, cell in MATRIX[capability].items() if verb in verbs_of(cell, capability)
+    )
 
 
 def _build() -> tuple[Permission, ...]:

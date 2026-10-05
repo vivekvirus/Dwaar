@@ -99,7 +99,9 @@ class AuthService:
             platform_level=True,
         )
 
-    def _issue_pair(self, person_id: uuid.UUID, session_id: uuid.UUID, refresh_secret: str) -> TokenPair:
+    def _issue_pair(
+        self, person_id: uuid.UUID, session_id: uuid.UUID, refresh_secret: str
+    ) -> TokenPair:
         if self.issuer is None:
             # blocked-external: a production deployment mints access tokens through its OIDC provider's token endpoint
             log.error("no token issuer configured; cannot complete sign-in")
@@ -115,7 +117,9 @@ class AuthService:
         cfg = self.config
         e164, token = self._phone(raw_phone)
         self._limit("otp_req_ip", client_ip, cfg.ip_capacity, cfg.ip_refill_seconds)
-        self._limit("otp_req_phone", token, cfg.otp_request_capacity, cfg.otp_request_refill_seconds)
+        self._limit(
+            "otp_req_phone", token, cfg.otp_request_capacity, cfg.otp_request_refill_seconds
+        )
         self._issue_challenge(token, e164, purpose="login", person_id=None, request_id=request_id)
         return self._accepted()
 
@@ -123,12 +127,19 @@ class AuthService:
         return {
             "status": "accepted",
             "expires_in_seconds": self.config.otp_ttl_seconds,
-            "resend_after_seconds": self.config.otp_request_refill_seconds // self.config.otp_request_capacity,
+            "resend_after_seconds": self.config.otp_request_refill_seconds
+            // self.config.otp_request_capacity,
             "simulation": self.config.simulation,
         }
 
     def _issue_challenge(
-        self, token: str, e164: str, *, purpose: str, person_id: uuid.UUID | None, request_id: uuid.UUID
+        self,
+        token: str,
+        e164: str,
+        *,
+        purpose: str,
+        person_id: uuid.UUID | None,
+        request_id: uuid.UUID,
     ) -> None:
         cfg = self.config
         cid, did = uuid7(), uuid7()
@@ -209,7 +220,9 @@ class AuthService:
         if attempt.status != "ok" or attempt.challenge_id is None:
             raise Unauthenticated()
         expected = crypto.otp_hash(cfg, token, attempt.challenge_id, code)
-        if not (code.isdigit() and len(code) == 6 and crypto.hashes_equal(expected, attempt.code_hash)):
+        if not (
+            code.isdigit() and len(code) == 6 and crypto.hashes_equal(expected, attempt.code_hash)
+        ):
             raise Unauthenticated()
         with self.db.app_tx() as conn:
             consumed = store.otp_consume(conn, attempt.challenge_id)
@@ -243,8 +256,12 @@ class AuthService:
         with self.db.app_tx(RequestContext(person_id=principal.person_id)) as conn:
             return store.session_list(conn, principal.person_id)
 
-    def revoke_session(self, principal: Principal, session_id: uuid.UUID, request_id: uuid.UUID) -> bool:
-        with self.db.app_tx(RequestContext(person_id=principal.person_id, request_id=request_id)) as conn:
+    def revoke_session(
+        self, principal: Principal, session_id: uuid.UUID, request_id: uuid.UUID
+    ) -> bool:
+        with self.db.app_tx(
+            RequestContext(person_id=principal.person_id, request_id=request_id)
+        ) as conn:
             done = store.session_revoke(conn, principal.person_id, session_id, "user_revoked")
             if done:
                 self._audit(
@@ -255,7 +272,9 @@ class AuthService:
 
     def revoke_others(self, principal: Principal, request_id: uuid.UUID) -> int:
         keep = _sid(principal)
-        with self.db.app_tx(RequestContext(person_id=principal.person_id, request_id=request_id)) as conn:
+        with self.db.app_tx(
+            RequestContext(person_id=principal.person_id, request_id=request_id)
+        ) as conn:
             n = store.session_revoke_others(conn, principal.person_id, keep, "user_revoked_others")
             self._audit(
                 conn, "auth.sessions_revoked", person=principal.person_id, obj=None,
@@ -272,7 +291,9 @@ class AuthService:
         with self.db.app_tx(RequestContext(person_id=principal.person_id)) as conn:
             if not store.mfa_enrol(conn, principal.person_id, factor_id, enc):
                 raise PolicyViolation(details={"reason": "mfa_already_enrolled"})
-        uri = pyotp.TOTP(secret).provisioning_uri(name=str(principal.person_id), issuer_name="Dwaar")
+        uri = pyotp.TOTP(secret).provisioning_uri(
+            name=str(principal.person_id), issuer_name="Dwaar"
+        )
         return {"factor_id": str(factor_id), "secret": secret, "otpauth_uri": uri, "kind": "totp"}
 
     def _factor(self, conn: Connection, principal: Principal) -> tuple[store.MfaFactor, str]:
@@ -280,7 +301,9 @@ class AuthService:
         if factor is None:
             raise PolicyViolation(details={"reason": "mfa_not_enrolled"})
         try:
-            secret = self.config.cipher.decrypt(factor.secret_enc, crypto.mfa_aad(principal.person_id))
+            secret = self.config.cipher.decrypt(
+                factor.secret_enc, crypto.mfa_aad(principal.person_id)
+            )
         except DecryptionError:
             log.error("mfa secret undecryptable")
             raise DependencyUnavailable(retry_after=30) from None
@@ -291,21 +314,32 @@ class AuthService:
         totp = pyotp.TOTP(secret)
         now = totp.timecode(datetime.now(UTC))
         for step in (now - 1, now, now + 1):
-            if step > last_step and code.isdigit() and len(code) == 6 and totp.at(step * totp.interval) == code:
+            if (
+                step > last_step
+                and code.isdigit()
+                and len(code) == 6
+                and totp.at(step * totp.interval) == code
+            ):
                 return int(step)
         return None
 
-    def mfa_verify(self, principal: Principal, code: str, *, confirm: bool, request_id: uuid.UUID) -> bool:
+    def mfa_verify(
+        self, principal: Principal, code: str, *, confirm: bool, request_id: uuid.UUID
+    ) -> bool:
         self._limit("mfa", str(principal.person_id), 5, 300)
         sid = _sid(principal)
-        with self.db.app_tx(RequestContext(person_id=principal.person_id, request_id=request_id)) as conn:
+        with self.db.app_tx(
+            RequestContext(person_id=principal.person_id, request_id=request_id)
+        ) as conn:
             factor, secret = self._factor(conn, principal)
             if confirm and factor.confirmed_at is not None:
                 raise PolicyViolation(details={"reason": "mfa_already_confirmed"})
             if not confirm and factor.confirmed_at is None:
                 raise PolicyViolation(details={"reason": "mfa_not_confirmed"})
             step = self._check_totp(secret, factor.last_used_step, code.strip())
-            if step is None or not store.mfa_use_step(conn, principal.person_id, factor.id, step, confirm=confirm):
+            if step is None or not store.mfa_use_step(
+                conn, principal.person_id, factor.id, step, confirm=confirm
+            ):
                 self._audit(
                     conn, "auth.mfa_failed", person=principal.person_id, obj=factor.id,
                     object_type="mfa_factor", request_id=request_id,
@@ -319,12 +353,22 @@ class AuthService:
         return True
 
     # ------------------------------------------------------------------------------------ number change (IAM-11)
-    def phone_change_request(self, principal: Principal, raw_phone: str, request_id: uuid.UUID) -> dict[str, Any]:
+    def phone_change_request(
+        self, principal: Principal, raw_phone: str, request_id: uuid.UUID
+    ) -> dict[str, Any]:
         cfg = self.config
         e164, token = self._phone(raw_phone)
-        self._limit("otp_req_phone", token, cfg.otp_request_capacity, cfg.otp_request_refill_seconds)
+        self._limit(
+            "otp_req_phone", token, cfg.otp_request_capacity, cfg.otp_request_refill_seconds
+        )
         self._limit("phone_change", str(principal.person_id), 5, 3600)
-        self._issue_challenge(token, e164, purpose="phone_change", person_id=principal.person_id, request_id=request_id)
+        self._issue_challenge(
+            token,
+            e164,
+            purpose="phone_change",
+            person_id=principal.person_id,
+            request_id=request_id,
+        )
         return self._accepted()
 
     def phone_change_confirm(
@@ -346,7 +390,9 @@ class AuthService:
         if consumed.person_id != principal.person_id:
             raise Unauthenticated()
         enc = cfg.cipher.encrypt(e164, crypto.vault_aad(principal.person_id, "phone"))
-        ctx = RequestContext(person_id=principal.person_id, actor_role="resident", request_id=request_id)
+        ctx = RequestContext(
+            person_id=principal.person_id, actor_role="resident", request_id=request_id
+        )
         with self.db.app_tx(ctx) as conn:
             result = store.change_phone(conn, principal.person_id, challenge_id, token, enc)
             if result == "conflict":
@@ -378,4 +424,11 @@ def make_service(db: Database, config: IdentityConfig, issuer: TokenIssuer | Non
     return AuthService(db, config, issuer)
 
 
-__all__ = ["AuthService", "DeviceInfo", "RateLimited", "SimulatorIssuer", "TokenPair", "make_service"]
+__all__ = [
+    "AuthService",
+    "DeviceInfo",
+    "RateLimited",
+    "SimulatorIssuer",
+    "TokenPair",
+    "make_service",
+]

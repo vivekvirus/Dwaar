@@ -24,6 +24,8 @@ CREATE TABLE iam.persons (
     phone_verified_at timestamptz,
     phone_released_at timestamptz,
     version integer NOT NULL DEFAULT 1,
+    retention_class text NOT NULL DEFAULT 'RES' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -33,6 +35,8 @@ CREATE TABLE iam.person_vault (
     phone_enc text NOT NULL,          -- AES-GCM envelope (dwaar_common.crypto.EnvelopeCipher), AAD binds person and field
     email_enc text,
     id_doc_masked text,               -- masked display value only; the number itself is never stored in the clear
+    retention_class text NOT NULL DEFAULT 'RES' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 

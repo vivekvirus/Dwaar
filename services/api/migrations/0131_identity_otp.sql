@@ -21,6 +21,8 @@ CREATE TABLE iam.otp_challenges (
     consumed_at timestamptz,
     session_issued_at timestamptz,
     superseded_at timestamptz,
+    retention_class text NOT NULL DEFAULT 'CRED' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX otp_challenges_lookup_idx ON iam.otp_challenges (phone_token, purpose, created_at DESC);
@@ -34,6 +36,8 @@ CREATE TABLE iam.otp_deliveries (
     payload_enc text,
     state text NOT NULL CHECK (state IN ('pending', 'simulated_sent', 'sent', 'failed', 'purged')),
     simulation boolean NOT NULL,
+    retention_class text NOT NULL DEFAULT 'CRED' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     created_at timestamptz NOT NULL DEFAULT now(),
     delivered_at timestamptz
 );

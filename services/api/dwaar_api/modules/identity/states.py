@@ -15,7 +15,9 @@ STATES: Final = (
     "requested", "evidence_pending", "society_review", "verified", "rejected", "appealed", "inactive",
 )  # fmt: skip
 APPLICANT_ACTIONS: Final = frozenset({"submit_evidence", "appeal", "leave"})
-REVIEWER_ACTIONS: Final = frozenset({"request_evidence", "start_review", "verify", "reject", "deactivate"})
+REVIEWER_ACTIONS: Final = frozenset(
+    {"request_evidence", "start_review", "verify", "reject", "deactivate"}
+)
 REASON_REQUIRED: Final = frozenset({"request_evidence", "reject", "deactivate", "appeal"})
 
 #: (state, action) -> next state. ``appeal`` opens a NEW case in state ``appealed`` (the rejected one stays rejected).
@@ -47,7 +49,12 @@ CASE_KIND: Final = {
 }
 #: membership kinds whose claims only a society-wide reviewer (secretary) may decide
 SOCIETY_ONLY_KINDS: Final = frozenset({"owner", "joint_owner", "staff"})
-APPLICANT_KINDS: Final = ("owner", "joint_owner", "tenant", "family")  # staff are onboarded by the society
+APPLICANT_KINDS: Final = (
+    "owner",
+    "joint_owner",
+    "tenant",
+    "family",
+)  # staff are onboarded by the society
 
 
 def next_state(state: str, action: str, *, case_kind: str = "household_join") -> str:
@@ -67,5 +74,7 @@ def next_state(state: str, action: str, *, case_kind: str = "household_join") ->
     else:
         target = TRANSITIONS.get((state, action))
     if target is None:
-        raise PolicyViolation(details={"reason": "invalid_transition", "state": state, "action": action})
+        raise PolicyViolation(
+            details={"reason": "invalid_transition", "state": state, "action": action}
+        )
     return target

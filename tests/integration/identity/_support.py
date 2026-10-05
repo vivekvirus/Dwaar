@@ -19,7 +19,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-import psycopg
 import pyotp
 import pytest
 from fastapi import FastAPI
@@ -40,6 +39,21 @@ UA = {"User-Agent": "dwaar-identity-tests"}
 def phone(n: int) -> str:
     """Reserved fictional test numbers: +91 99999 00xxx."""
     return f"+9199999{n:05d}"
+
+
+class KeyedClient(TestClient):
+    """TestClient adding a unique Idempotency-Key to writes on the keyed identity endpoints when none is given."""
+
+    def request(self, method: str, url: Any, **kwargs: Any) -> Any:
+        path = str(url)
+        if method.upper() in {"POST", "PUT", "PATCH", "DELETE"} and (
+            path.startswith(("/v1/societies/", "/v1/memberships/"))
+        ):
+            headers = dict(kwargs.get("headers") or {})
+            if not any(k.lower() == "idempotency-key" for k in headers):
+                headers["Idempotency-Key"] = f"auto-{uuid.uuid4()}"
+            kwargs["headers"] = headers
+        return super().request(method, url, **kwargs)
 
 
 @dataclass
@@ -83,14 +97,16 @@ class IdentityHarness:
         rt.auth.config = rt.config
         self.app.state.grant_resolver = PgGrantResolver(self.database, rt.config)
 
-    def client(self) -> TestClient:
-        return TestClient(self.app, raise_server_exceptions=False, headers=UA)
+    def client(self, *, auto_key: bool = True) -> TestClient:
+        """A client that supplies a fresh ``Idempotency-Key`` on society/membership writes unless told not to
+        (tests that care about the key pass their own, or ``auto_key=False`` to omit it)."""
+        cls = KeyedClient if auto_key else TestClient
+        return cls(self.app, raise_server_exceptions=False, headers=UA)
 
     # ---------------------------------------------------------------- seeding (owner role)
-    def _owner(self, society: uuid.UUID | None) -> contextlib.AbstractContextManager[psycopg.Connection[Any]]:
-        return self.db.owner_conn() if society is None else self.db.owner_conn()
-
-    def society(self, name: str = "Alpha Heights", units: tuple[str, ...] = ("A-101", "A-102", "B-201")) -> Society:
+    def society(
+        self, name: str = "Alpha Heights", units: tuple[str, ...] = ("A-101", "A-102", "B-201")
+    ) -> Society:
         sid, entity, block = uuid7(), uuid7(), uuid7()
         with self.db.owner_conn() as conn:
             conn.execute("SELECT set_config('app.society_id', %s, true)", (str(sid),))
@@ -112,7 +128,8 @@ class IdentityHarness:
                 (entity, sid, name),
             )
             conn.execute(
-                "INSERT INTO blocks (id, society_id, name, floors) VALUES (%s, %s, 'A', 10)", (block, sid)
+                "INSERT INTO blocks (id, society_id, name, floors) VALUES (%s, %s, 'A', 10)",
+                (block, sid),
             )
             ids: dict[str, uuid.UUID] = {}
             for label in units:
@@ -133,6 +150,7 @@ class IdentityHarness:
         *,
         verification: str = "verified",
         lives: bool = True,
+        effective_from: str | None = None,
         effective_to: str | None = None,
         owner_decision: str | None = None,
     ) -> uuid.UUID:
@@ -141,8 +159,21 @@ class IdentityHarness:
             conn.execute("SELECT set_config('app.society_id', %s, true)", (str(society),))
             conn.execute(
                 "INSERT INTO memberships (id, society_id, person_id, unit_id, kind, verification, lives_in_unit,"
-                " effective_to, owner_decision, created_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (mid, society, person, unit, kind, verification, lives, effective_to, owner_decision, person),
+                " effective_from, effective_to, owner_decision, created_by) VALUES (%s, %s, %s, %s, %s, %s, %s,"
+                " coalesce(%s::date, (now() AT TIME ZONE 'Asia/Kolkata')::date), %s, %s, %s)",
+                (
+                    mid,
+                    society,
+                    person,
+                    unit,
+                    kind,
+                    verification,
+                    lives,
+                    effective_from,
+                    effective_to,
+                    owner_decision,
+                    person,
+                ),
             )
         return mid
 
@@ -165,8 +196,8 @@ class IdentityHarness:
             conn.execute(
                 "INSERT INTO role_grants (id, society_id, person_id, role, scope, issued_by, approved_by, reason,"
                 " issued_at, expires_at) VALUES (%s, %s, %s, %s, %s, %s, %s, 'seeded for tests',"
-                " now() - interval '1 hour', " + (f"now() + interval '{expires}'" if expires else "NULL") + ")",  # noqa: S608
-                (gid, society, person, role, Jsonb(scope), issuer, approved_by),
+                " now() - interval '1 hour', CASE WHEN %s::text IS NULL THEN NULL ELSE now() + %s::interval END)",
+                (gid, society, person, role, Jsonb(scope), issuer, approved_by, expires, expires),
             )
         return gid
 
@@ -179,11 +210,15 @@ class IdentityHarness:
                 " ON CONFLICT DO NOTHING",
                 (pid, f"seeder-{pid}"),
             )
-            conn.execute("INSERT INTO iam.person_vault (person_id, phone_enc) VALUES (%s, 'x')", (pid,))
+            conn.execute(
+                "INSERT INTO iam.person_vault (person_id, phone_enc) VALUES (%s, 'x')", (pid,)
+            )
         return pid
 
     # ---------------------------------------------------------------- real login
-    def login(self, number: int | str, *, device: str = "dev-1", client: TestClient | None = None) -> Person:
+    def login(
+        self, number: int | str, *, device: str = "dev-1", client: TestClient | None = None
+    ) -> Person:
         c = client or self.client()
         num = phone(number) if isinstance(number, int) else number
         r = c.post("/v1/auth/otp/request", json={"phone": num})
@@ -191,14 +226,22 @@ class IdentityHarness:
         code = self.otp(num, c)
         r = c.post(
             "/v1/auth/otp/verify",
-            json={"phone": num, "code": code, "device": {"device_id": device, "label": f"Test {device}"}},
+            json={
+                "phone": num,
+                "code": code,
+                "device": {"device_id": device, "label": f"Test {device}"},
+            },
         )
         assert r.status_code == 200, r.text
         body = r.json()
         me = c.get("/v1/me", headers={"Authorization": f"Bearer {body['access_token']}"})
         assert me.status_code == 200, me.text
         return Person(
-            uuid.UUID(me.json()["person"]["id"]), num, body["access_token"], body["refresh_token"], body["session_id"]
+            uuid.UUID(me.json()["person"]["id"]),
+            num,
+            body["access_token"],
+            body["refresh_token"],
+            body["session_id"],
         )
 
     def otp(self, num: str, client: TestClient | None = None) -> str:
@@ -211,7 +254,10 @@ class IdentityHarness:
     def elevate_session(self, person: Person) -> None:
         """Mark the person's session as MFA-verified directly (the MFA flow itself has its own tests)."""
         with self.db.admin_conn() as conn:
-            conn.execute("UPDATE iam.auth_sessions SET mfa_verified_at = now() WHERE id = %s", (person.session_id,))
+            conn.execute(
+                "UPDATE iam.auth_sessions SET mfa_verified_at = now() WHERE id = %s",
+                (person.session_id,),
+            )
 
     def enrol_totp(self, person: Person, client: TestClient | None = None) -> str:
         c = client or self.client()
@@ -259,3 +305,46 @@ def idh(db: DbHandle) -> Iterator[IdentityHarness]:
 
 
 _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+
+
+# ------------------------------------------------------------------------------------------------- scenario helpers
+@dataclass
+class Staff:
+    secretary: Person
+    committee: Person
+
+
+def staff(idh: IdentityHarness, society: uuid.UUID, base: int) -> Staff:
+    """A secretary and a committee member, both with a fresh MFA step-up (elevated roles are real, not bypassed)."""
+    sec, com = (
+        idh.login(base + 5000),
+        idh.login(base + 6000),
+    )  # far from the small numbers the tests use
+    idh.seed_grant(society, sec.id, "secretary")
+    idh.seed_grant(society, com.id, "committee")
+    idh.elevate_session(sec)
+    idh.elevate_session(com)
+    return Staff(sec, com)
+
+
+def apply_for(
+    idh: IdentityHarness, who: Person, society: uuid.UUID, unit: uuid.UUID, kind: str, **extra: Any
+) -> dict[str, Any]:
+    r = idh.client().post(
+        f"/v1/societies/{society}/memberships",
+        json={"unit_id": str(unit), "kind": kind, **extra},
+        headers=who.headers,
+    )
+    assert r.status_code == 201, r.text
+    body: dict[str, Any] = r.json()
+    return body
+
+
+def advance(
+    idh: IdentityHarness, who: Person, society: uuid.UUID, case: str, action: str, **body: Any
+) -> Any:
+    return idh.client().post(
+        f"/v1/societies/{society}/verification-cases/{case}/advance",
+        json={"action": action, **body},
+        headers=who.headers,
+    )

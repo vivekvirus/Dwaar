@@ -1,3 +1,4 @@
+# ruff: noqa: PT018, PT012, F811
 """IAM-08: short-lived access tokens, rotating refresh tokens with reuse detection, device list, revocation."""
 
 from __future__ import annotations
@@ -22,7 +23,11 @@ def test_access_token_is_short_lived_and_carries_only_standard_claims(idh: Ident
     p = idh.login(1)
     claims = jwt.decode(p.access, options={"verify_signature": False})
     assert set(claims) == {"sub", "iss", "aud", "exp", "iat", "jti", "sid", "simulation"}
-    assert claims["simulation"] is True and claims["sub"] == str(p.id) and claims["sid"] == p.session_id
+    assert (
+        claims["simulation"] is True
+        and claims["sub"] == str(p.id)
+        and claims["sid"] == p.session_id
+    )
     assert claims["exp"] - claims["iat"] == idh.rt.config.access_ttl_seconds <= 900
     header = jwt.get_unverified_header(p.access)
     assert header["alg"] == "EdDSA" and header["kid"] and header["typ"] == "at+jwt"
@@ -49,15 +54,20 @@ def test_reuse_of_a_rotated_refresh_token_revokes_the_whole_family(idh: Identity
     c = idh.client()
     newer = c.post("/v1/auth/refresh", json={"refresh_token": p.refresh}).json()
     assert me(idh, newer["access_token"]) == 200
-    stolen_replay = c.post("/v1/auth/refresh", json={"refresh_token": p.refresh})  # the OLD token again
+    stolen_replay = c.post(
+        "/v1/auth/refresh", json={"refresh_token": p.refresh}
+    )  # the OLD token again
     assert stolen_replay.status_code == 401 and stolen_replay.json()["code"] == "unauthenticated"
     # the legitimate newest token is dead too, and so is every access token of that session
-    assert c.post("/v1/auth/refresh", json={"refresh_token": newer["refresh_token"]}).status_code == 401
+    assert (
+        c.post("/v1/auth/refresh", json={"refresh_token": newer["refresh_token"]}).status_code
+        == 401
+    )
     assert me(idh, newer["access_token"]) == 401
     assert me(idh, p.access) == 401
-    assert idh.admin_rows("SELECT revoked_reason FROM iam.auth_sessions WHERE id = %s", (p.session_id,)) == [
-        ("refresh_reuse",)
-    ]
+    assert idh.admin_rows(
+        "SELECT revoked_reason FROM iam.auth_sessions WHERE id = %s", (p.session_id,)
+    ) == [("refresh_reuse",)]
     assert idh.audit_ops("auth.refresh_reuse_detected")
 
 
@@ -72,7 +82,9 @@ def test_refresh_reuse_only_kills_that_session_not_the_other_devices(idh: Identi
     assert me(idh, other.access) == 200
 
 
-def test_revoking_a_session_makes_its_access_token_unusable_immediately(idh: IdentityHarness) -> None:
+def test_revoking_a_session_makes_its_access_token_unusable_immediately(
+    idh: IdentityHarness,
+) -> None:
     # REQ: IAM-08
     first = idh.login(5, device="phone")
     second = idh.login(first.phone, device="tablet")
@@ -83,7 +95,9 @@ def test_revoking_a_session_makes_its_access_token_unusable_immediately(idh: Ide
     assert me(idh, first.access) == 200
     r = c.delete(f"/v1/auth/sessions/{first.session_id}", headers=second.headers)
     assert r.status_code == 204
-    assert me(idh, first.access) == 401  # well before exp: revocation is a database fact, not a token claim
+    assert (
+        me(idh, first.access) == 401
+    )  # well before exp: revocation is a database fact, not a token claim
     assert c.post("/v1/auth/refresh", json={"refresh_token": first.refresh}).status_code == 401
     assert me(idh, second.access) == 200
 
@@ -96,7 +110,9 @@ def test_cannot_revoke_or_see_someone_elses_session(idh: IdentityHarness) -> Non
     assert r.status_code == 404
     assert c.delete(f"/v1/auth/sessions/{uuid.uuid4()}", headers=b.headers).status_code == 404
     assert me(idh, a.access) == 200
-    assert all(s["device_id"] for s in c.get("/v1/auth/sessions", headers=b.headers).json()["sessions"])
+    assert all(
+        s["device_id"] for s in c.get("/v1/auth/sessions", headers=b.headers).json()["sessions"]
+    )
     assert len(c.get("/v1/auth/sessions", headers=b.headers).json()["sessions"]) == 1
 
 
@@ -112,14 +128,20 @@ def test_logout_and_revoke_others(idh: IdentityHarness) -> None:
     assert me(idh, three.access) == 401
 
 
-def test_token_without_a_live_session_is_refused_even_if_validly_signed(idh: IdentityHarness) -> None:
+def test_token_without_a_live_session_is_refused_even_if_validly_signed(
+    idh: IdentityHarness,
+) -> None:
     # REQ: IAM-08
     p = idh.login(9)
     issuer = idh.rt.issuer
-    forged_sid = issuer.mint(p.id, uuid.uuid4(), ttl_seconds=300)  # right person, signed by us, no such session
+    forged_sid = issuer.mint(
+        p.id, uuid.uuid4(), ttl_seconds=300
+    )  # right person, signed by us, no such session
     assert me(idh, forged_sid) == 401
     other = idh.login(19)
-    assert me(idh, issuer.mint(p.id, uuid.UUID(other.session_id), ttl_seconds=300)) == 401  # someone else's session
+    assert (
+        me(idh, issuer.mint(p.id, uuid.UUID(other.session_id), ttl_seconds=300)) == 401
+    )  # someone else's session
 
 
 def test_expired_and_overlong_tokens_are_refused(idh: IdentityHarness) -> None:
@@ -127,7 +149,9 @@ def test_expired_and_overlong_tokens_are_refused(idh: IdentityHarness) -> None:
     p = idh.login(20)
     issuer = idh.rt.issuer
     assert me(idh, issuer.mint(p.id, uuid.UUID(p.session_id), ttl_seconds=-120)) == 401
-    assert me(idh, issuer.mint(p.id, uuid.UUID(p.session_id), ttl_seconds=86_400)) == 401  # exp - iat above the cap
+    assert (
+        me(idh, issuer.mint(p.id, uuid.UUID(p.session_id), ttl_seconds=86_400)) == 401
+    )  # exp - iat above the cap
     assert me(idh, issuer.mint(p.id, uuid.UUID(p.session_id), ttl_seconds=600)) == 200
 
 

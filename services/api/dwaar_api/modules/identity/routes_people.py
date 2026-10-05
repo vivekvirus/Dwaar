@@ -10,7 +10,6 @@ from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Request
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import text
 
@@ -33,6 +32,7 @@ from .access import (
     log_privileged_read,
     owns_unit,
     request_id_of,
+    synthetic_auth,
 )
 from .matrix import ELEVATED_ROLES
 from .runtime import Runtime
@@ -49,7 +49,9 @@ class Strict(BaseModel):
 class ProfileIn(Strict):
     display_name: str | None = Field(default=None, min_length=1, max_length=120)
     preferred_language: Literal["en", "hi", "mr", "kn"] | None = None
-    email: str | None = Field(default=None, min_length=3, max_length=200, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    email: str | None = Field(
+        default=None, min_length=3, max_length=200, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+    )
     id_document_number: str | None = Field(default=None, min_length=4, max_length=32)
 
 
@@ -73,12 +75,16 @@ def me(principal: Principal_, request: Request, rt: Runtime) -> dict[str, Any]:
         mfa_fresh = False
         if principal.session_id:
             try:
-                mfa_fresh = store.session_mfa_fresh(conn, pid, uuid.UUID(principal.session_id), rt.config.mfa_ttl_seconds)
+                mfa_fresh = store.session_mfa_fresh(
+                    conn, pid, uuid.UUID(principal.session_id), rt.config.mfa_ttl_seconds
+                )
             except ValueError:
                 mfa_fresh = False
     societies: dict[uuid.UUID, dict[str, Any]] = {}
     for row in overview:
-        entry = societies.setdefault(row.society_id, {"society_id": str(row.society_id), "roles": [], "memberships": []})
+        entry = societies.setdefault(
+            row.society_id, {"society_id": str(row.society_id), "roles": [], "memberships": []}
+        )
         elevated = row.role in ELEVATED_ROLES
         entry["roles"].append(
             {
@@ -115,13 +121,17 @@ def me(principal: Principal_, request: Request, rt: Runtime) -> dict[str, Any]:
 
 
 def _own_memberships(conn: Any, person_id: uuid.UUID) -> list[dict[str, Any]]:
-    rows = conn.execute(
-        text(
-            "SELECT id, unit_id, kind, verification, effective_from, effective_to, lives_in_unit, owner_decision"
-            " FROM memberships WHERE person_id = :p ORDER BY created_at, id"
-        ),
-        {"p": person_id},
-    ).mappings().all()
+    rows = (
+        conn.execute(
+            text(
+                "SELECT id, unit_id, kind, verification, effective_from, effective_to, lives_in_unit, owner_decision"
+                " FROM memberships WHERE person_id = :p ORDER BY created_at, id"
+            ),
+            {"p": person_id},
+        )
+        .mappings()
+        .all()
+    )
     ids = [r["id"] for r in rows]
     cases: dict[uuid.UUID, dict[str, Any]] = {}
     if ids:
@@ -155,10 +165,17 @@ def _own_memberships(conn: Any, person_id: uuid.UUID) -> list[dict[str, Any]]:
     return out
 
 
-@router.patch("/v1/me/profile", dependencies=[Depends(idempotency_exempt("idempotent field update of one's own profile"))])
-def update_profile(body: ProfileIn, principal: Principal_, request: Request, rt: Runtime) -> dict[str, Any]:
+@router.patch(
+    "/v1/me/profile",
+    dependencies=[Depends(idempotency_exempt("idempotent field update of one's own profile"))],
+)
+def update_profile(
+    body: ProfileIn, principal: Principal_, request: Request, rt: Runtime
+) -> dict[str, Any]:
     pid = principal.person_id
-    email_enc = rt.config.cipher.encrypt(body.email, crypto.vault_aad(pid, "email")) if body.email else None
+    email_enc = (
+        rt.config.cipher.encrypt(body.email, crypto.vault_aad(pid, "email")) if body.email else None
+    )
     masked = mask_aadhaar(body.id_document_number) if body.id_document_number else None
     with rt.db.app_tx(RequestContext(person_id=pid, request_id=request_id_of(request))) as conn:
         ok = store.update_profile(conn, pid, body.display_name, body.preferred_language)
@@ -188,11 +205,15 @@ class MembershipIn(Strict):
 @router.post(
     "/v1/societies/{society_id}/memberships",
     status_code=201,
-    dependencies=[Depends(idempotency_exempt("naturally idempotent: one live claim per person, unit and kind (unique index)"))],
 )
 def create_membership(
-    society_id: uuid.UUID, body: MembershipIn, principal: Principal_, request: Request, rt: Runtime
-) -> JSONResponse:
+    society_id: uuid.UUID,
+    body: MembershipIn,
+    principal: Principal_,
+    request: Request,
+    rt: Runtime,
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
     """Ask to join a unit (or, as a secretary, record a membership for someone else).
 
     Always yields a PENDING membership and a verification case: this endpoint cannot create an effective membership or a
@@ -207,16 +228,21 @@ def create_membership(
             capacity=rt.config.membership_request_capacity,
             refill_per_second=rt.config.membership_request_capacity / rt.config.membership_request_refill_seconds,
         )  # fmt: skip
-        ctx = applicant_context(society_id, principal, request)
-        person_id = principal.person_id
-        lives = body.lives_in_unit if body.lives_in_unit is not None else body.kind != "staff"
-        with rt.db.app_tx(ctx) as conn:
-            result = members.create_membership(
-                conn, ctx, person_id=person_id, unit_id=body.unit_id, kind=body.kind,
+        applicant = synthetic_auth(
+            request, principal, society_id, "applicant", "iam.membership.request"
+        )
+        lives = (
+            body.lives_in_unit if body.lives_in_unit is not None else True
+        )  # applicants are never staff
+
+        def apply_for_self(conn: Any) -> dict[str, Any]:
+            return members.create_membership(
+                conn, applicant.ctx, person_id=principal.person_id, unit_id=body.unit_id, kind=body.kind,
                 effective_from=body.effective_from, lives_in_unit=lives, evidence_ref=body.evidence_ref,
                 requested_by=principal.person_id,
             )  # fmt: skip
-        return JSONResponse(result, status_code=201)
+
+        return idem.run(applicant, apply_for_self, status_code=201)
     auth = authorize(request, principal, ["iam.membership.manage"], society_id)
     try:
         e164 = crypto.normalise_phone(body.person_phone)
@@ -226,16 +252,22 @@ def create_membership(
     new_id = uuid7()
     enc = rt.config.cipher.encrypt(e164, crypto.vault_aad(new_id, "phone"))
     lives = body.lives_in_unit if body.lives_in_unit is not None else body.kind != "staff"
-    with auth.tx() as conn:
+
+    def apply_for_other(conn: Any) -> dict[str, Any]:
         person_id = store.ensure_person(
-            conn, new_id=new_id, token=token, phone_enc=enc, display_name=body.display_name or "Resident"
+            conn,
+            new_id=new_id,
+            token=token,
+            phone_enc=enc,
+            display_name=body.display_name or "Resident",
         )
-        result = members.create_membership(
+        return members.create_membership(
             conn, auth.ctx, person_id=person_id, unit_id=body.unit_id, kind=body.kind,
             effective_from=body.effective_from, lives_in_unit=lives, evidence_ref=body.evidence_ref,
             requested_by=principal.person_id,
         )  # fmt: skip
-    return JSONResponse(result, status_code=201)
+
+    return idem.run(auth, apply_for_other, status_code=201)
 
 
 def _mask_name(name: str) -> str:
@@ -266,16 +298,26 @@ def list_memberships(
     if not own_only:
         purpose = clean_purpose(purpose)
     with auth.tx() as conn:
-        rows = conn.execute(
-            text(
-                "SELECT id, person_id, unit_id, kind, verification, effective_from, effective_to, lives_in_unit,"
-                " is_primary_approver FROM memberships"
-                " WHERE (CAST(:unit AS uuid) IS NULL OR unit_id = CAST(:unit AS uuid))"
-                " AND (CAST(:after AS uuid) IS NULL OR id > CAST(:after AS uuid))"
-                " AND (NOT :own OR person_id = :me) ORDER BY id LIMIT :limit"
-            ),
-            {"unit": unit_id, "after": after, "own": own_only, "me": principal.person_id, "limit": limit + 1},
-        ).mappings().all()
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT id, person_id, unit_id, kind, verification, effective_from, effective_to, lives_in_unit,"
+                    " is_primary_approver FROM memberships"
+                    " WHERE (CAST(:unit AS uuid) IS NULL OR unit_id = CAST(:unit AS uuid))"
+                    " AND (CAST(:after AS uuid) IS NULL OR id > CAST(:after AS uuid))"
+                    " AND (NOT :own OR person_id = :me) ORDER BY id LIMIT :limit"
+                ),
+                {
+                    "unit": unit_id,
+                    "after": after,
+                    "own": own_only,
+                    "me": principal.person_id,
+                    "limit": limit + 1,
+                },
+            )
+            .mappings()
+            .all()
+        )
         page = rows[:limit]
         names = store.society_people(conn, list({r["person_id"] for r in page}))
         if not own_only:
@@ -301,12 +343,24 @@ def list_memberships(
                 "masked": masked,
             }
         )
-    return {"items": items, "next_after": str(page[-1]["id"]) if len(rows) > limit and page else None}
+    return {
+        "items": items,
+        "next_after": str(page[-1]["id"]) if len(rows) > limit and page else None,
+    }
 
 
 # ===================================================================================================== cases
 class AdvanceIn(Strict):
-    action: Literal["request_evidence", "start_review", "verify", "reject", "deactivate", "submit_evidence", "appeal", "leave"]
+    action: Literal[
+        "request_evidence",
+        "start_review",
+        "verify",
+        "reject",
+        "deactivate",
+        "submit_evidence",
+        "appeal",
+        "leave",
+    ]
     reason: str | None = Field(default=None, max_length=500)
     evidence_ref: str | None = Field(default=None, max_length=300)
     waive_owner_confirmation: bool = False
@@ -315,30 +369,43 @@ class AdvanceIn(Strict):
 @router.get("/v1/societies/{society_id}/verification-cases")
 def list_cases(
     auth: Annotated[AuthContext, Depends(require("iam.case.read"))],
-    state: Annotated[str | None, Query(pattern="^(requested|evidence_pending|society_review|verified|rejected|appealed|inactive)$")] = None,
+    state: Annotated[
+        str | None,
+        Query(
+            pattern="^(requested|evidence_pending|society_review|verified|rejected|appealed|inactive)$"
+        ),
+    ] = None,
     after: uuid.UUID | None = None,
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
 ) -> dict[str, Any]:
     with auth.tx() as conn:
-        rows = conn.execute(
-            text(
-                f"SELECT {members.CASE_COLUMNS} FROM verification_cases"  # noqa: S608
-                " WHERE (CAST(:state AS text) IS NULL OR state = CAST(:state AS text))"
-                " AND (CAST(:after AS uuid) IS NULL OR id > CAST(:after AS uuid)) ORDER BY id LIMIT :limit"
-            ),
-            {"state": state, "after": after, "limit": limit + 1},
-        ).mappings().all()
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT id, membership_id, kind, state, requested_by, reviewer_id, reason, evidence_ref, appeal_of,"
+                    " decided_at, version, created_at, updated_at FROM verification_cases"
+                    " WHERE (CAST(:state AS text) IS NULL OR state = CAST(:state AS text))"
+                    " AND (CAST(:after AS uuid) IS NULL OR id > CAST(:after AS uuid)) ORDER BY id LIMIT :limit"
+                ),
+                {"state": state, "after": after, "limit": limit + 1},
+            )
+            .mappings()
+            .all()
+        )
     page = [members._public({k: _iso(v) for k, v in dict(r).items()}) for r in rows[:limit]]  # noqa: SLF001
     return {"items": page, "next_after": page[-1]["id"] if len(rows) > limit and page else None}
 
 
-@router.post(
-    "/v1/societies/{society_id}/verification-cases/{case_id}/advance",
-    dependencies=[Depends(idempotency_exempt("each transition is validated against the current state; a repeat is refused"))],
-)
+@router.post("/v1/societies/{society_id}/verification-cases/{case_id}/advance")
 def advance_case(
-    society_id: uuid.UUID, case_id: uuid.UUID, body: AdvanceIn, principal: Principal_, request: Request, rt: Runtime
-) -> dict[str, Any]:
+    society_id: uuid.UUID,
+    case_id: uuid.UUID,
+    body: AdvanceIn,
+    principal: Principal_,
+    request: Request,
+    rt: Runtime,
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
     """Move a verification case. Applicants (submit evidence, appeal, leave) act on their OWN membership; reviewers need
     secretary authority, or, for a tenant or family claim, ownership of THAT unit. Nobody reviews their own claim."""
     applicant_ctx = applicant_context(society_id, principal, request)
@@ -349,7 +416,7 @@ def advance_case(
     if body.action in states.APPLICANT_ACTIONS:
         if not is_applicant:
             raise NotFound()  # not your claim: indistinguishable from "no such case"
-        ctx = applicant_ctx
+        auth = synthetic_auth(request, principal, society_id, "applicant", "iam.case.act")
     else:
         actions = ["matrix.verify_tenancy.approve"]
         if membership["kind"] not in states.SOCIETY_ONLY_KINDS and case["kind"] != "dispute":
@@ -359,13 +426,15 @@ def advance_case(
             grants_in(request, principal, society_id), membership["unit_id"]
         ):
             raise NotFound()
-        ctx = auth.ctx
-    with rt.db.app_tx(ctx) as conn:
+
+    def work(conn: Any) -> dict[str, Any]:
         return members.advance_case(
-            conn, ctx, case_id=case_id, action=body.action, actor=principal.person_id,
+            conn, auth.ctx, case_id=case_id, action=body.action, actor=principal.person_id,
             as_applicant=body.action in states.APPLICANT_ACTIONS, reason=body.reason,
             evidence_ref=body.evidence_ref, waive_owner_confirmation=body.waive_owner_confirmation,
         )  # fmt: skip
+
+    return idem.run(auth, work)
 
 
 # ===================================================================================================== owner confirm / dispute
@@ -374,28 +443,38 @@ class OwnerConfirmIn(Strict):
     reason: str | None = Field(default=None, max_length=500)
 
 
-@router.post(
-    "/v1/memberships/{membership_id}/owner-confirm",
-    dependencies=[Depends(idempotency_exempt("a repeated decision overwrites the same owner decision"))],
-)
+@router.post("/v1/memberships/{membership_id}/owner-confirm")
 def owner_confirm(
-    membership_id: uuid.UUID, body: OwnerConfirmIn, principal: Principal_, request: Request, rt: Runtime
-) -> dict[str, Any]:
+    membership_id: uuid.UUID,
+    body: OwnerConfirmIn,
+    principal: Principal_,
+    request: Request,
+    rt: Runtime,
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
     """The OWNER OF THAT UNIT confirms (or contests) a tenant or household member (IAM-12, IAM-05). Anyone else, and any
     unknown id, gets the same 404."""
     with rt.db.app_tx(RequestContext(person_id=principal.person_id)) as conn:
         located = store.locate_membership(conn, membership_id)
-    if located is None or located[1] is None:
+    if located is None:
         raise NotFound()
-    society_id, unit_id = located
+    society_id, located_unit = located
+    if located_unit is None:
+        raise NotFound()
+    unit_id = located_unit
     if not owns_unit(grants_in(request, principal, society_id), unit_id):
         raise NotFound()
-    ctx = RequestContext(society_id, principal.person_id, "owner", request_id_of(request))
-    with rt.db.app_tx(ctx) as conn:
+    auth = synthetic_auth(request, principal, society_id, "owner", "iam.owner.confirm")
+
+    def work(conn: Any) -> dict[str, Any]:
         target = members.get_membership(conn, membership_id)
         if target["unit_id"] != unit_id or target["person_id"] == principal.person_id:
             raise NotFound()
-        return members.owner_decide(conn, ctx, membership_id=membership_id, decision=body.decision, reason=body.reason)
+        return members.owner_decide(
+            conn, auth.ctx, membership_id=membership_id, decision=body.decision, reason=body.reason
+        )
+
+    return idem.run(auth, work)
 
 
 class DisputeIn(Strict):
@@ -405,21 +484,35 @@ class DisputeIn(Strict):
 @router.post(
     "/v1/societies/{society_id}/memberships/{membership_id}/dispute",
     status_code=201,
-    dependencies=[Depends(idempotency_exempt("a second open dispute on one membership is refused"))],
 )
 def raise_dispute(
-    society_id: uuid.UUID, membership_id: uuid.UUID, body: DisputeIn, principal: Principal_, request: Request, rt: Runtime
-) -> dict[str, Any]:
+    society_id: uuid.UUID,
+    membership_id: uuid.UUID,
+    body: DisputeIn,
+    principal: Principal_,
+    request: Request,
+    rt: Runtime,
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
     """Open an owner-tenant dispute review. The membership becomes ``disputed`` and a case goes to the society; the
     occupancy is NOT touched: only an explicit reviewer decision can end it (IAM-05)."""
     peek = applicant_context(society_id, principal, request)
     with rt.db.app_tx(peek) as conn:
         target = members.get_membership(conn, membership_id)
     auth = authorize(
-        request, principal, ["iam.dispute.raise", "iam.dispute.raise_own"], society_id, unit_id=target["unit_id"]
+        request,
+        principal,
+        ["iam.dispute.raise", "iam.dispute.raise_own"],
+        society_id,
+        unit_id=target["unit_id"],
     )
-    with auth.tx() as conn:
-        return members.raise_dispute(conn, auth.ctx, membership_id=membership_id, reason=body.reason)
+    return idem.run(
+        auth,
+        lambda conn: members.raise_dispute(
+            conn, auth.ctx, membership_id=membership_id, reason=body.reason
+        ),
+        status_code=201,
+    )
 
 
 # ===================================================================================================== holds (IAM-12)
@@ -435,13 +528,20 @@ class HoldDecisionIn(Strict):
 @router.post(
     "/v1/societies/{society_id}/memberships/{membership_id}/holds",
     status_code=201,
-    dependencies=[Depends(idempotency_exempt("one open hold per membership (unique index)"))],
 )
 def place_hold(
-    membership_id: uuid.UUID, body: HoldIn, auth: Annotated[AuthContext, Depends(require("iam.hold.place"))]
-) -> dict[str, Any]:
-    with auth.tx() as conn:
-        return members.place_hold(conn, auth.ctx, membership_id=membership_id, reason=body.reason)
+    membership_id: uuid.UUID,
+    body: HoldIn,
+    auth: Annotated[AuthContext, Depends(require("iam.hold.place"))],
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
+    return idem.run(
+        auth,
+        lambda conn: members.place_hold(
+            conn, auth.ctx, membership_id=membership_id, reason=body.reason
+        ),
+        status_code=201,
+    )
 
 
 def _hold_standing(
@@ -453,12 +553,19 @@ def _hold_standing(
     grants = grants_in(request, principal, society_id)
     if owns_unit(grants, membership["unit_id"]):
         return True
-    return any(g.role in ("secretary", "committee", "secretary_mfa_pending", "committee_mfa_pending") for g in grants)
+    return any(
+        g.role in ("secretary", "committee", "secretary_mfa_pending", "committee_mfa_pending")
+        for g in grants
+    )
 
 
 @router.get("/v1/societies/{society_id}/memberships/{membership_id}/holds")
 def list_holds(
-    society_id: uuid.UUID, membership_id: uuid.UUID, principal: Principal_, request: Request, rt: Runtime
+    society_id: uuid.UUID,
+    membership_id: uuid.UUID,
+    principal: Principal_,
+    request: Request,
+    rt: Runtime,
 ) -> dict[str, Any]:
     """Holds are visible to the owner AND the tenant, with their reasons (IAM-12)."""
     ctx = applicant_context(society_id, principal, request)
@@ -469,32 +576,43 @@ def list_holds(
         return {"items": members.holds_of(conn, membership_id)}
 
 
-@router.post(
-    "/v1/societies/{society_id}/holds/{hold_id}/appeal",
-    dependencies=[Depends(idempotency_exempt("a hold can be appealed once while active"))],
-)
+@router.post("/v1/societies/{society_id}/holds/{hold_id}/appeal")
 def appeal_hold(
-    society_id: uuid.UUID, hold_id: uuid.UUID, body: HoldIn, principal: Principal_, request: Request, rt: Runtime
-) -> dict[str, Any]:
-    ctx = applicant_context(society_id, principal, request)
-    with rt.db.app_tx(ctx) as conn:
+    society_id: uuid.UUID,
+    hold_id: uuid.UUID,
+    body: HoldIn,
+    principal: Principal_,
+    request: Request,
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
+    auth = synthetic_auth(request, principal, society_id, "applicant", "iam.hold.appeal")
+
+    def work(conn: Any) -> dict[str, Any]:
         hold = members.get_hold(conn, hold_id)
         membership = members.get_membership(conn, hold["membership_id"])
         grants = grants_in(request, principal, society_id)
-        if membership["person_id"] != principal.person_id and not owns_unit(grants, membership["unit_id"]):
+        if membership["person_id"] != principal.person_id and not owns_unit(
+            grants, membership["unit_id"]
+        ):
             raise NotFound()  # only the tenant concerned or the owner of the unit appeal
-        return members.appeal_hold(conn, ctx, hold_id=hold_id, reason=body.reason)
+        return members.appeal_hold(conn, auth.ctx, hold_id=hold_id, reason=body.reason)
+
+    return idem.run(auth, work)
 
 
-@router.post(
-    "/v1/societies/{society_id}/holds/{hold_id}/decide",
-    dependencies=[Depends(idempotency_exempt("a hold is decided once; a repeat is refused by state"))],
-)
+@router.post("/v1/societies/{society_id}/holds/{hold_id}/decide")
 def decide_hold(
-    hold_id: uuid.UUID, body: HoldDecisionIn, auth: Annotated[AuthContext, Depends(require("iam.hold.decide"))]
-) -> dict[str, Any]:
-    with auth.tx() as conn:
-        return members.decide_hold(conn, auth.ctx, hold_id=hold_id, outcome=body.outcome, reason=body.reason)
+    hold_id: uuid.UUID,
+    body: HoldDecisionIn,
+    auth: Annotated[AuthContext, Depends(require("iam.hold.decide"))],
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
+    return idem.run(
+        auth,
+        lambda conn: members.decide_hold(
+            conn, auth.ctx, hold_id=hold_id, outcome=body.outcome, reason=body.reason
+        ),
+    )
 
 
 # ===================================================================================================== role grants
@@ -547,15 +665,17 @@ def issue_role_grant(
     return idem.run(auth, work, status_code=201)
 
 
-@router.post(
-    "/v1/societies/{society_id}/role-grants/{grant_id}/revoke",
-    dependencies=[Depends(idempotency_exempt("revoking twice is refused by state, never doubled"))],
-)
+@router.post("/v1/societies/{society_id}/role-grants/{grant_id}/revoke")
 def revoke_role_grant(
-    grant_id: uuid.UUID, body: RevokeIn, auth: Annotated[AuthContext, Depends(require("iam.role_grant.revoke"))]
-) -> dict[str, Any]:
-    with auth.tx() as conn:
-        return grants.revoke_grant(conn, auth.ctx, grant_id=grant_id, reason=body.reason)
+    grant_id: uuid.UUID,
+    body: RevokeIn,
+    auth: Annotated[AuthContext, Depends(require("iam.role_grant.revoke"))],
+    idem: Annotated[IdempotentCall, Depends(idempotency_required)],
+) -> Any:
+    return idem.run(
+        auth,
+        lambda conn: grants.revoke_grant(conn, auth.ctx, grant_id=grant_id, reason=body.reason),
+    )
 
 
 @router.get("/v1/societies/{society_id}/role-grants")
@@ -569,7 +689,11 @@ def list_role_grants(
     with auth.tx() as conn:
         items = grants.list_grants(conn, after=after, limit=limit)
         log_privileged_read(
-            conn, auth.ctx, object_type="role_grants", purpose=purpose, scope={"view": "all"}, returned=len(items)
+            conn,
+            auth.ctx,
+            object_type="role_grants",
+            purpose=purpose,
+            scope={"view": "all"},
+            returned=len(items),
         )
     return {"items": items, "next_after": items[-1]["id"] if len(items) == limit else None}
-

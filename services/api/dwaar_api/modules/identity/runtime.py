@@ -54,7 +54,13 @@ class DevOtpOut(BaseModel):
 @sim_router.get(
     "/v1/dev/otp",
     response_model=DevOtpOut,
-    dependencies=[Depends(public_route("dev-only simulator endpoint, mounted only when DWAAR_ENV is local or test"))],
+    dependencies=[
+        Depends(
+            public_route(
+                "dev-only simulator endpoint, mounted only when DWAAR_ENV is local or test"
+            )
+        )
+    ],
 )
 def dev_latest_otp(phone: str, rt: Runtime) -> DevOtpOut:
     """The latest live OTP for a number, from the labelled simulator delivery queue (never mounted elsewhere)."""
@@ -73,7 +79,9 @@ def dev_latest_otp(phone: str, rt: Runtime) -> DevOtpOut:
         raise NotFound()
     delivery_id, enc, template_id, created = found
     try:
-        payload: dict[str, Any] = json.loads(rt.config.cipher.decrypt(enc, crypto.delivery_aad(delivery_id)))
+        payload: dict[str, Any] = json.loads(
+            rt.config.cipher.decrypt(enc, crypto.delivery_aad(delivery_id))
+        )
     except (DecryptionError, ValueError):
         raise NotFound() from None
     return DevOtpOut(
@@ -87,7 +95,11 @@ oidc_router = APIRouter(tags=["simulator"])
 
 @oidc_router.get(
     "/.well-known/openid-configuration",
-    dependencies=[Depends(public_route("OIDC discovery of the labelled local simulator issuer (local/test only)"))],
+    dependencies=[
+        Depends(
+            public_route("OIDC discovery of the labelled local simulator issuer (local/test only)")
+        )
+    ],
 )
 def discovery(request: Request, rt: Runtime) -> dict[str, Any]:
     issuer = rt.issuer
@@ -98,7 +110,13 @@ def discovery(request: Request, rt: Runtime) -> dict[str, Any]:
 
 @oidc_router.get(
     "/.well-known/jwks.json",
-    dependencies=[Depends(public_route("public signing keys of the labelled local simulator issuer (local/test only)"))],
+    dependencies=[
+        Depends(
+            public_route(
+                "public signing keys of the labelled local simulator issuer (local/test only)"
+            )
+        )
+    ],
 )
 def jwks(rt: Runtime) -> dict[str, Any]:
     issuer = rt.issuer

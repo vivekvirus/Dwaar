@@ -33,7 +33,9 @@ class PgSessionStore:
     def __init__(self, database: Database) -> None:
         self._db = database
 
-    def is_active(self, *, session_id: str | None, subject: str, issued_at: datetime | None) -> bool:
+    def is_active(
+        self, *, session_id: str | None, subject: str, issued_at: datetime | None
+    ) -> bool:
         if session_id is None:
             return False  # every token this platform issues carries a sid; none means nothing to check against
         try:

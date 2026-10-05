@@ -63,6 +63,9 @@ CREATE TABLE memberships (
     kind text NOT NULL CHECK (kind IN ('owner', 'joint_owner', 'tenant', 'family', 'staff')),
     effective_from date NOT NULL DEFAULT ((now() AT TIME ZONE 'Asia/Kolkata')::date),
     effective_to date,
+    -- the INSTANT occupancy ended by an explicit decision (reviewer, or the member leaving); effective_to is the
+    -- calendar date shown to people and inclusive, ended_at makes the end take effect immediately
+    ended_at timestamptz,
     -- pending|verified|rejected|disputed are the PRD states; 'reverification' is added for IAM-11 (a number change
     -- or recycle). Only verified and disputed memberships carry grants: a dispute never removes occupancy (IAM-05).
     verification text NOT NULL DEFAULT 'pending'
@@ -77,10 +80,13 @@ CREATE TABLE memberships (
     owner_decision_at timestamptz,
     owner_decision_reason text CHECK (owner_decision_reason IS NULL OR char_length(owner_decision_reason) <= 500),
     created_by uuid NOT NULL REFERENCES iam.persons (id),
+    retention_class text NOT NULL DEFAULT 'RES' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     version integer NOT NULL DEFAULT 1,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT memberships_dates_check CHECK (effective_to IS NULL OR effective_to >= effective_from),
+    CONSTRAINT memberships_ended_has_date CHECK (ended_at IS NULL OR effective_to IS NOT NULL),
     CONSTRAINT memberships_society_id_key UNIQUE (society_id, id)
 );
 -- One live claim per (person, unit, kind). A rejected claim does not block a fresh one; an ended one neither.
@@ -107,6 +113,8 @@ CREATE TABLE verification_cases (
     evidence_ref text CHECK (evidence_ref IS NULL OR char_length(evidence_ref) <= 300),
     appeal_of uuid,
     decided_at timestamptz,
+    retention_class text NOT NULL DEFAULT 'RES' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     version integer NOT NULL DEFAULT 1,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
@@ -157,6 +165,8 @@ CREATE TABLE membership_holds (
     decided_by uuid REFERENCES iam.persons (id),
     decision_reason text CHECK (decision_reason IS NULL OR char_length(decision_reason) <= 500),
     decided_at timestamptz,
+    retention_class text NOT NULL DEFAULT 'RES' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     version integer NOT NULL DEFAULT 1,
     CONSTRAINT membership_holds_society_id_key UNIQUE (society_id, id),
     CONSTRAINT membership_holds_membership_fk FOREIGN KEY (society_id, membership_id)
@@ -180,7 +190,8 @@ BEGIN
             NEW.verification IN ('verified', 'disputed'),
             (NEW.effective_from::timestamp AT TIME ZONE 'Asia/Kolkata'),
             CASE WHEN NEW.effective_to IS NULL THEN NULL
-                 ELSE ((NEW.effective_to + 1)::timestamp AT TIME ZONE 'Asia/Kolkata') END, now())
+                 ELSE least(coalesce(NEW.ended_at, 'infinity'::timestamptz),
+                            ((NEW.effective_to + 1)::timestamp AT TIME ZONE 'Asia/Kolkata')) END, now())
     ON CONFLICT (source_kind, source_id) DO UPDATE SET
         role = EXCLUDED.role, membership_kind = EXCLUDED.membership_kind, verification = EXCLUDED.verification,
         effective = EXCLUDED.effective, not_before = EXCLUDED.not_before, expires_at = EXCLUDED.expires_at,

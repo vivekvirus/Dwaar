@@ -53,13 +53,17 @@ class SimulatorIssuer:
     simulation: bool = True
 
     @classmethod
-    def create(cls, config: IdentityConfig, environ: dict[str, str] | None = None) -> SimulatorIssuer:
+    def create(
+        cls, config: IdentityConfig, environ: dict[str, str] | None = None
+    ) -> SimulatorIssuer:
         env = os.environ if environ is None else environ
         pem_b64 = env.get("DWAAR_SIM_ISSUER_KEY", "")
         key: Ed25519PrivateKey
         if pem_b64:
             try:
-                loaded = serialization.load_pem_private_key(base64.b64decode(pem_b64), password=None)
+                loaded = serialization.load_pem_private_key(
+                    base64.b64decode(pem_b64), password=None
+                )
             except Exception:
                 raise ConfigError("DWAAR_SIM_ISSUER_KEY is not a base64 PEM Ed25519 key") from None
             if not isinstance(loaded, Ed25519PrivateKey):
@@ -107,7 +111,9 @@ class SimulatorIssuer:
             "sid": str(session_id),
             SIMULATION_CLAIM: True,
         }
-        claims.update(extra_claims or {})  # tests only: forged role claims must be ignored by the server
+        claims.update(
+            extra_claims or {}
+        )  # tests only: forged role claims must be ignored by the server
         return jwt.encode(
             claims, self.private_key, algorithm="EdDSA", headers={"kid": self.kid, "typ": "at+jwt"}
         )

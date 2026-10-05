@@ -22,38 +22,51 @@ from ...core.audit import MutationResult, mutation
 from ...core.db import RequestContext
 from . import states
 
-CASE_COLUMNS = (
-    "id, membership_id, kind, state, requested_by, reviewer_id, reason, evidence_ref, appeal_of, decided_at, "
-    "version, created_at, updated_at"
-)
-MEMBERSHIP_COLUMNS = (
-    "id, person_id, unit_id, kind, effective_from, effective_to, verification, evidence_ref, is_primary_approver, "
-    "lives_in_unit, billing_liable, voting_entitled, owner_decision, owner_decision_at, owner_decision_reason, version"
-)
-
 
 def _one(conn: Connection, sql: str, params: dict[str, Any]) -> dict[str, Any] | None:
     row = conn.execute(text(sql), params).mappings().first()
     return None if row is None else dict(row)
 
 
-def get_membership(conn: Connection, membership_id: uuid.UUID, *, lock: bool = False) -> dict[str, Any]:
-    row = _one(
-        conn,
-        f"SELECT {MEMBERSHIP_COLUMNS} FROM memberships WHERE id = :id" + (" FOR UPDATE" if lock else ""),  # noqa: S608
-        {"id": membership_id},
-    )
+def get_membership(
+    conn: Connection, membership_id: uuid.UUID, *, lock: bool = False
+) -> dict[str, Any]:
+    if lock:
+        row = _one(
+            conn,
+            "SELECT id, person_id, unit_id, kind, effective_from, effective_to, verification, evidence_ref,"
+            " is_primary_approver, lives_in_unit, billing_liable, voting_entitled, owner_decision,"
+            " owner_decision_at, owner_decision_reason, version FROM memberships WHERE id = :id FOR UPDATE",
+            {"id": membership_id},
+        )
+    else:
+        row = _one(
+            conn,
+            "SELECT id, person_id, unit_id, kind, effective_from, effective_to, verification, evidence_ref,"
+            " is_primary_approver, lives_in_unit, billing_liable, voting_entitled, owner_decision,"
+            " owner_decision_at, owner_decision_reason, version FROM memberships WHERE id = :id",
+            {"id": membership_id},
+        )
     if row is None:
         raise NotFound()
     return row
 
 
 def get_case(conn: Connection, case_id: uuid.UUID, *, lock: bool = False) -> dict[str, Any]:
-    row = _one(
-        conn,
-        f"SELECT {CASE_COLUMNS} FROM verification_cases WHERE id = :id" + (" FOR UPDATE" if lock else ""),  # noqa: S608
-        {"id": case_id},
-    )
+    if lock:
+        row = _one(
+            conn,
+            "SELECT id, membership_id, kind, state, requested_by, reviewer_id, reason, evidence_ref, appeal_of,"
+            " decided_at, version, created_at, updated_at FROM verification_cases WHERE id = :id FOR UPDATE",
+            {"id": case_id},
+        )
+    else:
+        row = _one(
+            conn,
+            "SELECT id, membership_id, kind, state, requested_by, reviewer_id, reason, evidence_ref, appeal_of,"
+            " decided_at, version, created_at, updated_at FROM verification_cases WHERE id = :id",
+            {"id": case_id},
+        )
     if row is None:
         raise NotFound()
     return row
@@ -97,7 +110,12 @@ def create_membership(
         return MutationResult(
             object_id=membership_id,
             object_version=int(row[0]),
-            after={"kind": kind, "unit_id": unit_id, "verification": "pending", "person_id": person_id},
+            after={
+                "kind": kind,
+                "unit_id": unit_id,
+                "verification": "pending",
+                "person_id": person_id,
+            },
             event_payload={"membership_id": membership_id, "kind": kind, "verification": "pending"},
         )
 
@@ -116,8 +134,14 @@ def create_membership(
              "evidence": evidence_ref},
         )  # fmt: skip
         return MutationResult(
-            object_id=case_id, object_version=1, after={"kind": case_kind, "state": "requested"},
-            event_payload={"case_id": case_id, "membership_id": membership_id, "state": "requested"},
+            object_id=case_id,
+            object_version=1,
+            after={"kind": case_kind, "state": "requested"},
+            event_payload={
+                "case_id": case_id,
+                "membership_id": membership_id,
+                "state": "requested",
+            },
         )
 
     mutation(
@@ -165,15 +189,24 @@ def _set_membership(
         row = c.execute(
             text(
                 "UPDATE memberships SET verification = :v, version = version + 1, updated_at = now(),"
-                " effective_to = CASE WHEN :end AND effective_to IS NULL THEN :today ELSE effective_to END"
+                " effective_to = CASE WHEN :end AND effective_to IS NULL THEN :today ELSE effective_to END,"
+                " ended_at = CASE WHEN :end THEN coalesce(ended_at, now()) ELSE ended_at END"
                 " WHERE id = :id RETURNING version, effective_to"
             ),
-            {"v": verification, "end": end_today, "today": ist_date(utc_now()), "id": membership["id"]},
+            {
+                "v": verification,
+                "end": end_today,
+                "today": ist_date(utc_now()),
+                "id": membership["id"],
+            },
         ).one()
         return MutationResult(
             object_id=membership["id"],
             object_version=int(row[0]),
-            before={"verification": membership["verification"], "effective_to": membership["effective_to"]},
+            before={
+                "verification": membership["verification"],
+                "effective_to": membership["effective_to"],
+            },
             after={"verification": verification, "effective_to": row[1]},
             event_payload={"membership_id": membership["id"], "verification": verification},
         )
@@ -204,7 +237,13 @@ def advance_case(
     if action in states.REASON_REQUIRED and len((reason or "").strip()) < 5:
         raise PolicyViolation(details={"reason": "reason_required"})
     if not as_applicant and actor == membership["person_id"]:
-        raise PolicyViolation(details={"reason": "self_verification"})  # nobody reviews their own claim
+        raise PolicyViolation(
+            details={"reason": "self_verification"}
+        )  # nobody reviews their own claim
+    if not as_applicant and actor == case["requested_by"]:
+        raise PolicyViolation(
+            details={"reason": "requester_cannot_review"}
+        )  # maker is never the checker
 
     if action == "appeal":
         return _open_appeal(conn, ctx, case, membership, actor, reason or "")
@@ -236,7 +275,12 @@ def advance_case(
             object_version=int(row[0]),
             before={"state": case["state"]},
             after={"state": target},
-            event_payload={"case_id": case_id, "membership_id": membership["id"], "state": target, "action": action},
+            event_payload={
+                "case_id": case_id,
+                "membership_id": membership["id"],
+                "state": target,
+                "action": action,
+            },
         )
 
     mutation(
@@ -248,7 +292,11 @@ def advance_case(
 
 
 def _check_can_verify(
-    conn: Connection, case: dict[str, Any], membership: dict[str, Any], waive: bool, reason: str | None
+    conn: Connection,
+    case: dict[str, Any],
+    membership: dict[str, Any],
+    waive: bool,
+    reason: str | None,
 ) -> None:
     if has_blocking_hold(conn, membership["id"]):
         raise PolicyViolation(details={"reason": "committee_hold_active"})
@@ -272,9 +320,23 @@ def _apply_membership_effect(
     if target == "verified":
         if case["kind"] == "dispute" and membership["verification"] != "disputed":
             return  # a dispute on a not-yet-verified membership never verifies it as a side effect
-        _set_membership(conn, ctx, membership, verification="verified", operation="membership.verify", reason=reason)
+        _set_membership(
+            conn,
+            ctx,
+            membership,
+            verification="verified",
+            operation="membership.verify",
+            reason=reason,
+        )
     elif target == "rejected":
-        _set_membership(conn, ctx, membership, verification="rejected", operation="membership.reject", reason=reason)
+        _set_membership(
+            conn,
+            ctx,
+            membership,
+            verification="rejected",
+            operation="membership.reject",
+            reason=reason,
+        )
     elif target == "inactive":
         # an explicit human decision (a reviewer, or the member leaving) is the ONLY way occupancy ends (IAM-05)
         _set_membership(
@@ -284,16 +346,26 @@ def _apply_membership_effect(
 
 
 def _open_appeal(
-    conn: Connection, ctx: RequestContext, case: dict[str, Any], membership: dict[str, Any], actor: uuid.UUID, reason: str
+    conn: Connection,
+    ctx: RequestContext,
+    case: dict[str, Any],
+    membership: dict[str, Any],
+    actor: uuid.UUID,
+    reason: str,
 ) -> dict[str, Any]:
     if case["state"] != "rejected":
-        raise PolicyViolation(details={"reason": "invalid_transition", "state": case["state"], "action": "appeal"})
-    open_appeal = conn.execute(
-        text("SELECT 1 FROM verification_cases WHERE appeal_of = :c AND state IN ('appealed') LIMIT 1"),
-        {"c": case["id"]},
+        raise PolicyViolation(
+            details={"reason": "invalid_transition", "state": case["state"], "action": "appeal"}
+        )
+    if membership["verification"] != "rejected":
+        raise PolicyViolation(
+            details={"reason": "invalid_transition", "state": case["state"], "action": "appeal"}
+        )
+    used = conn.execute(
+        text("SELECT 1 FROM verification_cases WHERE appeal_of = :c LIMIT 1"), {"c": case["id"]}
     ).first()
-    if open_appeal is not None:
-        raise PolicyViolation(details={"reason": "appeal_already_open"})
+    if used is not None:  # one appeal per rejection, open or decided
+        raise PolicyViolation(details={"reason": "appeal_already_used"})
     appeal_id = uuid.uuid4()
 
     def apply(c: Connection) -> MutationResult:
@@ -308,7 +380,9 @@ def _open_appeal(
             },
         )  # fmt: skip
         return MutationResult(
-            object_id=appeal_id, object_version=1, after={"state": "appealed", "appeal_of": case["id"]},
+            object_id=appeal_id,
+            object_version=1,
+            after={"state": "appealed", "appeal_of": case["id"]},
             event_payload={"case_id": appeal_id, "appeal_of": case["id"], "state": "appealed"},
         )
 
@@ -316,13 +390,20 @@ def _open_appeal(
         conn, ctx, operation="verification_case.appeal", object_type="verification_case",
         event_type="identity.verification_appealed", apply=apply, reason=reason,
     )  # fmt: skip
-    _set_membership(conn, ctx, membership, verification="pending", operation="membership.reopen", reason=reason)
+    _set_membership(
+        conn, ctx, membership, verification="pending", operation="membership.reopen", reason=reason
+    )
     return {"case_id": str(appeal_id), "state": "appealed", "membership_id": str(membership["id"])}
 
 
 # ------------------------------------------------------------------------------------------------- owner confirm / dispute
 def owner_decide(
-    conn: Connection, ctx: RequestContext, *, membership_id: uuid.UUID, decision: str, reason: str | None
+    conn: Connection,
+    ctx: RequestContext,
+    *,
+    membership_id: uuid.UUID,
+    decision: str,
+    reason: str | None,
 ) -> dict[str, Any]:
     """The unit's owner confirms (or contests) a tenant. Contesting a tenant who already lives there opens a review; it
     NEVER ends the occupancy (IAM-05): the tenancy stays effective until a reviewer decides otherwise."""
@@ -343,7 +424,12 @@ def owner_decide(
                 "                     ELSE verification END"
                 " WHERE id = :id RETURNING version, verification"
             ),
-            {"d": stored, "by": ctx.person_id, "reason": (reason or "").strip() or None, "id": membership_id},
+            {
+                "d": stored,
+                "by": ctx.person_id,
+                "reason": (reason or "").strip() or None,
+                "id": membership_id,
+            },
         ).one()
         return MutationResult(
             object_id=membership_id, object_version=int(row[0]),
@@ -359,10 +445,16 @@ def owner_decide(
     updated = get_membership(conn, membership_id)
     if stored == "disputed":
         _open_dispute_case(conn, ctx, updated, reason or "")
-    return {"membership_id": str(membership_id), "owner_decision": stored, "verification": updated["verification"]}
+    return {
+        "membership_id": str(membership_id),
+        "owner_decision": stored,
+        "verification": updated["verification"],
+    }
 
 
-def _open_dispute_case(conn: Connection, ctx: RequestContext, membership: dict[str, Any], reason: str) -> uuid.UUID | None:
+def _open_dispute_case(
+    conn: Connection, ctx: RequestContext, membership: dict[str, Any], reason: str
+) -> uuid.UUID | None:
     existing = conn.execute(
         text(
             "SELECT id FROM verification_cases WHERE membership_id = :m AND kind = 'dispute'"
@@ -380,11 +472,23 @@ def _open_dispute_case(conn: Connection, ctx: RequestContext, membership: dict[s
                 "INSERT INTO verification_cases (id, society_id, membership_id, kind, state, requested_by, reason)"
                 " VALUES (:id, :soc, :m, 'dispute', 'society_review', :by, :reason)"
             ),
-            {"id": case_id, "soc": ctx.society_id, "m": membership["id"], "by": ctx.person_id, "reason": reason.strip() or None},
+            {
+                "id": case_id,
+                "soc": ctx.society_id,
+                "m": membership["id"],
+                "by": ctx.person_id,
+                "reason": reason.strip() or None,
+            },
         )
         return MutationResult(
-            object_id=case_id, object_version=1, after={"kind": "dispute", "state": "society_review"},
-            event_payload={"case_id": case_id, "membership_id": membership["id"], "kind": "dispute"},
+            object_id=case_id,
+            object_version=1,
+            after={"kind": "dispute", "state": "society_review"},
+            event_payload={
+                "case_id": case_id,
+                "membership_id": membership["id"],
+                "kind": "dispute",
+            },
         )
 
     mutation(
@@ -435,11 +539,16 @@ def raise_dispute(
 
 
 # ------------------------------------------------------------------------------------------------- holds
-def place_hold(conn: Connection, ctx: RequestContext, *, membership_id: uuid.UUID, reason: str) -> dict[str, Any]:
+def place_hold(
+    conn: Connection, ctx: RequestContext, *, membership_id: uuid.UUID, reason: str
+) -> dict[str, Any]:
     if len(reason.strip()) < 10:
         raise PolicyViolation(details={"reason": "reason_required"})
     membership = get_membership(conn, membership_id, lock=True)
-    if membership["kind"] != "tenant" or membership["verification"] not in ("pending", "reverification"):
+    if membership["kind"] != "tenant" or membership["verification"] not in (
+        "pending",
+        "reverification",
+    ):
         # A hold stops an ONBOARDING; it can never remove someone who already lives there (IAM-05 / IAM-12).
         raise PolicyViolation(details={"reason": "hold_would_remove_occupancy"})
     hold_id = uuid.uuid4()
@@ -450,10 +559,18 @@ def place_hold(conn: Connection, ctx: RequestContext, *, membership_id: uuid.UUI
                 "INSERT INTO membership_holds (id, society_id, membership_id, placed_by, reason)"
                 " VALUES (:id, :soc, :m, :by, :reason)"
             ),
-            {"id": hold_id, "soc": ctx.society_id, "m": membership_id, "by": ctx.person_id, "reason": reason.strip()},
+            {
+                "id": hold_id,
+                "soc": ctx.society_id,
+                "m": membership_id,
+                "by": ctx.person_id,
+                "reason": reason.strip(),
+            },
         )
         return MutationResult(
-            object_id=hold_id, object_version=1, after={"state": "active"},
+            object_id=hold_id,
+            object_version=1,
+            after={"state": "active"},
             event_payload={"hold_id": hold_id, "membership_id": membership_id, "state": "active"},
         )
 
@@ -465,19 +582,28 @@ def place_hold(conn: Connection, ctx: RequestContext, *, membership_id: uuid.UUI
 
 
 def get_hold(conn: Connection, hold_id: uuid.UUID, *, lock: bool = False) -> dict[str, Any]:
-    row = _one(
-        conn,
-        "SELECT id, membership_id, state, placed_by, reason, placed_at, appeal_by, appeal_reason, appealed_at,"
-        " decided_by, decision_reason, decided_at, version FROM membership_holds WHERE id = :id"
-        + (" FOR UPDATE" if lock else ""),
-        {"id": hold_id},
-    )
+    if lock:
+        row = _one(
+            conn,
+            "SELECT id, membership_id, state, placed_by, reason, placed_at, appeal_by, appeal_reason, appealed_at,"
+            " decided_by, decision_reason, decided_at, version FROM membership_holds WHERE id = :id FOR UPDATE",
+            {"id": hold_id},
+        )
+    else:
+        row = _one(
+            conn,
+            "SELECT id, membership_id, state, placed_by, reason, placed_at, appeal_by, appeal_reason, appealed_at,"
+            " decided_by, decision_reason, decided_at, version FROM membership_holds WHERE id = :id",
+            {"id": hold_id},
+        )
     if row is None:
         raise NotFound()
     return row
 
 
-def appeal_hold(conn: Connection, ctx: RequestContext, *, hold_id: uuid.UUID, reason: str) -> dict[str, Any]:
+def appeal_hold(
+    conn: Connection, ctx: RequestContext, *, hold_id: uuid.UUID, reason: str
+) -> dict[str, Any]:
     if len(reason.strip()) < 10:
         raise PolicyViolation(details={"reason": "reason_required"})
     hold = get_hold(conn, hold_id, lock=True)
@@ -493,7 +619,10 @@ def appeal_hold(conn: Connection, ctx: RequestContext, *, hold_id: uuid.UUID, re
             {"by": ctx.person_id, "reason": reason.strip(), "id": hold_id},
         ).one()
         return MutationResult(
-            object_id=hold_id, object_version=int(row[0]), before={"state": "active"}, after={"state": "appealed"},
+            object_id=hold_id,
+            object_version=int(row[0]),
+            before={"state": "active"},
+            after={"state": "appealed"},
             event_payload={"hold_id": hold_id, "state": "appealed"},
         )
 
@@ -525,7 +654,10 @@ def decide_hold(
             {"s": target, "by": ctx.person_id, "reason": reason.strip(), "id": hold_id},
         ).one()
         return MutationResult(
-            object_id=hold_id, object_version=int(row[0]), before={"state": hold["state"]}, after={"state": target},
+            object_id=hold_id,
+            object_version=int(row[0]),
+            before={"state": hold["state"]},
+            after={"state": target},
             event_payload={"hold_id": hold_id, "state": target},
         )
 
@@ -548,7 +680,9 @@ def holds_of(conn: Connection, membership_id: uuid.UUID) -> list[dict[str, Any]]
 
 
 # ------------------------------------------------------------------------------------------------- IAM-11 re-verification
-def reopen_for_reverification(conn: Connection, ctx: RequestContext, *, person_id: uuid.UUID) -> int:
+def reopen_for_reverification(
+    conn: Connection, ctx: RequestContext, *, person_id: uuid.UUID
+) -> int:
     """After a number change: every verified membership of the person goes back to review (``reverification``) with a
     case the society must decide. Occupancy dates are untouched; only the grants pause until a human re-verifies."""
     rows = conn.execute(
@@ -566,7 +700,9 @@ def reopen_for_reverification(conn: Connection, ctx: RequestContext, *, person_i
         )  # fmt: skip
         case_id = uuid.uuid4()
 
-        def apply(c: Connection, case_id: uuid.UUID = case_id, mid: uuid.UUID = mid) -> MutationResult:
+        def apply(
+            c: Connection, case_id: uuid.UUID = case_id, mid: uuid.UUID = mid
+        ) -> MutationResult:
             c.execute(
                 text(
                     "INSERT INTO verification_cases (id, society_id, membership_id, kind, state, requested_by, reason)"
@@ -576,7 +712,9 @@ def reopen_for_reverification(conn: Connection, ctx: RequestContext, *, person_i
                 {"id": case_id, "soc": ctx.society_id, "m": mid, "by": person_id},
             )
             return MutationResult(
-                object_id=case_id, object_version=1, after={"kind": "reverification", "state": "evidence_pending"},
+                object_id=case_id,
+                object_version=1,
+                after={"kind": "reverification", "state": "evidence_pending"},
                 event_payload={"case_id": case_id, "membership_id": mid, "kind": "reverification"},
             )
 

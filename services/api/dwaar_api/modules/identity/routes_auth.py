@@ -108,7 +108,11 @@ def otp_verify(body: OtpVerifyIn, request: Request, rt: Runtime) -> JSONResponse
 
 @router.post(
     "/refresh",
-    dependencies=[Depends(public_route("the refresh token itself is the credential (rotating, reuse-detecting)"))],
+    dependencies=[
+        Depends(
+            public_route("the refresh token itself is the credential (rotating, reuse-detecting)")
+        )
+    ],
 )
 def refresh(body: RefreshIn, request: Request, rt: Runtime) -> JSONResponse:
     return _tokens(rt.auth.refresh(body.refresh_token, client_ip(request), request_id_of(request)))
@@ -158,7 +162,9 @@ def list_sessions(principal: Principal_, rt: Runtime) -> dict[str, Any]:
     status_code=204,
     dependencies=[Depends(idempotency_exempt("revocation is naturally idempotent"))],
 )
-def revoke_session(session_id: uuid.UUID, principal: Principal_, request: Request, rt: Runtime) -> Response:
+def revoke_session(
+    session_id: uuid.UUID, principal: Principal_, request: Request, rt: Runtime
+) -> Response:
     if not rt.auth.revoke_session(principal, session_id, request_id_of(request)):
         raise NotFound()  # someone else's session and an unknown one look the same
     return Response(status_code=204, headers=NO_STORE)
@@ -176,7 +182,11 @@ def revoke_other_sessions(principal: Principal_, request: Request, rt: Runtime) 
 @router.post(
     "/mfa/totp/enrol",
     status_code=201,
-    dependencies=[Depends(idempotency_exempt("a second call while unconfirmed simply replaces the pending factor"))],
+    dependencies=[
+        Depends(
+            idempotency_exempt("a second call while unconfirmed simply replaces the pending factor")
+        )
+    ],
 )
 def mfa_enrol(principal: Principal_, rt: Runtime) -> JSONResponse:
     """Start TOTP enrolment: the secret is returned ONCE (to scan into an authenticator) and stored encrypted."""
@@ -187,8 +197,12 @@ def mfa_enrol(principal: Principal_, rt: Runtime) -> JSONResponse:
     "/mfa/totp/confirm",
     dependencies=[Depends(idempotency_exempt("a TOTP step can be used once; replay is refused"))],
 )
-def mfa_confirm(body: CodeIn, principal: Principal_, request: Request, rt: Runtime) -> dict[str, bool]:
-    if not rt.auth.mfa_verify(principal, body.code, confirm=True, request_id=request_id_of(request)):
+def mfa_confirm(
+    body: CodeIn, principal: Principal_, request: Request, rt: Runtime
+) -> dict[str, bool]:
+    if not rt.auth.mfa_verify(
+        principal, body.code, confirm=True, request_id=request_id_of(request)
+    ):
         raise Unauthenticated()
     return {"confirmed": True, "session_elevated": True}
 
@@ -197,9 +211,13 @@ def mfa_confirm(body: CodeIn, principal: Principal_, request: Request, rt: Runti
     "/mfa/verify",
     dependencies=[Depends(idempotency_exempt("a TOTP step can be used once; replay is refused"))],
 )
-def mfa_verify(body: CodeIn, principal: Principal_, request: Request, rt: Runtime) -> dict[str, Any]:
+def mfa_verify(
+    body: CodeIn, principal: Principal_, request: Request, rt: Runtime
+) -> dict[str, Any]:
     """Step-up: prove the second factor for THIS session so elevated roles take effect (IAM-03)."""
-    if not rt.auth.mfa_verify(principal, body.code, confirm=False, request_id=request_id_of(request)):
+    if not rt.auth.mfa_verify(
+        principal, body.code, confirm=False, request_id=request_id_of(request)
+    ):
         raise Unauthenticated()
     return {"session_elevated": True, "valid_for_seconds": rt.config.mfa_ttl_seconds}
 
@@ -210,7 +228,9 @@ def mfa_verify(body: CodeIn, principal: Principal_, request: Request, rt: Runtim
     status_code=202,
     dependencies=[Depends(idempotency_exempt("sends a code to the NEW number; rate-limited"))],
 )
-def phone_change_request(body: PhoneIn, principal: Principal_, request: Request, rt: Runtime) -> JSONResponse:
+def phone_change_request(
+    body: PhoneIn, principal: Principal_, request: Request, rt: Runtime
+) -> JSONResponse:
     out = rt.auth.phone_change_request(principal, body.phone, request_id_of(request))
     return JSONResponse(out, status_code=202, headers=NO_STORE)
 
@@ -238,7 +258,11 @@ def phone_change_confirm(
         principal, body.phone, body.code, request_id_of(request), reverify
     )
     return JSONResponse(
-        {"phone_changed": True, "sessions_revoked": True, "reverification_required_in": [str(s) for s in societies]},
+        {
+            "phone_changed": True,
+            "sessions_revoked": True,
+            "reverification_required_in": [str(s) for s in societies],
+        },
         headers=NO_STORE,
     )
 

@@ -27,8 +27,10 @@ from ...core.authz import (
     AuthContext,
     Grant,
     GrantResolver,
+    Permission,
     PermissionRegistry,
     Scope,
+    ScopeKind,
     decide,
 )
 from ...core.db import RequestContext
@@ -67,31 +69,38 @@ def authorize(
     registry: PermissionRegistry = state.permissions
     resolver: GrantResolver = state.grant_resolver
     grants = resolver.resolve(principal, society_hint=society_id, fresh=True)
-    best: Exception | None = None
+    not_found = False
     for action in actions:
         permission = registry.get(action)
         if permission is None:
             raise NotAuthorised()
         try:
             scope = decide(
-                permission, grants, society_hint=society_id, unit_target=unit_id, person_target=person_id
+                permission,
+                grants,
+                society_hint=society_id,
+                unit_target=unit_id,
+                person_target=person_id,
             )
-        except NotFound as exc:
-            best = best or exc
-        except NotAuthorised as exc:
-            best = exc
+        except NotFound:
+            not_found = True
+        except NotAuthorised:
+            pass
         else:
             return AuthContext(principal, scope, permission, request_id_of(request), state.db)
-    raise best or NotFound()
+    # When any listed action answered "no such target / no standing" the answer is that 404: it reveals the least.
+    raise NotFound() if not_found else NotAuthorised()
 
 
-def grants_in(
-    request: Request, principal: Principal, society_id: uuid.UUID
-) -> list[Grant]:
+def grants_in(request: Request, principal: Principal, society_id: uuid.UUID) -> list[Grant]:
     """The caller's CURRENT active grants inside one society (fresh from the database)."""
     resolver: GrantResolver = request.app.state.grant_resolver
     now = utc_now()
-    return [g for g in resolver.resolve(principal, society_hint=society_id, fresh=True) if g.is_active(now)]
+    return [
+        g
+        for g in resolver.resolve(principal, society_hint=society_id, fresh=True)
+        if g.is_active(now)
+    ]
 
 
 def owns_unit(grants: Iterable[Grant], unit_id: uuid.UUID) -> bool:
@@ -105,6 +114,26 @@ def applicant_context(
     used only for rows that name the caller themselves: a membership request for their own person, never a read of
     anyone else's data."""
     return RequestContext(society_id, principal.person_id, "applicant", request_id_of(request))
+
+
+def synthetic_auth(
+    request: Request, principal: Principal, society_id: uuid.UUID, role: str, action: str
+) -> AuthContext:
+    """An ``AuthContext`` for a caller whose standing is NOT a grant: an applicant, or the owner proved through the index.
+
+    It carries no coverage beyond the caller's own person, and exists so these flows can use the same
+    ``Idempotency-Key`` machinery (bound to actor, society, endpoint and payload) as every other command.
+    """
+    state = request.app.state
+    permission = Permission(action, frozenset({role}), scope=ScopeKind.PERSON)
+    scope = Scope(
+        society_id=society_id,
+        role=role,
+        kind=ScopeKind.PERSON,
+        person_id=principal.person_id,
+        self_person_ids=frozenset({principal.person_id}),
+    )
+    return AuthContext(principal, scope, permission, request_id_of(request), state.db)
 
 
 def clean_purpose(raw: str | None) -> str:

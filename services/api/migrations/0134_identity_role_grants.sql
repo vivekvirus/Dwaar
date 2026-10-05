@@ -19,6 +19,8 @@ CREATE TABLE role_grants (
     revoked_at timestamptz,
     revoked_by uuid REFERENCES iam.persons (id),
     revoke_reason text CHECK (revoke_reason IS NULL OR char_length(revoke_reason) <= 500),
+    retention_class text NOT NULL DEFAULT 'LOG' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     version integer NOT NULL DEFAULT 1,
     created_at timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT role_grants_society_id_key UNIQUE (society_id, id),

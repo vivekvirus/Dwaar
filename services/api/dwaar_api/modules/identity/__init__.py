@@ -20,6 +20,7 @@ import logging
 from fastapi import APIRouter, FastAPI
 
 from ...core.authz import DenyAllGrantResolver
+from ...core.errors import register_society_scoped_unique
 from . import matrix, routes_auth, routes_people
 from .auth_service import AuthService
 from .config import IdentityConfig
@@ -28,6 +29,9 @@ from .issuer import SimulatorIssuer, TokenIssuer
 from .runtime import IdentityRuntime, oidc_router, sim_router
 
 log = logging.getLogger("dwaar_api.identity")
+
+# One live claim per (society, person, unit, kind): the collision is inside the caller's own society and own rows.
+register_society_scoped_unique("memberships_live_claim_uq")
 
 router = APIRouter()
 router.include_router(routes_auth.router)

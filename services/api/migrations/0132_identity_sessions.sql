@@ -17,7 +17,9 @@ CREATE TABLE iam.auth_sessions (
     expires_at timestamptz NOT NULL,
     mfa_verified_at timestamptz,
     revoked_at timestamptz,
-    revoked_reason text CHECK (revoked_reason IS NULL OR char_length(revoked_reason) <= 64)
+    revoked_reason text CHECK (revoked_reason IS NULL OR char_length(revoked_reason) <= 64),
+    retention_class text NOT NULL DEFAULT 'LOG' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid
 );
 CREATE INDEX auth_sessions_person_idx ON iam.auth_sessions (person_id) WHERE revoked_at IS NULL;
 
@@ -29,7 +31,9 @@ CREATE TABLE iam.refresh_tokens (
     issued_at timestamptz NOT NULL DEFAULT now(),
     expires_at timestamptz NOT NULL,
     used_at timestamptz,
-    revoked_at timestamptz
+    revoked_at timestamptz,
+    retention_class text NOT NULL DEFAULT 'CRED' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid
 );
 CREATE INDEX refresh_tokens_session_idx ON iam.refresh_tokens (session_id);
 
@@ -41,7 +45,9 @@ CREATE TABLE iam.mfa_factors (
     confirmed_at timestamptz,
     last_used_step bigint NOT NULL DEFAULT 0,
     created_at timestamptz NOT NULL DEFAULT now(),
-    revoked_at timestamptz
+    revoked_at timestamptz,
+    retention_class text NOT NULL DEFAULT 'CRED' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid
 );
 CREATE UNIQUE INDEX mfa_factors_one_live_idx ON iam.mfa_factors (person_id, kind) WHERE revoked_at IS NULL;
 REVOKE ALL ON TABLE iam.auth_sessions, iam.refresh_tokens, iam.mfa_factors FROM PUBLIC, dwaar_app, dwaar_worker;

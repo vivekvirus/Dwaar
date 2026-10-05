@@ -10,17 +10,17 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 187,
+    "files_scanned": 250,
     "files_ignored": 0,
-    "annotations": 196
+    "annotations": 577
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 2,
-      "partial": 23,
+      "done": 10,
+      "partial": 30,
       "blocked-external": 0,
-      "not-started": 195
+      "not-started": 180
     },
     "verified": {
       "verified": 0,
@@ -29,10 +29,10 @@
     },
     "by_priority": {
       "P0": {
-        "done": 0,
-        "partial": 13,
+        "done": 7,
+        "partial": 17,
         "blocked-external": 0,
-        "not-started": 125
+        "not-started": 114
       },
       "P1": {
         "done": 0,
@@ -41,10 +41,10 @@
         "not-started": 2
       },
       "none": {
-        "done": 2,
-        "partial": 10,
+        "done": 3,
+        "partial": 13,
         "blocked-external": 0,
-        "not-started": 68
+        "not-started": 64
       }
     },
     "acceptance_in_scope": 35,
@@ -75,6 +75,11 @@
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/core/authz.py",
+        "services/api/dwaar_api/modules/identity/access.py",
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/dwaar_api/modules/organisation/routes.py",
         "services/api/migrations/0004_audit_log.sql",
         "services/api/migrations/0008_integrity_hardening.sql",
         "services/api/migrations/0009_runtime_privilege_hardening.sql"
@@ -90,10 +95,40 @@
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/core/test_idempotency.py::<module>",
         "tests/integration/core/test_pagination.py::<module>",
+        "tests/integration/identity/test_authz.py:111",
+        "tests/integration/identity/test_authz.py:157",
+        "tests/integration/identity/test_authz.py:22",
+        "tests/integration/identity/test_authz.py:246",
+        "tests/integration/identity/test_authz.py:265",
+        "tests/integration/identity/test_authz.py::test_membership_in_a_does_not_reach_society_b_or_its_object_ids",
+        "tests/integration/identity/test_authz.py::test_resident_grant_is_limited_to_their_own_unit",
+        "tests/integration/identity/test_authz.py::test_revoking_a_grant_is_effective_on_the_next_request",
+        "tests/integration/identity/test_authz.py::test_role_claims_in_the_jwt_are_ignored",
+        "tests/integration/identity/test_authz.py::test_unit_scoped_role_grant_covers_only_that_unit",
+        "tests/integration/identity/test_grants.py:165",
+        "tests/integration/identity/test_matrix.py:102",
+        "tests/integration/identity/test_matrix.py:159",
+        "tests/integration/identity/test_matrix.py:185",
+        "tests/integration/identity/test_matrix.py:193",
+        "tests/integration/identity/test_matrix.py:204",
+        "tests/integration/identity/test_matrix.py::<module>",
+        "tests/integration/identity/test_verification.py:196",
+        "tests/integration/identity/test_verification.py:587",
+        "tests/integration/identity/test_verification.py::test_who_may_review",
+        "tests/integration/organisation/test_rls_isolation.py::test_api_guessed_ids_across_societies_are_404",
+        "tests/integration/organisation/test_rls_isolation.py::test_cannot_write_rows_for_another_society",
+        "tests/integration/organisation/test_rls_isolation.py::test_society_context_sees_only_its_own_rows",
+        "tests/integration/organisation/test_rls_isolation.py::test_society_row_is_protected_by_its_own_id",
+        "tests/integration/organisation/test_rls_isolation.py::test_worker_role_is_read_only",
+        "tests/integration/organisation/test_societies.py::test_list_societies_shows_only_current_grants_and_paginates",
+        "tests/integration/organisation/test_units.py::test_read_permissions_masking_and_own_unit_scope",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_core_rls_isolation.py::<module>",
+        "tests/security/test_identity_database.py:109",
+        "tests/security/test_identity_database.py:251",
+        "tests/security/test_identity_database.py::<module>",
         "tests/security/test_w1_authn.py::<module>",
         "tests/security/test_w1_authn_r2.py::<module>",
         "tests/security/test_w1_crypto_events_money.py::<module>",
@@ -134,6 +169,7 @@
       "implemented_in": [
         "packages/dwaar-common/dwaar_common/money.py",
         "services/api/dwaar_api/core/idempotency.py",
+        "services/api/dwaar_api/modules/organisation/schemas.py",
         "services/api/migrations/0006_idempotency_keys.sql",
         "services/api/migrations/0008_integrity_hardening.sql",
         "services/api/migrations/0009_runtime_privilege_hardening.sql"
@@ -146,6 +182,14 @@
         "tests/integration/core/test_fix_round1.py:3",
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/core/test_idempotency.py::<module>",
+        "tests/integration/identity/test_grants.py:272",
+        "tests/integration/identity/test_grants.py::test_grant_creation_is_idempotent_and_payload_bound",
+        "tests/integration/identity/test_memberships.py:261",
+        "tests/integration/identity/test_memberships.py::test_membership_request_needs_an_idempotency_key_and_a_retry_never_duplicates",
+        "tests/integration/identity/test_verification.py:638",
+        "tests/integration/identity/test_verification.py::test_a_retried_decision_replays_instead_of_being_applied_twice",
+        "tests/integration/organisation/test_import.py::test_import_replay_creates_nothing_twice",
+        "tests/integration/organisation/test_units.py::test_idempotent_creation_replays_and_detects_payload_mismatch",
         "tests/security/test_w1_crypto_events_money.py::<module>",
         "tests/security/test_w1_crypto_events_money_r2.py::<module>",
         "tests/security/test_w1_history.py::<module>",
@@ -216,18 +260,22 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_authz.py:81",
+        "tests/integration/identity/test_authz.py::test_ownership_occupancy_and_role_are_independent"
+      ],
       "acceptance_gates": [
         "AT-02"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-02"
       ],
       "verification": null,
@@ -394,7 +442,8 @@
       "implemented_in": [
         "packages/dwaar-packs/dwaar_packs/approvals.py",
         "packages/dwaar-packs/dwaar_packs/frozen.py",
-        "packages/dwaar-packs/dwaar_packs/rule_values.py"
+        "packages/dwaar-packs/dwaar_packs/rule_values.py",
+        "services/api/dwaar_api/modules/organisation/packs.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -404,6 +453,10 @@
         "packages/dwaar-packs/tests/test_legal_rules.py::test_at38_300_members_20_attendees",
         "packages/dwaar-packs/tests/test_legal_rules.py::test_maharashtra_appendix_a_rule_keys_exact",
         "packages/dwaar-packs/tests/test_packs_validation.py::<module>",
+        "tests/integration/identity/test_phone.py:71",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_approved_pack_content_is_immutable_and_changed_draft_updates",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_shipped_packs_load_from_files_unapproved_and_reload_is_a_noop",
+        "tests/integration/organisation/test_societies.py::test_pack_selection_rules",
         "tests/security/test_w1_packs.py::<module>",
         "tests/security/test_w1_r2_pure.py::<module>"
       ],
@@ -486,19 +539,41 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/migrations/0133_identity_memberships.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_authz.py:49",
+        "tests/integration/identity/test_authz.py:81",
+        "tests/integration/identity/test_authz.py::test_grants_follow_verification_state_and_dates",
+        "tests/integration/identity/test_authz.py::test_ownership_occupancy_and_role_are_independent",
+        "tests/integration/identity/test_memberships.py:103",
+        "tests/integration/identity/test_memberships.py:127",
+        "tests/integration/identity/test_memberships.py:15",
+        "tests/integration/identity/test_memberships.py:172",
+        "tests/integration/identity/test_memberships.py:212",
+        "tests/integration/identity/test_memberships.py:240",
+        "tests/integration/identity/test_memberships.py:261",
+        "tests/integration/identity/test_memberships.py::test_applying_creates_a_pending_membership_and_a_case_and_no_access",
+        "tests/integration/identity/test_memberships.py::test_duplicate_live_claim_is_refused_but_a_rejected_one_can_be_retried",
+        "tests/integration/identity/test_memberships.py::test_member_register_views_and_privileged_read_logging",
+        "tests/integration/identity/test_memberships.py::test_membership_request_needs_an_idempotency_key_and_a_retry_never_duplicates",
+        "tests/integration/identity/test_memberships.py::test_membership_requests_are_rate_limited_per_person",
+        "tests/integration/identity/test_memberships.py::test_register_pagination_is_cursor_based_and_bounded",
+        "tests/integration/identity/test_memberships.py::test_secretary_adds_a_member_by_phone_without_disclosing_whether_the_person_exists",
+        "tests/security/test_identity_database.py:231"
+      ],
       "acceptance_gates": [
         "AT-01",
         "AT-02"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-02"
       ],
@@ -516,19 +591,41 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/grants.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/migrations/0134_identity_role_grants.sql",
+        "services/api/migrations/0135_identity_access_functions.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_authz.py:198",
+        "tests/integration/identity/test_authz.py:222",
+        "tests/integration/identity/test_authz.py:278",
+        "tests/integration/identity/test_authz.py::test_background_sweep_revokes_elevated_sessions_of_expired_grants_without_any_request",
+        "tests/integration/identity/test_authz.py::test_expired_grant_stops_working_and_revokes_the_elevated_session",
+        "tests/integration/identity/test_authz.py::test_future_dated_grant_is_inactive_and_window_is_enforced",
+        "tests/integration/identity/test_grants.py:127",
+        "tests/integration/identity/test_grants.py:202",
+        "tests/integration/identity/test_grants.py:227",
+        "tests/integration/identity/test_grants.py:25",
+        "tests/integration/identity/test_grants.py:272",
+        "tests/integration/identity/test_grants.py::test_grant_by_phone_introduces_a_staff_person_without_disclosing_existence",
+        "tests/integration/identity/test_grants.py::test_grant_creation_is_idempotent_and_payload_bound",
+        "tests/integration/identity/test_grants.py::test_issue_a_grant_with_scope_issuer_expiry_and_reason",
+        "tests/integration/identity/test_grants.py::test_revoke_requires_a_reason_and_is_final",
+        "tests/integration/identity/test_grants.py::test_time_bound_roles_need_an_expiry_and_a_sane_window",
+        "tests/security/test_identity_database.py:231",
+        "tests/security/test_identity_database.py:301"
+      ],
       "acceptance_gates": [
         "AT-02",
         "AT-32"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-02",
         "acceptance-untested:AT-32"
       ],
@@ -546,17 +643,51 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/makerchecker.py",
+        "services/api/dwaar_api/modules/identity/routes_auth.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/identity/test_authz.py:170",
+        "tests/integration/identity/test_authz.py::test_elevated_roles_need_a_fresh_mfa_step_up",
+        "tests/integration/identity/test_grants.py:127",
+        "tests/integration/identity/test_grants.py:165",
+        "tests/integration/identity/test_grants.py:25",
+        "tests/integration/identity/test_grants.py:303",
+        "tests/integration/identity/test_grants.py:76",
+        "tests/integration/identity/test_grants.py:99",
+        "tests/integration/identity/test_grants.py::test_a_grant_can_never_be_self_issued",
+        "tests/integration/identity/test_grants.py::test_issue_a_grant_with_scope_issuer_expiry_and_reason",
+        "tests/integration/identity/test_grants.py::test_maker_checker_helper_is_reusable",
+        "tests/integration/identity/test_grants.py::test_only_a_secretary_with_mfa_can_grant_and_strangers_are_not_enumerable",
+        "tests/integration/identity/test_grants.py::test_platform_roles_and_unknown_roles_are_not_assignable_through_the_api",
+        "tests/integration/identity/test_grants.py::test_time_bound_roles_need_an_expiry_and_a_sane_window",
+        "tests/integration/identity/test_matrix.py:102",
+        "tests/integration/identity/test_matrix.py:153",
+        "tests/integration/identity/test_matrix.py:175",
+        "tests/integration/identity/test_matrix.py:185",
+        "tests/integration/identity/test_matrix.py:193",
+        "tests/integration/identity/test_matrix.py:210",
+        "tests/integration/identity/test_matrix.py::<module>",
+        "tests/integration/identity/test_memberships.py:80",
+        "tests/integration/identity/test_memberships.py::test_otp_login_and_membership_requests_never_write_a_grant_or_a_role",
+        "tests/integration/identity/test_mfa.py:101",
+        "tests/integration/identity/test_mfa.py:17",
+        "tests/integration/identity/test_mfa.py:49",
+        "tests/integration/identity/test_mfa.py:60",
+        "tests/integration/identity/test_mfa.py:74",
+        "tests/integration/identity/test_mfa.py:89",
+        "tests/integration/identity/test_mfa.py::<module>",
+        "tests/integration/identity/test_verification.py:228",
+        "tests/security/test_identity_database.py:301"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -571,17 +702,20 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/routes_people.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/identity/test_memberships.py:172",
+        "tests/integration/identity/test_memberships.py::test_member_register_views_and_privileged_read_logging",
+        "tests/integration/identity/test_mfa.py:101"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -596,18 +730,30 @@
       "slice": 4,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_verification.py:449",
+        "tests/integration/identity/test_verification.py:497",
+        "tests/integration/identity/test_verification.py:541",
+        "tests/integration/identity/test_verification.py:587",
+        "tests/integration/identity/test_verification.py:614",
+        "tests/integration/identity/test_verification.py::test_a_dispute_on_a_pending_membership_does_not_verify_it",
+        "tests/integration/identity/test_verification.py::test_a_hold_never_removes_an_existing_occupancy_and_an_upheld_hold_keeps_blocking",
+        "tests/integration/identity/test_verification.py::test_only_an_explicit_reviewer_decision_with_a_reason_ends_occupancy",
+        "tests/integration/identity/test_verification.py::test_owner_tenant_dispute_sets_a_review_state_and_never_deactivates_occupancy",
+        "tests/integration/identity/test_verification.py::test_unit_members_may_raise_a_dispute_strangers_may_not"
+      ],
       "acceptance_gates": [
         "AT-44"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-44"
       ],
       "verification": null,
@@ -631,13 +777,44 @@
       ],
       "implemented_in": [
         "services/api/dwaar_api/core/ratelimit.py",
-        "services/api/migrations/0007_rate_limit_buckets.sql"
+        "services/api/dwaar_api/modules/identity/auth_service.py",
+        "services/api/dwaar_api/modules/identity/config.py",
+        "services/api/dwaar_api/modules/identity/crypto.py",
+        "services/api/dwaar_api/modules/identity/routes_auth.py",
+        "services/api/dwaar_api/modules/identity/runtime.py",
+        "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/migrations/0007_rate_limit_buckets.sql",
+        "services/api/migrations/0131_identity_otp.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "tests/integration/core/test_ratelimit.py::<module>",
-        "tests/integration/core/test_sql_helpers.py::test_token_bucket_allows_capacity_then_denies_without_burning"
+        "tests/integration/core/test_sql_helpers.py::test_token_bucket_allows_capacity_then_denies_without_burning",
+        "tests/integration/identity/test_grants.py:202",
+        "tests/integration/identity/test_grants.py::test_grant_by_phone_introduces_a_staff_person_without_disclosing_existence",
+        "tests/integration/identity/test_issuer.py:89",
+        "tests/integration/identity/test_memberships.py:127",
+        "tests/integration/identity/test_memberships.py:240",
+        "tests/integration/identity/test_memberships.py::test_membership_requests_are_rate_limited_per_person",
+        "tests/integration/identity/test_memberships.py::test_secretary_adds_a_member_by_phone_without_disclosing_whether_the_person_exists",
+        "tests/integration/identity/test_otp.py:110",
+        "tests/integration/identity/test_otp.py:123",
+        "tests/integration/identity/test_otp.py:136",
+        "tests/integration/identity/test_otp.py:150",
+        "tests/integration/identity/test_otp.py:180",
+        "tests/integration/identity/test_otp.py:189",
+        "tests/integration/identity/test_otp.py:21",
+        "tests/integration/identity/test_otp.py:37",
+        "tests/integration/identity/test_otp.py:57",
+        "tests/integration/identity/test_otp.py:75",
+        "tests/integration/identity/test_otp.py:86",
+        "tests/integration/identity/test_otp.py::<module>",
+        "tests/integration/identity/test_phone.py:170",
+        "tests/security/test_identity_database.py:214",
+        "tests/security/test_identity_logs.py:127",
+        "tests/security/test_identity_logs.py:38",
+        "tests/security/test_identity_logs.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [
@@ -658,18 +835,37 @@
       "slice": 4,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/dwaar_api/modules/identity/states.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_verification.py:117",
+        "tests/integration/identity/test_verification.py:172",
+        "tests/integration/identity/test_verification.py:196",
+        "tests/integration/identity/test_verification.py:228",
+        "tests/integration/identity/test_verification.py:38",
+        "tests/integration/identity/test_verification.py:638",
+        "tests/integration/identity/test_verification.py:82",
+        "tests/integration/identity/test_verification.py:95",
+        "tests/integration/identity/test_verification.py::test_a_retried_decision_replays_instead_of_being_applied_twice",
+        "tests/integration/identity/test_verification.py::test_appeal_is_reviewed_by_someone_other_than_the_original_decision_maker",
+        "tests/integration/identity/test_verification.py::test_database_refuses_an_appeal_decided_by_the_original_reviewer",
+        "tests/integration/identity/test_verification.py::test_household_joining_goes_through_every_state_with_visible_reasons",
+        "tests/integration/identity/test_verification.py::test_nobody_verifies_their_own_claim_and_transitions_are_validated",
+        "tests/integration/identity/test_verification.py::test_rejection_requires_and_shows_a_reason",
+        "tests/integration/identity/test_verification.py::test_start_review_can_skip_the_evidence_request_when_evidence_came_with_the_application",
+        "tests/integration/identity/test_verification.py::test_who_may_review"
+      ],
       "acceptance_gates": [
         "AT-44"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-44"
       ],
       "verification": null,
@@ -688,15 +884,53 @@
       "labels": [],
       "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/glue.py",
+        "services/api/dwaar_api/modules/identity/routes_auth.py",
+        "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/dwaar_api/modules/organisation/permissions.py",
+        "services/api/migrations/0132_identity_sessions.sql",
+        "services/api/migrations/0135_identity_access_functions.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "tests/integration/core/test_fix_round1.py:3",
         "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/integration/identity/test_authz.py:170",
+        "tests/integration/identity/test_authz.py:22",
+        "tests/integration/identity/test_authz.py:246",
+        "tests/integration/identity/test_authz.py:49",
+        "tests/integration/identity/test_authz.py::test_elevated_roles_need_a_fresh_mfa_step_up",
+        "tests/integration/identity/test_authz.py::test_grants_follow_verification_state_and_dates",
+        "tests/integration/identity/test_authz.py::test_revoking_a_grant_is_effective_on_the_next_request",
+        "tests/integration/identity/test_authz.py::test_role_claims_in_the_jwt_are_ignored",
+        "tests/integration/identity/test_issuer.py:165",
+        "tests/integration/identity/test_issuer.py:30",
+        "tests/integration/identity/test_sessions.py:106",
+        "tests/integration/identity/test_sessions.py:120",
+        "tests/integration/identity/test_sessions.py:134",
+        "tests/integration/identity/test_sessions.py:148",
+        "tests/integration/identity/test_sessions.py:159",
+        "tests/integration/identity/test_sessions.py:170",
+        "tests/integration/identity/test_sessions.py:181",
+        "tests/integration/identity/test_sessions.py:189",
+        "tests/integration/identity/test_sessions.py:22",
+        "tests/integration/identity/test_sessions.py:38",
+        "tests/integration/identity/test_sessions.py:52",
+        "tests/integration/identity/test_sessions.py:75",
+        "tests/integration/identity/test_sessions.py:88",
+        "tests/integration/identity/test_sessions.py::<module>",
+        "tests/integration/organisation/test_import.py::test_import_is_secretary_only",
+        "tests/integration/organisation/test_societies.py::test_configure_is_secretary_only_and_uses_optimistic_versions",
+        "tests/integration/organisation/test_units.py::test_write_permissions_follow_matrix",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
+        "tests/security/test_identity_database.py:173",
+        "tests/security/test_identity_database.py:214",
+        "tests/security/test_identity_logs.py:38",
+        "tests/security/test_identity_logs.py::<module>",
         "tests/security/test_w1_authn.py::<module>",
         "tests/security/test_w1_authn_r2.py::<module>"
       ],
@@ -705,7 +939,6 @@
         "AT-32"
       ],
       "gaps": [
-        "no-implementation",
         "acceptance-untested:AT-01",
         "acceptance-untested:AT-32"
       ],
@@ -776,17 +1009,24 @@
       "slice": 4,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/routes_auth.py",
+        "services/api/dwaar_api/modules/identity/store.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/identity/test_phone.py:170",
+        "tests/integration/identity/test_phone.py:21",
+        "tests/integration/identity/test_phone.py:53",
+        "tests/integration/identity/test_phone.py:71",
+        "tests/integration/identity/test_phone.py:83",
+        "tests/integration/identity/test_phone.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -801,18 +1041,28 @@
       "slice": 4,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_verification.py:257",
+        "tests/integration/identity/test_verification.py:304",
+        "tests/integration/identity/test_verification.py:352",
+        "tests/integration/identity/test_verification.py:449",
+        "tests/integration/identity/test_verification.py::test_a_hold_never_removes_an_existing_occupancy_and_an_upheld_hold_keeps_blocking",
+        "tests/integration/identity/test_verification.py::test_committee_hold_is_logged_visible_to_owner_and_tenant_and_can_be_appealed",
+        "tests/integration/identity/test_verification.py::test_owner_confirmation_can_only_be_waived_with_a_reason_and_only_without_an_owner",
+        "tests/integration/identity/test_verification.py::test_tenant_onboarding_needs_the_owner_of_that_unit_to_confirm"
+      ],
       "acceptance_gates": [
         "AT-44"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-44"
       ],
       "verification": null,
@@ -829,22 +1079,34 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/members.py",
+        "services/api/dwaar_api/modules/identity/routes_people.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "services/api/tests/unit/test_authz_decide.py::<module>",
+        "tests/integration/identity/test_grants.py:165",
+        "tests/integration/identity/test_grants.py:99",
+        "tests/integration/identity/test_grants.py::test_only_a_secretary_with_mfa_can_grant_and_strangers_are_not_enumerable",
+        "tests/integration/identity/test_grants.py::test_platform_roles_and_unknown_roles_are_not_assignable_through_the_api",
+        "tests/integration/identity/test_matrix.py:219",
+        "tests/integration/identity/test_memberships.py:15",
+        "tests/integration/identity/test_memberships.py:42",
+        "tests/integration/identity/test_memberships.py:80",
+        "tests/integration/identity/test_memberships.py::test_applying_creates_a_pending_membership_and_a_case_and_no_access",
+        "tests/integration/identity/test_memberships.py::test_no_sign_up_path_can_assign_platform_committee_or_any_role",
+        "tests/integration/identity/test_memberships.py::test_otp_login_and_membership_requests_never_write_a_grant_or_a_role",
+        "tests/integration/organisation/test_societies.py::test_only_platform_or_org_admin_can_create",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_w1_errors_logging.py::<module>",
         "tests/security/test_w1_errors_logging_r2.py::<module>"
       ],
       "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "module-level-marks-only"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -864,18 +1126,26 @@
         "provider:oidc-identity"
       ],
       "implemented_in": [
-        "services/api/dwaar_api/core/authn.py"
+        "services/api/dwaar_api/core/authn.py",
+        "services/api/dwaar_api/modules/identity/issuer.py",
+        "services/api/dwaar_api/modules/identity/routes_auth.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/integration/identity/test_issuer.py:165",
+        "tests/integration/identity/test_issuer.py:234",
+        "tests/integration/identity/test_issuer.py:30",
+        "tests/integration/identity/test_issuer.py:55",
+        "tests/integration/identity/test_issuer.py:89",
+        "tests/integration/identity/test_issuer.py::<module>",
+        "tests/integration/identity/test_sessions.py:22",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_w1_authn.py::<module>",
         "tests/security/test_w1_authn_r2.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [
-        "module-level-marks-only",
         "no-adapter",
         "no-simulator"
       ],
@@ -1174,15 +1444,32 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
-        "services/api/migrations/0003_rls_and_append_only_helpers.sql"
+        "services/api/dwaar_api/modules/organisation/routes.py",
+        "services/api/migrations/0003_rls_and_append_only_helpers.sql",
+        "services/api/migrations/0102_societies_legal_entities.sql",
+        "services/api/migrations/0190_identity_org_foreign_keys.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
+        "tests/integration/identity/test_authz.py:111",
+        "tests/integration/identity/test_authz.py::test_membership_in_a_does_not_reach_society_b_or_its_object_ids",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
+        "tests/integration/organisation/test_rls_isolation.py::test_api_guessed_ids_across_societies_are_404",
+        "tests/integration/organisation/test_rls_isolation.py::test_cannot_write_rows_for_another_society",
+        "tests/integration/organisation/test_rls_isolation.py::test_cross_society_references_are_impossible",
+        "tests/integration/organisation/test_rls_isolation.py::test_global_reference_tables_are_not_readable_by_runtime_roles",
+        "tests/integration/organisation/test_rls_isolation.py::test_society_context_sees_only_its_own_rows",
+        "tests/integration/organisation/test_rls_isolation.py::test_society_row_is_protected_by_its_own_id",
+        "tests/integration/organisation/test_rls_isolation.py::test_worker_role_is_read_only",
+        "tests/integration/organisation/test_societies.py::test_create_writes_audit_and_outbox_in_same_transaction",
+        "tests/integration/organisation/test_units.py::test_duplicate_labels_across_blocks_work_but_not_within_a_block",
         "tests/security/test_core_rls_isolation.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
+        "tests/security/test_identity_database.py:109",
+        "tests/security/test_identity_database.py:251",
         "tests/security/test_w1_quality_db.py::<module>",
         "tests/security/test_w1_r2_db.py::<module>",
         "tests/security/test_w1_rls.py::<module>",
@@ -1208,17 +1495,26 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/crypto.py",
+        "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/migrations/0130_identity_persons.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/identity/test_issuer.py:149",
+        "tests/security/test_identity_database.py:130",
+        "tests/security/test_identity_database.py:144",
+        "tests/security/test_identity_database.py:173",
+        "tests/security/test_identity_database.py:4",
+        "tests/security/test_identity_database.py:58",
+        "tests/security/test_identity_database.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1238,6 +1534,7 @@
       "implemented_in": [
         "services/api/dwaar_api/core/config.py",
         "services/api/dwaar_api/core/db.py",
+        "services/api/dwaar_api/modules/identity/store.py",
         "services/api/migrations/0009_runtime_privilege_hardening.sql"
       ],
       "adapter_files": [],
@@ -1250,10 +1547,14 @@
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_openapi_export.py::<module>",
         "tests/integration/core/test_pagination.py::<module>",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_core_rls_isolation.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
+        "tests/security/test_identity_database.py:109",
+        "tests/security/test_identity_database.py:75",
+        "tests/security/test_identity_database.py::<module>",
         "tests/security/test_w1_quality_db.py::<module>",
         "tests/security/test_w1_r2_db.py::<module>",
         "tests/security/test_w1_rls.py::<module>",
@@ -1310,18 +1611,20 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
-        "services/api/dwaar_api/core/middleware.py"
+        "services/api/dwaar_api/core/middleware.py",
+        "services/api/dwaar_api/modules/organisation/routes.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
-        "tests/integration/core/test_ratelimit.py::<module>"
+        "tests/integration/core/test_ratelimit.py::<module>",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_feature_flags_are_per_society_and_versioned",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_quotas_per_society"
       ],
       "acceptance_gates": [
         "AT-29"
       ],
       "gaps": [
-        "module-level-marks-only",
         "acceptance-untested:AT-29"
       ],
       "verification": null,
@@ -1381,6 +1684,7 @@
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_w1_history.py::<module>",
         "tests/security/test_w1_history_r2.py::<module>",
@@ -1409,15 +1713,16 @@
       "slice": 5,
       "module": "services/api/modules/billing",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/identity/makerchecker.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -1575,17 +1880,40 @@
       "slice": 1,
       "module": "services/api/modules/org",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/organisation/__init__.py",
+        "services/api/dwaar_api/modules/organisation/masking.py",
+        "services/api/dwaar_api/modules/organisation/permissions.py",
+        "services/api/dwaar_api/modules/organisation/routes.py",
+        "services/api/dwaar_api/modules/organisation/schemas.py",
+        "services/api/dwaar_api/modules/organisation/service.py",
+        "services/api/dwaar_api/modules/organisation/views.py",
+        "services/api/migrations/0101_org_global_reference.sql",
+        "services/api/migrations/0102_societies_legal_entities.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/organisation/test_flags_quotas_packs.py::test_shipped_packs_load_from_files_unapproved_and_reload_is_a_noop",
+        "tests/integration/organisation/test_societies.py::test_approved_pack_allows_binding_flag",
+        "tests/integration/organisation/test_societies.py::test_configuration_read_follows_permission_matrix",
+        "tests/integration/organisation/test_societies.py::test_configure_is_secretary_only_and_uses_optimistic_versions",
+        "tests/integration/organisation/test_societies.py::test_create_society_returns_masked_identifiers_and_stores_ciphertext",
+        "tests/integration/organisation/test_societies.py::test_create_writes_audit_and_outbox_in_same_transaction",
+        "tests/integration/organisation/test_societies.py::test_get_society_roles_and_non_member_gets_404_identical_to_missing",
+        "tests/integration/organisation/test_societies.py::test_identifiers_are_optional_and_body_cannot_name_a_society",
+        "tests/integration/organisation/test_societies.py::test_identifiers_never_in_audit_outbox_or_idempotency_rows",
+        "tests/integration/organisation/test_societies.py::test_invalid_identifier_formats_are_rejected",
+        "tests/integration/organisation/test_societies.py::test_list_societies_shows_only_current_grants_and_paginates",
+        "tests/integration/organisation/test_societies.py::test_only_platform_or_org_admin_can_create",
+        "tests/integration/organisation/test_societies.py::test_org_admin_is_limited_to_own_org",
+        "tests/integration/organisation/test_societies.py::test_pack_selection_rules",
+        "tests/integration/organisation/test_societies.py::test_unapproved_legal_pack_leaves_binding_governance_disabled"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1600,17 +1928,32 @@
       "slice": 1,
       "module": "services/api/modules/org",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/organisation/__init__.py",
+        "services/api/dwaar_api/modules/organisation/permissions.py",
+        "services/api/dwaar_api/modules/organisation/routes.py",
+        "services/api/dwaar_api/modules/organisation/schemas.py",
+        "services/api/migrations/0103_blocks_units.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/organisation/test_import.py::test_cell_validation",
+        "tests/integration/organisation/test_import.py::test_valid_import_creates_all_units_with_one_audit_and_one_event",
+        "tests/integration/organisation/test_units.py::test_archive_unit_and_block",
+        "tests/integration/organisation/test_units.py::test_block_and_unit_crud_with_exact_decimals",
+        "tests/integration/organisation/test_units.py::test_block_update_rules",
+        "tests/integration/organisation/test_units.py::test_duplicate_labels_across_blocks_work_but_not_within_a_block",
+        "tests/integration/organisation/test_units.py::test_idempotent_creation_replays_and_detects_payload_mismatch",
+        "tests/integration/organisation/test_units.py::test_pagination_and_allow_listed_filters",
+        "tests/integration/organisation/test_units.py::test_read_permissions_masking_and_own_unit_scope",
+        "tests/integration/organisation/test_units.py::test_unit_validation",
+        "tests/integration/organisation/test_units.py::test_write_permissions_follow_matrix"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1625,17 +1968,31 @@
       "slice": 4,
       "module": "services/api/modules/org",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/organisation/__init__.py",
+        "services/api/dwaar_api/modules/organisation/imports.py",
+        "services/api/dwaar_api/modules/organisation/permissions.py",
+        "services/api/dwaar_api/modules/organisation/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/organisation/test_import.py::test_cell_validation",
+        "tests/integration/organisation/test_import.py::test_create_missing_blocks_option",
+        "tests/integration/organisation/test_import.py::test_dry_run_reports_without_writing",
+        "tests/integration/organisation/test_import.py::test_duplicate_detection_in_file_and_against_existing",
+        "tests/integration/organisation/test_import.py::test_file_level_rejections",
+        "tests/integration/organisation/test_import.py::test_header_errors",
+        "tests/integration/organisation/test_import.py::test_import_is_secretary_only",
+        "tests/integration/organisation/test_import.py::test_import_replay_creates_nothing_twice",
+        "tests/integration/organisation/test_import.py::test_interest_total_must_not_exceed_100",
+        "tests/integration/organisation/test_import.py::test_one_bad_row_creates_nothing",
+        "tests/integration/organisation/test_import.py::test_valid_import_creates_all_units_with_one_audit_and_one_event"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -5957,16 +6314,17 @@
       "slice": 1,
       "module": "infra",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/identity/test_issuer.py:149"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-implementation"
       ],
       "verification": null,
       "verified": null

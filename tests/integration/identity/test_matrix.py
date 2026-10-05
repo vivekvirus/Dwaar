@@ -1,3 +1,4 @@
+# ruff: noqa: PT018, PT012, F811
 """PRD 5.2 permission matrix and 5.1 denied-by-default rules, table-driven from the printed rows (SEC-10 role-matrix tests).
 
 The PRD table below is transcribed INDEPENDENTLY of ``dwaar_api.modules.identity.matrix``: cells are the strings as
@@ -15,12 +16,34 @@ from dwaar_api.modules.identity import matrix, permissions
 from dwaar_common.errors import NotAuthorised, NotFound
 from tests.integration.identity._support import IdentityHarness
 
-ROLES = ["secretary", "treasurer", "committee", "estate_mgr", "guard", "auditor", "owner_occ", "owner_nr", "tenant", "family"]
+ROLES = [
+    "secretary",
+    "treasurer",
+    "committee",
+    "estate_mgr",
+    "guard",
+    "auditor",
+    "owner_occ",
+    "owner_nr",
+    "tenant",
+    "family",
+]
 RESIDENTS = {"owner_occ", "owner_nr", "tenant", "family"}
 # PRD 5.2, columns SECRETARY TREASURER COMMITTEE ESTATE_MGR GUARD AUDITOR OWNER_OCC OWNER_NR TENANT FAMILY
 PRD_5_2 = {
     "society_config": ["F", "R", "R", "R", "N", "R", "N", "N", "N", "N"],
-    "unit_register": ["F", "R", "R", "R", "Masked R", "N", "O", "O", "O", "O"],  # AUDITOR cell empty in the source: N
+    "unit_register": [
+        "F",
+        "R",
+        "R",
+        "R",
+        "Masked R",
+        "N",
+        "O",
+        "O",
+        "O",
+        "O",
+    ],  # AUDITOR cell empty in the source: N
     "verify_tenancy": ["A", "N", "N", "N", "N", "N", "A (own unit)", "A (own unit)", "N", "N"],
     "gate_ops": ["R", "N", "R", "R", "F", "N", "O", "N", "O", "O"],
     "visitor_passes": ["N", "N", "N", "N", "N", "N", "O", "N", "O", "O"],
@@ -53,8 +76,13 @@ def allowed(role: str, action: str) -> bool:
     if perm is None:
         return False
     try:
-        decide(perm, [grant(role)], society_hint=SOC, unit_target=U1 if perm.scope is ScopeKind.UNIT else None,
-               person_target=ME if perm.scope is ScopeKind.PERSON else None)
+        decide(
+            perm,
+            [grant(role)],
+            society_hint=SOC,
+            unit_target=U1 if perm.scope is ScopeKind.UNIT else None,
+            person_target=ME if perm.scope is ScopeKind.PERSON else None,
+        )
     except (NotAuthorised, NotFound):
         return False
     return True
@@ -64,7 +92,9 @@ def act(cap: str, verb: str) -> str:
     return f"matrix.{cap}.{verb}"
 
 
-CELLS = [(cap, role, cell) for cap, row in PRD_5_2.items() for role, cell in zip(ROLES, row, strict=True)]
+CELLS = [
+    (cap, role, cell) for cap, row in PRD_5_2.items() for role, cell in zip(ROLES, row, strict=True)
+]
 
 
 @pytest.mark.parametrize(("cap", "role", "cell"), CELLS, ids=[f"{c}-{r}-{x}" for c, r, x in CELLS])
@@ -82,7 +112,6 @@ def test_every_cell_of_the_prd_matrix(cap: str, role: str, cell: str) -> None:
         verbs_denied("read", "read_own", "read_masked", *WRITE_VERBS, "approve_own", "vote")
     elif cell == "F":
         verbs_allowed("read", "manage")
-        verbs_denied("read_masked", "read_own") if False else None
     elif cell == "R":
         verbs_allowed("read")
         verbs_denied(*WRITE_VERBS)
@@ -131,11 +160,15 @@ def test_own_scope_cells_do_not_reach_other_units_or_other_people() -> None:
     perm = registry.get(act("unit_register", "read_own"))
     assert perm is not None and perm.scope is ScopeKind.UNIT
     with pytest.raises(NotFound):
-        decide(perm, [grant("tenant")], society_hint=SOC, unit_target=U2)  # another household's unit
+        decide(
+            perm, [grant("tenant")], society_hint=SOC, unit_target=U2
+        )  # another household's unit
     priv = registry.get(act("privacy", "read_own"))
     assert priv is not None and priv.scope is ScopeKind.PERSON
     with pytest.raises(NotFound):
-        decide(priv, [grant("tenant")], society_hint=SOC, person_target=uuid.uuid4())  # someone else's record
+        decide(
+            priv, [grant("tenant")], society_hint=SOC, person_target=uuid.uuid4()
+        )  # someone else's record
 
 
 def test_roles_without_a_matrix_column_have_no_matrix_permission() -> None:
@@ -150,14 +183,18 @@ DENIED = list(matrix.DENIED_BY_DEFAULT)
 @pytest.mark.parametrize(("role", "action", "why"), DENIED, ids=[f"{r}-{a}" for r, a, _w in DENIED])
 def test_prd_5_1_denied_by_default_list(role: str, action: str, why: str) -> None:
     # REQ: IAM-03 INV-01 (AT-02: non-resident owner cannot see the tenant's visitor history)
-    assert registry.get(action) is not None, f"{action} must exist so the denial is a decision, not an absence"
+    assert registry.get(action) is not None, (
+        f"{action} must exist so the denial is a decision, not an absence"
+    )
     assert not allowed(role, action), why
 
 
 def test_at02_non_resident_owner_vs_resident_tenant_on_visitor_history() -> None:
     # REQ: IAM-03 INV-01
     history = act("gate_ops", "read_own")
-    assert allowed("tenant", history) and allowed("owner_occ", history) and allowed("family", history)
+    assert (
+        allowed("tenant", history) and allowed("owner_occ", history) and allowed("family", history)
+    )
     assert not allowed("owner_nr", history)
     # ... while the non-resident owner keeps their own financial rights
     assert allowed("owner_nr", act("bill_runs", "read_own"))
@@ -176,7 +213,9 @@ def test_elevated_role_list_equals_the_database_function(idh: IdentityHarness) -
         assert row == (role in matrix.ELEVATED_ROLES), role
 
 
-def test_role_grant_check_constraint_covers_every_assignable_and_platform_role(idh: IdentityHarness) -> None:
+def test_role_grant_check_constraint_covers_every_assignable_and_platform_role(
+    idh: IdentityHarness,
+) -> None:
     # REQ: IAM-13
     definition = idh.admin_rows(
         "SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conname = 'role_grants_role_check'"
@@ -184,4 +223,6 @@ def test_role_grant_check_constraint_covers_every_assignable_and_platform_role(i
     for role in matrix.ASSIGNABLE_ROLES | matrix.PLATFORM_ROLES:
         assert f"'{role}'" in definition
     for role in matrix.RESIDENT_ROLES:
-        assert f"'{role}'" not in definition  # resident roles come from memberships only, never from grants
+        assert (
+            f"'{role}'" not in definition
+        )  # resident roles come from memberships only, never from grants
