@@ -1,0 +1,43 @@
+# Alternative to tools/dev/pg.sh for developers with Docker: PostgreSQL 16 + Redis 7.
+#   docker compose -f infra/docker-compose.yml up -d
+# Same ports and role model as the local cluster (see .env.example). Local development only:
+# the credentials below are placeholders for a throwaway container, not secrets.
+name: dwaar-dev
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres-local-only
+      DWAAR_DB_NAME: ${DWAAR_DB_NAME:-dwaar}
+      DWAAR_DB_OWNER_PASSWORD: ${DWAAR_DB_OWNER_PASSWORD:-dwaar-local-owner}
+      DWAAR_DB_APP_PASSWORD: ${DWAAR_DB_APP_PASSWORD:-dwaar-local-app}
+      DWAAR_DB_WORKER_PASSWORD: ${DWAAR_DB_WORKER_PASSWORD:-dwaar-local-worker}
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "127.0.0.1:${DWAAR_PG_PORT:-55432}:5432"
+    command: ["postgres", "-c", "fsync=off", "-c", "synchronous_commit=off", "-c", "timezone=UTC"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/dwaar-db:ro
+      - ./db/docker-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "127.0.0.1:${DWAAR_REDIS_PORT:-56379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

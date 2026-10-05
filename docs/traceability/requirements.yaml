@@ -1,0 +1,5813 @@
+# Dwaar requirement register (source of truth for requirement IDs, scope and build assignment).
+# Source: Dwaar Master PRD v2.0 (docs/prd/, local-only). Titles are paraphrases, not PRD text.
+# Fields: id, kind, area, title, priority/release exactly as printed in the PRD (null where the PRD prints none),
+# release_notes (extra release text, class= and alias= for AI features, target:/default:/owner: facts),
+# labels (LEGAL|CA|VERIFY|TBD), prd_section, prd_page, slice (PRD 4.3 build slice), module (logical target path;
+# physical paths are in module_map.yaml), status (planning status only; trace_check.py computes evidence status).
+# Conventions are documented in docs/traceability/README.md. Edit titles/modules/slices here; do not hand-edit counts.
+version: 1
+source: Dwaar Master PRD v2.0
+items:
+- id: INV-01
+  kind: invariant
+  area: invariants
+  title: Server-derived society and role scope on every object, query, cache, search and file
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: INV-02
+  kind: invariant
+  area: invariants
+  title: Money is integer paise; posted journals balance, are immutable and retry-safe
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 5
+  module: services/api/modules/ledger
+  status: not-started
+- id: INV-03
+  kind: invariant
+  area: invariants
+  title: Local deterministic policy decides entry; models never actuate; no auto-allow on timeout
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 2
+  module: services/api/modules/visits
+  status: not-started
+- id: INV-04
+  kind: invariant
+  area: invariants
+  title: 'Four independent relationships: ownership, occupancy, billing liability, statutory vote'
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: INV-05
+  kind: invariant
+  area: invariants
+  title: Advertising, commercial push, data resale and unrelated profiling are prohibited
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 1
+  module: infra
+  status: not-started
+- id: INV-06
+  kind: invariant
+  area: invariants
+  title: AI only proposes; deterministic permission and approval services execute
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 4
+  module: services/api/modules/ai
+  status: not-started
+- id: INV-07
+  kind: invariant
+  area: invariants
+  title: Statuses from submitted through settled are kept distinct and shown truthfully
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 2
+  module: services/api/modules/visits
+  status: not-started
+- id: INV-08
+  kind: invariant
+  area: invariants
+  title: Essential services are never restricted because of debt
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: INV-09
+  kind: invariant
+  area: invariants
+  title: Self-service export and migration manifest for every society
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 6
+  module: services/api/modules/exports
+  status: not-started
+- id: INV-10
+  kind: invariant
+  area: invariants
+  title: Interest caps, quorum, notice, weights, tax and retention come from approved packs
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 5
+  module: services/api/modules/legal_packs
+  status: not-started
+- id: INV-11
+  kind: invariant
+  area: invariants
+  title: Guards and staff finish every core flow in-language, supported by icons and audio
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 4
+  module: apps/guard-android
+  status: not-started
+- id: INV-12
+  kind: invariant
+  area: invariants
+  title: Every SLO is instrumented and reported; claims come only from measurements
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '1'
+  prd_page: 6
+  slice: 6
+  module: services/api/core
+  status: not-started
+- id: D-01
+  kind: decision
+  area: decisions
+  title: Product name is the placeholder Dwaar pending trademark check
+  priority: null
+  release: null
+  release_notes: 'default: Dwaar placeholder; alternative Aangan with trademark check; approver: Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 1
+  module: docs/adr
+  status: not-started
+- id: D-02
+  kind: decision
+  area: decisions
+  title: Pilot in Pune housing co-operatives under Maharashtra law
+  priority: null
+  release: null
+  release_notes: 'default: Pune, Maharashtra co-operative housing societies; Bengaluru after a Karnataka pack; approver:
+    Owner + local advocate'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 1
+  module: packages/legal-packs
+  status: not-started
+- id: D-03
+  kind: decision
+  area: decisions
+  title: Target society size of 250 to 1,500 units
+  priority: null
+  release: null
+  release_notes: 'default: 250 to 1,500 units; below 250 only with minimum fee; approver: Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: null
+  module: docs/adr
+  status: not-started
+- id: D-04
+  kind: decision
+  area: decisions
+  title: Launch languages English, Hindi, Marathi; Kannada next; others once evaluated
+  priority: null
+  release: null
+  release_notes: 'default: English, Hindi, Marathi at M1; Kannada at M2; never claim all-language accuracy; approver:
+    Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 4
+  module: packages/i18n
+  status: not-started
+- id: D-05
+  kind: decision
+  area: decisions
+  title: Resident app in React Native Expo with TypeScript plus accessible web
+  priority: null
+  release: null
+  release_notes: 'default: React Native Expo, TypeScript, iOS and Android plus accessible web; approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 2
+  module: apps/resident-mobile
+  status: not-started
+- id: D-06
+  kind: decision
+  area: decisions
+  title: Guard app is native Android Kotlin with Room and kiosk mode
+  priority: null
+  release: null
+  release_notes: 'default: Native Android Kotlin, Room/SQLite, device-owner kiosk; React Native only if kiosk and
+    scanner tests pass; approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 2
+  module: apps/guard-android
+  status: not-started
+- id: D-07
+  kind: decision
+  area: decisions
+  title: Admin console built with Next.js, TypeScript, Tailwind and shadcn/ui
+  priority: null
+  release: null
+  release_notes: 'default: Next.js App Router, TypeScript, Tailwind, shadcn/ui; approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 1
+  module: apps/admin-web
+  status: not-started
+- id: D-08
+  kind: decision
+  area: decisions
+  title: Modular FastAPI monolith plus workers as the backend
+  priority: null
+  release: null
+  release_notes: 'default: Python FastAPI modular monolith with workers; split only for proven scale or isolation;
+    approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: D-09
+  kind: decision
+  area: decisions
+  title: Managed multi-zone Postgres in India with RLS layered on top
+  priority: null
+  release: null
+  release_notes: 'default: Managed Postgres India region multi-zone, Supabase ap-south-1 by default, RLS as defence
+    in depth; approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 1
+  module: infra
+  status: not-started
+- id: D-10
+  kind: decision
+  area: decisions
+  title: Identifiers are time-ordered UUIDv7 using the native uuid type
+  priority: null
+  release: null
+  release_notes: 'default: UUIDv7; approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 1
+  module: packages/dwaar-common
+  status: not-started
+- id: D-11
+  kind: decision
+  area: decisions
+  title: Application event protocol for offline sync; no shared-file SQLite or money CRDTs
+  priority: null
+  release: null
+  release_notes: 'default: application event protocol; PowerSync only for resident and technician apps after a spike;
+    approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 3
+  module: services/api/modules/edge_sync
+  status: not-started
+- id: D-12
+  kind: decision
+  area: decisions
+  title: Edge gateway is Python on encrypted SQLite (WAL, synchronous FULL) with hardware keys
+  priority: null
+  release: null
+  release_notes: 'default: Python edge service, encrypted SQLite WAL synchronous=FULL, Linux mini-PC with hardware-backed
+    keys; approver: Tech lead + installer'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: D-13
+  kind: decision
+  area: decisions
+  title: 'Offline validity: resident credentials 72 h, guest passes 2 h gate-bound'
+  priority: null
+  release: null
+  release_notes: 'default: resident credentials 72 h; guest passes max 2 h gate-bound; supervisor overrides end
+    at shift end; approver: Security supervisor'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: D-14
+  kind: decision
+  area: decisions
+  title: Approval requests expire after 90 seconds and are never auto-allowed
+  priority: null
+  release: null
+  release_notes: 'default: 90 seconds; never auto-allow; approver: Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 2
+  module: services/api/modules/visits
+  status: not-started
+- id: D-15
+  kind: decision
+  area: decisions
+  title: Notification cascade defaults at 0, 10, 20, 35 and 90 seconds
+  priority: null
+  release: null
+  release_notes: 'default: push t=0, alternate adult t=10 s, masked IVR t=20 s, WhatsApp/SMS link t=35 s, expiry
+    t=90 s; all configurable within limits; approver: Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: D-16
+  kind: decision
+  area: decisions
+  title: Visitor data visible 30 days, extendable to 90, plus restricted legal archive
+  priority: null
+  release: null
+  release_notes: 'default: 30 days operational (to 90 with recorded justification) plus restricted archive of at
+    least one year; approver: Counsel + society'
+  labels: [LEGAL]
+  prd_section: '3'
+  prd_page: 9
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: D-17
+  kind: decision
+  area: decisions
+  title: Encrypted 35-day backup rotation; restores replay deletion tombstones
+  priority: null
+  release: null
+  release_notes: 'default: 35-day encrypted rotation; restores re-apply deletion tombstones; approver: Security
+    lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 6
+  module: infra
+  status: not-started
+- id: D-18
+  kind: decision
+  area: decisions
+  title: Provider-neutral AI adapter; default Claude models, Opus only where Sonnet fails
+  priority: null
+  release: null
+  release_notes: 'default: provider-neutral adapter; Claude Sonnet 5.5 and Haiku 4.5 by default; Opus 5.5 only where
+    Sonnet fails evaluation; terms must be approved; approver: Privacy owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: D-19
+  kind: decision
+  area: decisions
+  title: Self-hosted faster-whisper for speech recognition in an India region
+  priority: null
+  release: null
+  release_notes: 'default: self-hosted faster-whisper in India region; evaluate Indic ASR for Kannada, Odia, Bengali;
+    approver: Tech lead'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: D-20
+  kind: decision
+  area: decisions
+  title: RBI-authorised payment aggregator by default; funds settle directly to society
+  priority: null
+  release: null
+  release_notes: 'default: RBI-authorised aggregator (default Razorpay); UPI, AutoPay, BBPS via a BBPOU when confirmed;
+    direct settlement; approver: Treasurer + provider'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: D-21
+  kind: decision
+  area: decisions
+  title: Indian cloud telephony, DLT SMS, WhatsApp utility templates and video provider
+  priority: null
+  release: null
+  release_notes: 'default: Indian cloud telephony, DLT SMS, WhatsApp utility templates, video provider; vendors
+    undecided; approver: Owner'
+  labels: [TBD]
+  prd_section: '3'
+  prd_page: 9
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: D-22
+  kind: decision
+  area: decisions
+  title: Accounting export via Tally XML and Zoho Books API with a single authoritative ledger
+  priority: null
+  release: null
+  release_notes: 'default: Tally-importable XML and Zoho Books API; one authoritative ledger; no uncontrolled two-way
+    sync; approver: Treasurer + CA'
+  labels: []
+  prd_section: '3'
+  prd_page: 9
+  slice: 7
+  module: services/api/modules/exports
+  status: not-started
+- id: D-23
+  kind: decision
+  area: decisions
+  title: 'Initial hardware pair: one certified barrier on an isolated relay plus a UHF reader'
+  priority: null
+  release: null
+  release_notes: 'default: isolated dry-contact relay to one certified barrier model plus one UHF RFID reader; ANPR
+    at M3; approver: Installer'
+  labels: []
+  prd_section: '3'
+  prd_page: 10
+  slice: 8
+  module: services/edge
+  status: not-started
+- id: D-24
+  kind: decision
+  area: decisions
+  title: Binding governance stays disabled until the legal pack is approved
+  priority: null
+  release: null
+  release_notes: 'default: disabled until the society legal pack is approved; opinion polls available; approver:
+    Counsel'
+  labels: [LEGAL]
+  prd_section: '3'
+  prd_page: 10
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: D-25
+  kind: decision
+  area: decisions
+  title: Amenity restrictions for defaulters off by default, non-essential only, appealable
+  priority: null
+  release: null
+  release_notes: 'default: disabled by default; non-essential only with uploaded legal basis, notice and appeal;
+    approver: Counsel'
+  labels: [LEGAL]
+  prd_section: '3'
+  prd_page: 10
+  slice: 7
+  module: services/api/modules/amenities
+  status: not-started
+- id: D-26
+  kind: decision
+  area: decisions
+  title: Pricing tiers of 25, 35 and 50 rupees per flat with minimum fees
+  priority: null
+  release: null
+  release_notes: 'default: Essential 25, Operations 35, Township 50 rupees per contracted flat per month; minimums
+    5,000, 7,000, 15,000; add-ons for infrastructure; approver: Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 10
+  slice: 6
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: D-27
+  kind: decision
+  area: decisions
+  title: Subscription billed on all contracted units with transparent vacancy concession
+  priority: null
+  release: null
+  release_notes: 'default: all contracted units; transparent vacancy concession if justified; approver: Owner'
+  labels: []
+  prd_section: '3'
+  prd_page: 10
+  slice: 6
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: D-28
+  kind: decision
+  area: decisions
+  title: MDR and gateway charges borne by the society, never added for residents
+  priority: null
+  release: null
+  release_notes: 'default: society absorbs MDR and gateway fees; no surcharge to residents; fees shown in cost report;
+    approver: Treasurer'
+  labels: [VERIFY]
+  prd_section: '3'
+  prd_page: 10
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: IAM-01
+  kind: requirement
+  area: identity-access
+  title: Memberships with type, unit, dates, verification and evidence; many per person
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-02
+  kind: requirement
+  area: identity-access
+  title: Role grants with scope, issuer, reason and expiry; expiry revokes sessions
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-03
+  kind: requirement
+  area: identity-access
+  title: MFA mandatory for elevated roles; no self-granting; distinct maker and checker
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-04
+  kind: requirement
+  area: identity-access
+  title: Privileged reads and exports log their purpose and scope
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: IAM-05
+  kind: requirement
+  area: identity-access
+  title: Owner-tenant disputes trigger review, not deactivation of occupancy
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 4
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-06
+  kind: requirement
+  area: identity-access
+  title: Phone OTP with rate limits and DLT templates proves number control only
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-07
+  kind: requirement
+  area: identity-access
+  title: Household joining workflow with visible reasons and independent appeal review
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 4
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-08
+  kind: requirement
+  area: identity-access
+  title: Short-lived tokens, rotating refresh, session list, revocation, CSRF, secure storage
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-09
+  kind: requirement
+  area: identity-access
+  title: Step-up authentication for bank approval, legal-hold export, bulk personal-data download
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 6
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-10
+  kind: requirement
+  area: identity-access
+  title: Offline guard shift login from cached policy, supervisor local entitlements, revocation
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 3
+  module: services/api/modules/devices
+  status: not-started
+- id: IAM-11
+  kind: requirement
+  area: identity-access
+  title: Recycled phone numbers inherit nothing; number change forces re-verification
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 4
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-12
+  kind: requirement
+  area: identity-access
+  title: Tenant onboarding needs owner confirmation; committee holds are logged and appealable
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 4
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-13
+  kind: requirement
+  area: identity-access
+  title: Registration endpoints cannot hand out platform or committee roles
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: IAM-14
+  kind: requirement
+  area: identity-access
+  title: Use a maintained OIDC library or identity provider; no invented tokens
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '5.3'
+  prd_page: 14
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: UX-01
+  kind: requirement
+  area: ux
+  title: Resident home quick actions; operational messages separate from community content
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/resident-mobile
+  status: not-started
+- id: UX-02
+  kind: requirement
+  area: ux
+  title: Guard controls at least 48 dp, 4.5:1 contrast, decisions never colour-only
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/guard-android
+  status: not-started
+- id: UX-03
+  kind: requirement
+  area: ux
+  title: Accessibility for large text and screen readers; Devanagari wrapping and stable unit numerals
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/resident-mobile
+  status: not-started
+- id: UX-04
+  kind: requirement
+  area: ux
+  title: Show exact backend state such as saved-awaiting-sync or settlement pending
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 3
+  module: apps/resident-mobile
+  status: not-started
+- id: UX-05
+  kind: requirement
+  area: ux
+  title: Destructive, financial or rights-changing actions preview scope and give receipts
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/admin-web
+  status: not-started
+- id: UX-06
+  kind: requirement
+  area: ux
+  title: No infinite feeds, auto-play, hidden fees or nagging; preferences persist server-side
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/resident-mobile
+  status: not-started
+- id: UX-07
+  kind: requirement
+  area: ux
+  title: Residents can raise support or privacy issues even while membership is disputed
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: services/api/modules/privacy
+  status: not-started
+- id: UX-08
+  kind: requirement
+  area: ux
+  title: Per-guard login language, with audio prompts for each primary action
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/guard-android
+  status: not-started
+- id: UX-09
+  kind: requirement
+  area: ux
+  title: Guard practice mode with dummy units and per-guard training tracking
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/guard-android
+  status: not-started
+- id: UX-10
+  kind: requirement
+  area: ux
+  title: Handheld USB or Bluetooth barcode scanner supported alongside the camera
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '6'
+  prd_page: 15
+  slice: 4
+  module: apps/guard-android
+  status: not-started
+- id: ARCH-01
+  kind: arch
+  area: multi-tenancy
+  title: Every society-owned row carries society_id with cross-society reference guards
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '7.3'
+  prd_page: 17
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: ARCH-02
+  kind: arch
+  area: multi-tenancy
+  title: One global person identity with personal details in an encrypted vault
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '7.3'
+  prd_page: 17
+  slice: 1
+  module: services/api/modules/identity
+  status: not-started
+- id: ARCH-03
+  kind: arch
+  area: multi-tenancy
+  title: App connects as a restricted DB role; per-transaction context drives RLS
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '7.3'
+  prd_page: 17
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: ARCH-04
+  kind: arch
+  area: multi-tenancy
+  title: Only backend workers hold service-role credentials; clients never do
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '7.3'
+  prd_page: 17
+  slice: 1
+  module: services/worker
+  status: not-started
+- id: ARCH-05
+  kind: arch
+  area: multi-tenancy
+  title: Per-society limits for features, AI spend, request rates and queue share
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '7.3'
+  prd_page: 17
+  slice: 1
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: DB-01
+  kind: db-invariant
+  area: database-invariants
+  title: Posted journals have equal debit and credit totals in paise
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 20
+  slice: 5
+  module: services/api/modules/ledger
+  status: not-started
+- id: DB-02
+  kind: db-invariant
+  area: database-invariants
+  title: App role cannot modify or remove ledger lines, gate events, readings or audit entries
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 20
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: DB-03
+  kind: db-invariant
+  area: database-invariants
+  title: Maker of a bill run is barred from approving it
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 20
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: DB-04
+  kind: db-invariant
+  area: database-invariants
+  title: Bill-run interest above the active legal pack cap is rejected
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 21
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: DB-05
+  kind: db-invariant
+  area: database-invariants
+  title: Essential amenities are barred from carrying defaulter restrictions
+  priority: null
+  release: null
+  release_notes: AT-47 (M1) exercises this constraint before the M2 amenities module
+  labels: []
+  prd_section: '8.3'
+  prd_page: 21
+  slice: 4
+  module: services/api/modules/amenities
+  status: not-started
+- id: DB-06
+  kind: db-invariant
+  area: database-invariants
+  title: Allocation totals per receipt and invoice are checked in a locked transaction
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 21
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: DB-07
+  kind: db-invariant
+  area: database-invariants
+  title: Scheduled nightly check of the journal hash chain, alerting on breaks
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 21
+  slice: 5
+  module: services/worker
+  status: not-started
+- id: DB-08
+  kind: db-invariant
+  area: database-invariants
+  title: Erasure happens only via the privacy engine; marking a row deleted is not enough
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '8.3'
+  prd_page: 21
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: SOC-01
+  kind: requirement
+  area: society-setup
+  title: New society record with legal entity, registrations, tax identifiers and selected packs
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 1
+  module: services/api/modules/org
+  status: not-started
+- id: SOC-02
+  kind: requirement
+  area: society-setup
+  title: Blocks, floors and units with areas, undivided interest and certified construction cost
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 1
+  module: services/api/modules/org
+  status: not-started
+- id: SOC-03
+  kind: requirement
+  area: society-setup
+  title: Bulk CSV or Excel import of units and members, all-or-nothing with report
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 4
+  module: services/api/modules/org
+  status: not-started
+- id: SOC-04
+  kind: requirement
+  area: society-setup
+  title: Import from incumbent exports via mapping templates, dry run and conflict report
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 7
+  module: services/api/modules/org
+  status: not-started
+- id: SOC-05
+  kind: requirement
+  area: society-setup
+  title: Set up gates, lanes, posts and devices, with certificate-based device enrolment
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 3
+  module: services/api/modules/devices
+  status: not-started
+- id: SOC-06
+  kind: requirement
+  area: society-setup
+  title: 'Society policies: visitor rules, photo policy, delivery hours, overstay, cascade timings'
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 4
+  module: services/api/modules/org
+  status: not-started
+- id: SOC-07
+  kind: requirement
+  area: society-setup
+  title: Data processing agreement accepted by an office-bearer with version and signatory
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: SOC-08
+  kind: requirement
+  area: society-setup
+  title: Setup checklist showing progress across units, members, gates, guards, policies, packs
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 6
+  module: services/api/modules/org
+  status: not-started
+- id: SOC-09
+  kind: requirement
+  area: society-setup
+  title: Builder Day Zero mode with possession scheduling and signed handover manifest
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.1'
+  prd_page: 22
+  slice: 7
+  module: services/api/modules/org
+  status: not-started
+- id: GATE-01
+  kind: requirement
+  area: visitors-gate
+  title: Invitations with purpose, window and max uses; signed QR with opaque IDs only
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 2
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-02
+  kind: requirement
+  area: visitors-gate
+  title: Unannounced visitor flow from destination pick to consent, approval and observed entry
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 2
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-03
+  kind: requirement
+  area: visitors-gate
+  title: Stale mobile approvals cannot resurrect denied or expired requests
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 2
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-04
+  kind: requirement
+  area: visitors-gate
+  title: Multi-destination deliveries use independent stops; each stop needs its own approval
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 4
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-05
+  kind: requirement
+  area: visitors-gate
+  title: Exit may be scanned, observed or unknown; no invented exit times
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 3
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-06
+  kind: requirement
+  area: visitors-gate
+  title: Known resident credentials validated locally for status, gate, time, policy age, revocation
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: GATE-07
+  kind: requirement
+  area: visitors-gate
+  title: Emergency or manual entry needs local authority and a reason; egress independent of cloud
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: GATE-08
+  kind: requirement
+  area: visitors-gate
+  title: No-phone visitor path using alias, destination, host confirmation and host-issued pass
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 22
+  slice: 4
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-09
+  kind: requirement
+  area: visitors-gate
+  title: Guard home with Guest, Delivery, Service tiles plus Scan, Parcels, Inside, Incident
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 23
+  slice: 3
+  module: apps/guard-android
+  status: not-started
+- id: GATE-10
+  kind: requirement
+  area: visitors-gate
+  title: Spoken guard input pre-fills the entry form for single-tap confirmation
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 23
+  slice: 7
+  module: apps/guard-android
+  status: not-started
+- id: GATE-11
+  kind: requirement
+  area: visitors-gate
+  title: Overstay alerts for time-boxed passes, with delivery and service defaults
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 23
+  slice: 4
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-12
+  kind: requirement
+  area: visitors-gate
+  title: Society-scoped blocklist by contact token or plate with reason, expiry and review
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 23
+  slice: 7
+  module: services/api/modules/visits
+  status: not-started
+- id: GATE-13
+  kind: requirement
+  area: visitors-gate
+  title: Resident numbers hidden from guards; calling only through masked proxies
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 23
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: GATE-14
+  kind: requirement
+  area: visitors-gate
+  title: Household standing rules enforced by the edge policy
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.2'
+  prd_page: 23
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-01
+  kind: requirement
+  area: edge-sync
+  title: Edge SQLite in WAL with synchronous FULL, encrypted fields, single writer process
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 23
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-02
+  kind: requirement
+  area: edge-sync
+  title: Signed event envelope persisted atomically with projection and outbox before success
+  priority: P0
+  release: M0
+  release_notes: printed M0; built in slice 2 as the simulated-edge contract (PRD 4.3 lists edge work under slice
+    3)
+  labels: []
+  prd_section: '9.3'
+  prd_page: 23
+  slice: 2
+  module: services/edge
+  status: not-started
+- id: EDGE-03
+  kind: requirement
+  area: edge-sync
+  title: Sync batch endpoint with per-event outcomes, gap reporting, backoff and quarantine
+  priority: P0
+  release: M0
+  release_notes: printed M0; built in slice 2 as the simulated-edge contract (PRD 4.3 lists edge work under slice
+    3)
+  labels: []
+  prd_section: '9.3'
+  prd_page: 23
+  slice: 2
+  module: services/api/modules/edge_sync
+  status: not-started
+- id: EDGE-04
+  kind: requirement
+  area: edge-sync
+  title: Signed monotonic policy snapshots applied atomically with rollback rejected
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 23
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-05
+  kind: requirement
+  area: edge-sync
+  title: Stale policy or uncertain clock disables automatic time-sensitive decisions
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 23
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-06
+  kind: requirement
+  area: edge-sync
+  title: Terminals keep a restricted standalone mode for 24 hours if the gateway fails
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 23
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-07
+  kind: requirement
+  area: edge-sync
+  title: Sync conflict algorithm that never silently discards physical entries
+  priority: P0
+  release: M0
+  release_notes: printed M0; built in slice 2 as the simulated-edge contract (PRD 4.3 lists edge work under slice
+    3)
+  labels: []
+  prd_section: '9.3'
+  prd_page: 24
+  slice: 2
+  module: services/api/modules/edge_sync
+  status: not-started
+- id: EDGE-08
+  kind: requirement
+  area: edge-sync
+  title: Gateway hardware baseline, 72-hour buffering and UPS sizing from measured load
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 24
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-09
+  kind: requirement
+  area: edge-sync
+  title: mTLS, no inbound ports, signed A/B updates, no actuation during updates, health telemetry
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 24
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: EDGE-10
+  kind: requirement
+  area: edge-sync
+  title: Returning stale devices process tombstones before uploading personal records
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.3'
+  prd_page: 24
+  slice: 6
+  module: services/edge
+  status: not-started
+- id: NOTIF-01
+  kind: requirement
+  area: notifications
+  title: Notification categories with security and emergency channels free of ads
+  priority: P0
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 2
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-02
+  kind: requirement
+  area: notifications
+  title: Track created through actioned states; provider acceptance never shown as delivery
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-03
+  kind: requirement
+  area: notifications
+  title: Default cascade from push to alternate adult, IVR, link, then expiry
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-04
+  kind: requirement
+  area: notifications
+  title: Accepted decision cancels ringing and stale actions on all devices within 2 seconds
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-05
+  kind: requirement
+  area: notifications
+  title: Immutable request ID, deep links fetch current state, lock-screen actions re-check
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-06
+  kind: requirement
+  area: notifications
+  title: On-device diagnostic and OEM-specific guidance without false delivery guarantees
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: apps/resident-mobile
+  status: not-started
+- id: NOTIF-07
+  kind: requirement
+  area: notifications
+  title: Delivery telemetry by phone model and OS, with acknowledgement and fallback dashboards
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-08
+  kind: requirement
+  area: notifications
+  title: Spoken yes or no IVR approval in Hindi and English with DTMF fallback
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 7
+  module: services/api/modules/notifications
+  status: not-started
+- id: NOTIF-09
+  kind: requirement
+  area: notifications
+  title: Lock-screen alerts hide who is visiting and where unless residents opt in
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: CALL-01
+  kind: requirement
+  area: calling
+  title: TTL-bound masked proxy calls logging outcome and duration but not audio
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: CALL-02
+  kind: requirement
+  area: calling
+  title: SMS only via DLT-registered headers and templates, with allow-listed links
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.4'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: PAR-01
+  kind: requirement
+  area: parcels
+  title: Delivery entries tagged by brand with resident expecting-delivery pre-approval
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-02
+  kind: requirement
+  area: parcels
+  title: Parcel state machine with refused, returned and lost branches and guard record
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-03
+  kind: requirement
+  area: parcels
+  title: Explicit revocable leave-at-gate consent; single-use token or supervised pickup
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 24
+  slice: 4
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-04
+  kind: requirement
+  area: parcels
+  title: Courier delivered claims kept as external observations apart from society custody
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-05
+  kind: requirement
+  area: parcels
+  title: 24-hour and 48-hour parcel reminders plus custody count reconciliation
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-06
+  kind: requirement
+  area: parcels
+  title: Parcel label OCR suggests unit and recipient; guard confirms
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-07
+  kind: requirement
+  area: parcels
+  title: Partner delivery token spec, kept off until a partner agreement exists
+  priority: P2
+  release: M3
+  release_notes: disabled until a partner contract exists
+  labels: []
+  prd_section: '9.5'
+  prd_page: 25
+  slice: 9
+  module: services/api/modules/parcels
+  status: not-started
+- id: PAR-08
+  kind: requirement
+  area: parcels
+  title: Order-page screenshots are never accepted as gate entitlement
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.5'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/parcels
+  status: not-started
+- id: STAFF-01
+  kind: requirement
+  area: staff
+  title: One staff person with per-household engagements; guards see current destinations only
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/staff
+  status: not-started
+- id: STAFF-02
+  kind: requirement
+  area: staff
+  title: Attendance as observation; payroll changes need household approval; append-only corrections
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/staff
+  status: not-started
+- id: STAFF-03
+  kind: requirement
+  area: staff
+  title: Ending one engagement leaves other employers' engagements intact
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/staff
+  status: not-started
+- id: STAFF-04
+  kind: requirement
+  area: staff
+  title: Staff consent in their language before capture; no global blacklist
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/staff
+  status: not-started
+- id: STAFF-05
+  kind: requirement
+  area: staff
+  title: Staff check-in by code or card; no face matching until legal review
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/staff
+  status: not-started
+- id: STAFF-06
+  kind: requirement
+  area: staff
+  title: Contractor passes with permit reference and Aadhaar masked to last four digits
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/staff
+  status: not-started
+- id: STAFF-07
+  kind: requirement
+  area: staff
+  title: Agency attendance by post and shift to check guard and housekeeping invoices
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/staff
+  status: not-started
+- id: SHIFT-01
+  kind: requirement
+  area: shift-handover
+  title: Shift start and end checklists with dual acknowledgement and non-locking escalation
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/shifts
+  status: not-started
+- id: SHIFT-02
+  kind: requirement
+  area: shift-handover
+  title: Handover summary in incoming guard's language with full list always shown
+  priority: P1
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.6'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/shifts
+  status: not-started
+- id: OPS-01
+  kind: requirement
+  area: helpdesk-ops
+  title: Ticket state machine with SLA clocks, business calendar and immutable pause history
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/helpdesk
+  status: not-started
+- id: OPS-02
+  kind: requirement
+  area: helpdesk-ops
+  title: Ticket scope private, block or society; duplicate links never expose private complaints
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/helpdesk
+  status: not-started
+- id: OPS-03
+  kind: requirement
+  area: helpdesk-ops
+  title: Ticket intake by text, photo or voice, always confirmed by the resident first
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/helpdesk
+  status: not-started
+- id: OPS-04
+  kind: requirement
+  area: helpdesk-ops
+  title: Closure by confirmation or feedback window; reopen keeps original SLA history
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 4
+  module: services/api/modules/helpdesk
+  status: not-started
+- id: OPS-05
+  kind: requirement
+  area: helpdesk-ops
+  title: Asset register with warranty, AMC, statutory records, QR or NFC resolving to ID only
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: OPS-06
+  kind: requirement
+  area: helpdesk-ops
+  title: PM plans by calendar or runtime, yielding one work order per asset-plan-cycle
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: OPS-07
+  kind: requirement
+  area: helpdesk-ops
+  title: Checklists record pass, fail or not-observed, with evidence and supervisor verification
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: OPS-08
+  kind: requirement
+  area: helpdesk-ops
+  title: Parts requested, reserved, issued, returned via approved movements; no negative stock
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 25
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: OPS-09
+  kind: requirement
+  area: helpdesk-ops
+  title: Unsafe lift, electrical, gas or fire reports show emergency procedure and contacts
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/helpdesk
+  status: not-started
+- id: OPS-10
+  kind: requirement
+  area: helpdesk-ops
+  title: Per-asset statutory inspection calendar with reminders
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.7'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: OPS-11
+  kind: requirement
+  area: helpdesk-ops
+  title: Technician workspace works offline for checklists, notes, photos and part scans
+  priority: P0
+  release: M2
+  release_notes: TBD label from section 7.1 (role view in resident app or separate Expo app); default is the role
+    view
+  labels: [TBD]
+  prd_section: '9.7'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: COM-01
+  kind: requirement
+  area: notices-documents
+  title: Notice lifecycle with recipient scope, read acknowledgements and versioned revisions
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/notices
+  status: not-started
+- id: COM-02
+  kind: requirement
+  area: notices-documents
+  title: Translations show the original; safety or legal translations need human review
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/notices
+  status: not-started
+- id: COM-03
+  kind: requirement
+  area: notices-documents
+  title: Human sign-off needed before an AI-drafted notice goes out
+  priority: P1
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/notices
+  status: not-started
+- id: COM-04
+  kind: requirement
+  area: notices-documents
+  title: Versioned document vault with effective dates, authority and access tiers
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/notices
+  status: not-started
+- id: COM-05
+  kind: requirement
+  area: notices-documents
+  title: Privileged-role emergency alerts on a dedicated channel, with rate limiting
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/notices
+  status: not-started
+- id: COM-06
+  kind: requirement
+  area: notices-documents
+  title: Opinion polls labelled non-binding with owner-only option and neutral wording check
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 4
+  module: services/api/modules/notices
+  status: not-started
+- id: AMEN-01
+  kind: requirement
+  area: amenities
+  title: Transactional slot capacity, expiring payment holds, quotas, waitlist and bot protection
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/amenities
+  status: not-started
+- id: AMEN-02
+  kind: requirement
+  area: amenities
+  title: Defaulter restrictions only on non-essential amenities with legal basis and appeal
+  priority: P0
+  release: M2
+  release_notes: LEGAL label inherited from D-25; AT-47 (M1) needs the essential-amenity constraint (DB-05) before
+    the M2 amenities module
+  labels: [LEGAL]
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/amenities
+  status: not-started
+- id: AMEN-03
+  kind: requirement
+  area: amenities
+  title: Chat-based amenity booking in app or WhatsApp needing explicit confirmation
+  priority: P2
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.8'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/amenities
+  status: not-started
+- id: GOV-01
+  kind: requirement
+  area: governance
+  title: Per-society legal pack object; binding voting disabled until pack is approved
+  priority: P0
+  release: M2
+  release_notes: pack object and selection arrive at M0 via SOC-01; governance keys complete at M2
+  labels: []
+  prd_section: '9.9'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/legal_packs
+  status: not-started
+- id: GOV-02
+  kind: requirement
+  area: governance
+  title: Meeting setup freezes eligibility, computes clear days, checks agenda, records notice service
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-03
+  kind: requirement
+  area: governance
+  title: Hybrid attendance with QR check-in, video join, OTP identity check and timestamps
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-04
+  kind: requirement
+  area: governance
+  title: Live quorum meter and adjournment logic driven by the legal pack
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-05
+  kind: requirement
+  area: governance
+  title: Motion-by-motion voting with pack-defined basis; one mobile number is never one vote
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-06
+  kind: requirement
+  area: governance
+  title: Recording with SHA-256 hash, custody log and redevelopment meeting records
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 26
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-07
+  kind: requirement
+  area: governance
+  title: Minutes drafted from recording; tallies only from voting system; secretary signs
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 27
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-08
+  kind: requirement
+  area: governance
+  title: Secret ballots need a reviewed identity-separating design; statutory elections out of scope
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 27
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-09
+  kind: requirement
+  area: governance
+  title: Committee handover with expiring grants, frozen high-risk config and signed manifest
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 27
+  slice: 4
+  module: services/api/modules/governance
+  status: not-started
+- id: GOV-10
+  kind: requirement
+  area: governance
+  title: Rule changes after ballot opening need cancel and reissue, never silent recalculation
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.9'
+  prd_page: 27
+  slice: 7
+  module: services/api/modules/governance
+  status: not-started
+- id: FIN-01
+  kind: requirement
+  area: billing-ledger
+  title: Chart of accounts from legal-pack template with unit, fund, block, vendor, project dimensions
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/ledger
+  status: not-started
+- id: FIN-02
+  kind: requirement
+  area: billing-ledger
+  title: Effective-dated charge rules with basis, accounts, tax code and legal reference
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: FIN-03
+  kind: requirement
+  area: billing-ledger
+  title: Bill run preview, validation and authorised idempotent batch post to immutable invoices
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: FIN-04
+  kind: requirement
+  area: billing-ledger
+  title: Simple interest on overdue principal with grace and pack cap; allocation order configurable
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: FIN-05
+  kind: requirement
+  area: billing-ledger
+  title: Explicit postings for partial, advance, over-payment, credit note, waiver, dispute, refund
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/ledger
+  status: not-started
+- id: FIN-06
+  kind: requirement
+  area: billing-ledger
+  title: Posted invoices never edited; corrections via credit or debit notes; locked periods
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/ledger
+  status: not-started
+- id: FIN-07
+  kind: requirement
+  area: billing-ledger
+  title: 'Journal metadata: source, dates, rule version, approvers, reversal and hash chain'
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/ledger
+  status: not-started
+- id: FIN-08
+  kind: requirement
+  area: billing-ledger
+  title: Period close validates drafts, clearing, cash deposits, tax liabilities, unapplied receipts
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 7
+  module: services/api/modules/ledger
+  status: not-started
+- id: FIN-09
+  kind: requirement
+  area: billing-ledger
+  title: Invoice PDF with society details, heads, tax breakup, UPI QR and virtual account
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: FIN-10
+  kind: requirement
+  area: billing-ledger
+  title: Reminder schedule from due date to formal notice; settlement-pending never triggers default
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: FIN-11
+  kind: requirement
+  area: billing-ledger
+  title: Resident bill explainer built from a deterministic diff with rule references
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 7
+  module: services/api/modules/billing
+  status: not-started
+- id: FIN-12
+  kind: requirement
+  area: billing-ledger
+  title: Extra levies must cite a general body resolution
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.10'
+  prd_page: 27
+  slice: 7
+  module: services/api/modules/billing
+  status: not-started
+- id: PAY-01
+  kind: requirement
+  area: payments
+  title: Society onboarded to an authorised aggregator; platform never pools resident money
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 27
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-02
+  kind: requirement
+  area: payments
+  title: Payment attempt, settlement and refund state machines; chargebacks as later events
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-03
+  kind: requirement
+  area: payments
+  title: 'Webhook handling: signature check, replay window, dedupe, then atomic receipt, journal, outbox'
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-04
+  kind: requirement
+  area: payments
+  title: UPI intent, dynamic QR, virtual accounts at M1; AutoPay mandates and BBPS at M2
+  priority: P0
+  release: M1
+  release_notes: 'M1: UPI and virtual accounts; M2: AutoPay and BBPS'
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-05
+  kind: requirement
+  area: payments
+  title: Effective-dated channel cost config including UPI MDR; never passed to residents
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: [VERIFY]
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-06
+  kind: requirement
+  area: payments
+  title: Pre-redirect disclosure of principal, charges, total, payee and settlement; no surcharges
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-07
+  kind: requirement
+  area: payments
+  title: Timeouts show checking payment and reuse the same attempt and idempotency reference
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-08
+  kind: requirement
+  area: payments
+  title: Cash and cheque collection with sequential receipts, denominations and dual-signed handover
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-09
+  kind: requirement
+  area: payments
+  title: Bank reconciliation with CSV import, line hashing, matching and ranked review queue
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-10
+  kind: requirement
+  area: payments
+  title: Gross, fee, tax and net separated in clearing; variances post only explicitly
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: PAY-11
+  kind: requirement
+  area: payments
+  title: Refunds return to the original instrument unless verified authority permits otherwise
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.11'
+  prd_page: 28
+  slice: 5
+  module: services/api/modules/payments
+  status: not-started
+- id: ERP-01
+  kind: requirement
+  area: procurement-funds
+  title: Fund tracking per entity and CA treatment with transfers and bank backing
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/funds
+  status: not-started
+- id: ERP-02
+  kind: requirement
+  area: procurement-funds
+  title: Procurement chain from requisition to settlement with threshold-based approvers
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/procurement
+  status: not-started
+- id: ERP-03
+  kind: requirement
+  area: procurement-funds
+  title: Vendor payee changes are versioned, call-back verified and approved by two people
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/procurement
+  status: not-started
+- id: ERP-04
+  kind: requirement
+  area: procurement-funds
+  title: AI suggestions for vendor invoice extraction, duplicate detection and expense accounts
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/procurement
+  status: not-started
+- id: ERP-05
+  kind: requirement
+  area: procurement-funds
+  title: Compare agency invoices with guard and housekeeping shifts actually deployed
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/procurement
+  status: not-started
+- id: ERP-06
+  kind: requirement
+  area: procurement-funds
+  title: Depreciating fixed-asset register tied to the asset register under CA policy
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/assets
+  status: not-started
+- id: ERP-07
+  kind: requirement
+  area: procurement-funds
+  title: Budget versus actuals with AI commentary from deterministic aggregates
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: TAX-01
+  kind: requirement
+  area: tax
+  title: Tax rule store with source URL, dates, thresholds, rates, approver and review date
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 28
+  slice: 7
+  module: services/api/modules/tax
+  status: not-started
+- id: TAX-02
+  kind: requirement
+  area: tax
+  title: RWA GST logic as configured by the CA, including the full-amount threshold effect
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: [CA]
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 7
+  module: services/api/modules/tax
+  status: not-started
+- id: TAX-03
+  kind: requirement
+  area: tax
+  title: Routine bills kept apart from statutory e-invoices; IRP only where configured
+  priority: P2
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 9
+  module: services/api/modules/tax
+  status: not-started
+- id: TAX-04
+  kind: requirement
+  area: tax
+  title: TDS mapped to Income-tax Act 2025 with legacy aliases, thresholds and certificates
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: [CA]
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 7
+  module: services/api/modules/tax
+  status: not-started
+- id: TAX-05
+  kind: requirement
+  area: tax
+  title: Tax results explained deterministically with rule ID; unclassified items go to review
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 7
+  module: services/api/modules/tax
+  status: not-started
+- id: EXP-01
+  kind: requirement
+  area: export-integration
+  title: Self-service full society export with stable IDs, PDFs and checksummed manifest
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 6
+  module: services/api/modules/exports
+  status: not-started
+- id: EXP-02
+  kind: requirement
+  area: export-integration
+  title: Tally XML and Zoho Books adapters with round-trip trial balance and safe retries
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 7
+  module: services/api/modules/exports
+  status: not-started
+- id: EXP-03
+  kind: requirement
+  area: export-integration
+  title: Auditor pack of trial balance, ledgers, ageing, reconciliations, funds and audit extract
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.12'
+  prd_page: 29
+  slice: 7
+  module: services/api/modules/exports
+  status: not-started
+- id: HW-01
+  kind: requirement
+  area: access-hardware
+  title: Certified capability registry per controller model, firmware and wiring revision
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 8
+  module: services/api/modules/devices
+  status: not-started
+- id: HW-02
+  kind: requirement
+  area: access-hardware
+  title: Signed open command envelope with 2 s expiry, dedupe and sensor-confirmed opening
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 8
+  module: services/edge
+  status: not-started
+- id: HW-03
+  kind: requirement
+  area: access-hardware
+  title: Boot, reconnect and firmware update never open; every open logged with source
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 8
+  module: services/edge
+  status: not-started
+- id: HW-04
+  kind: requirement
+  area: access-hardware
+  title: Safety loops and obstruction detection stay independent of app and AI
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 8
+  module: services/edge
+  status: not-started
+- id: HW-05
+  kind: requirement
+  area: access-hardware
+  title: Signed commissioning checklist from installer and society before live actuation
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 8
+  module: docs/runbooks
+  status: not-started
+- id: HW-06
+  kind: requirement
+  area: access-hardware
+  title: Adapter interface contract; simulator implements it with simulation flag, no live relays
+  priority: P0
+  release: M1
+  release_notes: 'M1: simulator only; M2: live adapters'
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: HW-07
+  kind: requirement
+  area: access-hardware
+  title: Each lane has a single actuator authority, also during cutover from an incumbent
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 29
+  slice: 8
+  module: services/edge
+  status: not-started
+- id: VEH-01
+  kind: requirement
+  area: vehicles
+  title: Vehicle registry per unit with hashed tag identifier and replacement history
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 30
+  slice: 4
+  module: services/api/modules/vehicles
+  status: not-started
+- id: VEH-02
+  kind: requirement
+  area: vehicles
+  title: UHF RFID drive-through enrolment; FASTag read treated as identifier only
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 30
+  slice: 8
+  module: services/api/modules/vehicles
+  status: not-started
+- id: VEH-03
+  kind: requirement
+  area: vehicles
+  title: ANPR with calibration set, thresholds, multi-frame consensus, short image retention
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/vehicles
+  status: not-started
+- id: VEH-04
+  kind: requirement
+  area: vehicles
+  title: 'Fusion rule: tag match, else exact ANPR consensus, else guard confirmation'
+  priority: P0
+  release: M2
+  release_notes: 'M2: RFID path; M3: ANPR path'
+  labels: []
+  prd_section: '9.13'
+  prd_page: 30
+  slice: 8
+  module: services/api/modules/vehicles
+  status: not-started
+- id: VEH-05
+  kind: requirement
+  area: vehicles
+  title: Visitor vehicle plate on the pass with guard one-tap confirmation
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.13'
+  prd_page: 30
+  slice: 8
+  module: services/api/modules/vehicles
+  status: not-started
+- id: IOT-01
+  kind: requirement
+  area: iot-telemetry
+  title: Canonical append-only meter reading; measured, estimated and missing kept distinct
+  priority: P0
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: IOT-02
+  kind: requirement
+  area: iot-telemetry
+  title: Meter adapters for LoRaWAN, Modbus, M-Bus and MQTT; never a safety channel
+  priority: P0
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/edge
+  status: not-started
+- id: IOT-03
+  kind: requirement
+  area: iot-telemetry
+  title: Negative deltas, resets, rollover, duplicates and stale samples rejected or reviewed
+  priority: P0
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: WATER-01
+  kind: requirement
+  area: iot-water
+  title: Tanker verification from PO through calibrated inlet readings to invoice match
+  priority: P0
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: WATER-02
+  kind: requirement
+  area: iot-water
+  title: Variance threshold flags invoices for review without alleging theft or holding payment
+  priority: P0
+  release: M3
+  release_notes: 2% threshold is a proposal; configurable only after metrology review
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: WATER-03
+  kind: requirement
+  area: iot-water
+  title: Per-unit water sub-metering billing only where pack and resolution allow
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: [LEGAL]
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: FUEL-01
+  kind: requirement
+  area: iot-dg-fuel
+  title: DG fuel reconciliation against load baseline; anomalies become inspection drafts
+  priority: P0
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: FUEL-02
+  kind: requirement
+  area: iot-dg-fuel
+  title: Genset controller over Modbus, grid-outage comparison and NCR DG-use status
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: EV-01
+  kind: requirement
+  area: iot-ev
+  title: OCPP 1.6J and 2.0.1 charger adapter mapped to one internal session ledger
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: EV-02
+  kind: requirement
+  area: iot-ev
+  title: Local deterministic EV load controller with headroom, minimum current and stale-input cap
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 30
+  slice: 9
+  module: services/edge
+  status: not-started
+- id: EV-03
+  kind: requirement
+  area: iot-ev
+  title: EV tariff fixed at session start; Wh energy; lost stops reviewed; billing needs approvals
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: [LEGAL, CA]
+  prd_section: '9.14'
+  prd_page: 31
+  slice: 9
+  module: services/api/modules/iot
+  status: not-started
+- id: SUS-01
+  kind: requirement
+  area: sustainability
+  title: Sustainability dashboard with litres per person, tanker dependence, DG use and sources
+  priority: P2
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.14'
+  prd_page: 31
+  slice: 9
+  module: services/api/modules/reports
+  status: not-started
+- id: PRIV-01
+  kind: requirement
+  area: privacy
+  title: Data inventory and purpose map with a lawful basis recorded per purpose
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-02
+  kind: requirement
+  area: privacy
+  title: Layered, versioned privacy notices in several languages with audio and assisted reading
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-03
+  kind: requirement
+  area: privacy
+  title: Visitor notice-first flow with affirmative action recorded against the notice version
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-04
+  kind: requirement
+  area: privacy
+  title: Minimal gate record; no Aadhaar copies, mandatory biometrics or contact-book upload
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-05
+  kind: requirement
+  area: privacy
+  title: No child accounts at MVP; children added by a parent with minimal fields
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-06
+  kind: requirement
+  area: privacy
+  title: Versioned retention rule objects with operational removal distinct from final erasure
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-07
+  kind: requirement
+  area: privacy
+  title: Segregated encrypted one-year archive excluded from search, analytics and AI retrieval
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-08
+  kind: requirement
+  area: privacy
+  title: Deletion job from eligibility check to replica erasure, tombstones and completion proof
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-09
+  kind: requirement
+  area: privacy
+  title: Backups on 35-day rotation; isolated restores re-apply tombstones before users connect
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-10
+  kind: requirement
+  area: privacy
+  title: Legal holds with authority, case, scope filter, review date and release authority
+  priority: P1
+  release: M2
+  release_notes: printed M2; AT-23 (M1) needs minimal legal-hold support at M1
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-11
+  kind: requirement
+  area: privacy
+  title: Phone masking to last four digits, time-limited proxy calls, logged reveals
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 31
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-12
+  kind: requirement
+  area: privacy
+  title: Rights portal for access, correction, erasure, grievance and nomination with response targets
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-13
+  kind: requirement
+  area: privacy
+  title: Breach runbook with distinct containment, society notice, CERT-In and DPDP clocks
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 6
+  module: docs/runbooks
+  status: not-started
+- id: PRIV-14
+  kind: requirement
+  area: privacy
+  title: Indian data residency choice and approved sub-processor list; AI inputs minimised
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: PRIV-15
+  kind: requirement
+  area: privacy
+  title: Photos default off, no training on society content, AI data follows retention classes
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: RIGHTS-01
+  kind: requirement
+  area: resident-rights
+  title: Debt never restricts entry, egress, essential services, or complaint and privacy channels
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 5
+  module: services/api/modules/privacy
+  status: not-started
+- id: RIGHTS-02
+  kind: requirement
+  area: resident-rights
+  title: No configuration that filters or restricts residents by religion, diet or marital status
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 5
+  module: services/api/modules/privacy
+  status: not-started
+- id: RIGHTS-03
+  kind: requirement
+  area: resident-rights
+  title: Tenant safeguards with visible rules ledger, action explanations and independent appeal
+  priority: P0
+  release: M1
+  release_notes: LEGAL label inherited from the section 9.15 heading
+  labels: [LEGAL]
+  prd_section: '9.15'
+  prd_page: 32
+  slice: 5
+  module: services/api/modules/privacy
+  status: not-started
+- id: RPT-01
+  kind: requirement
+  area: reports
+  title: Gate KPI dashboard covering latencies, scan share, acknowledgement, fallback and overrides
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/reports
+  status: not-started
+- id: RPT-02
+  kind: requirement
+  area: reports
+  title: Committee dashboard of collections, arrears, mismatch age, SLA, cash, funds, notifications
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: RPT-03
+  kind: requirement
+  area: reports
+  title: Agency reconciliation of deployed versus invoiced shifts by post
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: RPT-04
+  kind: requirement
+  area: reports
+  title: Member transparency ledger showing expenses with bills and approval trail
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: RPT-05
+  kind: requirement
+  area: reports
+  title: Per-society reliability SLA report with denominators and conditions
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: RPT-06
+  kind: requirement
+  area: reports
+  title: Plain-language questions answered over read-only finance views
+  priority: P2
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: RPT-07
+  kind: requirement
+  area: reports
+  title: Pilot metrics on overdue critical PM, repeat faults, restoration and reopen rates
+  priority: P0
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.16'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/reports
+  status: not-started
+- id: PLAT-01
+  kind: requirement
+  area: platform-admin
+  title: Internal console with just-in-time scoped support access and metadata-only diagnostics
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.17'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: PLAT-02
+  kind: requirement
+  area: platform-admin
+  title: Device fleet management with enrolment, certificate rotation, remote wipe and firmware inventory
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.17'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: PLAT-03
+  kind: requirement
+  area: platform-admin
+  title: Subscription billing per contracted unit with tiers, minimum fee, caps and renewal notice
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '9.17'
+  prd_page: 32
+  slice: 6
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: PLAT-04
+  kind: requirement
+  area: platform-admin
+  title: Support ticketing with a single accountable owner and an internal AI copilot
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '9.17'
+  prd_page: 32
+  slice: 7
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: PLAT-05
+  kind: requirement
+  area: platform-admin
+  title: FM company console with multi-society views, entity separation and white-label
+  priority: P1
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '9.17'
+  prd_page: 32
+  slice: 9
+  module: services/api/modules/platform_admin
+  status: not-started
+- id: AI-SYS-01
+  kind: requirement
+  area: ai-platform
+  title: Server-side model access via provider adapter with full ai_runs audit
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-SYS-02
+  kind: requirement
+  area: ai-platform
+  title: Retrieval enforces society, role, unit and document visibility before and after search
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-SYS-03
+  kind: requirement
+  area: ai-platform
+  title: Uploaded content treated as untrusted data; model cannot follow embedded instructions
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-SYS-04
+  kind: requirement
+  area: ai-platform
+  title: Action proposal object bound to payload hash with execution-time re-checks
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/api/modules/ai
+  status: not-started
+- id: AI-SYS-05
+  kind: requirement
+  area: ai-platform
+  title: PII redaction middleware tokenises identifiers; golden-set recall at least 99 percent
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-SYS-06
+  kind: requirement
+  area: ai-platform
+  title: 15 s timeout and outage fall back to ordinary forms; per-society kill switch
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-SYS-07
+  kind: requirement
+  area: ai-platform
+  title: Versioned prompt files with regression set and canary rollout on changes
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: packages/prompts
+  status: not-started
+- id: AI-SYS-08
+  kind: requirement
+  area: ai-platform
+  title: Users see AI draft label, sources, save scope and correction route
+  priority: P0
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 33
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-SYS-09
+  kind: requirement
+  area: ai-platform
+  title: Shared monthly AI quota per society with a firm cap and visible usage
+  priority: P1
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '10.3'
+  prd_page: 34
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: G1
+  kind: guardrail
+  area: ai-guardrails
+  title: AI can assist and flag, but granting gate entry is outside its authority
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G2
+  kind: guardrail
+  area: ai-guardrails
+  title: Journal posting, bill release, payment approval and tax filing stay outside AI authority
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G3
+  kind: guardrail
+  area: ai-guardrails
+  title: AI sends nothing to residents unprompted except approved translations, concierge replies, reminders
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G4
+  kind: guardrail
+  area: ai-guardrails
+  title: Face recognition of any person, children included, is barred for AI through M3
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G5
+  kind: guardrail
+  area: ai-guardrails
+  title: No marketing profiling; collections predictions internal and never restrict essentials
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G6
+  kind: guardrail
+  area: ai-guardrails
+  title: Strip or tokenise personal data before every model call
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G7
+  kind: guardrail
+  area: ai-guardrails
+  title: Rule, bill and policy answers cite version and date; abstain on missing evidence
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G8
+  kind: guardrail
+  area: ai-guardrails
+  title: Respond in the user's language and always offer the original translation text
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G9
+  kind: guardrail
+  area: ai-guardrails
+  title: Flags and scores always come with a plain-words explanation
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G10
+  kind: guardrail
+  area: ai-guardrails
+  title: Legal answers are advisory and point to counsel under uncertainty
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G11
+  kind: guardrail
+  area: ai-guardrails
+  title: Customer data never trains models; sub-processors are disclosed
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: G12
+  kind: guardrail
+  area: ai-guardrails
+  title: Lift, electrical, gas and fire guidance restricted to approved manuals and SOPs
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '10.4'
+  prd_page: 34
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G01
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Voice-first visitor entry pre-filling type, brand, unit and count
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: >=95% critical fields correct after confirmation; median entry time down 40%
+    vs form'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G02
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Live two-way speech translation at the gate
+  priority: null
+  release: M4
+  release_notes: 'class=B; target: guard-rated usefulness; never used for approvals'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: null
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G03
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Classify visitor intent as guest, delivery, service, cab or staff
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: macro-F1 >=0.90'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G04
+  kind: ai-feature
+  area: ai-guard-gate
+  title: ID and registration document OCR with masked numbers
+  priority: null
+  release: M2
+  release_notes: 'class=C; target: >=98% key fields exact; 100% Aadhaar masking'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G05
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Edge ANPR producing plate text with confidence as evidence only
+  priority: null
+  release: M3
+  release_notes: 'class=n/a; feeds VEH-04; target: field acceptance per section 9.13'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 9
+  module: services/edge
+  status: not-started
+- id: AI-G06
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Parcel label OCR suggesting unit, recipient and carrier
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: >=90% correct unit suggestion; guard confirms'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G07
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Guard training coach using voice quizzes and role-play
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: >=95% of new guards competent in first shift'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G08
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Shift handover summary of pending items
+  priority: null
+  release: M1
+  release_notes: 'class=B; alias=AI-14; target: 100% of unresolved critical items retained; no invented exits'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G09
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Incident report drafted from guard voice narration with English translation
+  priority: null
+  release: M2
+  release_notes: 'class=B; alias=AI-15; target: observation separated from allegation; corrections preserved'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-G10
+  kind: ai-feature
+  area: ai-guard-gate
+  title: Gate queue forecast producing staffing suggestions from aggregates
+  priority: null
+  release: M3
+  release_notes: 'class=B; alias=AI-28; target: peak forecast error under 20%; no individual profiling'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R01
+  kind: ai-feature
+  area: ai-resident
+  title: Society concierge Q&A with document, section, version and effective date
+  priority: null
+  release: M2
+  release_notes: 'class=A; alias=AI-04; target: >=95% supported answers; >=95% correct abstention or conflict handling'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R02
+  kind: ai-feature
+  area: ai-resident
+  title: Voice, photo or text complaint intake producing an editable ticket draft
+  priority: null
+  release: M1
+  release_notes: 'class=B; alias=AI-01; target: >=95% critical fields correct after confirmation; no auto-submit'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R03
+  kind: ai-feature
+  area: ai-resident
+  title: Bill explainer describing current versus previous bill in plain language
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: 100% of numbers from the deterministic diff'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R04
+  kind: ai-feature
+  area: ai-resident
+  title: Order screenshot converted into a delivery pre-approval draft
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: >=95% brand and window accuracy; image deleted after use'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R05
+  kind: ai-feature
+  area: ai-resident
+  title: Standing rule suggestions from a unit's own approval history
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: opt-in; visible only to that unit'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R06
+  kind: ai-feature
+  area: ai-resident
+  title: Notification health assistant giving device-specific fix steps
+  priority: null
+  release: M1
+  release_notes: 'class=A; target: measured acknowledgement improvement on affected devices'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R07
+  kind: ai-feature
+  area: ai-resident
+  title: Notice and ticket translation with the original retained
+  priority: null
+  release: M1
+  release_notes: 'class=B; alias=AI-02; target: >=95% meaning preserved; legal or safety text human-approved'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R08
+  kind: ai-feature
+  area: ai-resident
+  title: Spoken IVR approvals mapped to allow, deny or talk to guard
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: >=98% intent accuracy; ambiguity falls back to keypad'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 35
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R09
+  kind: ai-feature
+  area: ai-resident
+  title: Amenity booking by chat producing a booking proposal
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: explicit confirmation; rules enforced by the booking service'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R10
+  kind: ai-feature
+  area: ai-resident
+  title: Personal navigation assistant to permitted screens or action proposals
+  priority: null
+  release: M2
+  release_notes: 'class=A/B; alias=AI-05; target: no inaccessible route or data; confirmation before writes'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-R11
+  kind: ai-feature
+  area: ai-resident
+  title: Accessible plain-language and audio versions of notices
+  priority: null
+  release: M2
+  release_notes: 'class=B; alias=AI-19; target: no omitted deadline, charge or safety instruction'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C01
+  kind: ai-feature
+  area: ai-committee
+  title: Notice and circular drafter producing multilingual drafts for approval
+  priority: null
+  release: M1
+  release_notes: 'class=B; target: human approval before publishing; flags threatening language'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C02
+  kind: ai-feature
+  area: ai-committee
+  title: Minutes drafted from consented recording with diarisation
+  priority: null
+  release: M2
+  release_notes: 'class=B; alias=AI-09; target: >=95% of motions captured; zero invented votes or results'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C03
+  kind: ai-feature
+  area: ai-committee
+  title: Meeting notice and agenda builder with deterministic statutory checks
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: rule failures block sending until resolved'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C04
+  kind: ai-feature
+  area: ai-committee
+  title: Finance Q&A through read-only SQL on allow-listed views
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: query shown; 100% of numbers from the database'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C05
+  kind: ai-feature
+  area: ai-committee
+  title: Bill-run anomaly check flagging units with reasons
+  priority: null
+  release: M1
+  release_notes: 'class=A; target: precision >=70%; preset violations block deterministically'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 5
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C06
+  kind: ai-feature
+  area: ai-committee
+  title: Budget builder and variance commentary from deterministic tables
+  priority: null
+  release: M2
+  release_notes: 'class=A/B; alias=AI-11; target: every number matches source'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C07
+  kind: ai-feature
+  area: ai-committee
+  title: Quotation comparison matrix with gaps highlighted
+  priority: null
+  release: M2
+  release_notes: 'class=C; alias=AI-10; target: all material price, tax and warranty fields source-linked'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C08
+  kind: ai-feature
+  area: ai-committee
+  title: Contract and AMC extraction of dates, SLAs, penalties and renewals
+  priority: null
+  release: M2
+  release_notes: 'class=B/C; alias=AI-16; target: reviewer confirms before reminders are created'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C09
+  kind: ai-feature
+  area: ai-committee
+  title: Collections reminder drafts for configured liable recipients
+  priority: null
+  release: M2
+  release_notes: 'class=B; alias=AI-12; target: no shaming or threats; hardship route included'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C10
+  kind: ai-feature
+  area: ai-committee
+  title: Monthly aggregate issue themes from tickets
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: aggregates only; no individual profiling'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C11
+  kind: ai-feature
+  area: ai-committee
+  title: Compliance assistant answering from legal pack and bye-laws with citations
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: always cites; recommends counsel when unclear'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-C12
+  kind: ai-feature
+  area: ai-committee
+  title: Poll wording check that flags bias and suggests neutral text
+  priority: null
+  release: M1
+  release_notes: 'class=B; target: reviewer accepts or edits'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A01
+  kind: ai-feature
+  area: ai-accounting
+  title: Vendor invoice extraction to typed fields with bank-change flag
+  priority: null
+  release: M2
+  release_notes: 'class=C; alias=AI-06; target: >=98% key fields exact; 100% arithmetic checks; uncertain fields
+    null'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A02
+  kind: ai-feature
+  area: ai-accounting
+  title: Bank reconciliation ranking of candidate matches with reason codes
+  priority: null
+  release: M2
+  release_notes: 'class=C; alias=AI-08; target: top-3 recall >=95%; no autonomous posting'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A03
+  kind: ai-feature
+  area: ai-accounting
+  title: Expense account suggestion for vendor bills
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: >=90% top-1 accuracy on history'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A04
+  kind: ai-feature
+  area: ai-accounting
+  title: Tax rule explainer limited to approved configured rules
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: rules only from approved tables'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A05
+  kind: ai-feature
+  area: ai-accounting
+  title: Audit pack narrator linking every number to the ledger
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: every number linked to the ledger'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A06
+  kind: ai-feature
+  area: ai-accounting
+  title: Migration mapper proposing column mappings from headers and redacted samples
+  priority: null
+  release: M2
+  release_notes: 'class=C; alias=AI-17; target: totals match after review; no silently dropped column'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-A07
+  kind: ai-feature
+  area: ai-accounting
+  title: Detect duplicate and split vendor invoices and present them as candidates
+  priority: null
+  release: M2
+  release_notes: 'class=C; alias=AI-07; target: >=95% precision; never auto-rejects'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 36
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F01
+  kind: ai-feature
+  area: ai-facilities
+  title: Ticket triage and duplicate grouping with proposed parent incident
+  priority: null
+  release: M1
+  release_notes: 'class=B; alias=AI-03,AI-18; target: macro-F1 >=0.90; grouping precision >=95%; no cross-unit disclosure'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F02
+  kind: ai-feature
+  area: ai-facilities
+  title: Technician copilot producing cited checklists from approved manuals
+  priority: null
+  release: M2
+  release_notes: 'class=B/C; alias=AI-13; target: cites manual version; escalates hazardous ambiguity'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F03
+  kind: ai-feature
+  area: ai-facilities
+  title: Photo defect classification with suggested severity
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: exposed wiring and structural cracks always escalate to a human'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F04
+  kind: ai-feature
+  area: ai-facilities
+  title: Equipment failure risk ranking of inspection priority
+  priority: null
+  release: M4
+  release_notes: 'class=B; alias=AI-25; target: prospective value over rules with adequate fault labels'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: null
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F05
+  kind: ai-feature
+  area: ai-facilities
+  title: PPM plan drafter from manuals and statutory calendar
+  priority: null
+  release: M2
+  release_notes: 'class=C; target: estate manager approves; statutory items marked mandatory'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F06
+  kind: ai-feature
+  area: ai-facilities
+  title: Work completion verification flags from photos and checklist
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: advisory only'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F07
+  kind: ai-feature
+  area: ai-facilities
+  title: Spare demand forecast producing reorder proposals
+  priority: null
+  release: M4
+  release_notes: 'class=C; alias=AI-26; target: fewer stock-outs without excess; no autonomous purchase'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: null
+  module: services/ai-gateway
+  status: not-started
+- id: AI-F08
+  kind: ai-feature
+  area: ai-facilities
+  title: SLA breach prediction producing escalation candidates
+  priority: null
+  release: M3
+  release_notes: 'class=B; alias=AI-27; target: precision >=80% and measured benefit over due-time rules'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I01
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: Water-loss anomaly detection as inspection candidates
+  priority: null
+  release: M3
+  release_notes: 'class=B; alias=AI-21; target: beats seasonal rule baseline; reports precision and missed incidents'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I02
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: Tanker discrepancy review explaining variance from meter, PO and invoice
+  priority: null
+  release: M3
+  release_notes: 'class=C; alias=AI-22; target: all quantities traceable; no theft allegation or payment hold'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I03
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: DG fuel anomaly detection against a load-normalised baseline
+  priority: null
+  release: M3
+  release_notes: 'class=B; alias=AI-23; target: sensor-error explanations visible'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I04
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: EV smart scheduling within hard engineered limits
+  priority: null
+  release: M3
+  release_notes: 'class=B; target: never exceeds engineered limits'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I05
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: Energy demand forecasting with optimisation hints
+  priority: null
+  release: M3
+  release_notes: 'class=A/B; alias=AI-24; target: better than seasonal-naive error; never overrides local caps'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I06
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: Sustainability report writer from deterministic metrics
+  priority: null
+  release: M3
+  release_notes: 'class=B; target: numbers from source only'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/ai-gateway
+  status: not-started
+- id: AI-I07
+  kind: ai-feature
+  area: ai-iot-sustainability
+  title: Portfolio efficiency benchmarks over aggregated cohorts
+  priority: null
+  release: M4
+  release_notes: 'class=A; alias=AI-30; target: minimum cohort size; no household re-identification'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: null
+  module: services/ai-gateway
+  status: not-started
+- id: AI-S01
+  kind: ai-feature
+  area: ai-security
+  title: Edge camera event triage for obstruction, tailgating and smoke
+  priority: null
+  release: M3
+  release_notes: 'class=B/C; printed M3+ (site-dependent, opt-in); alias=AI-29; target: site precision, recall and
+    false-alarm burden; no facial identity'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 9
+  module: services/edge
+  status: not-started
+- id: AI-S02
+  kind: ai-feature
+  area: ai-security
+  title: Access anomaly detection alerting supervisor and affected unit
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: precision >=70%; no broadcast of alerts'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-S03
+  kind: ai-feature
+  area: ai-security
+  title: Emergency SOP assistant showing approved procedures and contacts
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: displays approved SOPs only'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-D02
+  kind: ai-feature
+  area: ai-staff
+  title: Staff voice onboarding via IVR with consent in their language
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: confirmation playback; human review'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-P01
+  kind: ai-feature
+  area: ai-platform-support
+  title: Internal support copilot with redacted metadata
+  priority: null
+  release: M2
+  release_notes: 'class=A; target: no secret leakage'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-P02
+  kind: ai-feature
+  area: ai-platform-support
+  title: Society setup wizard drafting configuration for admin approval
+  priority: null
+  release: M2
+  release_notes: 'class=C; target: admin approves every section'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-P03
+  kind: ai-feature
+  area: ai-platform-support
+  title: Bye-law ingestion proposing legal-pack overrides with clause references
+  priority: null
+  release: M2
+  release_notes: 'class=C; target: overrides conflicting with statutory caps rejected; admin approves each'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 37
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-P04
+  kind: ai-feature
+  area: ai-platform-support
+  title: Privacy request assistant drafting redacted responses
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: admin approves; statutory retention overrides erasure'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 38
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-P05
+  kind: ai-feature
+  area: ai-platform-support
+  title: Help-content translation into supported languages
+  priority: null
+  release: M2
+  release_notes: 'class=B; target: human spot checks'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 38
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: AI-P06
+  kind: ai-feature
+  area: ai-platform-support
+  title: Support diagnostic assistant producing checklists from redacted metadata
+  priority: null
+  release: M2
+  release_notes: 'class=A/B; alias=AI-20; target: no unsupported fix; evidence and rollback attached'
+  labels: []
+  prd_section: '11.1'
+  prd_page: 38
+  slice: 7
+  module: services/ai-gateway
+  status: not-started
+- id: OBS-01
+  kind: requirement
+  area: observability
+  title: Structured logs with correlation ID and safe codes, never secrets or personal data
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '13'
+  prd_page: 43
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: OBS-02
+  kind: requirement
+  area: observability
+  title: Per-society and per-device metrics for sync, policy, outbox, disk, battery, relay errors
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '13'
+  prd_page: 43
+  slice: 3
+  module: services/api/core
+  status: not-started
+- id: OBS-03
+  kind: requirement
+  area: observability
+  title: On-call alerts for silent edge, refresh failure, disk, escalation and erasure backlog
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '13'
+  prd_page: 43
+  slice: 6
+  module: infra
+  status: not-started
+- id: RUN-01
+  kind: runbook
+  area: operations
+  title: Expand-and-contract migrations, canary society, no destructive rollback of postings
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '13'
+  prd_page: 43
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: RUN-02
+  kind: runbook
+  area: operations
+  title: Signed A/B edge updates with power and health pre-checks and no actuation
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '13'
+  prd_page: 43
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: RUN-03
+  kind: runbook
+  area: operations
+  title: Sev-1 acknowledgement in 15 minutes with updates every 30; outage and breach runbooks
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '13'
+  prd_page: 43
+  slice: 6
+  module: docs/runbooks
+  status: not-started
+- id: NFR-01
+  kind: nfr
+  area: non-functional
+  title: Cloud core availability of 99.9 percent monthly
+  priority: null
+  release: null
+  release_notes: 'target: 99.9% monthly (about 43.2 min budget per 30 days)'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 6
+  module: services/api/core
+  status: not-started
+- id: NFR-02
+  kind: nfr
+  area: non-functional
+  title: Cached policy decision latency p95 150 ms and p99 300 ms
+  priority: null
+  release: null
+  release_notes: 'target: p95 <=150 ms, p99 <=300 ms; 50,000 cached credentials, 20 events/s burst on certified
+    gateway'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: NFR-03
+  kind: nfr
+  area: non-functional
+  title: Scan to open command latency p95 500 ms
+  priority: null
+  release: null
+  release_notes: 'target: p95 <=500 ms; valid credential, healthy LAN; excludes barrier motion'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: NFR-04
+  kind: nfr
+  area: non-functional
+  title: LAN propagation between terminals p95 one second
+  priority: null
+  release: null
+  release_notes: 'target: p95 <=1 s; two terminals, one gateway'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: NFR-05
+  kind: nfr
+  area: non-functional
+  title: Median ten seconds to process a pre-approved arrival
+  priority: null
+  release: null
+  release_notes: 'target: median <=10 s; field observation in peak windows'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 4
+  module: apps/guard-android
+  status: not-started
+- id: NFR-06
+  kind: nfr
+  area: non-functional
+  title: Unannounced visitor decisions within 45 s at p95, inside request expiry
+  priority: null
+  release: null
+  release_notes: 'target: p95 <=45 s including fallbacks; never above request expiry'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NFR-07
+  kind: nfr
+  area: non-functional
+  title: Approval alert cancellation on all devices within two seconds
+  priority: null
+  release: null
+  release_notes: 'target: <=2 s after decision; two-device test'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 4
+  module: services/api/modules/notifications
+  status: not-started
+- id: NFR-08
+  kind: nfr
+  area: non-functional
+  title: Server-side p95 of 400 ms for standard API calls
+  priority: null
+  release: null
+  release_notes: 'target: p95 <=400 ms server time; providers excluded'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 6
+  module: services/api/core
+  status: not-started
+- id: NFR-09
+  kind: nfr
+  area: non-functional
+  title: 72-hour offline buffer holding 60,000 or more events without loss
+  priority: null
+  release: null
+  release_notes: 'target: 72 h and 60,000+ events; WAN unplugged with restarts; no acknowledged-event loss'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 3
+  module: services/edge
+  status: not-started
+- id: NFR-10
+  kind: nfr
+  area: non-functional
+  title: Sync recovery of 60,000 events within ten minutes at 5 Mbps
+  priority: null
+  release: null
+  release_notes: 'target: 60,000 events in <=10 min; 5 Mbps uplink, 2 KB per event'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 3
+  module: services/api/modules/edge_sync
+  status: not-started
+- id: NFR-11
+  kind: nfr
+  area: non-functional
+  title: Cloud RPO five minutes and RTO sixty minutes
+  priority: null
+  release: null
+  release_notes: 'target: RPO <=5 min, RTO <=60 min; isolated restore with ledger, permission and tombstone validation'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 6
+  module: infra
+  status: not-started
+- id: NFR-12
+  kind: nfr
+  area: non-functional
+  title: Billing run of 10,000 unit invoices within ten minutes
+  priority: null
+  release: null
+  release_notes: 'target: 10,000 unit invoices in <=10 min; no external IRP calls'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 5
+  module: services/api/modules/billing
+  status: not-started
+- id: NFR-13
+  kind: nfr
+  area: non-functional
+  title: AI draft or answer latency p95 15 seconds with timeout fallback
+  priority: null
+  release: null
+  release_notes: 'target: p95 draft or answer <=15 s; timeout returns the ordinary UI'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 4
+  module: services/ai-gateway
+  status: not-started
+- id: NFR-14
+  kind: nfr
+  area: non-functional
+  title: WCAG 2.2 AA for web, with equivalent testing for native apps
+  priority: null
+  release: null
+  release_notes: 'target: WCAG 2.2 AA on web; native equivalent; automated plus screen-reader and keyboard tests'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 4
+  module: apps/admin-web
+  status: not-started
+- id: NFR-15
+  kind: nfr
+  area: non-functional
+  title: Load certification at section 4.4 sizing
+  priority: null
+  release: null
+  release_notes: 'target: section 4.4 sizing (2,000 units, six gates, 20,000 events/day, 50,000 credentials; 100
+    societies)'
+  labels: []
+  prd_section: '14'
+  prd_page: 44
+  slice: 6
+  module: tests/load
+  status: not-started
+- id: SEC-01
+  kind: security
+  area: security
+  title: Threat model mapping each listed threat to preventive, detective and recovery controls
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 1
+  module: docs/security
+  status: not-started
+- id: SEC-02
+  kind: security
+  area: security
+  title: TLS, device mTLS, KMS keys, field encryption, least privilege, signed builds, SBOM
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 1
+  module: infra
+  status: not-started
+- id: SEC-03
+  kind: security
+  area: security
+  title: Upload validation, malware scanning and safe archive extraction
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 4
+  module: services/api/core
+  status: not-started
+- id: SEC-04
+  kind: security
+  area: security
+  title: Object storage via server policy and short-lived signed URLs after access checks
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 4
+  module: services/api/core
+  status: not-started
+- id: SEC-05
+  kind: security
+  area: security
+  title: API IDs, CSV exports and AI sources share permission tests and enumeration protection
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 1
+  module: services/api/core
+  status: not-started
+- id: SEC-06
+  kind: security
+  area: security
+  title: Security logs retained per approved schedule; one-hour contractual incident notice target
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: SEC-07
+  kind: security
+  area: security
+  title: No compulsory face biometrics or sensitive demographic profiling; cross-border transfers reviewed
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 6
+  module: services/api/modules/privacy
+  status: not-started
+- id: SEC-08
+  kind: security
+  area: security
+  title: OWASP ASVS Level 2 and MASVS as baselines
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 6
+  module: tests/security
+  status: not-started
+- id: SEC-09
+  kind: security
+  area: security
+  title: Third-party pen test required ahead of paid general release
+  priority: null
+  release: null
+  release_notes: PRD 4.1 makes a pen test with no open critical or high findings an M2 exit condition
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 7
+  module: tests/security
+  status: not-started
+- id: SEC-10
+  kind: security
+  area: security
+  title: Security acceptance pack covering role matrix, IDOR, XSS, replay, injection and restore
+  priority: null
+  release: null
+  release_notes: null
+  labels: []
+  prd_section: '15'
+  prd_page: 45
+  slice: 6
+  module: tests/security
+  status: not-started
+- id: AT-01
+  kind: acceptance
+  area: acceptance
+  title: Society A user switches to B and replays A's object IDs
+  priority: null
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 1
+  module: tests/acceptance
+  status: not-started
+- id: AT-02
+  kind: acceptance
+  area: acceptance
+  title: Non-resident owner asks for tenant's visit history
+  priority: null
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 1
+  module: tests/acceptance
+  status: not-started
+- id: AT-03
+  kind: acceptance
+  area: acceptance
+  title: Pending guest request with two family decisions racing
+  priority: null
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 2
+  module: tests/acceptance
+  status: not-started
+- id: AT-04
+  kind: acceptance
+  area: acceptance
+  title: Queued approval arriving after the request already lapsed
+  priority: null
+  release: M0
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 2
+  module: tests/acceptance
+  status: not-started
+- id: AT-05
+  kind: acceptance
+  area: acceptance
+  title: Guest QR used once, then shown at a separate isolated gate
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 3
+  module: tests/acceptance
+  status: not-started
+- id: AT-06
+  kind: acceptance
+  area: acceptance
+  title: WAN outage lasting 72 hours with restarts
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 3
+  module: tests/acceptance
+  status: not-started
+- id: AT-07
+  kind: acceptance
+  area: acceptance
+  title: Gateway failure combined with a LAN split
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 3
+  module: tests/acceptance
+  status: not-started
+- id: AT-08
+  kind: acceptance
+  area: acceptance
+  title: Wall clock on a device rolled backwards
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 3
+  module: tests/acceptance
+  status: not-started
+- id: AT-09
+  kind: acceptance
+  area: acceptance
+  title: Barrier open command succeeded but relay callback never arrived
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 8
+  module: tests/acceptance
+  status: not-started
+- id: AT-10
+  kind: acceptance
+  area: acceptance
+  title: Obstruction picked up by safety loop or photocell
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 8
+  module: tests/acceptance
+  status: not-started
+- id: AT-11
+  kind: acceptance
+  area: acceptance
+  title: Resident phone force-stopped or push permission revoked
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-12
+  kind: acceptance
+  area: acceptance
+  title: Domestic worker dropped by one of three employers
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-13
+  kind: acceptance
+  area: acceptance
+  title: Repeat pickup attempt on an already collected parcel
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-14
+  kind: acceptance
+  area: acceptance
+  title: Duplicate submission of an invoice batch
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-15
+  kind: acceptance
+  area: acceptance
+  title: Duplicate or reordered payment callbacks
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-16
+  kind: acceptance
+  area: acceptance
+  title: Bank credit differs from gross settlement minus fees
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-17
+  kind: acceptance
+  area: acceptance
+  title: One receipt allocated by two operators at once
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-18
+  kind: acceptance
+  area: acceptance
+  title: Fixing an invoice that sits in a closed period
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-19
+  kind: acceptance
+  area: acceptance
+  title: Vendor bank change approved by the person who made it
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-20
+  kind: acceptance
+  area: acceptance
+  title: 200 users competing for 10 amenity slots
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-21
+  kind: acceptance
+  area: acceptance
+  title: Binding vote switched on with no approved legal pack
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-22
+  kind: acceptance
+  area: acceptance
+  title: Treasurer tries to restrict entry or essentials over debt
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-23
+  kind: acceptance
+  area: acceptance
+  title: Erasure demand colliding with an active legal hold
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 6
+  module: tests/acceptance
+  status: not-started
+- id: AT-24
+  kind: acceptance
+  area: acceptance
+  title: Deleted visitor resurfacing from a stale device or backup
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 6
+  module: tests/acceptance
+  status: not-started
+- id: AT-25
+  kind: acceptance
+  area: acceptance
+  title: Malicious document tells the AI to leak neighbours' data
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-26
+  kind: acceptance
+  area: acceptance
+  title: AI proposal confirmed after the actor's role or target drifted
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-27
+  kind: acceptance
+  area: acceptance
+  title: Question with no authoritative source document
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-28
+  kind: acceptance
+  area: acceptance
+  title: OCR mixes up 8,000 and 80,000 on a vendor bill
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-29
+  kind: acceptance
+  area: acceptance
+  title: AI outage or exhausted AI budget
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-30
+  kind: acceptance
+  area: acceptance
+  title: Meter reset or duplicated meter messages
+  priority: null
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 9
+  module: tests/acceptance
+  status: not-started
+- id: AT-31
+  kind: acceptance
+  area: acceptance
+  title: Stale EV site meter or overloaded phase
+  priority: null
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 9
+  module: tests/acceptance
+  status: not-started
+- id: AT-32
+  kind: acceptance
+  area: acceptance
+  title: Privileged session still open when the committee term lapses
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-33
+  kind: acceptance
+  area: acceptance
+  title: Export of all financial data re-imported elsewhere
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 6
+  module: tests/acceptance
+  status: not-started
+- id: AT-34
+  kind: acceptance
+  area: acceptance
+  title: Recovery drill after a regional cloud incident
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 46
+  slice: 6
+  module: tests/acceptance
+  status: not-started
+- id: AT-35
+  kind: acceptance
+  area: acceptance
+  title: Low-vision resident and guard using a new language complete core tasks
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-36
+  kind: acceptance
+  area: acceptance
+  title: Settlement landing after migration cutover
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 6
+  module: tests/acceptance
+  status: not-started
+- id: AT-37
+  kind: acceptance
+  area: acceptance
+  title: Maharashtra pack with interest raised to 18 percent
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-38
+  kind: acceptance
+  area: acceptance
+  title: 300-member Maharashtra society with 20 verified attendees
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-39
+  kind: acceptance
+  area: acceptance
+  title: NEFT credit of 6,200 rupees to a unit's virtual account
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-40
+  kind: acceptance
+  area: acceptance
+  title: Ten seconds pass with no device acknowledging an approval
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-41
+  kind: acceptance
+  area: acceptance
+  title: Tanker billed for 12,000 L against 10,800 L measured
+  priority: null
+  release: M3
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 9
+  module: tests/acceptance
+  status: not-started
+- id: AT-42
+  kind: acceptance
+  area: acceptance
+  title: 7,800 rupee monthly contribution under a GST-registered RWA pack
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-43
+  kind: acceptance
+  area: acceptance
+  title: TDS fixture with contractor payments in March and April 2026
+  priority: null
+  release: M2
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 7
+  module: tests/acceptance
+  status: not-started
+- id: AT-44
+  kind: acceptance
+  area: acceptance
+  title: Owner confirms tenant by link, then committee places a hold
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-45
+  kind: acceptance
+  area: acceptance
+  title: Tampered journal hash chain in a test database
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-46
+  kind: acceptance
+  area: acceptance
+  title: 3,000 rupee UPI payment settled net of the 0.4 percent MDR
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 5
+  module: tests/acceptance
+  status: not-started
+- id: AT-47
+  kind: acceptance
+  area: acceptance
+  title: Defaulter restriction set on an amenity marked essential
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: AT-48
+  kind: acceptance
+  area: acceptance
+  title: New guard picks Marathi and runs the five training scenarios
+  priority: null
+  release: M1
+  release_notes: null
+  labels: []
+  prd_section: '16'
+  prd_page: 47
+  slice: 4
+  module: tests/acceptance
+  status: not-started
+- id: MIG-01
+  kind: runbook
+  area: migration
+  title: 'Migration discovery: signatory, entity, export rights, accounts, funds and open items'
+  priority: null
+  release: null
+  release_notes: runbook step applied per customer onboarding; pilot at M1
+  labels: []
+  prd_section: '17.2'
+  prd_page: 48
+  slice: 6
+  module: docs/runbooks
+  status: not-started
+- id: MIG-02
+  kind: runbook
+  area: migration
+  title: Migration dry run with checksums, reversible ID map, trial balance comparison
+  priority: null
+  release: null
+  release_notes: runbook step applied per customer onboarding; pilot at M1
+  labels: []
+  prd_section: '17.2'
+  prd_page: 48
+  slice: 6
+  module: docs/runbooks
+  status: not-started
+- id: MIG-03
+  kind: runbook
+  area: migration
+  title: Cutover with posting freeze, single actuator authority and incumbent invoicing disabled
+  priority: null
+  release: null
+  release_notes: runbook step applied per customer onboarding; pilot at M1
+  labels: []
+  prd_section: '17.2'
+  prd_page: 48
+  slice: 6
+  module: docs/runbooks
+  status: not-started
+- id: MIG-04
+  kind: runbook
+  area: migration
+  title: Rollback preserving all postings and events with one system of record
+  priority: null
+  release: null
+  release_notes: rollback procedure applied per customer onboarding; pilot at M1
+  labels: []
+  prd_section: '17.2'
+  prd_page: 48
+  slice: 6
+  module: docs/runbooks
+  status: not-started
+- id: Q1
+  kind: open-question
+  area: open-questions
+  title: Price acceptance at the 25, 35 and 50 rupee tiers
+  priority: null
+  release: null
+  release_notes: 'owner: Owner; evidence: 20 current contracts and 5 signed paid pilots'
+  labels: []
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: docs/adr
+  status: not-started
+- id: Q2
+  kind: open-question
+  area: open-questions
+  title: Push reliability on Xiaomi, Oppo, Vivo, Samsung and iOS handsets
+  priority: null
+  release: null
+  release_notes: 'owner: Tech lead; evidence: device matrix with blocked-permission tests'
+  labels: []
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/api/modules/notifications
+  status: not-started
+- id: Q3
+  kind: open-question
+  area: open-questions
+  title: Exact gate hardware controller manuals, firmware and read-zone measurements
+  priority: null
+  release: null
+  release_notes: 'owner: Installer; evidence: controller manuals, firmware, read-zone measurements'
+  labels: []
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/edge
+  status: not-started
+- id: Q4
+  kind: open-question
+  area: open-questions
+  title: Scope of one-year Rule 8(3) retention for visitor photos and ANPR images
+  priority: null
+  release: null
+  release_notes: 'owner: Advocate; evidence: counsel opinion'
+  labels: [LEGAL]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/api/modules/privacy
+  status: not-started
+- id: Q5
+  kind: open-question
+  area: open-questions
+  title: Maharashtra Rules 2026 values against Gazette text and model bye-laws status
+  priority: null
+  release: null
+  release_notes: 'owner: Advocate; evidence: Gazette text and Registrar circulars'
+  labels: [VERIFY]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: packages/legal-packs
+  status: not-started
+- id: Q6
+  kind: open-question
+  area: open-questions
+  title: Karnataka Apartment Bill 2026 enactment status and final provisions
+  priority: null
+  release: null
+  release_notes: 'owner: Advocate; evidence: Assembly record'
+  labels: [LEGAL]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: packages/legal-packs
+  status: not-started
+- id: Q7
+  kind: open-question
+  area: open-questions
+  title: Haryana position on online meetings and weighted votes
+  priority: null
+  release: null
+  release_notes: 'owner: Advocate; evidence: declaration and bye-laws'
+  labels: [LEGAL]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: packages/legal-packs
+  status: not-started
+- id: Q8
+  kind: open-question
+  area: open-questions
+  title: GST classification of maintenance, amenities, EV recovery and TDS categories
+  priority: null
+  release: null
+  release_notes: 'owner: CA; evidence: CA review of entity and invoice types'
+  labels: [CA]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: packages/tax-packs
+  status: not-started
+- id: Q9
+  kind: open-question
+  area: open-questions
+  title: UPI MDR classification, AutoPay and virtual-account costs from written acquirer schedule
+  priority: null
+  release: null
+  release_notes: 'owner: Treasurer; evidence: written acquirer schedule'
+  labels: [VERIFY]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/api/modules/payments
+  status: not-started
+- id: Q10
+  kind: open-question
+  area: open-questions
+  title: Delivery partner access needs written approval and production API rights
+  priority: null
+  release: null
+  release_notes: 'owner: Owner; evidence: written partner approval and production API rights'
+  labels: []
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/api/modules/parcels
+  status: not-started
+- id: Q11
+  kind: open-question
+  area: open-questions
+  title: Whether water can be billed by meter in Maharashtra societies
+  priority: null
+  release: null
+  release_notes: 'owner: Advocate; evidence: counsel opinion'
+  labels: [LEGAL]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/api/modules/iot
+  status: not-started
+- id: Q12
+  kind: open-question
+  area: open-questions
+  title: Vendor terms still open for calls, SMS, WhatsApp and video
+  priority: null
+  release: null
+  release_notes: 'owner: Owner; evidence: commercial terms'
+  labels: [TBD]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/api/modules/notifications
+  status: not-started
+- id: Q13
+  kind: open-question
+  area: open-questions
+  title: AI provider processing terms on region, retention and no-training
+  priority: null
+  release: null
+  release_notes: 'owner: Privacy owner; evidence: signed terms'
+  labels: []
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: services/ai-gateway
+  status: not-started
+- id: Q14
+  kind: open-question
+  area: open-questions
+  title: Name choice and trademark availability for the product
+  priority: null
+  release: null
+  release_notes: 'owner: Owner; evidence: trademark search'
+  labels: [TBD]
+  prd_section: '20'
+  prd_page: 54
+  slice: null
+  module: docs/adr
+  status: not-started
+- id: AI-D01
+  kind: guardrail
+  area: ai-staff
+  title: Withdrawn opt-in staff face matching; excluded from M1 to M3
+  priority: null
+  release: null
+  release_notes: withdrawn Draft A feature; exclusion text is in 11.5 (page 39); excluded from M1 to M3
+  labels: [LEGAL]
+  prd_section: Appendix D
+  prd_page: 59
+  slice: null
+  module: services/ai-gateway
+  status: not-started

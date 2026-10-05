@@ -1,0 +1,5 @@
+# JS/TS workspace. The apps are created by later steps; absent patterns are fine.
+packages:
+  - "apps/*"
+  - "packages/contracts"
+  - "packages/i18n"

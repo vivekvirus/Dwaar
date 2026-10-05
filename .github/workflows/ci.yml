@@ -1,0 +1,156 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DWAAR_ENV: test
+
+jobs:
+  python:
+    name: python (lint, types, tests, trace)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      # A superuser URL for the service container: the harness creates the Dwaar roles and
+      # per-test databases itself. Without this variable it would start a private cluster.
+      DWAAR_TEST_PG_ADMIN_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: PostgreSQL client (psql runs the role/database bootstrap SQL)
+        run: |
+          command -v psql || { sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client; }
+          psql --version
+
+      - name: Install dependencies (lockfile must be current)
+        run: uv sync --locked
+
+      - name: Lint
+        run: make lint
+
+      - name: Type check
+        run: make typecheck
+
+      - name: Tests
+        run: make test PYTEST_ARGS="--run-json .local/run/_run.json"
+
+      - name: Acceptance evidence (runs once acceptance tests exist)
+        if: hashFiles('tests/acceptance/**/*.py') != ''
+        run: make acceptance MILESTONE=M0
+
+      - name: Traceability
+        run: make trace
+
+      - name: Upload evidence and run report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence
+          path: |
+            docs/evidence/
+            .local/run/
+          if-no-files-found: ignore
+
+  node:
+    name: node (safe when no JS projects exist yet)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect JS/TS projects
+        id: detect
+        run: |
+          shopt -s nullglob
+          projects=(apps/*/package.json packages/contracts/package.json packages/i18n/package.json)
+          if [ "${#projects[@]}" -gt 0 ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            printf 'JS projects: %s\n' "${projects[@]}"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No JS/TS projects yet; node job is a no-op."
+          fi
+
+      - uses: pnpm/action-setup@v4
+        if: steps.detect.outputs.present == 'true'
+        # version comes from "packageManager" in package.json
+
+      - uses: actions/setup-node@v4
+        if: steps.detect.outputs.present == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        if: steps.detect.outputs.present == 'true'
+        run: |
+          if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install; fi
+
+      - name: Lint, typecheck, test
+        if: steps.detect.outputs.present == 'true'
+        run: |
+          pnpm -r --if-present run lint
+          pnpm -r --if-present run typecheck
+          pnpm -r --if-present run test
+
+  sbom:
+    name: sbom (CycloneDX)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Python SBOM
+        run: |
+          mkdir -p sbom
+          uvx --from cyclonedx-bom cyclonedx-py environment .venv --of JSON --sv 1.5 -o sbom/python.cdx.json
+
+      - name: Node SBOM (only when JS projects exist)
+        run: |
+          shopt -s nullglob
+          projects=(apps/*/package.json packages/contracts/package.json packages/i18n/package.json)
+          if [ "${#projects[@]}" -eq 0 ]; then echo "No JS/TS projects yet; skipping."; exit 0; fi
+          corepack enable
+          pnpm install --ignore-scripts
+          npx --yes @cyclonedx/cyclonedx-npm --ignore-npm-errors --output-format JSON --spec-version 1.5 --output-file sbom/node.cdx.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom/

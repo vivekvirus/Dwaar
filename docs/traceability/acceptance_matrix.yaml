@@ -1,0 +1,247 @@
+# Dwaar acceptance test matrix (PRD section 16): 48 mandatory release gates, paraphrased.
+# milestone is the milestone at which the test must pass (cumulative: an M1 release also needs every M0 test).
+# Evidence for each test is recorded under docs/evidence/ in the PRD 4.3 format; this file holds no results.
+version: 1
+items:
+- id: AT-01
+  milestone: M0
+  scenario: A user moves from Society A to Society B and replays object IDs that belong to A
+  expected: Nothing from A is reachable through API, files, export, search or AI
+  prd_page: 46
+- id: AT-02
+  milestone: M0
+  scenario: A non-resident owner asks for the visitor history of their tenant
+  expected: Request denied while the owner's financial rights stay intact
+  prd_page: 46
+- id: AT-03
+  milestone: M0
+  scenario: A guest request is pending and two family members decide at the same moment
+  expected: Exactly one canonical decision; the other device gets the result and alerts stop
+  prd_page: 46
+- id: AT-04
+  milestone: M0
+  scenario: An approval request times out and a queued approval from a phone arrives afterwards
+  expected: No permission is issued and the user is shown that the request expired
+  prd_page: 46
+- id: AT-05
+  milestone: M1
+  scenario: A guest QR is consumed at one gate and then presented at a second, isolated gate
+  expected: Rejected as wrong gate or replay, or sent to a supervised manual path; no silent global single-use claim
+  prd_page: 46
+- id: AT-06
+  milestone: M1
+  scenario: The WAN stays down for 72 hours including device and gateway restarts
+  expected: Cached permitted flows keep working, new approvals use the explicit fallback, events recover after reconnect
+  prd_page: 46
+- id: AT-07
+  milestone: M1
+  scenario: The gateway fails while the LAN is partitioned
+  expected: Terminals run in restricted mode with correct single-use limits
+  prd_page: 46
+- id: AT-08
+  milestone: M1
+  scenario: A device wall clock is moved backwards
+  expected: Time-sensitive automatic decisions are disabled or routed to review
+  prd_page: 46
+- id: AT-09
+  milestone: M2
+  scenario: The relay acknowledgement is lost after the barrier was commanded to open
+  expected: No blind duplicate pulse; physical state is reconciled from sensors
+  prd_page: 46
+- id: AT-10
+  milestone: M2
+  scenario: A safety loop or photocell detects an obstruction
+  expected: The controller's safety logic acts independently of the app and AI
+  prd_page: 46
+- id: AT-11
+  milestone: M1
+  scenario: A resident's phone is force-stopped or notification permission is denied
+  expected: No false delivery claim; the configured call or intercom fallback is used
+  prd_page: 46
+- id: AT-12
+  milestone: M1
+  scenario: A domestic worker loses one of three employers
+  expected: The other two engagements remain intact
+  prd_page: 46
+- id: AT-13
+  milestone: M1
+  scenario: A parcel pickup is attempted twice
+  expected: The second attempt is denied and the custody history stays intact
+  prd_page: 46
+- id: AT-14
+  milestone: M1
+  scenario: The same invoice batch is submitted twice
+  expected: One invoice and one journal exist per unique billing key
+  prd_page: 46
+- id: AT-15
+  milestone: M1
+  scenario: A payment callback repeats or arrives out of order
+  expected: One valid receipt exists; reversals and refunds are handled as separate events
+  prd_page: 46
+- id: AT-16
+  milestone: M1
+  scenario: The gross settlement less fees differs from the bank credit
+  expected: Clearing reconciles only through explicit fee or variance entries
+  prd_page: 46
+- id: AT-17
+  milestone: M1
+  scenario: Two operators allocate the same receipt concurrently
+  expected: No over-allocation; one operator retries or hits a conflict
+  prd_page: 46
+- id: AT-18
+  milestone: M1
+  scenario: An invoice in a closed period needs correction
+  expected: Correction goes through reversal or credit and the original stays auditable
+  prd_page: 46
+- id: AT-19
+  milestone: M2
+  scenario: Vendor bank details are changed and approved by the same person
+  expected: Blocked until independent verification and a separate checker act
+  prd_page: 46
+- id: AT-20
+  milestone: M2
+  scenario: 200 users try to book 10 amenity slots
+  expected: Exactly 10 bookings are confirmed; the rest are waitlisted or declined
+  prd_page: 46
+- id: AT-21
+  milestone: M2
+  scenario: Binding voting is switched on without an approved legal pack
+  expected: Blocked; only labelled non-binding opinion polls are available
+  prd_page: 46
+- id: AT-22
+  milestone: M1
+  scenario: A treasurer tries to restrict entry or an essential service because of debt
+  expected: Blocked by the invariant and the lawful recovery workflow is shown
+  prd_page: 46
+- id: AT-23
+  milestone: M1
+  scenario: An erasure request arrives while a legal hold applies
+  expected: Access is restricted, the hold is explained and nothing is deleted unlawfully
+  prd_page: 46
+- id: AT-24
+  milestone: M1
+  scenario: A deleted visitor record reappears from a stale device or a backup
+  expected: Tombstones and the restore filter prevent resurrection
+  prd_page: 46
+- id: AT-25
+  milestone: M1
+  scenario: A malicious document instructs the AI to export data about neighbours
+  expected: No disclosure or tool execution; a safe diagnostic is logged
+  prd_page: 46
+- id: AT-26
+  milestone: M1
+  scenario: An AI proposal is confirmed after the user's role or the target has changed
+  expected: Revalidation fails and a fresh proposal is required
+  prd_page: 46
+- id: AT-27
+  milestone: M2
+  scenario: A Q&A question has no authoritative document behind it
+  expected: Explicit abstention or a clarifying question; no fabricated rule
+  prd_page: 46
+- id: AT-28
+  milestone: M2
+  scenario: OCR confuses 8,000 rupees with 80,000 rupees on a vendor bill
+  expected: Uncertainty, the arithmetic check and a reviewer stop the posting
+  prd_page: 46
+- id: AT-29
+  milestone: M1
+  scenario: The AI provider is unavailable or the society's AI budget is exhausted
+  expected: Forms, gate and billing keep working with no blocking spinner
+  prd_page: 46
+- id: AT-30
+  milestone: M3
+  scenario: A meter resets or its messages are duplicated
+  expected: No negative or duplicated billed consumption and a review flag is raised
+  prd_page: 46
+- id: AT-31
+  milestone: M3
+  scenario: The EV site meter goes stale or a phase is overloaded
+  expected: The local engineered cap or pause applies and no model can override it
+  prd_page: 46
+- id: AT-32
+  milestone: M1
+  scenario: A committee term ends while a privileged session is active
+  expected: The privileged action is denied and the audit trail is preserved
+  prd_page: 46
+- id: AT-33
+  milestone: M1
+  scenario: The full financial export is re-imported into an external system
+  expected: Trial balance, open items, funds and attachments reconcile
+  prd_page: 46
+- id: AT-34
+  milestone: M1
+  scenario: Restore after a regional-service incident
+  expected: RPO and RTO are measured and ledger, permissions and tombstones are valid
+  prd_page: 46
+- id: AT-35
+  milestone: M1
+  scenario: A low-vision user and a guard in a new language perform core tasks
+  expected: Both finish accessibly and a supported alternative exists
+  prd_page: 47
+- id: AT-36
+  milestone: M1
+  scenario: A late settlement arrives after the migration cutover
+  expected: It is routed to the correct source record with no duplicated balance
+  prd_page: 47
+- id: AT-37
+  milestone: M1
+  scenario: A Maharashtra pack has the general-body interest set to 18 percent
+  expected: Bill-run preview fails against the 12 percent simple cap and cannot be approved
+  prd_page: 47
+- id: AT-38
+  milestone: M2
+  scenario: A 300-member Maharashtra society has 20 verified attendees
+  expected: Quorum is met for an AGM but not for redevelopment, which needs 200
+  prd_page: 47
+- id: AT-39
+  milestone: M1
+  scenario: A 6,200 rupee NEFT credit lands in a unit's virtual account
+  expected: A receipt is created and allocated to the oldest open invoice and the resident is notified within 60
+    seconds
+  prd_page: 47
+- id: AT-40
+  milestone: M1
+  scenario: No device acknowledges an approval request for 10 seconds
+  expected: Alternate adult at 10 s, IVR at 20 s, link at 35 s, expiry with guard options at 90 s; never auto-allow
+  prd_page: 47
+- id: AT-41
+  milestone: M3
+  scenario: A tanker is invoiced for 12,000 L but the calibrated inlet shows 10,800 L
+  expected: The 10 percent variance is flagged for review with no theft label and no automatic payment hold
+  prd_page: 47
+- id: AT-42
+  milestone: M2
+  scenario: A 7,800 rupee monthly member contribution under a GST-registered RWA pack
+  expected: GST is computed on the full amount per the configured rule and the explanation cites the rule ID
+  prd_page: 47
+- id: AT-43
+  milestone: M2
+  scenario: TDS fixture with one contractor payment in March 2026 and one in April 2026
+  expected: March maps to the legacy alias and April maps to Income-tax Act 2025 section 393
+  prd_page: 47
+- id: AT-44
+  milestone: M1
+  scenario: An owner confirms a tenant through a link and the committee then places a hold
+  expected: Tenant is active within 60 seconds of confirmation; hold reason and time are visible to both; appeal
+    is available
+  prd_page: 47
+- id: AT-45
+  milestone: M1
+  scenario: The journal hash chain is altered in a test database
+  expected: The nightly verifier raises an alert that identifies the break
+  prd_page: 47
+- id: AT-46
+  milestone: M1
+  scenario: A 3,000 rupee UPI payment settles net of the 0.4 percent MDR
+  expected: Bank 2,988 and fee expense 12 are posted and clearing is zero
+  prd_page: 47
+- id: AT-47
+  milestone: M1
+  scenario: An essential amenity is configured with a defaulter restriction
+  expected: Rejected by database constraint DB-05
+  prd_page: 47
+- id: AT-48
+  milestone: M1
+  scenario: A new guard picks Marathi at login and runs the five training scenarios
+  expected: All screens and audio are in Marathi and competency is recorded
+  prd_page: 47

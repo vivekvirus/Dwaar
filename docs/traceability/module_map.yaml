@@ -1,0 +1,2333 @@
+# Dwaar module map: logical target modules, build slices (PRD 4.3), AT gates, external dependencies.
+# Logical module paths follow the PRD 19.1 layout. API modules are "services/api/modules/<name>" here and live at
+# "services/api/dwaar_api/modules/<name>" on disk (physical_path); the register's `module` field uses the logical path.
+# Per-requirement module and slice live in requirements.yaml; this file adds surfaces (secondary modules), the AT
+# gates that exercise the requirement (inverted from the AT links) and external dependencies from the catalogue below.
+# `gates` are curated from the PRD acceptance matrix scenarios; a slice's own gate list is under `slices`.
+version: 1
+source: Dwaar Master PRD v2.0
+milestone_of_slice: {1: M0, 2: M0, 3: M1, 4: M1, 5: M1, 6: M1, 7: M2, 8: M2, 9: M3}
+slices:
+- id: 1
+  milestone: M0
+  deliverable: Repo, identity, scoped schema, synthetic data, CI, audit foundation
+  gate_ats: [AT-01, AT-02]
+  gate_note: Gate before slice 2 (PRD 4.3)
+- id: 2
+  milestone: M0
+  deliverable: Visitor request, decision and observation across resident and guard apps
+  gate_ats: [AT-03, AT-04]
+  gate_note: 'Gate before slice 3: AT-03 and AT-04 with real persistence (PRD 4.3)'
+- id: 3
+  milestone: M1
+  deliverable: Edge cache, signed policy, outbox, simulator
+  gate_ats: [AT-05, AT-06, AT-07, AT-08]
+  gate_note: Gate before slice 4 (PRD 4.3)
+- id: 4
+  milestone: M1
+  deliverable: Notification cascade, parcels, staff, shift handover, helpdesk
+  gate_ats: [AT-11, AT-12, AT-13, AT-40]
+  gate_note: Gate before slice 5 also includes field usability (PRD 4.3)
+- id: 5
+  milestone: M1
+  deliverable: Ledger, bills, receipts, cash, manual bank import
+  gate_ats: [AT-14, AT-15, AT-16, AT-17, AT-18]
+  gate_note: Gate before slice 6 also includes an auditor-approved fixture (PRD 4.3)
+- id: 6
+  milestone: M1
+  deliverable: Privacy, retention, exports, backup and security hardening; M1 pilot
+  gate_ats: [AT-23, AT-24, AT-33, AT-34]
+  gate_note: Gate for the M1 pilot (PRD 4.3)
+- id: 7
+  milestone: M2
+  deliverable: Full ERP, PPM, live payments, Tally/Zoho, governance, M2 AI
+  gate_ats: []
+  gate_note: Gate is provider, CA and security evaluation for the M2 release (PRD 4.3); no AT range listed
+- id: 8
+  milestone: M2
+  deliverable: Barrier and RFID adapter
+  gate_ats: [AT-09, AT-10]
+  gate_note: Gate also includes installer sign-off (PRD 4.3)
+- id: 9
+  milestone: M3
+  deliverable: ANPR, metering, DG, EV
+  gate_ats: []
+  gate_note: Gate is M3 field tests (PRD 4.3); no AT range listed
+modules:
+- id: core
+  path: services/api/core
+  physical_path: services/api/dwaar_api/core
+  kind: api-core
+  migrations: 0001-0099
+  purpose: 'Cross-cutting API platform: audit log, outbox, idempotency, errors, RLS context, rate limits, observability,
+    migrations'
+- id: identity
+  path: services/api/modules/identity
+  physical_path: services/api/dwaar_api/modules/identity
+  kind: api-module
+  migrations: 0100-0199
+  purpose: Persons, memberships, role grants, verification cases, OTP, sessions, MFA, step-up
+- id: org
+  path: services/api/modules/org
+  physical_path: services/api/dwaar_api/modules/org
+  kind: api-module
+  migrations: 0100-0199
+  purpose: Organisations, societies, legal entities, blocks, units, society policies, bulk import, setup checklist
+- id: legal_packs
+  path: services/api/modules/legal_packs
+  physical_path: services/api/dwaar_api/modules/legal_packs
+  kind: api-module
+  migrations: 0100-0199
+  purpose: Legal pack registry, validation and approval workflow consumed by billing, governance and privacy
+- id: devices
+  path: services/api/modules/devices
+  physical_path: services/api/dwaar_api/modules/devices
+  kind: api-module
+  migrations: 0200-0299
+  purpose: Gates, lanes, devices, certificates, controllers, signed policy snapshot issuer, device fleet
+- id: visits
+  path: services/api/modules/visits
+  physical_path: services/api/dwaar_api/modules/visits
+  kind: api-module
+  migrations: 0200-0299
+  purpose: Invitations, approval requests and decisions, visits, observations, exceptions, standing rules, blocklist
+- id: notifications
+  path: services/api/modules/notifications
+  physical_path: services/api/dwaar_api/modules/notifications
+  kind: api-module
+  migrations: 0200-0299
+  purpose: Notification orchestrator, cascade, masked calling, delivery telemetry, SMS and WhatsApp templates
+- id: vehicles
+  path: services/api/modules/vehicles
+  physical_path: services/api/dwaar_api/modules/vehicles
+  kind: api-module
+  migrations: 0200-0299
+  purpose: Vehicle registry, tag enrolment, plate fusion, ANPR integration
+- id: edge_sync
+  path: services/api/modules/edge_sync
+  physical_path: services/api/dwaar_api/modules/edge_sync
+  kind: api-module
+  migrations: 0300-0399
+  purpose: Edge event ingest, sync batches, access events, conflict handling and quarantine
+- id: staff
+  path: services/api/modules/staff
+  physical_path: services/api/dwaar_api/modules/staff
+  kind: api-module
+  migrations: 0400-0499
+  purpose: Domestic and contract staff, engagements, attendance, agency attendance
+- id: parcels
+  path: services/api/modules/parcels
+  physical_path: services/api/dwaar_api/modules/parcels
+  kind: api-module
+  migrations: 0400-0499
+  purpose: Parcel lifecycle, custody transfers, pickup tokens, partner token contract
+- id: shifts
+  path: services/api/modules/shifts
+  physical_path: services/api/dwaar_api/modules/shifts
+  kind: api-module
+  migrations: 0400-0499
+  purpose: Guard shift start and end checklists and handover records
+- id: helpdesk
+  path: services/api/modules/helpdesk
+  physical_path: services/api/dwaar_api/modules/helpdesk
+  kind: api-module
+  migrations: 0500-0599
+  purpose: Tickets, SLA clocks, duplicate linking, emergency procedure display
+- id: assets
+  path: services/api/modules/assets
+  physical_path: services/api/dwaar_api/modules/assets
+  kind: api-module
+  migrations: 0500-0599
+  purpose: Assets, PM plans, work orders, checklists, parts, statutory calendar, fixed assets
+- id: notices
+  path: services/api/modules/notices
+  physical_path: services/api/dwaar_api/modules/notices
+  kind: api-module
+  migrations: 0500-0599
+  purpose: Notices, versions, document vault, emergency broadcast, opinion polls
+- id: amenities
+  path: services/api/modules/amenities
+  physical_path: services/api/dwaar_api/modules/amenities
+  kind: api-module
+  migrations: 0500-0599
+  purpose: Amenities, bookings, waitlists, defaulter restriction guard rails
+- id: ledger
+  path: services/api/modules/ledger
+  physical_path: services/api/dwaar_api/modules/ledger
+  kind: api-module
+  migrations: 0600-0699
+  purpose: Chart of accounts, journals, hash chain, periods, receipts and allocations
+- id: billing
+  path: services/api/modules/billing
+  physical_path: services/api/dwaar_api/modules/billing
+  kind: api-module
+  migrations: 0600-0699
+  purpose: Charge rules, bill runs, invoices, interest, reminders, invoice PDF
+- id: payments
+  path: services/api/modules/payments
+  physical_path: services/api/dwaar_api/modules/payments
+  kind: api-module
+  migrations: 0600-0699
+  purpose: Payment attempts, webhooks, settlements, refunds, cash and cheque, bank reconciliation, virtual accounts
+- id: procurement
+  path: services/api/modules/procurement
+  physical_path: services/api/dwaar_api/modules/procurement
+  kind: api-module
+  migrations: 0800+
+  purpose: Vendors, bank detail versions, POs, vendor bills, payment proposals, agency reconciliation
+- id: funds
+  path: services/api/modules/funds
+  physical_path: services/api/dwaar_api/modules/funds
+  kind: api-module
+  migrations: 0800+
+  purpose: Society funds, transfers and fund statements
+- id: tax
+  path: services/api/modules/tax
+  physical_path: services/api/dwaar_api/modules/tax
+  kind: api-module
+  migrations: 0800+
+  purpose: GST, TDS and e-invoice rule engine reading approved tax packs
+- id: exports
+  path: services/api/modules/exports
+  physical_path: services/api/dwaar_api/modules/exports
+  kind: api-module
+  migrations: null
+  purpose: Society export jobs, auditor pack, Tally and Zoho adapters
+- id: privacy
+  path: services/api/modules/privacy
+  physical_path: services/api/dwaar_api/modules/privacy
+  kind: api-module
+  migrations: 0700-0799
+  purpose: Consent receipts, notices, retention rules, legal holds, tombstones, rights requests, breach support
+- id: ai
+  path: services/api/modules/ai
+  physical_path: services/api/dwaar_api/modules/ai
+  kind: api-module
+  migrations: 0700-0799
+  purpose: AI proposals, confirmations, ai_runs audit and feedback endpoints
+- id: governance
+  path: services/api/modules/governance
+  physical_path: services/api/dwaar_api/modules/governance
+  kind: api-module
+  migrations: 0800+
+  purpose: Meetings, attendance, motions, votes, minutes, committee handover
+- id: iot
+  path: services/api/modules/iot
+  physical_path: services/api/dwaar_api/modules/iot
+  kind: api-module
+  migrations: 0800+
+  purpose: Meters, readings, tanker trips, DG fuel, EV chargers and sessions
+- id: reports
+  path: services/api/modules/reports
+  physical_path: services/api/dwaar_api/modules/reports
+  kind: api-module
+  migrations: null
+  purpose: Gate, committee, reliability and sustainability dashboards over read-only views
+- id: platform_admin
+  path: services/api/modules/platform_admin
+  physical_path: services/api/dwaar_api/modules/platform_admin
+  kind: api-module
+  migrations: 0001-0099
+  purpose: Internal console, feature flags, AI budgets, subscription billing, support access
+- id: edge
+  path: services/edge
+  physical_path: services/edge
+  kind: service
+  migrations: null
+  purpose: 'Society gateway: local policy engine, event store, sync client, adapter drivers and simulators'
+- id: worker
+  path: services/worker
+  physical_path: services/worker
+  kind: service
+  migrations: null
+  purpose: 'Outbox relay and jobs: cascade, billing, reconciliation, retention, PM, hash-chain verifier'
+- id: aigw
+  path: services/ai-gateway
+  physical_path: services/ai-gateway
+  kind: service
+  migrations: null
+  purpose: 'AI gateway: provider adapter, redaction, prompts, evaluations, budgets, kill switch'
+- id: admin
+  path: apps/admin-web
+  physical_path: apps/admin-web
+  kind: app
+  migrations: null
+  purpose: Next.js committee, finance, auditor and internal consoles
+- id: resident
+  path: apps/resident-mobile
+  physical_path: apps/resident-mobile
+  kind: app
+  migrations: null
+  purpose: Expo React Native resident and technician views plus accessible web
+- id: guard
+  path: apps/guard-android
+  physical_path: apps/guard-android
+  kind: app
+  migrations: null
+  purpose: 'Native Kotlin guard terminal: Room, kiosk mode, scanner support'
+- id: contracts
+  path: packages/contracts
+  physical_path: packages/contracts
+  kind: package
+  migrations: null
+  purpose: OpenAPI, JSON Schemas, event envelopes and generated clients
+- id: lpacks
+  path: packages/legal-packs
+  physical_path: packages/legal-packs
+  kind: package
+  migrations: null
+  purpose: Versioned legal packs (YAML) with sources and approvals
+- id: tpacks
+  path: packages/tax-packs
+  physical_path: packages/tax-packs
+  kind: package
+  migrations: null
+  purpose: Versioned tax rule tables with sources and approvals
+- id: prompts
+  path: packages/prompts
+  physical_path: packages/prompts
+  kind: package
+  migrations: null
+  purpose: Versioned prompt templates
+- id: i18n
+  path: packages/i18n
+  physical_path: packages/i18n
+  kind: package
+  migrations: null
+  purpose: Translation catalogues (en, hi, mr; kn at M2) and audio prompt keys
+- id: common
+  path: packages/dwaar-common
+  physical_path: packages/dwaar-common
+  kind: package
+  migrations: null
+  purpose: 'Shared Python library: UUIDv7, money, time, envelope, signing, crypto, errors'
+- id: infra
+  path: infra
+  physical_path: infra
+  kind: infra
+  migrations: null
+  purpose: IaC, CI workflows, environments, dependency and SBOM checks
+- id: t_acc
+  path: tests/acceptance
+  physical_path: tests/acceptance
+  kind: tests
+  migrations: null
+  purpose: Acceptance scenarios AT-01 to AT-48 and evidence emitters
+- id: t_sec
+  path: tests/security
+  physical_path: tests/security
+  kind: tests
+  migrations: null
+  purpose: Security acceptance pack and penetration-test tracking
+- id: t_load
+  path: tests/load
+  physical_path: tests/load
+  kind: tests
+  migrations: null
+  purpose: Load and certification-sizing tests
+- id: docs_rb
+  path: docs/runbooks
+  physical_path: docs/runbooks
+  kind: docs
+  migrations: null
+  purpose: 'Runbooks: migration, breach, outage, commissioning'
+- id: docs_sec
+  path: docs/security
+  physical_path: docs/security
+  kind: docs
+  migrations: null
+  purpose: Threat model, data inventory and purpose map
+- id: docs_adr
+  path: docs/adr
+  physical_path: docs/adr
+  kind: docs
+  migrations: null
+  purpose: ADRs and DECISIONS.md
+external_dependencies:
+- id: provider:payment-aggregator
+  kind: provider
+  description: 'RBI-authorised payment aggregator (default Razorpay): UPI, cards, netbanking, virtual accounts,
+    direct settlement'
+  default_state: disabled until credentials and onboarding exist; sandbox or labelled simulator (simulation=true)
+    in local
+  decisions: [D-20, Q9]
+- id: provider:bbpou
+  kind: provider
+  description: BBPS operating unit for bill payment, only when commercially confirmed (M2)
+  default_state: disabled; no simulator before M2
+  decisions: [D-20]
+- id: provider:telephony-ivr
+  kind: provider
+  description: Indian cloud telephony for IVR and masked proxy calls
+  default_state: disabled until vendor chosen; labelled simulator; intercom or office fallback stays visible
+  decisions: [D-21, Q12]
+- id: provider:sms-dlt
+  kind: provider
+  description: DLT-registered SMS headers and templates (also OTP delivery)
+  default_state: disabled until DLT registration exists; labelled simulator
+  decisions: [D-21, Q12]
+- id: provider:whatsapp
+  kind: provider
+  description: WhatsApp utility templates
+  default_state: disabled until a vendor and templates are approved; labelled simulator
+  decisions: [D-21, Q12]
+- id: provider:push
+  kind: provider
+  description: FCM and APNs push credentials
+  default_state: disabled until a Firebase and Apple project exist; labelled simulator
+  decisions: []
+- id: provider:video
+  kind: provider
+  description: Video provider for hybrid meetings (M2)
+  default_state: disabled; M2 only
+  decisions: [D-21, Q12]
+- id: provider:oidc-identity
+  kind: provider
+  description: OIDC identity provider with phone OTP and MFA (default Supabase Auth)
+  default_state: labelled simulator issuer when DWAAR_ENV=local; real provider via adapter
+  decisions: [D-09]
+- id: provider:ai-model
+  kind: provider
+  description: LLM, speech and OCR provider (default Anthropic Claude, self-hosted faster-whisper)
+  default_state: deterministic labelled simulator provider; real provider disabled until terms are signed and evaluation
+    passes
+  decisions: [D-18, D-19, Q13]
+- id: provider:zoho-books
+  kind: provider
+  description: Zoho Books API for accounting export (M2)
+  default_state: disabled; Tally XML file export has no provider
+  decisions: [D-22]
+- id: provider:gst-irp
+  kind: provider
+  description: GST invoice registration portal, only where legally required (M3)
+  default_state: disabled
+  decisions: []
+- id: provider:android-enterprise
+  kind: provider
+  description: Android Enterprise management for guard terminals
+  default_state: disabled; fleet functions stubbed behind an interface
+  decisions: []
+- id: provider:pentest-vendor
+  kind: provider
+  description: Independent penetration test before paid general availability
+  default_state: external engagement; tracked as evidence
+  decisions: []
+- id: hardware:edge-gateway
+  kind: hardware
+  description: Certified fanless gateway with TPM, watchdog and UPS (field fsync, thermal, latency verification)
+  default_state: software runs on any Linux host; no performance or durability claim until measured on the certified
+    unit
+  decisions: [D-12, Q3]
+- id: hardware:barrier-controller
+  kind: hardware
+  description: One certified barrier controller model and revision, installer-commissioned
+  default_state: simulator implements the same adapter contract; live adapter disabled until installer sign-off
+  decisions: [D-23, Q3]
+- id: hardware:rfid-reader
+  kind: hardware
+  description: One UHF RFID reader model
+  default_state: simulator only until hardware is certified
+  decisions: [D-23]
+- id: hardware:anpr-camera
+  kind: hardware
+  description: ANPR camera, illumination and compute (M3)
+  default_state: disabled; labelled simulator for adapter tests
+  decisions: []
+- id: hardware:meter-gateway
+  kind: hardware
+  description: LoRaWAN, Modbus or M-Bus meters, calibrated, with approved gateways (M3)
+  default_state: disabled; replay simulator; no verified-volume label without calibration
+  decisions: []
+- id: hardware:fuel-sensor-genset
+  kind: hardware
+  description: DG fuel sensors and genset controller (M3)
+  default_state: disabled; replay simulator
+  decisions: []
+- id: hardware:ocpp-charger
+  kind: hardware
+  description: Certified OCPP chargers and site meters (M3)
+  default_state: disabled; simulator; engineered caps stay local
+  decisions: []
+- id: hardware:handheld-scanner
+  kind: hardware
+  description: USB or Bluetooth HID 2D scanner for sunlight use
+  default_state: keyboard-wedge input handled in software; field test on a real scanner pending
+  decisions: []
+- id: partner:delivery-partner
+  kind: partner
+  description: Delivery partner signed-token access (M3)
+  default_state: disabled until a written partner contract and production API rights exist
+  decisions: [Q10]
+- id: approval:legal-pack
+  kind: approval
+  description: Counsel-approved legal pack per society and jurisdiction
+  default_state: pack ships unapproved; binding governance and statutory automation stay disabled
+  decisions: [D-24, Q5, Q6, Q7]
+- id: approval:counsel
+  kind: approval
+  description: Advocate confirmation of notices, retention, lawful basis and restrictions
+  default_state: configuration ships as unapproved defaults
+  decisions: [D-16, D-25, Q4]
+- id: approval:ca
+  kind: approval
+  description: Chartered accountant confirmation of fund, depreciation, GST and TDS treatment
+  default_state: tax and fund rules ship as unapproved configuration
+  decisions: [Q8]
+- id: approval:acquirer
+  kind: approval
+  description: Written acquirer schedule for UPI MDR classification and channel costs
+  default_state: cost configuration marked VERIFY and shown as unconfirmed
+  decisions: [D-28, Q9]
+- id: approval:installer
+  kind: approval
+  description: Qualified installer and society commissioning sign-off
+  default_state: live actuation stays disabled
+  decisions: [D-23]
+- id: approval:metrology
+  kind: approval
+  description: Metrology review of tanker variance thresholds and calibration
+  default_state: threshold fixed at the proposal and flagged unreviewed
+  decisions: []
+- id: approval:discom
+  kind: approval
+  description: DISCOM, operator and tax approval for EV charging billing
+  default_state: EV billing disabled
+  decisions: []
+- id: approval:ai-provider-terms
+  kind: approval
+  description: 'Signed AI provider terms: region, retention, no-training'
+  default_state: real AI provider disabled; simulator only
+  decisions: [D-18, Q13]
+- id: field:pilot-measurement
+  kind: field
+  description: Measurements taken on real devices, sites and traffic (INV-12)
+  default_state: targets are tested with simulated load only; no SLO claim until measured in the field
+  decisions: []
+- id: data:baseline-observation
+  kind: data
+  description: 60 to 90 days of baseline observation for data-dependent AI (PRD 11.4)
+  default_state: transparent rules first; insufficient data is a valid output
+  decisions: []
+worker_jobs:
+- id: notification-calling
+  module: services/worker
+  trigger: Event-driven
+  reliability: Expiry-aware; cancels on decision; deduplicates per request, channel and recipient
+  requirements: [NOTIF-03, NOTIF-04, CALL-01]
+- id: edge-policy-publisher
+  module: services/worker
+  trigger: On change and periodic refresh
+  reliability: Signed monotonic version; atomic snapshot; revocations prioritised
+  requirements: [EDGE-04, IAM-02, INV-08]
+- id: billing-scheduler
+  module: services/worker
+  trigger: Approved calendar
+  reliability: Preview and approval gate; unique billing key; no double run after restart
+  requirements: [FIN-03, NFR-12]
+- id: settlement-reconciliation
+  module: services/worker
+  trigger: Provider event and daily statement
+  reliability: Exception queue; no silent gross/net mismatch
+  requirements: [PAY-09, PAY-10]
+- id: pm-generator
+  module: services/worker
+  trigger: Hourly and meter thresholds
+  reliability: Unique asset-plan-cycle; safe retry
+  requirements: [OPS-06]
+- id: retention-index-purge
+  module: services/worker
+  trigger: Nightly and on rights or hold events
+  reliability: Archive and hold checks; tombstones; per-replica outcome
+  requirements: [PRIV-08, DB-08]
+- id: ai-ingestion
+  module: services/worker
+  trigger: Document publication
+  reliability: Malware-safe parsing; scoped index; re-index or delete on version change
+  requirements: [AI-SYS-02, AI-SYS-03, AI-R01]
+- id: hash-chain-verifier
+  module: services/worker
+  trigger: Nightly
+  reliability: Alert on any journal chain break
+  requirements: [DB-07, FIN-07]
+- id: backup-restore-drill
+  module: services/worker
+  trigger: Continuous backup; scheduled drill
+  reliability: Restore evidence; permission and tombstone checks; measured RPO and RTO
+  requirements: [NFR-11, PRIV-09, D-17]
+assignments:
+  INV-01:
+    surfaces: [services/ai-gateway, services/api/modules/exports]
+    gates: [AT-01]
+    external: []
+  INV-02:
+    surfaces: [services/api/modules/payments, services/api/modules/billing]
+    gates: [AT-14, AT-15, AT-16, AT-17]
+    external: []
+  INV-03:
+    surfaces: [services/edge, services/ai-gateway]
+    gates: [AT-04, AT-06, AT-40]
+    external: []
+  INV-04:
+    surfaces: [services/api/modules/billing, services/api/modules/governance]
+    gates: [AT-02]
+    external: []
+  INV-05:
+    surfaces: [services/api/modules/notifications, apps/resident-mobile]
+    gates: []
+    external: []
+  INV-06:
+    surfaces: [services/ai-gateway]
+    gates: [AT-25, AT-26]
+    external: []
+  INV-07:
+    surfaces: [services/api/modules/parcels, services/api/modules/payments, apps/resident-mobile, apps/guard-android]
+    gates: [AT-03, AT-04, AT-15]
+    external: []
+  INV-08:
+    surfaces: [services/api/modules/devices, services/api/modules/amenities, services/api/modules/privacy]
+    gates: [AT-22, AT-47]
+    external: []
+  INV-09:
+    surfaces: [apps/admin-web]
+    gates: [AT-33]
+    external: []
+  INV-10:
+    surfaces: [services/api/modules/tax, services/api/modules/billing, services/api/modules/governance, services/api/modules/privacy]
+    gates: [AT-21, AT-37, AT-38]
+    external: []
+  INV-11:
+    surfaces: [packages/i18n]
+    gates: [AT-35, AT-48]
+    external: []
+  INV-12:
+    surfaces: [services/api/modules/reports, services/edge]
+    gates: [AT-34]
+    external: []
+  D-01:
+    surfaces: []
+    gates: []
+    external: []
+  D-02:
+    surfaces: [services/api/modules/org]
+    gates: []
+    external: []
+  D-03:
+    surfaces: [services/api/modules/platform_admin]
+    gates: []
+    external: []
+  D-04:
+    surfaces: [apps/guard-android, apps/resident-mobile]
+    gates: [AT-48]
+    external: []
+  D-05:
+    surfaces: []
+    gates: []
+    external: []
+  D-06:
+    surfaces: []
+    gates: []
+    external: []
+  D-07:
+    surfaces: []
+    gates: []
+    external: []
+  D-08:
+    surfaces: [services/worker]
+    gates: []
+    external: []
+  D-09:
+    surfaces: [services/api/core]
+    gates: []
+    external: []
+  D-10:
+    surfaces: [services/api/core]
+    gates: []
+    external: []
+  D-11:
+    surfaces: [services/edge]
+    gates: []
+    external: []
+  D-12:
+    surfaces: []
+    gates: []
+    external: ['hardware:edge-gateway']
+  D-13:
+    surfaces: [services/api/modules/visits]
+    gates: [AT-05, AT-06, AT-07]
+    external: []
+  D-14:
+    surfaces: [services/api/modules/notifications]
+    gates: [AT-04, AT-40]
+    external: []
+  D-15:
+    surfaces: [services/api/modules/org]
+    gates: [AT-40]
+    external: []
+  D-16:
+    surfaces: [services/api/modules/visits]
+    gates: []
+    external: []
+  D-17:
+    surfaces: [services/api/modules/privacy]
+    gates: [AT-24, AT-34]
+    external: []
+  D-18:
+    surfaces: []
+    gates: []
+    external: ['provider:ai-model', 'approval:ai-provider-terms']
+  D-19:
+    surfaces: []
+    gates: []
+    external: ['provider:ai-model']
+  D-20:
+    surfaces: []
+    gates: []
+    external: ['provider:payment-aggregator']
+  D-21:
+    surfaces: [services/api/modules/governance]
+    gates: []
+    external: ['provider:telephony-ivr', 'provider:sms-dlt', 'provider:whatsapp', 'provider:video']
+  D-22:
+    surfaces: []
+    gates: []
+    external: ['provider:zoho-books']
+  D-23:
+    surfaces: [services/api/modules/devices, services/api/modules/vehicles]
+    gates: []
+    external: ['hardware:barrier-controller', 'hardware:rfid-reader']
+  D-24:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-21]
+    external: ['approval:legal-pack']
+  D-25:
+    surfaces: []
+    gates: []
+    external: ['approval:counsel']
+  D-26:
+    surfaces: []
+    gates: []
+    external: []
+  D-27:
+    surfaces: []
+    gates: []
+    external: []
+  D-28:
+    surfaces: [services/api/modules/reports]
+    gates: [AT-46]
+    external: ['approval:acquirer']
+  IAM-01:
+    surfaces: [services/api/modules/org]
+    gates: [AT-01, AT-02]
+    external: []
+  IAM-02:
+    surfaces: [services/api/core]
+    gates: [AT-02, AT-32]
+    external: []
+  IAM-03:
+    surfaces: [services/api/modules/ledger]
+    gates: [AT-19]
+    external: []
+  IAM-04:
+    surfaces: [services/api/modules/exports]
+    gates: []
+    external: []
+  IAM-05:
+    surfaces: []
+    gates: [AT-44]
+    external: []
+  IAM-06:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: ['provider:sms-dlt', 'provider:oidc-identity']
+  IAM-07:
+    surfaces: [apps/resident-mobile, apps/admin-web]
+    gates: [AT-44]
+    external: []
+  IAM-08:
+    surfaces: [apps/admin-web, apps/resident-mobile]
+    gates: [AT-01, AT-32]
+    external: []
+  IAM-09:
+    surfaces: [services/api/modules/exports, services/api/modules/privacy]
+    gates: [AT-19]
+    external: []
+  IAM-10:
+    surfaces: [apps/guard-android, services/edge]
+    gates: [AT-07]
+    external: []
+  IAM-11:
+    surfaces: []
+    gates: []
+    external: []
+  IAM-12:
+    surfaces: [apps/resident-mobile, services/api/modules/notifications]
+    gates: [AT-44]
+    external: []
+  IAM-13:
+    surfaces: []
+    gates: []
+    external: []
+  IAM-14:
+    surfaces: []
+    gates: []
+    external: ['provider:oidc-identity']
+  UX-01:
+    surfaces: []
+    gates: []
+    external: []
+  UX-02:
+    surfaces: []
+    gates: [AT-35]
+    external: []
+  UX-03:
+    surfaces: [apps/guard-android, apps/admin-web, packages/i18n]
+    gates: [AT-35]
+    external: []
+  UX-04:
+    surfaces: [apps/guard-android, apps/admin-web]
+    gates: [AT-11]
+    external: []
+  UX-05:
+    surfaces: [apps/resident-mobile, apps/guard-android]
+    gates: []
+    external: []
+  UX-06:
+    surfaces: [services/api/modules/identity]
+    gates: []
+    external: []
+  UX-07:
+    surfaces: [services/api/modules/helpdesk, services/api/modules/identity]
+    gates: [AT-23]
+    external: []
+  UX-08:
+    surfaces: [packages/i18n]
+    gates: [AT-35, AT-48]
+    external: []
+  UX-09:
+    surfaces: [services/api/modules/shifts, services/api/modules/staff]
+    gates: [AT-35, AT-48]
+    external: []
+  UX-10:
+    surfaces: []
+    gates: []
+    external: ['hardware:handheld-scanner']
+  ARCH-01:
+    surfaces: []
+    gates: [AT-01]
+    external: []
+  ARCH-02:
+    surfaces: [services/api/core]
+    gates: []
+    external: []
+  ARCH-03:
+    surfaces: []
+    gates: [AT-01]
+    external: []
+  ARCH-04:
+    surfaces: [infra]
+    gates: []
+    external: []
+  ARCH-05:
+    surfaces: [services/ai-gateway, services/worker]
+    gates: [AT-29]
+    external: []
+  DB-01:
+    surfaces: []
+    gates: [AT-14]
+    external: []
+  DB-02:
+    surfaces: [services/api/modules/ledger, services/api/modules/edge_sync, services/api/modules/iot]
+    gates: [AT-18]
+    external: []
+  DB-03:
+    surfaces: []
+    gates: []
+    external: []
+  DB-04:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-37]
+    external: []
+  DB-05:
+    surfaces: []
+    gates: [AT-22, AT-47]
+    external: []
+  DB-06:
+    surfaces: [services/api/modules/ledger]
+    gates: [AT-17]
+    external: []
+  DB-07:
+    surfaces: [services/api/modules/ledger]
+    gates: [AT-45]
+    external: []
+  DB-08:
+    surfaces: []
+    gates: [AT-24]
+    external: []
+  SOC-01:
+    surfaces: [services/api/modules/legal_packs, services/api/modules/tax]
+    gates: []
+    external: []
+  SOC-02:
+    surfaces: []
+    gates: []
+    external: []
+  SOC-03:
+    surfaces: [apps/admin-web]
+    gates: []
+    external: []
+  SOC-04:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  SOC-05:
+    surfaces: [apps/admin-web]
+    gates: []
+    external: []
+  SOC-06:
+    surfaces: [services/api/modules/visits, services/api/modules/notifications]
+    gates: []
+    external: []
+  SOC-07:
+    surfaces: [services/api/modules/org]
+    gates: []
+    external: []
+  SOC-08:
+    surfaces: [apps/admin-web]
+    gates: []
+    external: []
+  SOC-09:
+    surfaces: [services/api/modules/platform_admin]
+    gates: []
+    external: []
+  GATE-01:
+    surfaces: [apps/resident-mobile, apps/guard-android]
+    gates: [AT-05]
+    external: []
+  GATE-02:
+    surfaces: [apps/guard-android, apps/resident-mobile, services/api/modules/notifications]
+    gates: [AT-03, AT-04, AT-40]
+    external: []
+  GATE-03:
+    surfaces: [apps/resident-mobile]
+    gates: [AT-03, AT-04]
+    external: []
+  GATE-04:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: []
+  GATE-05:
+    surfaces: [apps/guard-android, services/edge]
+    gates: []
+    external: []
+  GATE-06:
+    surfaces: [apps/guard-android]
+    gates: [AT-06]
+    external: []
+  GATE-07:
+    surfaces: [apps/guard-android, services/api/modules/visits]
+    gates: [AT-07]
+    external: []
+  GATE-08:
+    surfaces: [apps/guard-android, services/api/modules/privacy]
+    gates: []
+    external: []
+  GATE-09:
+    surfaces: []
+    gates: []
+    external: []
+  GATE-10:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:ai-model']
+  GATE-11:
+    surfaces: [services/api/modules/notifications, services/worker]
+    gates: []
+    external: []
+  GATE-12:
+    surfaces: []
+    gates: []
+    external: []
+  GATE-13:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['provider:telephony-ivr']
+  GATE-14:
+    surfaces: [services/api/modules/visits, apps/resident-mobile]
+    gates: [AT-06]
+    external: []
+  EDGE-01:
+    surfaces: []
+    gates: [AT-06]
+    external: ['hardware:edge-gateway']
+  EDGE-02:
+    surfaces: [packages/contracts, services/api/modules/edge_sync]
+    gates: [AT-05, AT-06, AT-08]
+    external: []
+  EDGE-03:
+    surfaces: [services/edge, packages/contracts]
+    gates: [AT-06]
+    external: []
+  EDGE-04:
+    surfaces: [services/api/modules/devices]
+    gates: []
+    external: []
+  EDGE-05:
+    surfaces: [apps/guard-android]
+    gates: [AT-06, AT-08]
+    external: []
+  EDGE-06:
+    surfaces: [apps/guard-android]
+    gates: [AT-07]
+    external: []
+  EDGE-07:
+    surfaces: [services/edge]
+    gates: [AT-05, AT-06]
+    external: []
+  EDGE-08:
+    surfaces: [infra]
+    gates: []
+    external: ['hardware:edge-gateway']
+  EDGE-09:
+    surfaces: [services/api/modules/devices, services/api/core]
+    gates: [AT-06]
+    external: ['hardware:edge-gateway']
+  EDGE-10:
+    surfaces: [services/api/modules/privacy, services/api/modules/edge_sync]
+    gates: [AT-24]
+    external: []
+  NOTIF-01:
+    surfaces: []
+    gates: [AT-39]
+    external: []
+  NOTIF-02:
+    surfaces: [services/api/modules/reports]
+    gates: [AT-11]
+    external: ['provider:push']
+  NOTIF-03:
+    surfaces: [services/api/modules/visits, services/worker]
+    gates: [AT-11, AT-40]
+    external: ['provider:push', 'provider:telephony-ivr', 'provider:whatsapp', 'provider:sms-dlt']
+  NOTIF-04:
+    surfaces: [apps/resident-mobile, services/api/modules/visits]
+    gates: [AT-03]
+    external: []
+  NOTIF-05:
+    surfaces: [apps/resident-mobile]
+    gates: [AT-03, AT-04]
+    external: []
+  NOTIF-06:
+    surfaces: [services/ai-gateway, services/api/modules/notifications]
+    gates: [AT-11]
+    external: []
+  NOTIF-07:
+    surfaces: [services/api/modules/reports]
+    gates: [AT-11]
+    external: []
+  NOTIF-08:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:telephony-ivr', 'provider:ai-model']
+  NOTIF-09:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: []
+  CALL-01:
+    surfaces: [apps/guard-android]
+    gates: [AT-11, AT-40]
+    external: ['provider:telephony-ivr']
+  CALL-02:
+    surfaces: []
+    gates: [AT-40]
+    external: ['provider:sms-dlt']
+  PAR-01:
+    surfaces: [services/ai-gateway, apps/resident-mobile]
+    gates: []
+    external: []
+  PAR-02:
+    surfaces: [apps/guard-android]
+    gates: [AT-13]
+    external: []
+  PAR-03:
+    surfaces: [apps/resident-mobile]
+    gates: [AT-13]
+    external: []
+  PAR-04:
+    surfaces: []
+    gates: [AT-13]
+    external: []
+  PAR-05:
+    surfaces: [services/worker]
+    gates: []
+    external: []
+  PAR-06:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:ai-model']
+  PAR-07:
+    surfaces: []
+    gates: []
+    external: ['partner:delivery-partner']
+  PAR-08:
+    surfaces: [apps/guard-android, services/api/modules/visits]
+    gates: []
+    external: []
+  STAFF-01:
+    surfaces: [apps/guard-android]
+    gates: [AT-12]
+    external: []
+  STAFF-02:
+    surfaces: []
+    gates: []
+    external: []
+  STAFF-03:
+    surfaces: []
+    gates: [AT-12]
+    external: []
+  STAFF-04:
+    surfaces: [services/api/modules/privacy, services/ai-gateway]
+    gates: []
+    external: []
+  STAFF-05:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: []
+  STAFF-06:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  STAFF-07:
+    surfaces: [services/api/modules/procurement, services/api/modules/reports]
+    gates: []
+    external: []
+  SHIFT-01:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: []
+  SHIFT-02:
+    surfaces: [services/ai-gateway, apps/guard-android]
+    gates: []
+    external: []
+  OPS-01:
+    surfaces: []
+    gates: []
+    external: []
+  OPS-02:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  OPS-03:
+    surfaces: [services/ai-gateway, apps/resident-mobile]
+    gates: [AT-29]
+    external: []
+  OPS-04:
+    surfaces: []
+    gates: []
+    external: []
+  OPS-05:
+    surfaces: []
+    gates: []
+    external: []
+  OPS-06:
+    surfaces: [services/worker, services/ai-gateway]
+    gates: []
+    external: []
+  OPS-07:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: []
+  OPS-08:
+    surfaces: []
+    gates: []
+    external: []
+  OPS-09:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  OPS-10:
+    surfaces: [services/worker]
+    gates: []
+    external: []
+  OPS-11:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: []
+  COM-01:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: []
+  COM-02:
+    surfaces: [services/ai-gateway, packages/i18n]
+    gates: []
+    external: []
+  COM-03:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  COM-04:
+    surfaces: []
+    gates: []
+    external: []
+  COM-05:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: []
+  COM-06:
+    surfaces: [services/ai-gateway]
+    gates: [AT-21]
+    external: []
+  AMEN-01:
+    surfaces: [services/api/modules/payments]
+    gates: [AT-20]
+    external: []
+  AMEN-02:
+    surfaces: [services/api/modules/billing]
+    gates: [AT-22, AT-47]
+    external: ['approval:counsel']
+  AMEN-03:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:whatsapp']
+  GOV-01:
+    surfaces: [services/api/modules/governance]
+    gates: [AT-21, AT-38]
+    external: ['approval:legal-pack']
+  GOV-02:
+    surfaces: [services/ai-gateway, services/api/modules/notices]
+    gates: []
+    external: []
+  GOV-03:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: ['provider:video']
+  GOV-04:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-38]
+    external: ['approval:legal-pack']
+  GOV-05:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-21]
+    external: ['approval:legal-pack']
+  GOV-06:
+    surfaces: []
+    gates: []
+    external: ['approval:legal-pack']
+  GOV-07:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  GOV-08:
+    surfaces: []
+    gates: []
+    external: ['approval:legal-pack']
+  GOV-09:
+    surfaces: [services/api/modules/identity]
+    gates: [AT-32]
+    external: []
+  GOV-10:
+    surfaces: []
+    gates: []
+    external: []
+  FIN-01:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-33, AT-46]
+    external: []
+  FIN-02:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-37]
+    external: []
+  FIN-03:
+    surfaces: [services/api/modules/ai, services/api/modules/ledger]
+    gates: [AT-14, AT-37]
+    external: []
+  FIN-04:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-37]
+    external: []
+  FIN-05:
+    surfaces: [services/api/modules/payments]
+    gates: [AT-17, AT-39]
+    external: []
+  FIN-06:
+    surfaces: [services/api/modules/billing]
+    gates: [AT-18]
+    external: []
+  FIN-07:
+    surfaces: []
+    gates: [AT-14, AT-18, AT-45]
+    external: []
+  FIN-08:
+    surfaces: []
+    gates: []
+    external: []
+  FIN-09:
+    surfaces: [services/api/modules/payments]
+    gates: []
+    external: []
+  FIN-10:
+    surfaces: [services/api/modules/notifications, services/worker]
+    gates: [AT-22]
+    external: []
+  FIN-11:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:ai-model']
+  FIN-12:
+    surfaces: [services/api/modules/governance]
+    gates: []
+    external: []
+  PAY-01:
+    surfaces: []
+    gates: []
+    external: ['provider:payment-aggregator']
+  PAY-02:
+    surfaces: []
+    gates: [AT-15]
+    external: []
+  PAY-03:
+    surfaces: [services/api/modules/ledger]
+    gates: [AT-15, AT-36, AT-39]
+    external: ['provider:payment-aggregator']
+  PAY-04:
+    surfaces: [services/api/modules/billing]
+    gates: [AT-39]
+    external: ['provider:payment-aggregator', 'provider:bbpou']
+  PAY-05:
+    surfaces: [services/api/modules/reports]
+    gates: [AT-16, AT-46]
+    external: ['approval:acquirer']
+  PAY-06:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: []
+  PAY-07:
+    surfaces: [apps/resident-mobile]
+    gates: [AT-15]
+    external: ['provider:payment-aggregator']
+  PAY-08:
+    surfaces: [apps/admin-web, services/api/modules/ledger]
+    gates: []
+    external: []
+  PAY-09:
+    surfaces: [services/api/modules/ai, services/api/modules/ledger]
+    gates: [AT-16, AT-36, AT-39]
+    external: []
+  PAY-10:
+    surfaces: [services/api/modules/ledger]
+    gates: [AT-16, AT-36, AT-46]
+    external: []
+  PAY-11:
+    surfaces: [services/api/modules/ledger]
+    gates: []
+    external: ['provider:payment-aggregator']
+  ERP-01:
+    surfaces: [services/api/modules/ledger]
+    gates: []
+    external: ['approval:ca']
+  ERP-02:
+    surfaces: [services/api/modules/legal_packs, services/api/modules/ledger]
+    gates: [AT-28]
+    external: []
+  ERP-03:
+    surfaces: [services/api/modules/identity]
+    gates: [AT-19]
+    external: []
+  ERP-04:
+    surfaces: [services/ai-gateway]
+    gates: [AT-28]
+    external: ['provider:ai-model']
+  ERP-05:
+    surfaces: [services/api/modules/staff, services/api/modules/reports]
+    gates: []
+    external: []
+  ERP-06:
+    surfaces: [services/api/modules/ledger]
+    gates: []
+    external: ['approval:ca']
+  ERP-07:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:ai-model']
+  TAX-01:
+    surfaces: [packages/tax-packs]
+    gates: [AT-42, AT-43]
+    external: []
+  TAX-02:
+    surfaces: [packages/tax-packs]
+    gates: [AT-42]
+    external: ['approval:ca']
+  TAX-03:
+    surfaces: []
+    gates: []
+    external: ['provider:gst-irp', 'approval:ca']
+  TAX-04:
+    surfaces: [packages/tax-packs]
+    gates: [AT-43]
+    external: ['approval:ca']
+  TAX-05:
+    surfaces: [services/api/modules/ledger, services/ai-gateway]
+    gates: [AT-42, AT-43]
+    external: []
+  EXP-01:
+    surfaces: [apps/admin-web]
+    gates: [AT-01, AT-33]
+    external: []
+  EXP-02:
+    surfaces: [services/api/modules/ledger]
+    gates: []
+    external: ['provider:zoho-books']
+  EXP-03:
+    surfaces: [services/api/modules/ledger, services/api/modules/tax]
+    gates: []
+    external: []
+  HW-01:
+    surfaces: []
+    gates: []
+    external: ['hardware:barrier-controller']
+  HW-02:
+    surfaces: []
+    gates: [AT-09]
+    external: ['hardware:barrier-controller']
+  HW-03:
+    surfaces: []
+    gates: [AT-09]
+    external: ['hardware:barrier-controller']
+  HW-04:
+    surfaces: []
+    gates: [AT-10]
+    external: ['hardware:barrier-controller']
+  HW-05:
+    surfaces: [services/api/modules/devices]
+    gates: [AT-10]
+    external: ['hardware:barrier-controller', 'approval:installer']
+  HW-06:
+    surfaces: [services/api/modules/devices]
+    gates: [AT-09, AT-10]
+    external: ['hardware:barrier-controller']
+  HW-07:
+    surfaces: [services/api/modules/devices]
+    gates: []
+    external: ['hardware:barrier-controller']
+  VEH-01:
+    surfaces: []
+    gates: []
+    external: []
+  VEH-02:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: ['hardware:rfid-reader']
+  VEH-03:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['hardware:anpr-camera']
+  VEH-04:
+    surfaces: [services/edge]
+    gates: []
+    external: ['hardware:rfid-reader', 'hardware:anpr-camera']
+  VEH-05:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['hardware:anpr-camera']
+  IOT-01:
+    surfaces: []
+    gates: [AT-30]
+    external: ['hardware:meter-gateway']
+  IOT-02:
+    surfaces: [services/api/modules/iot]
+    gates: []
+    external: ['hardware:meter-gateway']
+  IOT-03:
+    surfaces: []
+    gates: [AT-30]
+    external: ['hardware:meter-gateway']
+  WATER-01:
+    surfaces: [services/api/modules/vehicles, services/api/modules/procurement]
+    gates: [AT-41]
+    external: ['hardware:meter-gateway', 'hardware:anpr-camera']
+  WATER-02:
+    surfaces: [services/api/modules/procurement]
+    gates: [AT-41]
+    external: ['approval:metrology']
+  WATER-03:
+    surfaces: [services/api/modules/billing, services/api/modules/legal_packs]
+    gates: []
+    external: ['hardware:meter-gateway']
+  FUEL-01:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['hardware:fuel-sensor-genset']
+  FUEL-02:
+    surfaces: [services/edge]
+    gates: []
+    external: ['hardware:fuel-sensor-genset']
+  EV-01:
+    surfaces: [services/edge]
+    gates: []
+    external: ['hardware:ocpp-charger']
+  EV-02:
+    surfaces: [services/api/modules/iot]
+    gates: [AT-31]
+    external: ['hardware:ocpp-charger']
+  EV-03:
+    surfaces: [services/api/modules/billing]
+    gates: []
+    external: ['hardware:ocpp-charger', 'approval:discom']
+  SUS-01:
+    surfaces: [services/api/modules/iot]
+    gates: []
+    external: []
+  PRIV-01:
+    surfaces: [docs/security]
+    gates: []
+    external: ['approval:counsel']
+  PRIV-02:
+    surfaces: [packages/i18n]
+    gates: []
+    external: ['approval:counsel']
+  PRIV-03:
+    surfaces: [apps/guard-android, services/api/modules/visits]
+    gates: []
+    external: ['approval:counsel']
+  PRIV-04:
+    surfaces: [services/api/modules/visits]
+    gates: [AT-02]
+    external: []
+  PRIV-05:
+    surfaces: [services/api/modules/identity]
+    gates: []
+    external: ['approval:counsel']
+  PRIV-06:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-23]
+    external: ['approval:counsel']
+  PRIV-07:
+    surfaces: [services/api/core]
+    gates: []
+    external: ['approval:counsel']
+  PRIV-08:
+    surfaces: [services/worker, services/api/modules/edge_sync]
+    gates: [AT-23, AT-24]
+    external: []
+  PRIV-09:
+    surfaces: [infra]
+    gates: [AT-24, AT-34]
+    external: []
+  PRIV-10:
+    surfaces: []
+    gates: [AT-23]
+    external: ['approval:counsel']
+  PRIV-11:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: []
+  PRIV-12:
+    surfaces: [services/ai-gateway, apps/resident-mobile]
+    gates: [AT-23]
+    external: []
+  PRIV-13:
+    surfaces: [services/api/modules/privacy]
+    gates: []
+    external: []
+  PRIV-14:
+    surfaces: [services/ai-gateway, infra]
+    gates: []
+    external: ['approval:ai-provider-terms']
+  PRIV-15:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  RIGHTS-01:
+    surfaces: [services/api/modules/billing, services/api/modules/devices]
+    gates: [AT-22]
+    external: []
+  RIGHTS-02:
+    surfaces: [services/api/modules/org]
+    gates: []
+    external: []
+  RIGHTS-03:
+    surfaces: [services/api/modules/identity, services/api/modules/helpdesk]
+    gates: [AT-44]
+    external: []
+  RPT-01:
+    surfaces: [services/api/modules/visits, services/api/modules/notifications]
+    gates: []
+    external: []
+  RPT-02:
+    surfaces: [apps/admin-web]
+    gates: []
+    external: []
+  RPT-03:
+    surfaces: [services/api/modules/procurement, services/api/modules/staff]
+    gates: []
+    external: []
+  RPT-04:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: []
+  RPT-05:
+    surfaces: [services/api/core]
+    gates: []
+    external: []
+  RPT-06:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:ai-model']
+  RPT-07:
+    surfaces: [services/api/modules/helpdesk, services/api/modules/assets]
+    gates: []
+    external: []
+  PLAT-01:
+    surfaces: [apps/admin-web]
+    gates: []
+    external: []
+  PLAT-02:
+    surfaces: [services/api/modules/devices]
+    gates: []
+    external: ['provider:android-enterprise']
+  PLAT-03:
+    surfaces: []
+    gates: []
+    external: []
+  PLAT-04:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['provider:ai-model']
+  PLAT-05:
+    surfaces: [apps/admin-web]
+    gates: []
+    external: []
+  AI-SYS-01:
+    surfaces: [services/api/modules/ai]
+    gates: []
+    external: ['provider:ai-model', 'approval:ai-provider-terms']
+  AI-SYS-02:
+    surfaces: [services/api/modules/ai]
+    gates: [AT-01, AT-25]
+    external: ['approval:ai-provider-terms']
+  AI-SYS-03:
+    surfaces: []
+    gates: [AT-25]
+    external: []
+  AI-SYS-04:
+    surfaces: [services/ai-gateway]
+    gates: [AT-25, AT-26]
+    external: []
+  AI-SYS-05:
+    surfaces: []
+    gates: []
+    external: []
+  AI-SYS-06:
+    surfaces: [services/api/modules/platform_admin]
+    gates: [AT-29]
+    external: []
+  AI-SYS-07:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: []
+  AI-SYS-08:
+    surfaces: [apps/resident-mobile, apps/admin-web]
+    gates: [AT-29]
+    external: []
+  AI-SYS-09:
+    surfaces: [services/api/modules/platform_admin]
+    gates: []
+    external: []
+  G1:
+    surfaces: [services/api/modules/visits, services/edge]
+    gates: []
+    external: []
+  G2:
+    surfaces: [services/api/modules/ledger, services/api/modules/billing]
+    gates: []
+    external: []
+  G3:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: []
+  G4:
+    surfaces: [services/api/modules/staff, services/api/modules/vehicles]
+    gates: []
+    external: []
+  G5:
+    surfaces: [services/api/modules/billing]
+    gates: []
+    external: []
+  G6:
+    surfaces: []
+    gates: []
+    external: []
+  G7:
+    surfaces: []
+    gates: [AT-27]
+    external: []
+  G8:
+    surfaces: [packages/i18n]
+    gates: []
+    external: []
+  G9:
+    surfaces: []
+    gates: []
+    external: []
+  G10:
+    surfaces: []
+    gates: [AT-27]
+    external: []
+  G11:
+    surfaces: [services/api/modules/privacy]
+    gates: []
+    external: []
+  G12:
+    surfaces: [services/api/modules/helpdesk, services/api/modules/assets]
+    gates: []
+    external: []
+  AI-G01:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G02:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G03:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G04:
+    surfaces: [services/api/modules/staff]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G05:
+    surfaces: [services/api/modules/vehicles]
+    gates: []
+    external: ['hardware:anpr-camera']
+  AI-G06:
+    surfaces: [services/api/modules/parcels]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G07:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G08:
+    surfaces: [services/api/modules/shifts]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G09:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['provider:ai-model']
+  AI-G10:
+    surfaces: [services/api/modules/reports]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-R01:
+    surfaces: [apps/resident-mobile]
+    gates: [AT-27]
+    external: ['provider:ai-model']
+  AI-R02:
+    surfaces: [services/api/modules/helpdesk, apps/resident-mobile]
+    gates: []
+    external: ['provider:ai-model']
+  AI-R03:
+    surfaces: [services/api/modules/billing]
+    gates: []
+    external: ['provider:ai-model']
+  AI-R04:
+    surfaces: [services/api/modules/parcels]
+    gates: []
+    external: ['provider:ai-model']
+  AI-R05:
+    surfaces: [services/api/modules/visits]
+    gates: []
+    external: ['provider:ai-model']
+  AI-R06:
+    surfaces: [services/api/modules/notifications, apps/resident-mobile]
+    gates: [AT-11]
+    external: ['provider:ai-model']
+  AI-R07:
+    surfaces: [services/api/modules/notices, packages/i18n]
+    gates: [AT-25]
+    external: ['provider:ai-model']
+  AI-R08:
+    surfaces: [services/api/modules/notifications]
+    gates: []
+    external: ['provider:ai-model', 'provider:telephony-ivr']
+  AI-R09:
+    surfaces: [services/api/modules/amenities]
+    gates: []
+    external: ['provider:ai-model']
+  AI-R10:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: ['provider:ai-model']
+  AI-R11:
+    surfaces: [services/api/modules/notices]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C01:
+    surfaces: [services/api/modules/notices]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C02:
+    surfaces: [services/api/modules/governance]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C03:
+    surfaces: [services/api/modules/governance]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C04:
+    surfaces: [services/api/modules/reports]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C05:
+    surfaces: [services/api/modules/billing]
+    gates: []
+    external: []
+  AI-C06:
+    surfaces: [services/api/modules/reports]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C07:
+    surfaces: [services/api/modules/procurement]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C08:
+    surfaces: [services/api/modules/assets]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C09:
+    surfaces: [services/api/modules/billing]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C10:
+    surfaces: [services/api/modules/helpdesk]
+    gates: []
+    external: ['provider:ai-model']
+  AI-C11:
+    surfaces: [services/api/modules/legal_packs]
+    gates: [AT-27]
+    external: ['provider:ai-model']
+  AI-C12:
+    surfaces: [services/api/modules/notices]
+    gates: []
+    external: ['provider:ai-model']
+  AI-A01:
+    surfaces: [services/api/modules/procurement]
+    gates: [AT-28]
+    external: ['provider:ai-model']
+  AI-A02:
+    surfaces: [services/api/modules/payments]
+    gates: []
+    external: []
+  AI-A03:
+    surfaces: [services/api/modules/procurement]
+    gates: []
+    external: ['provider:ai-model']
+  AI-A04:
+    surfaces: [services/api/modules/tax]
+    gates: []
+    external: ['provider:ai-model']
+  AI-A05:
+    surfaces: [services/api/modules/exports]
+    gates: []
+    external: ['provider:ai-model']
+  AI-A06:
+    surfaces: [services/api/modules/org]
+    gates: []
+    external: ['provider:ai-model']
+  AI-A07:
+    surfaces: [services/api/modules/procurement]
+    gates: []
+    external: []
+  AI-F01:
+    surfaces: [services/api/modules/helpdesk]
+    gates: [AT-25]
+    external: ['provider:ai-model']
+  AI-F02:
+    surfaces: [services/api/modules/assets]
+    gates: []
+    external: ['provider:ai-model']
+  AI-F03:
+    surfaces: [services/api/modules/helpdesk]
+    gates: []
+    external: ['provider:ai-model']
+  AI-F04:
+    surfaces: [services/api/modules/assets]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-F05:
+    surfaces: [services/api/modules/assets]
+    gates: []
+    external: ['provider:ai-model']
+  AI-F06:
+    surfaces: [services/api/modules/assets]
+    gates: []
+    external: ['provider:ai-model']
+  AI-F07:
+    surfaces: [services/api/modules/assets]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-F08:
+    surfaces: [services/api/modules/helpdesk]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-I01:
+    surfaces: [services/api/modules/iot]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-I02:
+    surfaces: [services/api/modules/iot]
+    gates: [AT-41]
+    external: ['provider:ai-model']
+  AI-I03:
+    surfaces: [services/api/modules/iot]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-I04:
+    surfaces: [services/api/modules/iot]
+    gates: [AT-31]
+    external: ['hardware:ocpp-charger']
+  AI-I05:
+    surfaces: [services/api/modules/iot]
+    gates: [AT-31]
+    external: ['data:baseline-observation']
+  AI-I06:
+    surfaces: [services/api/modules/reports]
+    gates: []
+    external: ['provider:ai-model']
+  AI-I07:
+    surfaces: [services/api/modules/reports]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-S01:
+    surfaces: []
+    gates: []
+    external: ['hardware:anpr-camera']
+  AI-S02:
+    surfaces: [services/api/modules/visits]
+    gates: []
+    external: ['data:baseline-observation']
+  AI-S03:
+    surfaces: [services/api/modules/helpdesk]
+    gates: []
+    external: []
+  AI-D02:
+    surfaces: [services/api/modules/staff]
+    gates: []
+    external: ['provider:ai-model', 'provider:telephony-ivr']
+  AI-P01:
+    surfaces: [services/api/modules/platform_admin]
+    gates: []
+    external: ['provider:ai-model']
+  AI-P02:
+    surfaces: [services/api/modules/org]
+    gates: []
+    external: ['provider:ai-model']
+  AI-P03:
+    surfaces: [services/api/modules/legal_packs]
+    gates: []
+    external: ['provider:ai-model']
+  AI-P04:
+    surfaces: [services/api/modules/privacy]
+    gates: []
+    external: ['provider:ai-model']
+  AI-P05:
+    surfaces: [packages/i18n]
+    gates: []
+    external: ['provider:ai-model']
+  AI-P06:
+    surfaces: [services/api/modules/platform_admin]
+    gates: []
+    external: ['provider:ai-model']
+  OBS-01:
+    surfaces: []
+    gates: []
+    external: []
+  OBS-02:
+    surfaces: [services/edge, services/api/modules/reports]
+    gates: []
+    external: []
+  OBS-03:
+    surfaces: [services/worker]
+    gates: [AT-45]
+    external: []
+  RUN-01:
+    surfaces: [infra]
+    gates: [AT-34]
+    external: []
+  RUN-02:
+    surfaces: [services/api/modules/devices]
+    gates: []
+    external: []
+  RUN-03:
+    surfaces: []
+    gates: []
+    external: []
+  NFR-01:
+    surfaces: [infra]
+    gates: []
+    external: ['field:pilot-measurement']
+  NFR-02:
+    surfaces: []
+    gates: []
+    external: ['hardware:edge-gateway']
+  NFR-03:
+    surfaces: []
+    gates: []
+    external: ['hardware:edge-gateway']
+  NFR-04:
+    surfaces: [apps/guard-android]
+    gates: []
+    external: ['hardware:edge-gateway']
+  NFR-05:
+    surfaces: [services/edge]
+    gates: []
+    external: ['field:pilot-measurement']
+  NFR-06:
+    surfaces: [services/api/modules/visits]
+    gates: []
+    external: ['field:pilot-measurement']
+  NFR-07:
+    surfaces: [apps/resident-mobile]
+    gates: [AT-03]
+    external: []
+  NFR-08:
+    surfaces: []
+    gates: []
+    external: []
+  NFR-09:
+    surfaces: []
+    gates: [AT-06]
+    external: ['hardware:edge-gateway']
+  NFR-10:
+    surfaces: [services/edge]
+    gates: [AT-06]
+    external: ['hardware:edge-gateway']
+  NFR-11:
+    surfaces: [services/api/core]
+    gates: [AT-34]
+    external: []
+  NFR-12:
+    surfaces: [services/worker]
+    gates: []
+    external: []
+  NFR-13:
+    surfaces: []
+    gates: [AT-29]
+    external: ['provider:ai-model']
+  NFR-14:
+    surfaces: [apps/resident-mobile, apps/guard-android]
+    gates: [AT-35]
+    external: []
+  NFR-15:
+    surfaces: []
+    gates: []
+    external: []
+  SEC-01:
+    surfaces: []
+    gates: []
+    external: []
+  SEC-02:
+    surfaces: [services/api/core, packages/dwaar-common]
+    gates: []
+    external: []
+  SEC-03:
+    surfaces: []
+    gates: []
+    external: []
+  SEC-04:
+    surfaces: []
+    gates: [AT-01]
+    external: []
+  SEC-05:
+    surfaces: [services/ai-gateway, services/api/modules/exports]
+    gates: [AT-01, AT-02]
+    external: []
+  SEC-06:
+    surfaces: [services/api/core]
+    gates: []
+    external: ['approval:counsel']
+  SEC-07:
+    surfaces: [services/ai-gateway]
+    gates: []
+    external: ['approval:ai-provider-terms']
+  SEC-08:
+    surfaces: []
+    gates: []
+    external: []
+  SEC-09:
+    surfaces: []
+    gates: []
+    external: ['provider:pentest-vendor']
+  SEC-10:
+    surfaces: []
+    gates: [AT-01, AT-02, AT-25]
+    external: []
+  AT-01:
+    surfaces: []
+    gates: []
+    external: []
+  AT-02:
+    surfaces: []
+    gates: []
+    external: []
+  AT-03:
+    surfaces: []
+    gates: []
+    external: []
+  AT-04:
+    surfaces: []
+    gates: []
+    external: []
+  AT-05:
+    surfaces: []
+    gates: []
+    external: []
+  AT-06:
+    surfaces: []
+    gates: []
+    external: []
+  AT-07:
+    surfaces: []
+    gates: []
+    external: []
+  AT-08:
+    surfaces: []
+    gates: []
+    external: []
+  AT-09:
+    surfaces: []
+    gates: []
+    external: []
+  AT-10:
+    surfaces: []
+    gates: []
+    external: []
+  AT-11:
+    surfaces: []
+    gates: []
+    external: []
+  AT-12:
+    surfaces: []
+    gates: []
+    external: []
+  AT-13:
+    surfaces: []
+    gates: []
+    external: []
+  AT-14:
+    surfaces: []
+    gates: []
+    external: []
+  AT-15:
+    surfaces: []
+    gates: []
+    external: []
+  AT-16:
+    surfaces: []
+    gates: []
+    external: []
+  AT-17:
+    surfaces: []
+    gates: []
+    external: []
+  AT-18:
+    surfaces: []
+    gates: []
+    external: []
+  AT-19:
+    surfaces: []
+    gates: []
+    external: []
+  AT-20:
+    surfaces: []
+    gates: []
+    external: []
+  AT-21:
+    surfaces: []
+    gates: []
+    external: []
+  AT-22:
+    surfaces: []
+    gates: []
+    external: []
+  AT-23:
+    surfaces: []
+    gates: []
+    external: []
+  AT-24:
+    surfaces: []
+    gates: []
+    external: []
+  AT-25:
+    surfaces: []
+    gates: []
+    external: []
+  AT-26:
+    surfaces: []
+    gates: []
+    external: []
+  AT-27:
+    surfaces: []
+    gates: []
+    external: []
+  AT-28:
+    surfaces: []
+    gates: []
+    external: []
+  AT-29:
+    surfaces: []
+    gates: []
+    external: []
+  AT-30:
+    surfaces: []
+    gates: []
+    external: []
+  AT-31:
+    surfaces: []
+    gates: []
+    external: []
+  AT-32:
+    surfaces: []
+    gates: []
+    external: []
+  AT-33:
+    surfaces: []
+    gates: []
+    external: []
+  AT-34:
+    surfaces: []
+    gates: []
+    external: []
+  AT-35:
+    surfaces: []
+    gates: []
+    external: []
+  AT-36:
+    surfaces: []
+    gates: []
+    external: []
+  AT-37:
+    surfaces: []
+    gates: []
+    external: []
+  AT-38:
+    surfaces: []
+    gates: []
+    external: []
+  AT-39:
+    surfaces: []
+    gates: []
+    external: []
+  AT-40:
+    surfaces: []
+    gates: []
+    external: []
+  AT-41:
+    surfaces: []
+    gates: []
+    external: []
+  AT-42:
+    surfaces: []
+    gates: []
+    external: []
+  AT-43:
+    surfaces: []
+    gates: []
+    external: []
+  AT-44:
+    surfaces: []
+    gates: []
+    external: []
+  AT-45:
+    surfaces: []
+    gates: []
+    external: []
+  AT-46:
+    surfaces: []
+    gates: []
+    external: []
+  AT-47:
+    surfaces: []
+    gates: []
+    external: []
+  AT-48:
+    surfaces: []
+    gates: []
+    external: []
+  MIG-01:
+    surfaces: [services/api/modules/exports]
+    gates: []
+    external: []
+  MIG-02:
+    surfaces: [services/api/modules/exports, services/api/modules/org]
+    gates: [AT-33]
+    external: []
+  MIG-03:
+    surfaces: [services/api/modules/payments]
+    gates: [AT-36]
+    external: []
+  MIG-04:
+    surfaces: [services/api/modules/ledger]
+    gates: []
+    external: []
+  Q1:
+    surfaces: [services/api/modules/platform_admin]
+    gates: []
+    external: []
+  Q2:
+    surfaces: [apps/resident-mobile]
+    gates: []
+    external: []
+  Q3:
+    surfaces: [services/api/modules/devices]
+    gates: []
+    external: []
+  Q4:
+    surfaces: [services/api/modules/visits]
+    gates: []
+    external: []
+  Q5:
+    surfaces: [services/api/modules/legal_packs]
+    gates: []
+    external: []
+  Q6:
+    surfaces: [services/api/modules/legal_packs]
+    gates: []
+    external: []
+  Q7:
+    surfaces: [services/api/modules/legal_packs]
+    gates: []
+    external: []
+  Q8:
+    surfaces: [services/api/modules/tax]
+    gates: []
+    external: []
+  Q9:
+    surfaces: [services/api/modules/reports]
+    gates: []
+    external: []
+  Q10:
+    surfaces: []
+    gates: []
+    external: []
+  Q11:
+    surfaces: [services/api/modules/legal_packs]
+    gates: []
+    external: []
+  Q12:
+    surfaces: []
+    gates: []
+    external: []
+  Q13:
+    surfaces: [services/api/modules/privacy]
+    gates: []
+    external: []
+  Q14:
+    surfaces: []
+    gates: []
+    external: []
+  AI-D01:
+    surfaces: [services/api/modules/staff]
+    gates: []
+    external: []

@@ -1,0 +1,6063 @@
+{
+  "tool": "tools/trace_check.py",
+  "schema_version": 1,
+  "milestone": "M1",
+  "scope": "cumulative",
+  "registry": {
+    "source": "Dwaar Master PRD v2.0",
+    "items": 444,
+    "digest": "sha256:5b876e55b22f9c5c24193e65f1488abf7ca018df6e370d0b7488db16964cbd77"
+  },
+  "scan": {
+    "files_scanned": 67,
+    "files_ignored": 0,
+    "annotations": 11
+  },
+  "summary": {
+    "requirements_in_scope": 220,
+    "by_status": {
+      "done": 0,
+      "partial": 8,
+      "blocked-external": 0,
+      "not-started": 212
+    },
+    "by_priority": {
+      "P0": {
+        "done": 0,
+        "partial": 5,
+        "blocked-external": 0,
+        "not-started": 133
+      },
+      "P1": {
+        "done": 0,
+        "partial": 0,
+        "blocked-external": 0,
+        "not-started": 2
+      },
+      "none": {
+        "done": 0,
+        "partial": 3,
+        "blocked-external": 0,
+        "not-started": 77
+      }
+    },
+    "acceptance_in_scope": 35,
+    "acceptance_by_status": {
+      "done": 0,
+      "partial": 0,
+      "not-started": 35
+    },
+    "reference_items": {
+      "decision": 24,
+      "open-question": 14
+    },
+    "orphans": 0
+  },
+  "requirements": [
+    {
+      "id": "INV-01",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Server-derived society and role scope on every object, query, cache, search and file",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01"
+      ]
+    },
+    {
+      "id": "INV-02",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Money is integer paise; posted journals balance, are immutable and retry-safe",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/ledger",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [
+        "packages/dwaar-common/dwaar_common/money.py"
+      ],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-14",
+        "AT-15",
+        "AT-16",
+        "AT-17"
+      ],
+      "gaps": [
+        "no-tests",
+        "acceptance-untested:AT-14",
+        "acceptance-untested:AT-15",
+        "acceptance-untested:AT-16",
+        "acceptance-untested:AT-17"
+      ]
+    },
+    {
+      "id": "INV-03",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Local deterministic policy decides entry; models never actuate; no auto-allow on timeout",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-04",
+        "AT-06",
+        "AT-40"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-04",
+        "acceptance-untested:AT-06",
+        "acceptance-untested:AT-40"
+      ]
+    },
+    {
+      "id": "INV-04",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Four independent relationships: ownership, occupancy, billing liability, statutory vote",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-02"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-02"
+      ]
+    },
+    {
+      "id": "INV-05",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Advertising, commercial push, data resale and unrelated profiling are prohibited",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "infra",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "INV-06",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "AI only proposes; deterministic permission and approval services execute",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/ai",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-25",
+        "AT-26"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-25",
+        "acceptance-untested:AT-26"
+      ]
+    },
+    {
+      "id": "INV-07",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Statuses from submitted through settled are kept distinct and shown truthfully",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-03",
+        "AT-04",
+        "AT-15"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-03",
+        "acceptance-untested:AT-04",
+        "acceptance-untested:AT-15"
+      ]
+    },
+    {
+      "id": "INV-08",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Essential services are never restricted because of debt",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-22",
+        "AT-47"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-22",
+        "acceptance-untested:AT-47"
+      ]
+    },
+    {
+      "id": "INV-09",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Self-service export and migration manifest for every society",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/exports",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-33"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-33"
+      ]
+    },
+    {
+      "id": "INV-10",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Interest caps, quorum, notice, weights, tax and retention come from approved packs",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/legal_packs",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-37"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-37"
+      ]
+    },
+    {
+      "id": "INV-11",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Guards and staff finish every core flow in-language, supported by icons and audio",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [
+        "packages/dwaar-common/dwaar_common/i18n.py"
+      ],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-35",
+        "AT-48"
+      ],
+      "gaps": [
+        "no-tests",
+        "acceptance-untested:AT-35",
+        "acceptance-untested:AT-48"
+      ]
+    },
+    {
+      "id": "INV-12",
+      "kind": "invariant",
+      "area": "invariants",
+      "title": "Every SLO is instrumented and reported; claims come only from measurements",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-34"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-34"
+      ]
+    },
+    {
+      "id": "IAM-01",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Memberships with type, unit, dates, verification and evidence; many per person",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [
+        "tools/tests/test_trace_check.py:510"
+      ],
+      "acceptance_gates": [
+        "AT-01",
+        "AT-02"
+      ],
+      "gaps": [
+        "no-implementation",
+        "acceptance-untested:AT-01",
+        "acceptance-untested:AT-02"
+      ]
+    },
+    {
+      "id": "IAM-02",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Role grants with scope, issuer, reason and expiry; expiry revokes sessions",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [
+        "tools/tests/test_trace_check.py:510"
+      ],
+      "acceptance_gates": [
+        "AT-02",
+        "AT-32"
+      ],
+      "gaps": [
+        "no-implementation",
+        "acceptance-untested:AT-02",
+        "acceptance-untested:AT-32"
+      ]
+    },
+    {
+      "id": "IAM-03",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "MFA mandatory for elevated roles; no self-granting; distinct maker and checker",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "IAM-04",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Privileged reads and exports log their purpose and scope",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "IAM-05",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Owner-tenant disputes trigger review, not deactivation of occupancy",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-44"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-44"
+      ]
+    },
+    {
+      "id": "IAM-06",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Phone OTP with rate limits and DLT templates proves number control only",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:oidc-identity",
+        "provider:sms-dlt"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "IAM-07",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Household joining workflow with visible reasons and independent appeal review",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-44"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-44"
+      ]
+    },
+    {
+      "id": "IAM-08",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Short-lived tokens, rotating refresh, session list, revocation, CSRF, secure storage",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01",
+        "AT-32"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01",
+        "acceptance-untested:AT-32"
+      ]
+    },
+    {
+      "id": "IAM-09",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Step-up authentication for bank approval, legal-hold export, bulk personal-data download",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "IAM-10",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Offline guard shift login from cached policy, supervisor local entitlements, revocation",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/api/modules/devices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-07"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-07"
+      ]
+    },
+    {
+      "id": "IAM-11",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Recycled phone numbers inherit nothing; number change forces re-verification",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "IAM-12",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Tenant onboarding needs owner confirmation; committee holds are logged and appealable",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-44"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-44"
+      ]
+    },
+    {
+      "id": "IAM-13",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Registration endpoints cannot hand out platform or committee roles",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "IAM-14",
+      "kind": "requirement",
+      "area": "identity-access",
+      "title": "Use a maintained OIDC library or identity provider; no invented tokens",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:oidc-identity"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "UX-01",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Resident home quick actions; operational messages separate from community content",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/resident-mobile",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "UX-02",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Guard controls at least 48 dp, 4.5:1 contrast, decisions never colour-only",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-35"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-35"
+      ]
+    },
+    {
+      "id": "UX-03",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Accessibility for large text and screen readers; Devanagari wrapping and stable unit numerals",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/resident-mobile",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-35"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-35"
+      ]
+    },
+    {
+      "id": "UX-04",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Show exact backend state such as saved-awaiting-sync or settlement pending",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "apps/resident-mobile",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11"
+      ]
+    },
+    {
+      "id": "UX-05",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Destructive, financial or rights-changing actions preview scope and give receipts",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/admin-web",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "UX-06",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "No infinite feeds, auto-play, hidden fees or nagging; preferences persist server-side",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/resident-mobile",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "UX-07",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Residents can raise support or privacy issues even while membership is disputed",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/privacy",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-23"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-23"
+      ]
+    },
+    {
+      "id": "UX-08",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Per-guard login language, with audio prompts for each primary action",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-35",
+        "AT-48"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-35",
+        "acceptance-untested:AT-48"
+      ]
+    },
+    {
+      "id": "UX-09",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Guard practice mode with dummy units and per-guard training tracking",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-35",
+        "AT-48"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-35",
+        "acceptance-untested:AT-48"
+      ]
+    },
+    {
+      "id": "UX-10",
+      "kind": "requirement",
+      "area": "ux",
+      "title": "Handheld USB or Bluetooth barcode scanner supported alongside the camera",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:handheld-scanner"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "ARCH-01",
+      "kind": "arch",
+      "area": "multi-tenancy",
+      "title": "Every society-owned row carries society_id with cross-society reference guards",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01"
+      ]
+    },
+    {
+      "id": "ARCH-02",
+      "kind": "arch",
+      "area": "multi-tenancy",
+      "title": "One global person identity with personal details in an encrypted vault",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/identity",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "ARCH-03",
+      "kind": "arch",
+      "area": "multi-tenancy",
+      "title": "App connects as a restricted DB role; per-transaction context drives RLS",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01"
+      ]
+    },
+    {
+      "id": "ARCH-04",
+      "kind": "arch",
+      "area": "multi-tenancy",
+      "title": "Only backend workers hold service-role credentials; clients never do",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/worker",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "ARCH-05",
+      "kind": "arch",
+      "area": "multi-tenancy",
+      "title": "Per-society limits for features, AI spend, request rates and queue share",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/platform_admin",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-29"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-29"
+      ]
+    },
+    {
+      "id": "DB-01",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Posted journals have equal debit and credit totals in paise",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/ledger",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-14"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-14"
+      ]
+    },
+    {
+      "id": "DB-02",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "App role cannot modify or remove ledger lines, gate events, readings or audit entries",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-18"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-18"
+      ]
+    },
+    {
+      "id": "DB-03",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Maker of a bill run is barred from approving it",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "DB-04",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Bill-run interest above the active legal pack cap is rejected",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-37"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-37"
+      ]
+    },
+    {
+      "id": "DB-05",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Essential amenities are barred from carrying defaulter restrictions",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/amenities",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-22",
+        "AT-47"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-22",
+        "acceptance-untested:AT-47"
+      ]
+    },
+    {
+      "id": "DB-06",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Allocation totals per receipt and invoice are checked in a locked transaction",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-17"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-17"
+      ]
+    },
+    {
+      "id": "DB-07",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Scheduled nightly check of the journal hash chain, alerting on breaks",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/worker",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-45"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-45"
+      ]
+    },
+    {
+      "id": "DB-08",
+      "kind": "db-invariant",
+      "area": "database-invariants",
+      "title": "Erasure happens only via the privacy engine; marking a row deleted is not enough",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-24"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-24"
+      ]
+    },
+    {
+      "id": "SOC-01",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "New society record with legal entity, registrations, tax identifiers and selected packs",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/org",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SOC-02",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "Blocks, floors and units with areas, undivided interest and certified construction cost",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/modules/org",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SOC-03",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "Bulk CSV or Excel import of units and members, all-or-nothing with report",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/org",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SOC-05",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "Set up gates, lanes, posts and devices, with certificate-based device enrolment",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/api/modules/devices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SOC-06",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "Society policies: visitor rules, photo policy, delivery hours, overstay, cascade timings",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/org",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SOC-07",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "Data processing agreement accepted by an office-bearer with version and signatory",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SOC-08",
+      "kind": "requirement",
+      "area": "society-setup",
+      "title": "Setup checklist showing progress across units, members, gates, guards, policies, packs",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/org",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GATE-01",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Invitations with purpose, window and max uses; signed QR with opaque IDs only",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-05"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-05"
+      ]
+    },
+    {
+      "id": "GATE-02",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Unannounced visitor flow from destination pick to consent, approval and observed entry",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-03",
+        "AT-04",
+        "AT-40"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-03",
+        "acceptance-untested:AT-04",
+        "acceptance-untested:AT-40"
+      ]
+    },
+    {
+      "id": "GATE-03",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Stale mobile approvals cannot resurrect denied or expired requests",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [
+        "tools/tests/test_trace_check.py:510"
+      ],
+      "acceptance_gates": [
+        "AT-03",
+        "AT-04"
+      ],
+      "gaps": [
+        "no-implementation",
+        "acceptance-untested:AT-03",
+        "acceptance-untested:AT-04"
+      ]
+    },
+    {
+      "id": "GATE-04",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Multi-destination deliveries use independent stops; each stop needs its own approval",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [
+        "tools/tests/test_trace_check.py:510"
+      ],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation"
+      ]
+    },
+    {
+      "id": "GATE-05",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Exit may be scanned, observed or unknown; no invented exit times",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GATE-06",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Known resident credentials validated locally for status, gate, time, policy age, revocation",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "GATE-07",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Emergency or manual entry needs local authority and a reason; egress independent of cloud",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-07"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-07"
+      ]
+    },
+    {
+      "id": "GATE-08",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "No-phone visitor path using alias, destination, host confirmation and host-issued pass",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GATE-09",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Guard home with Guest, Delivery, Service tiles plus Scan, Parcels, Inside, Incident",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GATE-11",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Overstay alerts for time-boxed passes, with delivery and service defaults",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/visits",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GATE-13",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Resident numbers hidden from guards; calling only through masked proxies",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:telephony-ivr"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GATE-14",
+      "kind": "requirement",
+      "area": "visitors-gate",
+      "title": "Household standing rules enforced by the edge policy",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "EDGE-01",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Edge SQLite in WAL with synchronous FULL, encrypted fields, single writer process",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "EDGE-02",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Signed event envelope persisted atomically with projection and outbox before success",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/edge",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [
+        "packages/dwaar-common/dwaar_common/events.py",
+        "packages/dwaar-common/dwaar_common/signing.py"
+      ],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-05",
+        "AT-06",
+        "AT-08"
+      ],
+      "gaps": [
+        "no-tests",
+        "acceptance-untested:AT-05",
+        "acceptance-untested:AT-06",
+        "acceptance-untested:AT-08"
+      ]
+    },
+    {
+      "id": "EDGE-03",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Sync batch endpoint with per-event outcomes, gap reporting, backoff and quarantine",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/edge_sync",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "EDGE-04",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Signed monotonic policy snapshots applied atomically with rollback rejected",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "EDGE-05",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Stale policy or uncertain clock disables automatic time-sensitive decisions",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06",
+        "AT-08"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06",
+        "acceptance-untested:AT-08"
+      ]
+    },
+    {
+      "id": "EDGE-06",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Terminals keep a restricted standalone mode for 24 hours if the gateway fails",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-07"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-07"
+      ]
+    },
+    {
+      "id": "EDGE-07",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Sync conflict algorithm that never silently discards physical entries",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/edge_sync",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-05",
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-05",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "EDGE-08",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Gateway hardware baseline, 72-hour buffering and UPS sizing from measured load",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "EDGE-09",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "mTLS, no inbound ports, signed A/B updates, no actuation during updates, health telemetry",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "EDGE-10",
+      "kind": "requirement",
+      "area": "edge-sync",
+      "title": "Returning stale devices process tombstones before uploading personal records",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-24"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-24"
+      ]
+    },
+    {
+      "id": "NOTIF-01",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Notification categories with security and emergency channels free of ads",
+      "priority": "P0",
+      "release": "M0",
+      "effective_milestone": "M0",
+      "slice": 2,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-39"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-39"
+      ]
+    },
+    {
+      "id": "NOTIF-02",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Track created through actioned states; provider acceptance never shown as delivery",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:push"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11"
+      ]
+    },
+    {
+      "id": "NOTIF-03",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Default cascade from push to alternate adult, IVR, link, then expiry",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:push",
+        "provider:sms-dlt",
+        "provider:telephony-ivr",
+        "provider:whatsapp"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11",
+        "AT-40"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11",
+        "acceptance-untested:AT-40"
+      ]
+    },
+    {
+      "id": "NOTIF-04",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Accepted decision cancels ringing and stale actions on all devices within 2 seconds",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-03"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-03"
+      ]
+    },
+    {
+      "id": "NOTIF-05",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Immutable request ID, deep links fetch current state, lock-screen actions re-check",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-03",
+        "AT-04"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-03",
+        "acceptance-untested:AT-04"
+      ]
+    },
+    {
+      "id": "NOTIF-06",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "On-device diagnostic and OEM-specific guidance without false delivery guarantees",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/resident-mobile",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11"
+      ]
+    },
+    {
+      "id": "NOTIF-07",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Delivery telemetry by phone model and OS, with acknowledgement and fallback dashboards",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11"
+      ]
+    },
+    {
+      "id": "NOTIF-09",
+      "kind": "requirement",
+      "area": "notifications",
+      "title": "Lock-screen alerts hide who is visiting and where unless residents opt in",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "CALL-01",
+      "kind": "requirement",
+      "area": "calling",
+      "title": "TTL-bound masked proxy calls logging outcome and duration but not audio",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:telephony-ivr"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11",
+        "AT-40"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11",
+        "acceptance-untested:AT-40"
+      ]
+    },
+    {
+      "id": "CALL-02",
+      "kind": "requirement",
+      "area": "calling",
+      "title": "SMS only via DLT-registered headers and templates, with allow-listed links",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:sms-dlt"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-40"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-40"
+      ]
+    },
+    {
+      "id": "PAR-01",
+      "kind": "requirement",
+      "area": "parcels",
+      "title": "Delivery entries tagged by brand with resident expecting-delivery pre-approval",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/parcels",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PAR-02",
+      "kind": "requirement",
+      "area": "parcels",
+      "title": "Parcel state machine with refused, returned and lost branches and guard record",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/parcels",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-13"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-13"
+      ]
+    },
+    {
+      "id": "PAR-03",
+      "kind": "requirement",
+      "area": "parcels",
+      "title": "Explicit revocable leave-at-gate consent; single-use token or supervised pickup",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/parcels",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-13"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-13"
+      ]
+    },
+    {
+      "id": "PAR-04",
+      "kind": "requirement",
+      "area": "parcels",
+      "title": "Courier delivered claims kept as external observations apart from society custody",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/parcels",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-13"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-13"
+      ]
+    },
+    {
+      "id": "PAR-05",
+      "kind": "requirement",
+      "area": "parcels",
+      "title": "24-hour and 48-hour parcel reminders plus custody count reconciliation",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/parcels",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PAR-08",
+      "kind": "requirement",
+      "area": "parcels",
+      "title": "Order-page screenshots are never accepted as gate entitlement",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/parcels",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "STAFF-01",
+      "kind": "requirement",
+      "area": "staff",
+      "title": "One staff person with per-household engagements; guards see current destinations only",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/staff",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-12"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-12"
+      ]
+    },
+    {
+      "id": "STAFF-02",
+      "kind": "requirement",
+      "area": "staff",
+      "title": "Attendance as observation; payroll changes need household approval; append-only corrections",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/staff",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "STAFF-03",
+      "kind": "requirement",
+      "area": "staff",
+      "title": "Ending one engagement leaves other employers' engagements intact",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/staff",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-12"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-12"
+      ]
+    },
+    {
+      "id": "STAFF-04",
+      "kind": "requirement",
+      "area": "staff",
+      "title": "Staff consent in their language before capture; no global blacklist",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/staff",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "STAFF-05",
+      "kind": "requirement",
+      "area": "staff",
+      "title": "Staff check-in by code or card; no face matching until legal review",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/staff",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SHIFT-01",
+      "kind": "requirement",
+      "area": "shift-handover",
+      "title": "Shift start and end checklists with dual acknowledgement and non-locking escalation",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/shifts",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SHIFT-02",
+      "kind": "requirement",
+      "area": "shift-handover",
+      "title": "Handover summary in incoming guard's language with full list always shown",
+      "priority": "P1",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/shifts",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "OPS-01",
+      "kind": "requirement",
+      "area": "helpdesk-ops",
+      "title": "Ticket state machine with SLA clocks, business calendar and immutable pause history",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/helpdesk",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "OPS-02",
+      "kind": "requirement",
+      "area": "helpdesk-ops",
+      "title": "Ticket scope private, block or society; duplicate links never expose private complaints",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/helpdesk",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "OPS-03",
+      "kind": "requirement",
+      "area": "helpdesk-ops",
+      "title": "Ticket intake by text, photo or voice, always confirmed by the resident first",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/helpdesk",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-29"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-29"
+      ]
+    },
+    {
+      "id": "OPS-04",
+      "kind": "requirement",
+      "area": "helpdesk-ops",
+      "title": "Closure by confirmation or feedback window; reopen keeps original SLA history",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/helpdesk",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "OPS-09",
+      "kind": "requirement",
+      "area": "helpdesk-ops",
+      "title": "Unsafe lift, electrical, gas or fire reports show emergency procedure and contacts",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/helpdesk",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "COM-01",
+      "kind": "requirement",
+      "area": "notices-documents",
+      "title": "Notice lifecycle with recipient scope, read acknowledgements and versioned revisions",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "COM-02",
+      "kind": "requirement",
+      "area": "notices-documents",
+      "title": "Translations show the original; safety or legal translations need human review",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "COM-03",
+      "kind": "requirement",
+      "area": "notices-documents",
+      "title": "Human sign-off needed before an AI-drafted notice goes out",
+      "priority": "P1",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "COM-04",
+      "kind": "requirement",
+      "area": "notices-documents",
+      "title": "Versioned document vault with effective dates, authority and access tiers",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "COM-05",
+      "kind": "requirement",
+      "area": "notices-documents",
+      "title": "Privileged-role emergency alerts on a dedicated channel, with rate limiting",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "COM-06",
+      "kind": "requirement",
+      "area": "notices-documents",
+      "title": "Opinion polls labelled non-binding with owner-only option and neutral wording check",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notices",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "GOV-09",
+      "kind": "requirement",
+      "area": "governance",
+      "title": "Committee handover with expiring grants, frozen high-risk config and signed manifest",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/governance",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-32"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-32"
+      ]
+    },
+    {
+      "id": "FIN-01",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Chart of accounts from legal-pack template with unit, fund, block, vendor, project dimensions",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/ledger",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-33",
+        "AT-46"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-33",
+        "acceptance-untested:AT-46"
+      ]
+    },
+    {
+      "id": "FIN-02",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Effective-dated charge rules with basis, accounts, tax code and legal reference",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-37"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-37"
+      ]
+    },
+    {
+      "id": "FIN-03",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Bill run preview, validation and authorised idempotent batch post to immutable invoices",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-14",
+        "AT-37"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-14",
+        "acceptance-untested:AT-37"
+      ]
+    },
+    {
+      "id": "FIN-04",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Simple interest on overdue principal with grace and pack cap; allocation order configurable",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-37"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-37"
+      ]
+    },
+    {
+      "id": "FIN-05",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Explicit postings for partial, advance, over-payment, credit note, waiver, dispute, refund",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/ledger",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-17",
+        "AT-39"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-17",
+        "acceptance-untested:AT-39"
+      ]
+    },
+    {
+      "id": "FIN-06",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Posted invoices never edited; corrections via credit or debit notes; locked periods",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/ledger",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-18"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-18"
+      ]
+    },
+    {
+      "id": "FIN-07",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Journal metadata: source, dates, rule version, approvers, reversal and hash chain",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/ledger",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-14",
+        "AT-18",
+        "AT-45"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-14",
+        "acceptance-untested:AT-18",
+        "acceptance-untested:AT-45"
+      ]
+    },
+    {
+      "id": "FIN-09",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Invoice PDF with society details, heads, tax breakup, UPI QR and virtual account",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "FIN-10",
+      "kind": "requirement",
+      "area": "billing-ledger",
+      "title": "Reminder schedule from due date to formal notice; settlement-pending never triggers default",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-22"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-22"
+      ]
+    },
+    {
+      "id": "PAY-01",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Society onboarded to an authorised aggregator; platform never pools resident money",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:payment-aggregator"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PAY-02",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Payment attempt, settlement and refund state machines; chargebacks as later events",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-15"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-15"
+      ]
+    },
+    {
+      "id": "PAY-03",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Webhook handling: signature check, replay window, dedupe, then atomic receipt, journal, outbox",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:payment-aggregator"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-15",
+        "AT-36",
+        "AT-39"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-15",
+        "acceptance-untested:AT-36",
+        "acceptance-untested:AT-39"
+      ]
+    },
+    {
+      "id": "PAY-04",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "UPI intent, dynamic QR, virtual accounts at M1; AutoPay mandates and BBPS at M2",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:bbpou",
+        "provider:payment-aggregator"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-39"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-39"
+      ]
+    },
+    {
+      "id": "PAY-05",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Effective-dated channel cost config including UPI MDR; never passed to residents",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [
+        "VERIFY"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "VERIFY",
+        "approval:acquirer"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-16",
+        "AT-46"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-16",
+        "acceptance-untested:AT-46"
+      ]
+    },
+    {
+      "id": "PAY-06",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Pre-redirect disclosure of principal, charges, total, payee and settlement; no surcharges",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PAY-07",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Timeouts show checking payment and reuse the same attempt and idempotency reference",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:payment-aggregator"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-15"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-15"
+      ]
+    },
+    {
+      "id": "PAY-08",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Cash and cheque collection with sequential receipts, denominations and dual-signed handover",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PAY-09",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Bank reconciliation with CSV import, line hashing, matching and ranked review queue",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-16",
+        "AT-36",
+        "AT-39"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-16",
+        "acceptance-untested:AT-36",
+        "acceptance-untested:AT-39"
+      ]
+    },
+    {
+      "id": "PAY-10",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Gross, fee, tax and net separated in clearing; variances post only explicitly",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-16",
+        "AT-36",
+        "AT-46"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-16",
+        "acceptance-untested:AT-36",
+        "acceptance-untested:AT-46"
+      ]
+    },
+    {
+      "id": "PAY-11",
+      "kind": "requirement",
+      "area": "payments",
+      "title": "Refunds return to the original instrument unless verified authority permits otherwise",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/payments",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:payment-aggregator"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "EXP-01",
+      "kind": "requirement",
+      "area": "export-integration",
+      "title": "Self-service full society export with stable IDs, PDFs and checksummed manifest",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/exports",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01",
+        "AT-33"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01",
+        "acceptance-untested:AT-33"
+      ]
+    },
+    {
+      "id": "HW-06",
+      "kind": "requirement",
+      "area": "access-hardware",
+      "title": "Adapter interface contract; simulator implements it with simulation flag, no live relays",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:barrier-controller"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "VEH-01",
+      "kind": "requirement",
+      "area": "vehicles",
+      "title": "Vehicle registry per unit with hashed tag identifier and replacement history",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/vehicles",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-01",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Data inventory and purpose map with a lawful basis recorded per purpose",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-02",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Layered, versioned privacy notices in several languages with audio and assisted reading",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-03",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Visitor notice-first flow with affirmative action recorded against the notice version",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-04",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Minimal gate record; no Aadhaar copies, mandatory biometrics or contact-book upload",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-02"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-02"
+      ]
+    },
+    {
+      "id": "PRIV-05",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "No child accounts at MVP; children added by a parent with minimal fields",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-06",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Versioned retention rule objects with operational removal distinct from final erasure",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-23"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-23"
+      ]
+    },
+    {
+      "id": "PRIV-07",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Segregated encrypted one-year archive excluded from search, analytics and AI retrieval",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-08",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Deletion job from eligibility check to replica erasure, tombstones and completion proof",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-23",
+        "AT-24"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-23",
+        "acceptance-untested:AT-24"
+      ]
+    },
+    {
+      "id": "PRIV-09",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Backups on 35-day rotation; isolated restores re-apply tombstones before users connect",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-24",
+        "AT-34"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-24",
+        "acceptance-untested:AT-34"
+      ]
+    },
+    {
+      "id": "PRIV-11",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Phone masking to last four digits, time-limited proxy calls, logged reveals",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-12",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Rights portal for access, correction, erasure, grievance and nomination with response targets",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-23"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-23"
+      ]
+    },
+    {
+      "id": "PRIV-13",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Breach runbook with distinct containment, society notice, CERT-In and DPDP clocks",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "docs/runbooks",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-14",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Indian data residency choice and approved sub-processor list; AI inputs minimised",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL",
+        "approval:ai-provider-terms"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PRIV-15",
+      "kind": "requirement",
+      "area": "privacy",
+      "title": "Photos default off, no training on society content, AI data follows retention classes",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "RIGHTS-01",
+      "kind": "requirement",
+      "area": "resident-rights",
+      "title": "Debt never restricts entry, egress, essential services, or complaint and privacy channels",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-22"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-22"
+      ]
+    },
+    {
+      "id": "RIGHTS-02",
+      "kind": "requirement",
+      "area": "resident-rights",
+      "title": "No configuration that filters or restricts residents by religion, diet or marital status",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "RIGHTS-03",
+      "kind": "requirement",
+      "area": "resident-rights",
+      "title": "Tenant safeguards with visible rules ledger, action explanations and independent appeal",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/privacy",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-44"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-44"
+      ]
+    },
+    {
+      "id": "RPT-01",
+      "kind": "requirement",
+      "area": "reports",
+      "title": "Gate KPI dashboard covering latencies, scan share, acknowledgement, fallback and overrides",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/reports",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PLAT-01",
+      "kind": "requirement",
+      "area": "platform-admin",
+      "title": "Internal console with just-in-time scoped support access and metadata-only diagnostics",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/platform_admin",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PLAT-02",
+      "kind": "requirement",
+      "area": "platform-admin",
+      "title": "Device fleet management with enrolment, certificate rotation, remote wipe and firmware inventory",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/platform_admin",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:android-enterprise"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "PLAT-03",
+      "kind": "requirement",
+      "area": "platform-admin",
+      "title": "Subscription billing per contracted unit with tiers, minimum fee, caps and renewal notice",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/platform_admin",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-SYS-01",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "Server-side model access via provider adapter with full ai_runs audit",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "approval:ai-provider-terms",
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-SYS-02",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "Retrieval enforces society, role, unit and document visibility before and after search",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "approval:ai-provider-terms"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01",
+        "AT-25"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01",
+        "acceptance-untested:AT-25"
+      ]
+    },
+    {
+      "id": "AI-SYS-03",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "Uploaded content treated as untrusted data; model cannot follow embedded instructions",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-25"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-25"
+      ]
+    },
+    {
+      "id": "AI-SYS-04",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "Action proposal object bound to payload hash with execution-time re-checks",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/ai",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-25",
+        "AT-26"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-25",
+        "acceptance-untested:AT-26"
+      ]
+    },
+    {
+      "id": "AI-SYS-05",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "PII redaction middleware tokenises identifiers; golden-set recall at least 99 percent",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-SYS-06",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "15 s timeout and outage fall back to ordinary forms; per-society kill switch",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-29"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-29"
+      ]
+    },
+    {
+      "id": "AI-SYS-07",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "Versioned prompt files with regression set and canary rollout on changes",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "packages/prompts",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-SYS-08",
+      "kind": "requirement",
+      "area": "ai-platform",
+      "title": "Users see AI draft label, sources, save scope and correction route",
+      "priority": "P0",
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-29"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-29"
+      ]
+    },
+    {
+      "id": "G1",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "AI can assist and flag, but granting gate entry is outside its authority",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G2",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Journal posting, bill release, payment approval and tax filing stay outside AI authority",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G3",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "AI sends nothing to residents unprompted except approved translations, concierge replies, reminders",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G4",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Face recognition of any person, children included, is barred for AI through M3",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G5",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "No marketing profiling; collections predictions internal and never restrict essentials",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G6",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Strip or tokenise personal data before every model call",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G7",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Rule, bill and policy answers cite version and date; abstain on missing evidence",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G8",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Respond in the user's language and always offer the original translation text",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G9",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Flags and scores always come with a plain-words explanation",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G10",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Legal answers are advisory and point to counsel under uncertainty",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G11",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Customer data never trains models; sub-processors are disclosed",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "G12",
+      "kind": "guardrail",
+      "area": "ai-guardrails",
+      "title": "Lift, electrical, gas and fire guidance restricted to approved manuals and SOPs",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-G08",
+      "kind": "ai-feature",
+      "area": "ai-guard-gate",
+      "title": "Shift handover summary of pending items",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-R02",
+      "kind": "ai-feature",
+      "area": "ai-resident",
+      "title": "Voice, photo or text complaint intake producing an editable ticket draft",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-R06",
+      "kind": "ai-feature",
+      "area": "ai-resident",
+      "title": "Notification health assistant giving device-specific fix steps",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-11"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-11"
+      ]
+    },
+    {
+      "id": "AI-R07",
+      "kind": "ai-feature",
+      "area": "ai-resident",
+      "title": "Notice and ticket translation with the original retained",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-25"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-25"
+      ]
+    },
+    {
+      "id": "AI-C01",
+      "kind": "ai-feature",
+      "area": "ai-committee",
+      "title": "Notice and circular drafter producing multilingual drafts for approval",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-C05",
+      "kind": "ai-feature",
+      "area": "ai-committee",
+      "title": "Bill-run anomaly check flagging units with reasons",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-C12",
+      "kind": "ai-feature",
+      "area": "ai-committee",
+      "title": "Poll wording check that flags bias and suggests neutral text",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-F01",
+      "kind": "ai-feature",
+      "area": "ai-facilities",
+      "title": "Ticket triage and duplicate grouping with proposed parent incident",
+      "priority": null,
+      "release": "M1",
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-25"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-25"
+      ]
+    },
+    {
+      "id": "OBS-01",
+      "kind": "requirement",
+      "area": "observability",
+      "title": "Structured logs with correlation ID and safe codes, never secrets or personal data",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "partial",
+      "blocked_by": [],
+      "implemented_in": [
+        "packages/dwaar-common/dwaar_common/logging.py",
+        "packages/dwaar-common/dwaar_common/masking.py"
+      ],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-tests"
+      ]
+    },
+    {
+      "id": "OBS-02",
+      "kind": "requirement",
+      "area": "observability",
+      "title": "Per-society and per-device metrics for sync, policy, outbox, disk, battery, relay errors",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "OBS-03",
+      "kind": "requirement",
+      "area": "observability",
+      "title": "On-call alerts for silent edge, refresh failure, disk, escalation and erasure backlog",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "infra",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-45"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-45"
+      ]
+    },
+    {
+      "id": "RUN-01",
+      "kind": "runbook",
+      "area": "operations",
+      "title": "Expand-and-contract migrations, canary society, no destructive rollback of postings",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-34"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-34"
+      ]
+    },
+    {
+      "id": "RUN-02",
+      "kind": "runbook",
+      "area": "operations",
+      "title": "Signed A/B edge updates with power and health pre-checks and no actuation",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "RUN-03",
+      "kind": "runbook",
+      "area": "operations",
+      "title": "Sev-1 acknowledgement in 15 minutes with updates every 30; outage and breach runbooks",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "docs/runbooks",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-01",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Cloud core availability of 99.9 percent monthly",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "field:pilot-measurement"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-02",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Cached policy decision latency p95 150 ms and p99 300 ms",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-03",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Scan to open command latency p95 500 ms",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-04",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "LAN propagation between terminals p95 one second",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-05",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Median ten seconds to process a pre-approved arrival",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/guard-android",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "field:pilot-measurement"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-06",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Unannounced visitor decisions within 45 s at p95, inside request expiry",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "field:pilot-measurement"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-07",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Approval alert cancellation on all devices within two seconds",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/modules/notifications",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-03"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-03"
+      ]
+    },
+    {
+      "id": "NFR-08",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Server-side p95 of 400 ms for standard API calls",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-09",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "72-hour offline buffer holding 60,000 or more events without loss",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/edge",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "NFR-10",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Sync recovery of 60,000 events within ten minutes at 5 Mbps",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 3,
+      "module": "services/api/modules/edge_sync",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "hardware:edge-gateway"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-06"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-06"
+      ]
+    },
+    {
+      "id": "NFR-11",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Cloud RPO five minutes and RTO sixty minutes",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "infra",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-34"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-34"
+      ]
+    },
+    {
+      "id": "NFR-12",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Billing run of 10,000 unit invoices within ten minutes",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 5,
+      "module": "services/api/modules/billing",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "NFR-13",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "AI draft or answer latency p95 15 seconds with timeout fallback",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/ai-gateway",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "provider:ai-model"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-29"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-29"
+      ]
+    },
+    {
+      "id": "NFR-14",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "WCAG 2.2 AA for web, with equivalent testing for native apps",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "apps/admin-web",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-35"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-35"
+      ]
+    },
+    {
+      "id": "NFR-15",
+      "kind": "nfr",
+      "area": "non-functional",
+      "title": "Load certification at section 4.4 sizing",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "tests/load",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-01",
+      "kind": "security",
+      "area": "security",
+      "title": "Threat model mapping each listed threat to preventive, detective and recovery controls",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "docs/security",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-02",
+      "kind": "security",
+      "area": "security",
+      "title": "TLS, device mTLS, KMS keys, field encryption, least privilege, signed builds, SBOM",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "infra",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-03",
+      "kind": "security",
+      "area": "security",
+      "title": "Upload validation, malware scanning and safe archive extraction",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-04",
+      "kind": "security",
+      "area": "security",
+      "title": "Object storage via server policy and short-lived signed URLs after access checks",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 4,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01"
+      ]
+    },
+    {
+      "id": "SEC-05",
+      "kind": "security",
+      "area": "security",
+      "title": "API IDs, CSV exports and AI sources share permission tests and enumeration protection",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M0",
+      "slice": 1,
+      "module": "services/api/core",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01",
+        "AT-02"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01",
+        "acceptance-untested:AT-02"
+      ]
+    },
+    {
+      "id": "SEC-06",
+      "kind": "security",
+      "area": "security",
+      "title": "Security logs retained per approved schedule; one-hour contractual incident notice target",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "approval:counsel"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-07",
+      "kind": "security",
+      "area": "security",
+      "title": "No compulsory face biometrics or sensitive demographic profiling; cross-border transfers reviewed",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "services/api/modules/privacy",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [
+        "approval:ai-provider-terms"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-08",
+      "kind": "security",
+      "area": "security",
+      "title": "OWASP ASVS Level 2 and MASVS as baselines",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "tests/security",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "SEC-10",
+      "kind": "security",
+      "area": "security",
+      "title": "Security acceptance pack covering role matrix, IDOR, XSS, replay, injection and restore",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "tests/security",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-01",
+        "AT-02",
+        "AT-25"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-01",
+        "acceptance-untested:AT-02",
+        "acceptance-untested:AT-25"
+      ]
+    },
+    {
+      "id": "MIG-01",
+      "kind": "runbook",
+      "area": "migration",
+      "title": "Migration discovery: signatory, entity, export rights, accounts, funds and open items",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "docs/runbooks",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "MIG-02",
+      "kind": "runbook",
+      "area": "migration",
+      "title": "Migration dry run with checksums, reversible ID map, trial balance comparison",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "docs/runbooks",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-33"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-33"
+      ]
+    },
+    {
+      "id": "MIG-03",
+      "kind": "runbook",
+      "area": "migration",
+      "title": "Cutover with posting freeze, single actuator authority and incumbent invoicing disabled",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "docs/runbooks",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [
+        "AT-36"
+      ],
+      "gaps": [
+        "no-implementation",
+        "no-tests",
+        "acceptance-untested:AT-36"
+      ]
+    },
+    {
+      "id": "MIG-04",
+      "kind": "runbook",
+      "area": "migration",
+      "title": "Rollback preserving all postings and events with one system of record",
+      "priority": null,
+      "release": null,
+      "effective_milestone": "M1",
+      "slice": 6,
+      "module": "docs/runbooks",
+      "labels": [],
+      "status": "not-started",
+      "blocked_by": [],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    },
+    {
+      "id": "AI-D01",
+      "kind": "guardrail",
+      "area": "ai-staff",
+      "title": "Withdrawn opt-in staff face matching; excluded from M1 to M3",
+      "priority": null,
+      "release": null,
+      "effective_milestone": null,
+      "slice": null,
+      "module": "services/ai-gateway",
+      "labels": [
+        "LEGAL"
+      ],
+      "status": "not-started",
+      "blocked_by": [
+        "LEGAL"
+      ],
+      "implemented_in": [],
+      "adapter_files": [],
+      "simulator_files": [],
+      "tested_by": [],
+      "acceptance_gates": [],
+      "gaps": [
+        "no-implementation",
+        "no-tests"
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AT-01",
+      "milestone": "M0",
+      "slice": 1,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A user moves from Society A to Society B and replays object IDs that belong to A"
+    },
+    {
+      "id": "AT-02",
+      "milestone": "M0",
+      "slice": 1,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A non-resident owner asks for the visitor history of their tenant"
+    },
+    {
+      "id": "AT-03",
+      "milestone": "M0",
+      "slice": 2,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A guest request is pending and two family members decide at the same moment"
+    },
+    {
+      "id": "AT-04",
+      "milestone": "M0",
+      "slice": 2,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "An approval request times out and a queued approval from a phone arrives afterwards"
+    },
+    {
+      "id": "AT-05",
+      "milestone": "M1",
+      "slice": 3,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A guest QR is consumed at one gate and then presented at a second, isolated gate"
+    },
+    {
+      "id": "AT-06",
+      "milestone": "M1",
+      "slice": 3,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The WAN stays down for 72 hours including device and gateway restarts"
+    },
+    {
+      "id": "AT-07",
+      "milestone": "M1",
+      "slice": 3,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The gateway fails while the LAN is partitioned"
+    },
+    {
+      "id": "AT-08",
+      "milestone": "M1",
+      "slice": 3,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A device wall clock is moved backwards"
+    },
+    {
+      "id": "AT-11",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A resident's phone is force-stopped or notification permission is denied"
+    },
+    {
+      "id": "AT-12",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A domestic worker loses one of three employers"
+    },
+    {
+      "id": "AT-13",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A parcel pickup is attempted twice"
+    },
+    {
+      "id": "AT-14",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The same invoice batch is submitted twice"
+    },
+    {
+      "id": "AT-15",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A payment callback repeats or arrives out of order"
+    },
+    {
+      "id": "AT-16",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The gross settlement less fees differs from the bank credit"
+    },
+    {
+      "id": "AT-17",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "Two operators allocate the same receipt concurrently"
+    },
+    {
+      "id": "AT-18",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "An invoice in a closed period needs correction"
+    },
+    {
+      "id": "AT-22",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A treasurer tries to restrict entry or an essential service because of debt"
+    },
+    {
+      "id": "AT-23",
+      "milestone": "M1",
+      "slice": 6,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "An erasure request arrives while a legal hold applies"
+    },
+    {
+      "id": "AT-24",
+      "milestone": "M1",
+      "slice": 6,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A deleted visitor record reappears from a stale device or a backup"
+    },
+    {
+      "id": "AT-25",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A malicious document instructs the AI to export data about neighbours"
+    },
+    {
+      "id": "AT-26",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "An AI proposal is confirmed after the user's role or the target has changed"
+    },
+    {
+      "id": "AT-29",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The AI provider is unavailable or the society's AI budget is exhausted"
+    },
+    {
+      "id": "AT-32",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A committee term ends while a privileged session is active"
+    },
+    {
+      "id": "AT-33",
+      "milestone": "M1",
+      "slice": 6,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The full financial export is re-imported into an external system"
+    },
+    {
+      "id": "AT-34",
+      "milestone": "M1",
+      "slice": 6,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "Restore after a regional-service incident"
+    },
+    {
+      "id": "AT-35",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A low-vision user and a guard in a new language perform core tasks"
+    },
+    {
+      "id": "AT-36",
+      "milestone": "M1",
+      "slice": 6,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A late settlement arrives after the migration cutover"
+    },
+    {
+      "id": "AT-37",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A Maharashtra pack has the general-body interest set to 18 percent"
+    },
+    {
+      "id": "AT-39",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A 6,200 rupee NEFT credit lands in a unit's virtual account"
+    },
+    {
+      "id": "AT-40",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "No device acknowledges an approval request for 10 seconds"
+    },
+    {
+      "id": "AT-44",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "An owner confirms a tenant through a link and the committee then places a hold"
+    },
+    {
+      "id": "AT-45",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "The journal hash chain is altered in a test database"
+    },
+    {
+      "id": "AT-46",
+      "milestone": "M1",
+      "slice": 5,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A 3,000 rupee UPI payment settles net of the 0.4 percent MDR"
+    },
+    {
+      "id": "AT-47",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "An essential amenity is configured with a defaulter restriction"
+    },
+    {
+      "id": "AT-48",
+      "milestone": "M1",
+      "slice": 4,
+      "status": "not-started",
+      "tests": [],
+      "evidence": [],
+      "evidence_failed": false,
+      "scenario": "A new guard picks Marathi at login and runs the five training scenarios"
+    }
+  ],
+  "orphans": []
+}
