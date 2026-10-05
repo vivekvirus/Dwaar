@@ -1,0 +1,44 @@
+# --- Source PRD is confidential: kept in the working tree for builders, never committed unless the owner decides otherwise.
+docs/prd/*
+!docs/prd/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+.next/
+.expo/
+.turbo/
+*.tsbuildinfo
+coverage/
+
+# Android / Gradle
+.gradle/
+*.apk
+*.aab
+local.properties
+.idea/
+**/build/
+
+# Local runtime state (never commit secrets or databases)
+.local/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.log
+.DS_Store
