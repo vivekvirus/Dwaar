@@ -4,19 +4,20 @@ PRD 16: "Non-resident owner requests tenant visitor history. Required outcome: D
 PRD 5.1/5.2: ownership, occupancy and billing liability are independent (INV-04); the "Gate operations" row gives OWNER_NR
 ``N`` and OWNER_OCC / TENANT / FAMILY ``O`` (own unit); the "Bill runs" row gives OWNER_NR ``O (bills)``.
 
-WHAT RUNS TODAY, AND WHAT DOES NOT (read this before trusting the green mark):
+WHAT RUNS, AND AT WHICH LEVEL (slice 2 added the endpoint, so the denial is now proven end to end as well):
 
-* The visitor-history ENDPOINT does not exist yet (slice 2: visitor request, decision and observation). So the denial is
-  proven at the PERMISSION-SERVICE level: the real registry (``app.state.permissions``, PRD 5.2 as data), the real
-  database-backed grant resolver and the real ``decide()`` that every ``require(...)`` route calls, fed by the REAL seeded
-  memberships. ``gate.history`` in the task wording is the PRD 5.2 "Gate operations" capability, own-unit read
-  (``matrix.gate_ops.read_own``): there is no separate ``gate.history`` permission string.
-* The owner's financial rights are asserted at the same level (``matrix.bill_runs.read_own``,
-  ``matrix.unit_register.read_own``, ``matrix.audit_log.read_own``) AND end to end through the endpoints that exist: the
-  ownership record of the unit (``GET /units/{id}``), the unit register scope, and the stored liability/voting facts.
-* ``test_visitor_history_route_is_not_built_yet`` is a tripwire. When slice 2 adds the endpoint it FAILS until the HTTP-level
-  assertions (owner_nr -> 403 ``not_authorised`` on the tenant's unit; tenant and owner_occ -> 200; a stranger -> 404) are
-  added, so the permission-level proof can never silently stand in for the end-to-end one.
+* END TO END: ``GET /v1/societies/{id}/units/{unit_id}/visits`` (visits module, permission ``gate.history.read``, the PRD 5.2 "Gate
+  operations" row): the non-resident owner of a tenant-occupied unit is refused (403 ``not_authorised``, or 404 ``not_found`` when the
+  person lives elsewhere as an occupying owner, see the quirk below) and no visitor of the tenant appears in the answer; the tenant
+  and the occupying owner read the history of their unit (200); a stranger, a member of another society and another household get
+  404. The owner's financial rights are intact through the endpoints that exist: the unit record, the unit register scope and
+  the stored liability and voting facts.
+* PERMISSION LEVEL (kept as the second, independent proof): the real registry (``app.state.permissions``, PRD 5.2 as data), the
+  real database-backed grant resolver and the real ``decide()`` that every ``require(...)`` route calls, fed by the REAL seeded
+  memberships, for ``matrix.gate_ops.read_own`` (there is no ``gate.history`` matrix string; the module action is
+  ``gate.history.read``) and the owner's own-unit bills/register/audit capabilities.
+* ``test_visitor_history_route_is_registered_and_never_lists_the_non_resident_owner`` replaces the slice 1 tripwire: it fails if
+  the route disappears or if OWNER_NR ever becomes a role of the visits history permissions.
 """
 
 from __future__ import annotations
@@ -245,12 +246,134 @@ def test_secretary_without_a_step_up_is_not_authorised_but_the_owner_role_is_una
     assert ok.status_code == 200
 
 
-def test_visitor_history_route_is_not_built_yet(world: World) -> None:
-    """TRIPWIRE. No gate / visitor route exists in slice 1. When slice 2 adds one this test fails: add the HTTP-level AT-02
-    assertions for it (owner_nr -> 403 not_authorised; tenant, owner_occ -> 200; stranger -> 404) and update this list."""
-    found = sorted(
+# ===================================================================================================== end to end (slice 2)
+HISTORY = "/v1/societies/{society}/units/{unit}/visits"
+
+
+def _history(
+    world: World, who: Session, unit: uuid.UUID, society: uuid.UUID | None = None, **params: Any
+) -> Any:
+    sid = society or world.objects("mh").society
+    return world.call(who, "GET", HISTORY.format(society=sid, unit=unit), params=params)
+
+
+@pytest.mark.parametrize(("who", "block", "label", "status"), NON_RESIDENT_OWNERS)
+def test_http_non_resident_owner_is_denied_the_tenants_visitor_history(
+    world: World, who: str, block: str, label: str, status: int
+) -> None:
+    """AT-02 end to end: the real endpoint, the real seeded memberships, the real token."""
+    owner = world.login(who)
+    _society, unit = _unit(world, block, label)
+    r = _history(world, owner, unit)
+    assert r.status_code == status, r.text
+    assert r.json()["code"] == ("not_authorised" if status == 403 else "not_found")
+    assert "items" not in r.json() and "Unknown sales visitor" not in r.text
+    # staff-style access does not open it for an owner either: a purpose changes nothing
+    again = _history(world, owner, unit, purpose="I own this flat and want to know who visits")
+    assert again.status_code == status and "items" not in again.json()
+
+
+def test_http_the_tenant_and_the_occupying_owner_do_read_the_history_of_their_unit(
+    world: World,
+) -> None:
+    """The control: the SAME endpoint answers 200 to the people who live in the unit, with the seeded visits of that unit."""
+    _soc, b205 = _unit(world, "B", "205")
+    priya = world.login("priya")  # tenant of Meera's flat
+    r = _history(world, priya, b205)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["view"] == "household" and body["unit_id"] == str(b205)
+    assert [i["visitor_alias"] for i in body["items"]] == [
+        "Unknown sales visitor"
+    ]  # the denied request seeded for her flat
+    assert body["items"][0]["state"] == "cancelled" and body["items"][0]["entry_observed"] is False
+    assert "visitor_contact_token" not in r.text
+    # Dev (tenant, move-out disputed: occupancy continues) keeps the history of A-305, Smita (non-resident owner) does not have it
+    _s, a305 = _unit(world, "A", "305")
+    assert _history(world, world.login("dev"), a305).status_code == 200
+    assert _history(world, world.login("smita"), a305).status_code == 403
+    # Ganesh lives in A-203 as owner and sees the seeded visits of his household (and only those)
+    _s, a203 = _unit(world, "A", "203")
+    ganesh = _history(world, world.login("ganesh"), a203, limit=100)
+    aliases = {i["visitor_alias"] for i in ganesh.json()["items"]}
+    assert ganesh.status_code == 200 and {"Vikas (cousin)", "Courier parcel"} <= aliases
+    assert "Unknown sales visitor" not in aliases and "Grocery Basket delivery" not in aliases
+    # a delegated family member of the same unit reads it too
+    assert _history(world, world.login("rekha"), a203).status_code == 200
+
+
+def test_http_everyone_else_gets_nothing(world: World) -> None:
+    _soc, b205 = _unit(world, "B", "205")
+    _s, a203 = _unit(world, "A", "203")
+    # another household of the same society, a member of ANOTHER society, a person with no standing at all
+    assert _history(world, world.login("neha"), b205).status_code == 404
+    assert _history(world, world.login("neha"), a203).status_code == 404
+    assert _history(world, world.login("farhan"), b205).status_code == 404
+    assert _history(world, world.login("vikram"), b205).status_code == 404
+    ka_secretary_in_mh = _history(
+        world, world.login("ka.secretary"), a203, purpose="Cross-society curiosity"
+    )
+    assert ka_secretary_in_mh.status_code == 403  # she is only a non-resident owner in this society
+    # a unit id of ANOTHER society used under my society's path is simply unknown
+    ka_unit = world.objects("ka").ref.unit("Tower 1", "101")
+    assert _history(world, world.login("ganesh"), ka_unit).status_code == 404
+    # society roles without a purpose get no read; the treasurer and the auditor never do (PRD 5.1/5.2)
+    secretary = world.login("mh.secretary")
+    assert _history(world, secretary, b205).status_code == 400
+    ok = _history(world, secretary, b205, purpose="Complaint review by the committee")
+    assert ok.status_code == 200 and ok.json()["view"] == "full"
+    for who in ("mh.treasurer", "mh.auditor"):
+        assert (
+            _history(world, world.login(who), b205, purpose="Looking at visitors").status_code
+            == 403
+        ), who
+    guard = world.login("mh.guard1")
+    assert _history(world, guard, b205).status_code == 400  # the guard names the gate
+    gate = visit_gate(world)
+    assert (
+        _history(world, guard, b205, gate_id=str(gate)).json()["items"] == []
+    )  # the only visit there is closed (denied)
+
+
+def visit_gate(world: World) -> uuid.UUID:
+    return uuid.UUID(
+        str(world.admin_rows("SELECT id FROM gates ORDER BY created_at, id LIMIT 1")[0][0])
+    )
+
+
+def test_http_owner_keeps_financial_rights_after_the_history_denial(world: World) -> None:
+    """Denied the tenant's visitors, still the liable owner: the unit record stays readable and the liability facts stay hers."""
+    meera = world.login("ka.secretary")
+    mh = world.objects("mh")
+    unit = mh.ref.unit("B", "205")
+    assert _history(world, meera, unit).status_code == 403
+    record = world.call(meera, "GET", f"/v1/societies/{mh.society}/units/{unit}")
+    assert record.status_code == 200 and record.json()["id"] == str(unit)
+    owner_m = world.membership_of(mh.society, "ka.secretary", "B", "205", "owner")
+    row = world.admin_rows(
+        "SELECT billing_liable, voting_entitled, lives_in_unit FROM memberships WHERE id = %s",
+        (owner_m,),
+    )[0]
+    assert row == (True, True, False)
+
+
+def test_visitor_history_route_is_registered_and_never_lists_the_non_resident_owner(
+    world: World,
+) -> None:
+    """Replaces the slice 1 tripwire: the endpoint exists, and OWNER_NR is in none of the roles of the gate history permissions."""
+    paths = sorted(
         route.path
         for route in iter_api_routes(world.app)
-        if any(word in route.path.lower() for word in ("visit", "gate", "guest", "pass"))
+        if route.path.endswith("/units/{unit_id}/visits")
     )
-    assert found == [], f"visitor/gate routes now exist, extend AT-02 end to end: {found}"
+    assert paths == ["/v1/societies/{society_id}/units/{unit_id}/visits"]
+    permissions = world.app.state.permissions
+    for action in (
+        "gate.history.read",
+        "gate.invitation.create",
+        "gate.request.decide",
+        GATE_HISTORY,
+    ):
+        permission = permissions.get(action)
+        assert permission is not None and "owner_nr" not in permission.roles, action
+    assert permissions.get("gate.history.read").roles >= matrix.roles_for("gate_ops", "read_own")

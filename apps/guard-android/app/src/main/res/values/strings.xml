@@ -1,0 +1,4 @@
+<resources>
+    <!-- Launcher label only. All in-app text comes from the shared catalogs (packages/i18n). -->
+    <string name="app_name" translatable="false">Dwaar Guard</string>
+</resources>
