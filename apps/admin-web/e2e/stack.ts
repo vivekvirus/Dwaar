@@ -100,6 +100,7 @@ export async function stopStack() {
   rmSync(PG_ROOT, { recursive: true, force: true });
   rmSync(STATE_FILE, { force: true });
   rmSync(`${APP}/e2e/.state/totp-used.json`, { force: true });
+  rmSync(`${APP}/e2e/.state/tokens.json`, { force: true });
 }
 
 /** Names of processes that would indicate a leak (used by the teardown assertion). */

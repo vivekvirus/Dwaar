@@ -7,8 +7,8 @@ import { I18nProvider } from "@/i18n/provider";
 
 export const SOCIETY = "019b76da-a800-713c-a879-90fe5f48356e";
 
-export function renderConsole(ui: ReactElement, roles: string[] = ["secretary"], societyId = SOCIETY) {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: 0 } } });
+export function renderConsole(ui: ReactElement, roles: string[] = ["secretary"], societyId = SOCIETY, existing?: QueryClient) {
+  const client = existing ?? new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: 0 } } });
   const caps = capabilitiesFor(roles);
   const value = {
     societyId,

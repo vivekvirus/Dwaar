@@ -14,7 +14,7 @@ export async function signIn(context: BrowserContext, phone: string, opts: { mfa
   const headers = { "x-csrf-token": csrf, "content-type": "application/json", origin: new URL(page.url()).origin };
   const req = context.request;
   let r = await req.post("/api/auth/otp/request", { data: { phone }, headers });
-  expect(r.status()).toBe(202);
+  expect(r.status(), `OTP request for ${phone} (limit: 3 per 5 minutes per number)`).toBe(202);
   r = await req.post("/api/auth/otp/verify", { data: { phone, code: await otpFor(phone) }, headers });
   expect(r.status()).toBe(200);
   if (opts.mfa) {

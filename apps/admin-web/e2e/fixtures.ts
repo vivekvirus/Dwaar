@@ -48,31 +48,44 @@ export async function otpFor(phone: string): Promise<string> {
 }
 
 /** Direct API sign-in (fixtures and contract checks only; the console itself never does this from the browser). */
-const tokens = new Map<string, string>();
+// Playwright loads each spec file with its own module registry, so a fixture session is shared through a file (synthetic
+// data only; removed with the stack). OTP requests are rate limited per number (3 per 5 minutes) and a session lives 15 minutes.
+const TOKENS = `${APP}/e2e/.state/tokens.json`;
+type TokenCache = Record<string, { token: string; at: number }>;
+const readTokens = (): TokenCache => {
+  try {
+    return JSON.parse(readFileSync(TOKENS, "utf8")) as TokenCache;
+  } catch {
+    return {};
+  }
+};
+
 export async function apiLogin(phone: string, opts: { mfa?: boolean } = {}): Promise<string> {
-  // OTP requests are rate limited per number (3 per 5 minutes), so a fixture session is reused within a test run
   const key = `${phone}|${opts.mfa ? "mfa" : "otp"}`;
-  const cached = tokens.get(key);
-  if (cached) return cached;
+  const hit = readTokens()[key];
+  if (hit && Date.now() - hit.at < 10 * 60_000) return hit.token;
   const token = await apiLoginFresh(phone, opts);
-  tokens.set(key, token);
+  mkdirSync(dirname(TOKENS), { recursive: true });
+  writeFileSync(TOKENS, JSON.stringify({ ...readTokens(), [key]: { token, at: Date.now() } }));
   return token;
 }
 
 async function apiLoginFresh(phone: string, opts: { mfa?: boolean }): Promise<string> {
-  await dev("/v1/auth/otp/request", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone }) });
+  const req = await dev("/v1/auth/otp/request", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone }) });
+  if (req.status !== 202) throw new Error(`otp request for ${phone} failed: ${req.status} ${await req.text()}`);
   const code = await otpFor(phone);
   const r = await dev("/v1/auth/otp/verify", {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ phone, code, device: { device_id: `e2e-${randomUUID()}`, label: "e2e fixture" } }),
   });
+  if (r.status !== 200) throw new Error(`otp verify for ${phone} failed: ${r.status} ${await r.text()}`);
   const token = ((await r.json()) as { access_token: string }).access_token;
   if (opts.mfa) {
     const m = await dev("/v1/auth/mfa/verify", {
       method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
       body: JSON.stringify({ code: await totpFor(phone) }),
     });
-    if (m.status !== 200) throw new Error(`mfa verify failed: ${m.status}`);
+    if (m.status !== 200) throw new Error(`mfa verify failed: ${m.status} ${await m.text()} (${phone})`);
   }
   return token;
 }

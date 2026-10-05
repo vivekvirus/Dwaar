@@ -142,6 +142,26 @@ describe("devices: approve, reject, revoke (SOC-05 subset)", () => {
   });
 });
 
+describe("cached data is keyed by society (INV-01)", () => {
+  it("a second society never shows rows cached for the first, even with the same query client", async () => {
+    const { QueryClient } = await import("@tanstack/react-query");
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: 60_000 } } });
+    const OTHER = "019b76da-a800-7bbb-b000-000000000002";
+    const mine = { items: [{ ...devices.items[0]!, id: "d-a", name: "Society A gate terminal", state: "active" }] };
+    const theirs = { items: [{ ...devices.items[0]!, id: "d-b", name: "Society B gate terminal", state: "active" }] };
+    const calls = mockFetch({ "GET /api/bff/society/devices": (c) => ({ json: c.headers["x-dwaar-society"] === SOCIETY ? mine : theirs }), "GET /api/bff/society/gates": () => ({ json: gates }) });
+    const a = renderConsole(<DevicesPage />, ["secretary"], SOCIETY, client);
+    await screen.findByText("Society A gate terminal");
+    a.unmount();
+    renderConsole(<DevicesPage />, ["secretary"], OTHER, client);
+    expect(screen.queryByText("Society A gate terminal")).toBeNull(); // not even for one frame
+    await screen.findByText("Society B gate terminal");
+    expect(screen.queryByText("Society A gate terminal")).toBeNull();
+    expect(calls.filter((c) => c.url.endsWith("/devices")).map((c) => c.headers["x-dwaar-society"])).toEqual([SOCIETY, OTHER]);
+    expect(client.getQueryCache().getAll().every((q) => q.queryKey[0] === SOCIETY || q.queryKey[0] === OTHER)).toBe(true);
+  });
+});
+
 describe("society settings tell the truth about the legal pack (INV-10)", () => {
   it("shows 'unapproved: binding governance is disabled' and the blockers", async () => {
     mockFetch({ "GET /api/bff/society/configuration": () => ({ json: configuration }), "GET /api/bff/v1/meta": () => ({ json: { service: "dwaar_api", version: "0.1.0", api_version: "v1", environment: "local", simulation: true } }) });

@@ -1,5 +1,6 @@
 // Server Component helper: reads the HttpOnly cookies through next/headers and returns the SERVER-derived session.
 import { cookies, headers } from "next/headers";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { requiredFor } from "@/lib/access";
 import { CookieJar } from "./cookies";
@@ -11,7 +12,8 @@ export async function currentPath(): Promise<string> {
   return (await headers()).get("x-dwaar-pathname") ?? "/overview";
 }
 
-export async function requireSession(): Promise<{ session: ConsoleSession; path: string }> {
+// cache(): the layout and the page of one request share ONE /v1/me round trip
+export const requireSession = cache(async (): Promise<{ session: ConsoleSession; path: string }> => {
   const store = await cookies();
   const jar = new CookieJar(store.getAll().map((c) => `${c.name}=${encodeURIComponent(c.value)}`).join("; "));
   const path = await currentPath();
@@ -20,7 +22,7 @@ export async function requireSession(): Promise<{ session: ConsoleSession; path:
   if (!view.authenticated) redirect("/signin");
   if (view.stepUpRequired) redirect("/signin?step=mfa");
   return { session: view, path };
-}
+});
 
 export function accessVerdict(session: ConsoleSession, path: string): "ok" | "no_console" | "pick_society" | "forbidden" {
   if (!session.societies.some((s) => s.consoleAccess)) return "no_console";

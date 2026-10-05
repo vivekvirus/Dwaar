@@ -58,10 +58,23 @@ test("guard supervisor: security screens only, may review exceptions and approve
   await expect(page.getByText("Approval requests at a gate")).toBeVisible();
   await page.getByLabel("Gate", { exact: true }).last().selectOption({ label: "Main Gate" });
   await page.getByLabel("State", { exact: true }).last().selectOption({ label: "Approved" });
-  await expect(page.locator('div[role="region"][aria-label="Approval requests at a gate"]')).toBeVisible();
+  const requests = page.locator('div[role="region"][aria-label="Approval requests at a gate"] tr[data-row]');
+  await expect(requests.first()).toBeVisible(); // the seeded approved requests of the Main Gate
+  await expect(requests.first()).toContainText("Approved");
 
-  await page.goto("/security/exceptions");
-  await expect(page.getByRole("button", { name: /^(Start review|Escalate|Resolve)/ }).first()).toBeVisible().catch(() => undefined);
+  // the supervisor raises a fresh exception through the API (earlier specs resolved the seeded overstay), then reviews it in the UI
+  const token = await apiLogin(PHONES.guardSupMh, { mfa: true });
+  const soc = await societies(await apiLogin(PHONES.secretaryMh, { mfa: true })); // the supervisor role cannot list societies (BR-8)
+  const raised = await dev(`/v1/societies/${soc.mh.id}/exceptions`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}`, "content-type": "application/json", "idempotency-key": "e2e-supervisor-exception" },
+    body: JSON.stringify({ kind: "other", reason: "E2E: visitor left a bag at the gate" }),
+  });
+  expect(raised.status, await raised.clone().text()).toBe(201);
+  await page.goto("/security/exceptions?state=open");
+  // the supervisor may review: the open exception offers Start review and Escalate (but resolve only after review)
+  await expect(page.getByRole("button", { name: /^Start review of exception/ }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Escalate exception/ }).first()).toBeVisible();
   await context.close();
 });
 

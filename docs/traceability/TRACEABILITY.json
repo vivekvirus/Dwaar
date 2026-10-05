@@ -10,17 +10,17 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 373,
+    "files_scanned": 554,
     "files_ignored": 0,
-    "annotations": 788
+    "annotations": 856
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 21,
-      "partial": 32,
+      "done": 23,
+      "partial": 36,
       "blocked-external": 0,
-      "not-started": 167
+      "not-started": 161
     },
     "verified": {
       "verified": 0,
@@ -29,10 +29,10 @@
     },
     "by_priority": {
       "P0": {
-        "done": 14,
-        "partial": 21,
+        "done": 15,
+        "partial": 26,
         "blocked-external": 0,
-        "not-started": 103
+        "not-started": 97
       },
       "P1": {
         "done": 0,
@@ -41,8 +41,8 @@
         "not-started": 2
       },
       "none": {
-        "done": 7,
-        "partial": 11,
+        "done": 8,
+        "partial": 10,
         "blocked-external": 0,
         "not-started": 62
       }
@@ -74,6 +74,12 @@
       "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "apps/admin-web/src/lib/access.ts",
+        "apps/admin-web/src/lib/api-client.ts",
+        "apps/admin-web/src/server/session.ts",
+        "apps/admin-web/src/server/upstream.ts",
+        "apps/resident-mobile/src/domain/household.ts",
+        "apps/resident-mobile/src/screens/ChooseHomeScreen.tsx",
         "services/api/dwaar_api/core/authz.py",
         "services/api/dwaar_api/modules/identity/access.py",
         "services/api/dwaar_api/modules/identity/members.py",
@@ -90,6 +96,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/admin-web/e2e/society.spec.ts:4",
+        "apps/resident-mobile/__tests__/household.test.ts:1",
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "services/api/tests/unit/test_pagination_unit.py::<module>",
         "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
@@ -308,18 +316,18 @@
       "slice": 1,
       "module": "infra",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/admin-web/src/server/config.ts"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "tests/integration/visits/test_pii.py:4"
       ],
       "acceptance_gates": [],
-      "gaps": [
-        "no-implementation"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -367,6 +375,7 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/resident-mobile/src/domain/status.ts",
         "services/api/dwaar_api/modules/visits/routes_visits.py",
         "services/api/dwaar_api/modules/visits/visits.py",
         "services/api/migrations/0204_access_events.sql"
@@ -374,6 +383,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/resident-mobile/__tests__/approvalScreen.test.tsx:1",
+        "apps/resident-mobile/__tests__/status.test.ts:1",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
@@ -513,6 +524,7 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/admin-web/src/i18n/index.ts",
         "packages/dwaar-common/dwaar_common/i18n.py",
         "packages/i18n/src/index.ts",
         "tools/i18n_check.py"
@@ -679,6 +691,11 @@
       "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "apps/admin-web/playwright.config.ts",
+        "apps/admin-web/src/lib/access.ts",
+        "apps/admin-web/src/server/csrf.ts",
+        "apps/admin-web/src/server/handlers.ts",
+        "apps/admin-web/src/server/session.ts",
         "services/api/dwaar_api/modules/identity/makerchecker.py",
         "services/api/dwaar_api/modules/identity/routes_auth.py",
         "services/api/dwaar_api/modules/identity/routes_people.py",
@@ -687,6 +704,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/admin-web/e2e/auth.spec.ts:6",
+        "apps/admin-web/e2e/roles.spec.ts:6",
         "tests/acceptance/test_at02_nonresident_owner.py::<module>",
         "tests/integration/identity/test_authz.py:170",
         "tests/integration/identity/test_authz.py::test_elevated_roles_need_a_fresh_mfa_step_up",
@@ -926,6 +945,13 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/admin-web/src/lib/access.ts",
+        "apps/admin-web/src/server/config.ts",
+        "apps/admin-web/src/server/cookies.ts",
+        "apps/admin-web/src/server/csrf.ts",
+        "apps/admin-web/src/server/session.ts",
+        "apps/admin-web/src/server/tokens.ts",
+        "apps/admin-web/src/server/upstream.ts",
         "services/api/dwaar_api/modules/identity/glue.py",
         "services/api/dwaar_api/modules/identity/routes_auth.py",
         "services/api/dwaar_api/modules/identity/store.py",
@@ -937,6 +963,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/admin-web/e2e/sessions.spec.ts:5",
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
         "tests/integration/core/test_fix_round1.py:3",
@@ -1000,15 +1027,19 @@
       "slice": 6,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/admin-web/src/lib/api-client.ts",
+        "apps/admin-web/src/middleware.ts",
+        "apps/admin-web/src/server/config.ts",
+        "apps/admin-web/src/server/csrf.ts"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -1172,6 +1203,8 @@
         "provider:oidc-identity"
       ],
       "implemented_in": [
+        "apps/resident-mobile/src/auth/session.ts",
+        "apps/resident-mobile/src/screens/SignInScreen.tsx",
         "services/api/dwaar_api/core/authn.py",
         "services/api/dwaar_api/modules/identity/issuer.py",
         "services/api/dwaar_api/modules/identity/routes_auth.py"
@@ -1179,6 +1212,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/resident-mobile/__tests__/session-context.test.tsx:1",
         "tests/integration/identity/test_issuer.py:165",
         "tests/integration/identity/test_issuer.py:234",
         "tests/integration/identity/test_issuer.py:30",
@@ -1209,17 +1243,18 @@
       "slice": 4,
       "module": "apps/resident-mobile",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/resident-mobile/src/screens/HomeScreen.tsx"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "apps/resident-mobile/__tests__/homeScreen.test.tsx:1"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1237,16 +1272,20 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/resident-mobile/src/ui/components.tsx",
+        "apps/resident-mobile/src/ui/tokens.ts",
         "tools/i18n_check.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "apps/resident-mobile/__tests__/accessibility-static.test.tsx:1",
+        "apps/resident-mobile/__tests__/contrast.test.ts:1"
+      ],
       "acceptance_gates": [
         "AT-35"
       ],
       "gaps": [
-        "no-tests",
         "acceptance-untested:AT-35"
       ],
       "verification": null,
@@ -1263,18 +1302,23 @@
       "slice": 4,
       "module": "apps/resident-mobile",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/resident-mobile/src/i18n/index.ts",
+        "apps/resident-mobile/src/ui/components.tsx",
+        "apps/resident-mobile/src/ui/tokens.ts"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "apps/resident-mobile/__tests__/accessibility-static.test.tsx:1",
+        "apps/resident-mobile/__tests__/contrast.test.ts:1"
+      ],
       "acceptance_gates": [
         "AT-35"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-35"
       ],
       "verification": null,
@@ -1294,16 +1338,19 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/resident-mobile/src/domain/status.ts",
         "tools/i18n_check.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "apps/resident-mobile/__tests__/approvalScreen.test.tsx:1",
+        "apps/resident-mobile/__tests__/status.test.ts:1"
+      ],
       "acceptance_gates": [
         "AT-11"
       ],
       "gaps": [
-        "no-tests",
         "acceptance-untested:AT-11"
       ],
       "verification": null,
@@ -1320,16 +1367,17 @@
       "slice": 4,
       "module": "apps/admin-web",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "apps/resident-mobile/__tests__/approvalScreen.test.tsx:1"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-implementation"
       ],
       "verification": null,
       "verified": null
@@ -1345,15 +1393,16 @@
       "slice": 4,
       "module": "apps/resident-mobile",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/resident-mobile/src/screens/ProfileScreen.tsx"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -1401,6 +1450,8 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/admin-web/src/i18n/index.ts",
+        "apps/resident-mobile/src/i18n/index.ts",
         "packages/i18n/src/index.ts",
         "tools/i18n_check.py"
       ],
@@ -1987,6 +2038,7 @@
       "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "apps/admin-web/playwright.config.ts",
         "services/api/dwaar_api/modules/organisation/__init__.py",
         "services/api/dwaar_api/modules/organisation/permissions.py",
         "services/api/dwaar_api/modules/organisation/routes.py",
@@ -1996,6 +2048,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/admin-web/e2e/console.spec.ts:8",
         "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
         "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/organisation/test_import.py::test_cell_validation",
@@ -2175,6 +2228,10 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/resident-mobile/src/api/endpoints.ts",
+        "apps/resident-mobile/src/screens/InviteDetailScreen.tsx",
+        "apps/resident-mobile/src/screens/InviteNewScreen.tsx",
+        "apps/resident-mobile/src/screens/VisitorsScreen.tsx",
         "services/api/dwaar_api/modules/visits/__init__.py",
         "services/api/dwaar_api/modules/visits/config.py",
         "services/api/dwaar_api/modules/visits/invitations.py",
@@ -2189,6 +2246,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/resident-mobile/__tests__/invite-visitors-profile.test.tsx:1",
+        "apps/resident-mobile/__tests__/qr-real.test.tsx:1",
         "tests/integration/visits/test_invitations.py:4",
         "tests/integration/visits/test_invitations.py::<module>",
         "tests/integration/visits/test_schema.py::test_a_pass_cannot_be_open_ended",
@@ -2231,6 +2290,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/resident-mobile/__tests__/approvalScreen.test.tsx:1",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
@@ -2264,6 +2324,9 @@
       "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "apps/resident-mobile/src/api/endpoints.ts",
+        "apps/resident-mobile/src/screens/ApprovalScreen.tsx",
+        "apps/resident-mobile/src/state/approvalFlow.ts",
         "services/api/dwaar_api/modules/visits/__init__.py",
         "services/api/dwaar_api/modules/visits/permissions.py",
         "services/api/dwaar_api/modules/visits/routes_approvals.py",
@@ -2272,6 +2335,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "apps/resident-mobile/__tests__/approvalFlow.test.ts:1",
+        "apps/resident-mobile/__tests__/approvalScreen.test.tsx:1",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
@@ -5022,15 +5087,16 @@
       "slice": 6,
       "module": "services/api/modules/reports",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/admin-web/src/lib/csv.ts"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
