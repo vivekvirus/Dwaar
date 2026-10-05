@@ -189,3 +189,33 @@ Format: ID, date, owner, decision, reason / consequence.
   `done`, and reads a run report when present (`done` is not `verified`); the hi/mr lock-screen text keeps the brand `Dwaar`;
   `BLOCKING_DECISIONS.md` lists every D/Q ID and no longer says shipped packs are unbuilt.
 - **Still open (not in this round):** see `tests/security/verify_w1_quality_r2.py` (strict xfail list).
+
+### B-011 Slice 1 finish: matrix reading, simulator environments, MFA denial, seed, real-resolver tests, AT-01/AT-02
+- Date: 2026-10-05. Owner: Viz.
+- **PRD 5.2 "Unit and member register" prints ten values (F R R R Masked R O O O O): GUARD = Masked, AUDITOR = R.** An earlier
+  reading from a text extraction (nine values, AUDITOR = N) was wrong and was corrected after checking the rendered table; identity and
+  organisation now agree (`identity/matrix.py`, ADR-0011).
+- **The identity simulator is allowed in `local` AND `test`**, not only `local` as BUILD_BRIEF section 3 words it. The core
+  already defines `Environment.allows_simulators` as local and test (and `.env.example` says so); the test suites and the
+  acceptance scenarios sign in through it with `simulation=true`. It is never mounted in staging or production. The SEED and the
+  demo logins stay `DWAAR_ENV=local` only (`python -m dwaar_api.seed` refuses anything else, the tests call it with an explicit
+  local environment for a private test database).
+- **A secretary (any elevated role) without a fresh TOTP step-up gets 403 `not_authorised`**, not a dedicated code: PRD 12.2 has no
+  `mfa_required`. The resolver hands the grant out as `<role>_mfa_pending`, which no permission lists (ADR-0011 section 4);
+  `/v1/me` tells the client a step-up is needed. Tested in `tests/acceptance/test_at02_nonresident_owner.py` and the identity suite.
+- **Seed (`dwaar_api.seed`)**: a package of steps discovered by file name (`steps/sNNN_*.py`, unique ORDER) so later slices add
+  data without editing a shared file. It calls the same service functions as the routes, as `dwaar_app` with the RLS context (only
+  the pack loader uses `dwaar_owner`), so audit and outbox rows exist. Ids made through `uuid7()` are deterministic (fixed
+  2026-01-01 time, random bits seeded per scope key); membership and case ids still come from `uuid.uuid4()` inside
+  `identity.members.create_membership` and are found by natural key on a re-run. Not seeded yet, by design: guard shifts, visits,
+  invoices, receipts, bank lines, settlements (their slices own them). No PAN/TAN/GSTIN is invented.
+- **The organisation tests now also run against the REAL `PgGrantResolver`** (`RESOLVER_FACTORIES["pg"]` in
+  `tests/integration/organisation/_support.py`, real memberships and role grants, the access-index triggers, MFA-verified sessions
+  for elevated roles). `platform_admin` has no database representation (`role_grants.role` has no such value; platform roles are
+  issued out of band, ADR-0011), so in the `pg` kind it is a documented in-memory overlay. Production needs a real way to hold
+  that role before society creation by operators can work through the API (reported as an open question).
+- **AT-02 capability naming.** There is no `gate.history` permission string: "visitor history of a unit" is the PRD 5.2
+  "Gate operations" own-unit read, `matrix.gate_ops.read_own` (OWNER_NR `N`; OWNER_OCC, TENANT, FAMILY `O`). The denial is proven
+  at the permission-service level until slice 2 adds the endpoint; a tripwire test fails when a gate/visitor route appears.
+- **README.md got a "Local demo" section** although it is outside the slice's file list: the task asked for the demo logins to be
+  documented there. Additive only.

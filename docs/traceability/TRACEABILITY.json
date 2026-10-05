@@ -10,15 +10,15 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 250,
+    "files_scanned": 271,
     "files_ignored": 0,
-    "annotations": 577
+    "annotations": 605
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 10,
-      "partial": 30,
+      "done": 15,
+      "partial": 25,
       "blocked-external": 0,
       "not-started": 180
     },
@@ -29,8 +29,8 @@
     },
     "by_priority": {
       "P0": {
-        "done": 7,
-        "partial": 17,
+        "done": 8,
+        "partial": 16,
         "blocked-external": 0,
         "not-started": 114
       },
@@ -41,17 +41,17 @@
         "not-started": 2
       },
       "none": {
-        "done": 3,
-        "partial": 13,
+        "done": 7,
+        "partial": 9,
         "blocked-external": 0,
         "not-started": 64
       }
     },
     "acceptance_in_scope": 35,
     "acceptance_by_status": {
-      "done": 0,
+      "done": 2,
       "partial": 2,
-      "not-started": 33
+      "not-started": 31
     },
     "reference_items": {
       "decision": 24,
@@ -71,7 +71,7 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/core/authz.py",
@@ -89,6 +89,7 @@
       "tested_by": [
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "services/api/tests/unit/test_pagination_unit.py::<module>",
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
         "tests/integration/core/test_audit_outbox.py::<module>",
         "tests/integration/core/test_db_context.py::<module>",
         "tests/integration/core/test_fix_round1.py:3",
@@ -147,9 +148,7 @@
       "acceptance_gates": [
         "AT-01"
       ],
-      "gaps": [
-        "acceptance-untested:AT-01"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -260,7 +259,7 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/modules/identity/members.py",
@@ -269,15 +268,14 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at02_nonresident_owner.py::<module>",
         "tests/integration/identity/test_authz.py:81",
         "tests/integration/identity/test_authz.py::test_ownership_occupancy_and_role_are_independent"
       ],
       "acceptance_gates": [
         "AT-02"
       ],
-      "gaps": [
-        "acceptance-untested:AT-02"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -443,7 +441,8 @@
         "packages/dwaar-packs/dwaar_packs/approvals.py",
         "packages/dwaar-packs/dwaar_packs/frozen.py",
         "packages/dwaar-packs/dwaar_packs/rule_values.py",
-        "services/api/dwaar_api/modules/organisation/packs.py"
+        "services/api/dwaar_api/modules/organisation/packs.py",
+        "services/api/dwaar_api/seed/steps/s010_packs.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -539,16 +538,20 @@
       "slice": 1,
       "module": "services/api/modules/identity",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/modules/identity/members.py",
         "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/dwaar_api/seed/steps/s300_residents.py",
         "services/api/migrations/0133_identity_memberships.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/acceptance/test_at02_nonresident_owner.py::<module>",
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/identity/test_authz.py:49",
         "tests/integration/identity/test_authz.py:81",
         "tests/integration/identity/test_authz.py::test_grants_follow_verification_state_and_dates",
@@ -573,10 +576,7 @@
         "AT-01",
         "AT-02"
       ],
-      "gaps": [
-        "acceptance-untested:AT-01",
-        "acceptance-untested:AT-02"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -596,6 +596,7 @@
       "implemented_in": [
         "services/api/dwaar_api/modules/identity/grants.py",
         "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/dwaar_api/seed/steps/s200_staff.py",
         "services/api/migrations/0134_identity_role_grants.sql",
         "services/api/migrations/0135_identity_access_functions.sql"
       ],
@@ -626,7 +627,6 @@
         "AT-32"
       ],
       "gaps": [
-        "acceptance-untested:AT-02",
         "acceptance-untested:AT-32"
       ],
       "verification": null,
@@ -648,11 +648,13 @@
       "implemented_in": [
         "services/api/dwaar_api/modules/identity/makerchecker.py",
         "services/api/dwaar_api/modules/identity/routes_auth.py",
-        "services/api/dwaar_api/modules/identity/routes_people.py"
+        "services/api/dwaar_api/modules/identity/routes_people.py",
+        "services/api/dwaar_api/seed/people.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at02_nonresident_owner.py::<module>",
         "tests/integration/identity/test_authz.py:170",
         "tests/integration/identity/test_authz.py::test_elevated_roles_need_a_fresh_mfa_step_up",
         "tests/integration/identity/test_grants.py:127",
@@ -739,6 +741,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/identity/test_verification.py:449",
         "tests/integration/identity/test_verification.py:497",
         "tests/integration/identity/test_verification.py:541",
@@ -783,6 +786,7 @@
         "services/api/dwaar_api/modules/identity/routes_auth.py",
         "services/api/dwaar_api/modules/identity/runtime.py",
         "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/dwaar_api/seed/demo.py",
         "services/api/migrations/0007_rate_limit_buckets.sql",
         "services/api/migrations/0131_identity_otp.sql"
       ],
@@ -845,6 +849,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/identity/test_verification.py:117",
         "tests/integration/identity/test_verification.py:172",
         "tests/integration/identity/test_verification.py:196",
@@ -896,6 +901,7 @@
       "simulator_files": [],
       "tested_by": [
         "services/api/tests/unit/test_authz_decide.py::<module>",
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
         "tests/integration/core/test_fix_round1.py:3",
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/identity/test_authz.py:170",
@@ -939,7 +945,6 @@
         "AT-32"
       ],
       "gaps": [
-        "acceptance-untested:AT-01",
         "acceptance-untested:AT-32"
       ],
       "verification": null,
@@ -1050,6 +1055,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at02_nonresident_owner.py::<module>",
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/identity/test_verification.py:257",
         "tests/integration/identity/test_verification.py:304",
         "tests/integration/identity/test_verification.py:352",
@@ -1441,7 +1448,7 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/modules/organisation/routes.py",
@@ -1452,6 +1459,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
         "tests/integration/identity/test_authz.py:111",
@@ -1478,9 +1487,7 @@
       "acceptance_gates": [
         "AT-01"
       ],
-      "gaps": [
-        "acceptance-untested:AT-01"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1505,6 +1512,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at02_nonresident_owner.py::<module>",
         "tests/integration/identity/test_issuer.py:149",
         "tests/security/test_identity_database.py:130",
         "tests/security/test_identity_database.py:144",
@@ -1529,7 +1537,7 @@
       "slice": 1,
       "module": "services/api/core",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/core/config.py",
@@ -1563,9 +1571,7 @@
       "acceptance_gates": [
         "AT-01"
       ],
-      "gaps": [
-        "acceptance-untested:AT-01"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1896,6 +1902,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_shipped_packs_load_from_files_unapproved_and_reload_is_a_noop",
         "tests/integration/organisation/test_societies.py::test_approved_pack_allows_binding_flag",
         "tests/integration/organisation/test_societies.py::test_configuration_read_follows_permission_matrix",
@@ -1940,6 +1948,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/organisation/test_import.py::test_cell_validation",
         "tests/integration/organisation/test_import.py::test_valid_import_creates_all_units_with_one_audit_and_one_event",
         "tests/integration/organisation/test_units.py::test_archive_unit_and_block",
@@ -4268,7 +4278,6 @@
       "gaps": [
         "no-implementation",
         "no-tests",
-        "acceptance-untested:AT-01",
         "acceptance-untested:AT-33"
       ],
       "verification": null,
@@ -4442,8 +4451,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-02"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -5008,7 +5016,6 @@
       "gaps": [
         "no-implementation",
         "no-tests",
-        "acceptance-untested:AT-01",
         "acceptance-untested:AT-25"
       ],
       "verification": null,
@@ -6376,8 +6383,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-01"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -6405,9 +6411,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-01",
-        "acceptance-untested:AT-02"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -6516,8 +6520,6 @@
       "gaps": [
         "no-implementation",
         "no-tests",
-        "acceptance-untested:AT-01",
-        "acceptance-untested:AT-02",
         "acceptance-untested:AT-25"
       ],
       "verification": null,
@@ -6664,9 +6666,13 @@
       "id": "AT-01",
       "milestone": "M0",
       "slice": 1,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>"
+      ],
+      "evidence": [
+        "docs/evidence/AT-01.json"
+      ],
       "evidence_failed": false,
       "scenario": "A user moves from Society A to Society B and replays object IDs that belong to A"
     },
@@ -6674,9 +6680,13 @@
       "id": "AT-02",
       "milestone": "M0",
       "slice": 1,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at02_nonresident_owner.py::<module>"
+      ],
+      "evidence": [
+        "docs/evidence/AT-02.json"
+      ],
       "evidence_failed": false,
       "scenario": "A non-resident owner asks for the visitor history of their tenant"
     },

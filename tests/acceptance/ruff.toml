@@ -1,0 +1,6 @@
+# Acceptance scenarios assert on status + code + body in one go (PT018/PT012 add only noise), and build catalogue-driven
+# SQL from table names read from information_schema, never from input (S608).
+extend = "../../pyproject.toml"
+
+[lint]
+extend-ignore = ["PT018", "PT012", "S608"]

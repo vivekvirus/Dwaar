@@ -37,13 +37,13 @@ PRD_5_2 = {
         "R",
         "R",
         "R",
-        "Masked R",
-        "N",
+        "Masked",
+        "R",
         "O",
         "O",
         "O",
         "O",
-    ],  # AUDITOR cell empty in the source: N
+    ],
     "verify_tenancy": ["A", "N", "N", "N", "N", "N", "A (own unit)", "A (own unit)", "N", "N"],
     "gate_ops": ["R", "N", "R", "R", "F", "N", "O", "N", "O", "O"],
     "visitor_passes": ["N", "N", "N", "N", "N", "N", "O", "N", "O", "O"],
@@ -115,7 +115,7 @@ def test_every_cell_of_the_prd_matrix(cap: str, role: str, cell: str) -> None:
     elif cell == "R":
         verbs_allowed("read")
         verbs_denied(*WRITE_VERBS)
-    elif cell == "Masked R":
+    elif cell == "Masked":
         verbs_allowed("read_masked")
         verbs_denied("read", *WRITE_VERBS)
     elif cell.startswith("O"):

@@ -4,13 +4,13 @@ REQ: PRD 5.1 (roles; allowed and denied by default), PRD 5.2 (matrix), IAM-03 (e
 
 ``MATRIX`` holds the cells exactly as printed in the PRD, one string per role. ``permissions`` is generated from it,
 so the registry cannot drift from the document. The cell vocabulary is: F full, R read, O own records only,
-A approve, M maker, C checker, N none, plus the printed qualifiers ("Masked R", "A (own unit)", "O (bills)",
+A approve, M maker, C checker, N none, plus the printed qualifiers ("Masked", "A (own unit)", "O (bills)",
 "O (if liable)", "O (about them)", "Create", "Draft", "M (requests)", "Vote if entitled").
 
 Decisions recorded where the printed table is silent or ambiguous (see ADR-0011):
 
-* "Unit and member register" prints nine values for ten columns; the AUDITOR cell is empty in the source text and is
-  treated as N (denied by default).
+* "Unit and member register" prints ten values (F R R R Masked R O O O O): GUARD is "Masked" and AUDITOR is "R". A plain-text
+  extraction of the PDF merges the two cells into "Masked R"; the rendered table is authoritative.
 * "O" (own records) is a UNIT-scoped permission for unit capabilities and a PERSON-scoped one for privacy requests
   and the audit log ("about them"). "(if liable)" and "Vote if entitled" are entitlements owned by finance and
   governance (INV-04): the matrix grants the role, the owning module checks the entitlement.
@@ -77,7 +77,7 @@ _RAW: Final[dict[str, tuple[str, ScopeKind, tuple[str, ...]]]] = {
     "society_config": ("Society configuration", ScopeKind.UNIT,
                        ("F", "R", "R", "R", "N", "R", "N", "N", "N", "N")),
     "unit_register": ("Unit and member register", ScopeKind.UNIT,
-                      ("F", "R", "R", "R", "Masked R", "N", "O", "O", "O", "O")),
+                      ("F", "R", "R", "R", "Masked", "R", "O", "O", "O", "O")),
     "verify_tenancy": ("Verify tenancy / membership", ScopeKind.UNIT,
                        ("A", "N", "N", "N", "N", "N", "A (own unit)", "A (own unit)", "N", "N")),
     "gate_ops": ("Gate operations", ScopeKind.UNIT,
@@ -116,7 +116,7 @@ _VERBS: Final[dict[str, tuple[str, ...]]] = {
     "M (requests)": ("make",),
     "Create": ("create",),
     "Draft": ("read", "draft"),
-    "Masked R": ("read_masked",),
+    "Masked": ("read_masked",),
     "O": ("read_own",),
     "O (bills)": ("read_own",),
     "O (if liable)": ("read_own",),
@@ -211,7 +211,7 @@ IDENTITY_PERMISSIONS: Final = (
     Permission(
         "iam.membership.read_masked",
         roles_for("unit_register", "read_masked"),
-        description="Read the masked member directory (names reduced to initials): PRD 5.2 'Masked R'",
+        description="Read the masked member directory (names reduced to initials): PRD 5.2 'Masked'",
     ),
     Permission(
         "iam.case.read",

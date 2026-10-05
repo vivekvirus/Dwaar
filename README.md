@@ -24,7 +24,7 @@ Python 3.12 and [uv](https://docs.astral.sh/uv/), PostgreSQL 16 server binaries 
 make setup      # uv sync (flock-guarded), create .env with freshly generated local keys, pnpm install if JS projects exist
 make db-up      # persistent dev PostgreSQL under .local/pg on port 55432 (roles, database, extensions)
 make migrate    # apply SQL migrations as dwaar_owner (dwaar_api.core.migrate; checksummed, one transaction per file)
-make seed       # synthetic demo data, DWAAR_ENV=local only (says so if not implemented yet)
+make seed       # synthetic demo data, DWAAR_ENV=local only (see "Local demo"); safe to run again
 make api        # FastAPI on http://127.0.0.1:8000 (foreground, Ctrl-C to stop; uvicorn's own access log is dropped; the JSON access log of the app records the route template, never the raw path or query)
 make db-down    # stop the dev database
 ```
@@ -35,6 +35,47 @@ make db-down    # stop the dev database
   roles, database, ports and Redis (see `.env.example`; `docker-init` runs the same SQL files).
 * `.env` is git-ignored and created once by `make setup`; the process environment overrides `.env`, which overrides
   `.env.example`. Add every new variable to `.env.example` with a comment.
+
+## Local demo
+
+`make seed` fills the dev database with a synthetic dataset (PRD 8.3, slice 1 part). It refuses to run unless
+`DWAAR_ENV=local`, writes through the real service functions as the restricted `dwaar_app` role (so every row has its audit
+and outbox record), is deterministic (fixed UUIDv7 time, ids derived from stable keys) and idempotent (run it again: nothing
+changes; `make db-reset && make migrate && make seed` starts over).
+
+| What | Content |
+|---|---|
+| Sahyadri Residency CHS (demo), Pune, Maharashtra | 3 blocks (A 100, B 80, C 60 units = 240); legal pack `maharashtra-chs`, **unapproved**, so binding governance is off |
+| Nandana Apartments Owners Association (demo), Bengaluru, Karnataka | 2 blocks (Tower 1 100, Tower 2 80 = 180); legal pack `karnataka-aoa-1972`, unapproved |
+| Staff and committee | secretary, treasurer, committee, estate manager, guards, guard supervisor, time-bound auditor per society; elevated roles have a confirmed synthetic TOTP factor |
+| People scenarios | unit labels repeated across blocks; owners with several memberships; a non-resident owner and her tenant; an active tenant whose owner is absent; a disputed move-out; family approvals (2 approved, 1 pending, 1 rejected); a mover who left Society A for B; a committee hold; 64 generated owner-occupiers |
+
+Not seeded yet (their slices add them as `services/api/dwaar_api/seed/steps/sNNN_*.py`): guard shifts, visits, invoices,
+receipts, bank lines, settlements.
+
+Everything is invented. Phone numbers are the reserved fictional range `+91 99999 0nnnn`. **Demo logins exist only through
+the labelled local identity simulator** (`simulation=true`, mounted only when `DWAAR_ENV` is `local` or `test`); there is no
+password and no other way in. `uv run --no-sync python tools/dev/devenv.py exec -- python -m dwaar_api.seed demo-logins` prints every seeded person with the role and scenario (the `devenv exec` wrapper loads `.env` so `DWAAR_ENV=local` is set).
+
+```bash
+make api &                                    # the API on http://127.0.0.1:8000
+P=+919999901001                               # Anita Kulkarni, secretary of Sahyadri (MH)
+curl -s -X POST localhost:8000/v1/auth/otp/request -H 'Content-Type: application/json' -d "{\"phone\":\"$P\"}"
+OTP=$(curl -s "localhost:8000/v1/dev/otp?phone=%2B919999901001" | python -c 'import json,sys; print(json.load(sys.stdin)["otp"])')
+TOKEN=$(curl -s -X POST localhost:8000/v1/auth/otp/verify -H 'Content-Type: application/json' \
+  -d "{\"phone\":\"$P\",\"code\":\"$OTP\",\"device\":{\"device_id\":\"demo\",\"label\":\"curl\"}}" \
+  | python -c 'import json,sys; print(json.load(sys.stdin)["access_token"])')
+# elevated roles (secretary, treasurer, committee, estate manager, guard supervisor, auditor) must step up with TOTP,
+# otherwise society routes answer 403 not_authorised; the seeded secret is derived from the number:
+CODE=$(uv run --no-sync python tools/dev/devenv.py exec -- python -m dwaar_api.seed totp $P)
+curl -s -X POST localhost:8000/v1/auth/mfa/verify -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "{\"code\":\"$CODE\"}"
+curl -s localhost:8000/v1/me -H "Authorization: Bearer $TOKEN"          # who the server says you are, per society
+```
+
+Useful personas: `+91 99999 01101` Meera Joshi (secretary of Nandana **and** non-resident owner in Sahyadri: AT-01/AT-02),
+`01212` Vikram Nair (moved from Sahyadri to Nandana), `01213` Farhan Sheikh (Nandana only), `01205` Imran Qureshi (tenant,
+owner absent), `01204` Dev Rane (tenant, move-out disputed). Residents have no second factor. The TOTP secrets protect nothing:
+the people, the numbers and the database are synthetic, and the seed will not run anywhere but local.
 
 ## Quality gates
 

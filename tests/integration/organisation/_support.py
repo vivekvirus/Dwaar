@@ -1,8 +1,16 @@
 """Harness for the organisation tests: real Postgres, the real module, real signed JWTs.
 
-Grants come from a ``GrantSeeder``. The default seeder fills the core's ``InMemoryGrantResolver``; when the identity
-module ships a database-backed resolver, add a factory to ``RESOLVER_FACTORIES`` below and every test in this
-directory runs against real memberships/role grants too (the ``resolver_kind`` fixture is parametrised from it).
+Grants come from a ``GrantSeeder``. Two resolver kinds run every test in this directory (the ``resolver_kind`` fixture
+is parametrised from ``RESOLVER_FACTORIES``):
+
+* ``memory``: the core's ``InMemoryGrantResolver`` filled directly.
+* ``pg``: the identity module's REAL ``PgGrantResolver`` over real ``memberships`` and ``role_grants`` rows (the access
+  index triggers of migrations 0133/0134 run exactly as in production). Elevated roles need a fresh MFA step-up in the
+  session, so the seeder also creates an ``iam.auth_sessions`` row with ``mfa_verified_at`` set for such a person and
+  ``OrgHarness.auth`` puts that session id in the token (``sid``); nothing else about the token matters.
+
+``platform_admin`` has no database representation (``role_grants.role`` does not allow it; platform roles are issued out
+of band, ADR-0011), so in the ``pg`` kind it is overlaid from an in-memory list: a documented test-only shim.
 """
 
 from __future__ import annotations
@@ -11,18 +19,22 @@ import contextlib
 import dataclasses
 import datetime as dt
 import uuid
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Sequence
 from typing import Any, Protocol
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from psycopg.types.json import Jsonb
 from sqlalchemy import create_engine, text
 
-from dwaar_api.core.authn import InMemorySessionStore, OidcIdentityProvider
+from dwaar_api.core.authn import InMemorySessionStore, OidcIdentityProvider, Principal
 from dwaar_api.core.authz import Grant, GrantResolver, InMemoryGrantResolver
+from dwaar_api.core.config import Settings
 from dwaar_api.core.db import Database
 from dwaar_api.main import create_app
+from dwaar_api.modules.identity.config import IdentityConfig
+from dwaar_api.modules.identity.glue import PgGrantResolver
 from dwaar_api.modules.organisation.packs import load_packs
 from dwaar_common.crypto import EnvelopeCipher, KeyRing, generate_key
 from dwaar_common.ids import uuid7
@@ -119,15 +131,190 @@ class MemorySeeder:
 class ResolverBundle:
     resolver: GrantResolver
     seeder: GrantSeeder
+    #: session id to put in a person's token (``sid``), or None. Real resolver: the MFA-verified session of an elevated person.
+    session_for: Callable[[uuid.UUID], str | None] = lambda _person: None
 
 
-def _memory_factory(db: DbHandle) -> ResolverBundle:
+def _memory_factory(db: DbHandle, database: Database, settings: Settings) -> ResolverBundle:
     resolver = InMemoryGrantResolver()
     return ResolverBundle(resolver, MemorySeeder(resolver))
 
 
-#: name -> factory(db). Add the identity module's real grant resolver here when it exists.
-RESOLVER_FACTORIES: dict[str, Callable[[DbHandle], ResolverBundle]] = {"memory": _memory_factory}
+# ------------------------------------------------------------------------------------------------- real resolver
+#: org-test role -> (membership kind, lives_in_unit); everything else is a role grant
+_MEMBERSHIP_ROLES = {
+    "owner_occ": ("owner", True),
+    "owner_nr": ("owner", False),
+    "tenant": ("tenant", True),
+    "family": ("family", True),
+}
+_ELEVATED = frozenset(
+    {"secretary", "treasurer", "committee", "estate_mgr", "guard_sup", "auditor", "org_admin"}
+)
+_TIME_BOUND = frozenset({"auditor", "vendor_tech", "plat_support"})
+
+
+class PlatformOverlayResolver:
+    """The real resolver plus the in-memory ``platform_admin`` overlay (that role is not a database row)."""
+
+    def __init__(self, inner: GrantResolver, overlay: InMemoryGrantResolver) -> None:
+        self._inner = inner
+        self._overlay = overlay
+
+    def resolve(
+        self, principal: Principal, *, society_hint: uuid.UUID | None, fresh: bool
+    ) -> Sequence[Grant]:
+        return (
+            *self._inner.resolve(principal, society_hint=society_hint, fresh=fresh),
+            *self._overlay.resolve(principal, society_hint=society_hint, fresh=fresh),
+        )
+
+
+class PgSeeder:
+    """Writes real persons, memberships and role grants (owner role with the society context, as the identity tests do)."""
+
+    def __init__(self, db: DbHandle) -> None:
+        self.db = db
+        self.overlay = InMemoryGrantResolver()
+        self._persons: set[uuid.UUID] = set()
+        self._sessions: dict[uuid.UUID, str] = {}
+        self._issuer: uuid.UUID | None = None
+
+    def _person(self, person: uuid.UUID) -> None:
+        if person in self._persons:
+            return
+        with self.db.admin_conn() as conn:
+            conn.execute(
+                "INSERT INTO iam.persons (id, display_name, phone_token) VALUES (%s, %s, %s)"
+                " ON CONFLICT DO NOTHING",
+                (person, f"Org test person {str(person)[-4:]}", f"orgtest-{person}"),
+            )
+            conn.execute(
+                "INSERT INTO iam.person_vault (person_id, phone_enc) VALUES (%s, 'x')"
+                " ON CONFLICT DO NOTHING",
+                (person,),
+            )
+        self._persons.add(person)
+
+    def _issuer_person(self) -> uuid.UUID:
+        if self._issuer is None:
+            self._issuer = uuid7()
+            self._person(self._issuer)
+        return self._issuer
+
+    def _mfa_session(self, person: uuid.UUID) -> None:
+        if person in self._sessions:
+            return
+        sid = uuid7()
+        with self.db.admin_conn() as conn:
+            conn.execute(
+                "INSERT INTO iam.auth_sessions (id, person_id, device_id, expires_at, mfa_verified_at)"
+                " VALUES (%s, %s, 'org-test', now() + interval '1 day', now())",
+                (sid, person),
+            )
+        self._sessions[person] = str(sid)
+
+    def _ensure_unit(self, society: uuid.UUID, unit: uuid.UUID) -> None:
+        """A membership needs a real unit (composite FK). Tests that grant on a made-up unit id get a placeholder one."""
+        with self.db.owner_conn() as conn:
+            conn.execute("SELECT set_config('app.society_id', %s, true)", (str(society),))
+            if conn.execute("SELECT 1 FROM units WHERE id = %s", (unit,)).fetchone() is not None:
+                return
+            block = conn.execute(
+                "INSERT INTO blocks (id, society_id, name, floors) VALUES (%s, %s, 'AUTO-SEED', 5)"
+                " ON CONFLICT (society_id, name) DO UPDATE SET name = excluded.name RETURNING id",
+                (uuid7(), society),
+            ).fetchone()
+            assert block is not None
+            conn.execute(
+                "INSERT INTO units (id, society_id, block_id, label, floor) VALUES (%s, %s, %s, %s, 1)",
+                (unit, society, block[0], f"AUTO-{str(unit)[:8]}"),
+            )
+
+    def session_for(self, person: uuid.UUID) -> str | None:
+        return self._sessions.get(person)
+
+    def grant(
+        self,
+        person: uuid.UUID,
+        role: str,
+        society: uuid.UUID,
+        *,
+        unit: uuid.UUID | None = None,
+        own_person: bool = False,
+        expires_at: dt.datetime | None = None,
+        not_before: dt.datetime | None = None,
+    ) -> None:
+        if role == "platform_admin":
+            self.overlay.add(person, Grant(role, society))
+            return
+        self._person(person)
+        if role in _ELEVATED:
+            self._mfa_session(person)
+        if role in _MEMBERSHIP_ROLES:
+            kind, lives = _MEMBERSHIP_ROLES[role]
+            if unit is None or expires_at is not None or not_before is not None:
+                raise ValueError("resident roles need a unit and take no validity window here")
+            self._ensure_unit(society, unit)
+            with self.db.owner_conn() as conn:
+                conn.execute("SELECT set_config('app.society_id', %s, true)", (str(society),))
+                conn.execute(
+                    "INSERT INTO memberships (id, society_id, person_id, unit_id, kind, verification,"
+                    " lives_in_unit, created_by) VALUES (%s, %s, %s, %s, %s, 'verified', %s, %s)",
+                    (uuid7(), society, person, unit, kind, lives, person),
+                )
+            return
+        issued = min(
+            dt.datetime.now(dt.UTC) - dt.timedelta(hours=1),
+            (expires_at or dt.datetime.max.replace(tzinfo=dt.UTC)) - dt.timedelta(days=1),
+        )
+        if role in _TIME_BOUND and expires_at is None:
+            expires_at = dt.datetime.now(dt.UTC) + dt.timedelta(days=300)
+        scope = {"kind": "unit", "unit_id": str(unit)} if unit else {"kind": "society"}
+        with self.db.owner_conn() as conn:
+            conn.execute("SELECT set_config('app.society_id', %s, true)", (str(society),))
+            conn.execute(
+                "INSERT INTO role_grants (id, society_id, person_id, role, scope, issued_by, reason,"
+                " issued_at, not_before, expires_at) VALUES (%s, %s, %s, %s, %s, %s, 'seeded for tests', %s, %s, %s)",
+                (uuid7(), society, person, role, Jsonb(scope), self._issuer_person(), issued, not_before, expires_at),
+            )  # fmt: skip
+
+    def revoke_all(self, person: uuid.UUID) -> None:
+        self.overlay.clear(person)
+        with self.db.admin_conn() as conn:
+            societies = [
+                r[0]
+                for r in conn.execute(
+                    "SELECT DISTINCT society_ref FROM iam.person_access_index WHERE person_id = %s",
+                    (person,),
+                ).fetchall()
+            ]
+        issuer = self._issuer_person()
+        for society in societies:
+            with self.db.owner_conn() as conn:
+                conn.execute("SELECT set_config('app.society_id', %s, true)", (str(society),))
+                conn.execute(
+                    "UPDATE role_grants SET revoked_at = now(), revoked_by = %s, revoke_reason = 'test revoke_all'"
+                    " WHERE person_id = %s AND revoked_at IS NULL",
+                    (issuer, person),
+                )
+                conn.execute(
+                    "UPDATE memberships SET verification = 'rejected' WHERE person_id = %s",
+                    (person,),
+                )
+
+
+def _pg_factory(db: DbHandle, database: Database, settings: Settings) -> ResolverBundle:
+    seeder = PgSeeder(db)
+    real = PgGrantResolver(database, IdentityConfig.from_environment(settings))
+    return ResolverBundle(PlatformOverlayResolver(real, seeder.overlay), seeder, seeder.session_for)
+
+
+#: name -> factory(db, database, settings).
+RESOLVER_FACTORIES: dict[str, Callable[[DbHandle, Database, Settings], ResolverBundle]] = {
+    "memory": _memory_factory,
+    "pg": _pg_factory,
+}
 
 
 @pytest.fixture(params=sorted(RESOLVER_FACTORIES))
@@ -146,6 +333,7 @@ class OrgHarness:
     legal_pack_id: uuid.UUID  # maharashtra-chs, unapproved as shipped
     approved_pack_id: uuid.UUID  # same content, approved WITH evidence (inserted by the owner role)
     tax_pack_id: uuid.UUID
+    session_for: Callable[[uuid.UUID], str | None] = lambda _person: None
     _client: TestClient | None = None
 
     def client(self) -> TestClient:
@@ -154,7 +342,9 @@ class OrgHarness:
         return self._client
 
     def auth(self, person: uuid.UUID) -> dict[str, str]:
-        return {"Authorization": f"Bearer {self.issuer.mint(person)}"}
+        return {
+            "Authorization": f"Bearer {self.issuer.mint(person, session_id=self.session_for(person))}"
+        }
 
     def call(
         self,
@@ -291,8 +481,8 @@ def org_harness(db: DbHandle, kind: str = "memory") -> Iterator[OrgHarness]:
     legal, approved, tax = _seed_packs(db)
     settings = make_settings(db)
     issuer = TestIssuer()
-    bundle = RESOLVER_FACTORIES[kind](db)
     database = Database.from_settings(settings)
+    bundle = RESOLVER_FACTORIES[kind](db, database, settings)
     provider = OidcIdentityProvider(issuer.verifier(), name="test-oidc", simulation=True)
     app = create_app(
         settings,
@@ -304,7 +494,9 @@ def org_harness(db: DbHandle, kind: str = "memory") -> Iterator[OrgHarness]:
     )
     cipher = EnvelopeCipher(KeyRing({"t1": generate_key()}, "t1"))
     app.state.pii_cipher = cipher
-    harness = OrgHarness(db, app, issuer, bundle.seeder, database, cipher, legal, approved, tax)
+    harness = OrgHarness(
+        db, app, issuer, bundle.seeder, database, cipher, legal, approved, tax, bundle.session_for
+    )
     try:
         yield harness
     finally:

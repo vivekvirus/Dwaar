@@ -111,13 +111,9 @@ MFA-elevated sessions (`iam.sweep_person`, run on every session check and by the
 
 `matrix.py` holds PRD 5.2 cell-for-cell (strings as printed) and generates `matrix.<capability>.<verb>` permissions
 (`read manage read_masked read_own approve approve_own make check create draft vote`); identity adds `iam.*` permissions.
-Decisions where the printed table is silent: the Unit-and-member-register AUDITOR cell is empty in the source and is treated
-as N; "O" is UNIT-scoped (PERSON-scoped for privacy requests and the audit log); any permission a resident role may use is
-UNIT-scoped so a unit-bound membership grant satisfies it while society-wide grants always qualify; "(if liable)" and "Vote
-if entitled" are entitlements owned by finance/governance (the matrix grants the role); roles without a matrix column
-(GUARD_SUP, TECHNICIAN, VENDOR_TECH, ORG_ADMIN, PLAT_SUPPORT, STAFF) get no matrix permission. PRD 5.1 "denied by default"
-rules are data (`DENIED_BY_DEFAULT`) and tested one by one. `tests/integration/identity/test_matrix.py` re-transcribes the
-PRD table independently and checks every role x capability cell.
+Correction (orchestrator, 2026-10-05): the Unit-and-member-register row prints ten values (F R R R Masked R O O O O). GUARD is
+`Masked` and AUDITOR is `R`; a plain-text PDF extraction merges them into "Masked R", which was first misread as nine values
+with AUDITOR empty. AUDITOR therefore has register read (purpose logged, IAM-04), consistent with the organisation module.
 
 ### 7. Role grants (IAM-02, IAM-03, IAM-13)
 
