@@ -56,6 +56,8 @@ CREATE TABLE invitation_windows (
     seq integer NOT NULL CHECK (seq >= 1),
     window_start timestamptz NOT NULL,
     window_end timestamptz NOT NULL,
+    retention_class text NOT NULL DEFAULT 'VIS' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     CONSTRAINT invitation_windows_order CHECK (window_end > window_start),
     CONSTRAINT invitation_windows_length CHECK (window_end - window_start <= interval '7 days'),
     CONSTRAINT invitation_windows_seq_uq UNIQUE (society_id, invitation_id, seq),

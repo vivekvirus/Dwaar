@@ -219,3 +219,11 @@ Format: ID, date, owner, decision, reason / consequence.
   at the permission-service level until slice 2 adds the endpoint; a tripwire test fails when a gate/visitor route appears.
 - **README.md got a "Local demo" section** although it is outside the slice's file list: the task asked for the demo logins to be
   documented there. Additive only.
+
+### B-012 Slice 2 visits module deviations (ADR-0013)
+- Date: 2026-10-05. Owner: Viz.
+- `event_id` and device-key uniqueness are scoped per society, not global, so a probe cannot learn whether another society holds an ID (INV-01).
+- The canonical decision response keeps `request_id` = the approval request id (PRD 12.3); the core replay rewrite is undone by `restore_canonical`.
+- The guard's "current gate" is the gate the guard names until shifts exist (slice 4); expiry is evaluated lazily and by an idempotent expire job.
+- Open: `dwaar_worker` lacks INSERT on `outbox` (sweep/expiry jobs run as `dwaar_app` for now); GUARD_SUP actions to be folded into the identity matrix.
+

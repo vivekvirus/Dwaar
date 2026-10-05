@@ -441,7 +441,7 @@ def test_overstay_thresholds_are_configuration_per_society_and_per_booking(gate:
 
 
 def test_the_sweep_expires_unused_permissions_and_passes_and_never_enters_anybody(gate: VW) -> None:
-    visit_id, h = authorised(gate)
+    _visit_id, h = authorised(gate)
     inv = gate.call(
         h.owner, "POST", gate.s("invitations"),
         json={"unit_id": str(h.unit), "purpose": "Dinner", "windows": [{"start": _iso(-dt.timedelta(hours=1)), "end": _iso(dt.timedelta(hours=1))}]},
@@ -463,7 +463,7 @@ def test_the_sweep_expires_unused_permissions_and_passes_and_never_enters_anybod
 
 
 def test_visit_cancel_withdraws_authorisation(gate: VW) -> None:
-    visit_id, h = authorised(gate)
+    visit_id, _h = authorised(gate)
     v = gate.call(
         gate.guard, "GET", f"/v1/visits/{visit_id}", params={"gate_id": str(gate.gate_id)}
     ).json()

@@ -67,7 +67,7 @@ class VW:
         params: dict[str, Any] | None = None,
         key: str | None = None,
         headers: dict[str, str] | None = None,
-        society: uuid.UUID | None | bool = True,
+        society: uuid.UUID | bool | None = True,
     ) -> Any:
         """One request. Writes get a fresh Idempotency-Key unless ``key`` is given; routes without the society in the path
         get ``X-Society-Id`` (pass ``society=False`` to omit it or a uuid to name another society)."""

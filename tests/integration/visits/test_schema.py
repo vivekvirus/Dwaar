@@ -186,12 +186,10 @@ def test_only_one_valid_first_decision_per_request_and_decisions_are_append_only
     decision(me)
     with pytest.raises(psycopg.errors.UniqueViolation):
         decision(other)  # a second FIRST decision is impossible whoever writes it
-    with vw.idh.db.app_conn(vw.soc.id) as conn:
-        with pytest.raises(psycopg.errors.InsufficientPrivilege):
-            conn.execute("UPDATE approval_decisions SET decision = 'deny'")
-    with vw.idh.db.app_conn(vw.soc.id) as conn:
-        with pytest.raises(psycopg.errors.InsufficientPrivilege):
-            conn.execute("DELETE FROM approval_decisions")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege), vw.idh.db.app_conn(vw.soc.id) as conn:
+        conn.execute("UPDATE approval_decisions SET decision = 'deny'")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege), vw.idh.db.app_conn(vw.soc.id) as conn:
+        conn.execute("DELETE FROM approval_decisions")
     with pytest.raises(psycopg.errors.Error, match="append-only"):
         _owner(
             vw.idh, vw.soc.id, "DELETE FROM approval_decisions"
@@ -209,9 +207,8 @@ def test_access_events_are_append_only_and_device_sequence_and_event_id_are_uniq
     r = vw.observe(visit_id, "entry", seq=5)
     assert r.status_code == 201, r.text
     event_id = r.json()["event"]["event_id"]
-    with vw.idh.db.app_conn(vw.soc.id) as conn:
-        with pytest.raises(psycopg.errors.InsufficientPrivilege):
-            conn.execute("UPDATE access_events SET seq = 99")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege), vw.idh.db.app_conn(vw.soc.id) as conn:
+        conn.execute("UPDATE access_events SET seq = 99")
     with pytest.raises(psycopg.errors.Error, match="append-only"):
         _owner(vw.idh, vw.soc.id, "DELETE FROM access_events")
     # same device + same seq, different event id: the second observation is refused (409, nothing written)

@@ -1,0 +1,60 @@
+{
+  "id": "AT-03",
+  "milestone": "M0",
+  "scenario": "A guest request is pending and two family members decide at the same moment",
+  "expected": "Exactly one canonical decision; the other device gets the result and alerts stop",
+  "observed": {
+    "outcome": "passed",
+    "message": null
+  },
+  "commit": "4489722a0e522319ff20f9e6d4bbd66f0d4ec4ea",
+  "environment": {
+    "python": "3.12.3",
+    "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
+    "postgres_mode": "ephemeral",
+    "DWAAR_ENV": "unset",
+    "simulation": true,
+    "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+    "tree_dirty": true
+  },
+  "dataset": "dwaar-seed-v1: two synthetic societies (Maharashtra CHS 3 blocks/240 units, Karnataka association 2 blocks/180 units), invented people on fictional numbers +91 99999 0nnnn, loaded by python -m dwaar_api.seed",
+  "trace": {
+    "pytest_nodeids": [
+      "tests/acceptance/test_at03_family_decision_race.py::test_the_seed_delegated_household_approval_to_the_family",
+      "tests/acceptance/test_at03_family_decision_race.py::test_two_family_decisions_race_and_exactly_one_is_canonical",
+      "tests/acceptance/test_at03_family_decision_race.py::test_the_guard_sees_the_canonical_outcome_and_approval_is_not_entry",
+      "tests/acceptance/test_at03_family_decision_race.py::test_a_decision_from_outside_the_household_is_not_part_of_the_race",
+      "tests/integration/visits/test_race.py::test_two_family_decisions_race_exactly_one_wins"
+    ],
+    "duration_s": 19.7618,
+    "tests": [
+      {
+        "nodeid": "tests/acceptance/test_at03_family_decision_race.py::test_the_seed_delegated_household_approval_to_the_family",
+        "outcome": "passed",
+        "duration_s": 0.0196
+      },
+      {
+        "nodeid": "tests/acceptance/test_at03_family_decision_race.py::test_two_family_decisions_race_and_exactly_one_is_canonical",
+        "outcome": "passed",
+        "duration_s": 5.7693
+      },
+      {
+        "nodeid": "tests/acceptance/test_at03_family_decision_race.py::test_the_guard_sees_the_canonical_outcome_and_approval_is_not_entry",
+        "outcome": "passed",
+        "duration_s": 5.515
+      },
+      {
+        "nodeid": "tests/acceptance/test_at03_family_decision_race.py::test_a_decision_from_outside_the_household_is_not_part_of_the_race",
+        "outcome": "passed",
+        "duration_s": 5.8814
+      },
+      {
+        "nodeid": "tests/integration/visits/test_race.py::test_two_family_decisions_race_exactly_one_wins",
+        "outcome": "passed",
+        "duration_s": 2.5764
+      }
+    ]
+  },
+  "tester": "automated/claude-code",
+  "date": "2026-10-05T20:10:39+00:00"
+}

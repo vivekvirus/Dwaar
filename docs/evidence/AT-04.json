@@ -1,0 +1,54 @@
+{
+  "id": "AT-04",
+  "milestone": "M0",
+  "scenario": "An approval request times out and a queued approval from a phone arrives afterwards",
+  "expected": "No permission is issued and the user is shown that the request expired",
+  "observed": {
+    "outcome": "passed",
+    "message": null
+  },
+  "commit": "4489722a0e522319ff20f9e6d4bbd66f0d4ec4ea",
+  "environment": {
+    "python": "3.12.3",
+    "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
+    "postgres_mode": "ephemeral",
+    "DWAAR_ENV": "unset",
+    "simulation": true,
+    "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+    "tree_dirty": true
+  },
+  "dataset": "dwaar-seed-v1: two synthetic societies (Maharashtra CHS 3 blocks/240 units, Karnataka association 2 blocks/180 units), invented people on fictional numbers +91 99999 0nnnn, loaded by python -m dwaar_api.seed",
+  "trace": {
+    "pytest_nodeids": [
+      "tests/acceptance/test_at04_expired_request.py::test_a_queued_approval_after_expiry_issues_no_permission",
+      "tests/acceptance/test_at04_expired_request.py::test_a_denied_request_and_an_expired_one_stay_closed_whoever_answers_late",
+      "tests/acceptance/test_at04_expired_request.py::test_real_clock_the_request_expires_by_itself_and_the_queued_approval_is_refused",
+      "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind"
+    ],
+    "duration_s": 82.0353,
+    "tests": [
+      {
+        "nodeid": "tests/acceptance/test_at04_expired_request.py::test_a_queued_approval_after_expiry_issues_no_permission",
+        "outcome": "passed",
+        "duration_s": 5.3271
+      },
+      {
+        "nodeid": "tests/acceptance/test_at04_expired_request.py::test_a_denied_request_and_an_expired_one_stay_closed_whoever_answers_late",
+        "outcome": "passed",
+        "duration_s": 5.3773
+      },
+      {
+        "nodeid": "tests/acceptance/test_at04_expired_request.py::test_real_clock_the_request_expires_by_itself_and_the_queued_approval_is_refused",
+        "outcome": "passed",
+        "duration_s": 67.3434
+      },
+      {
+        "nodeid": "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind",
+        "outcome": "passed",
+        "duration_s": 3.9876
+      }
+    ]
+  },
+  "tester": "automated/claude-code",
+  "date": "2026-10-05T20:10:39+00:00"
+}

@@ -60,6 +60,8 @@ CREATE TABLE approval_decisions (
     reverses_decision_id uuid,
     reason text CHECK (reason IS NULL OR char_length(reason) <= 500),
     decided_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+    retention_class text NOT NULL DEFAULT 'VIS' CHECK (retention_class ~ '^[A-Z][A-Z0-9]{1,15}$'),
+    legal_hold_id uuid,
     CONSTRAINT approval_decisions_society_id_uq UNIQUE (society_id, id),
     CONSTRAINT approval_decisions_request_fk FOREIGN KEY (society_id, request_id)
         REFERENCES approval_requests (society_id, id),

@@ -207,11 +207,12 @@ def test_real_clock_the_request_expires_by_itself_and_the_queued_approval_is_ref
     world = fresh_world
     ids = visit_ids(world, "mh")
     secretary = world.login("mh.secretary")
+    current = world.call(secretary, "GET", f"/v1/societies/{ids.society}/gate-policy").json()
     policy = world.call(
         secretary,
         "PUT",
         f"/v1/societies/{ids.society}/gate-policy",
-        json={"approval_expiry_seconds": 60},
+        json={"approval_expiry_seconds": 60, "expected_version": current["version"]},
     )
     assert policy.status_code == 200, policy.text
     guard, rekha = world.login("mh.guard1"), world.login("rekha")

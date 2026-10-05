@@ -15,6 +15,10 @@ What is proven here, and what is not (be honest, see docs/reports/slice-1.md):
 * every society-scoped route that exists today (inventory-checked: a new route fails ``test_route_inventory`` until it is
   classified and covered) answers an A id used in B, and an A path used by a non-member, exactly like a random id: same
   status, same code, same message, same details, and no A identifier anywhere in the body;
+* slice 2 added the gate, device, pass, approval-request, visit and exception routes. They are probed like every other route,
+  including the routes whose society comes from ``X-Society-Id`` instead of the path (``society_header=True``), with the SEEDED
+  gate, lane, device, pass, request, visit and exception ids of A replayed in B (``_visits_world.visit_ids``): same status,
+  same code, same body shape as a made-up id, and none of those ids in any answer;
 * the database refuses the same thing underneath (RLS on every table with a ``society_id`` column);
 * FILES, EXPORT, SEARCH and AI have no endpoints in this slice. They are covered only by a tripwire (no such route exists;
   probing the obvious paths answers 404) and will be exercised end-to-end by the slices that add them.
@@ -31,6 +35,7 @@ import pytest
 from psycopg import errors as pgerr
 
 from dwaar_api.core.authz import iter_api_routes
+from tests.acceptance._visits_world import visit_ids
 from tests.acceptance._world import DATASET, World, leaks, shape
 
 pytestmark = [
@@ -53,6 +58,10 @@ class Case:
     foreign: tuple[str, ...] = ()
     #: raw CSV body instead of JSON
     csv: bool = False
+    #: the society is chosen by the ``X-Society-Id`` header (the PRD paths of approvals, visits, exceptions carry none)
+    society_header: bool = False
+    #: Meera (secretary of B) holds a role that may call this route in B; False = guard/household-only (403 for her)
+    meera_authorised: bool = True
 
     @property
     def key(self) -> tuple[str, str]:
@@ -154,6 +163,207 @@ CASES: tuple[Case, ...] = (
     ),
 )
 
+KEY43 = "A" * 43
+WINDOW = [{"start": "2026-10-06T10:00:00+00:00", "end": "2026-10-06T12:00:00+00:00"}]
+NOTICE = {"version": "visitor-notice-v1", "language": "en", "consent_given": True}
+DECISION = {
+    "decision": "approve",
+    "expected_version": 1,
+    "client_action_id": "0192f3a1-7c4e-7a10-9b2e-5d1c0f6a2b11",
+}
+OBSERVATION = {
+    "type": "entry",
+    "gate_id": "{gate_id}",
+    "device_id": "{device_id}",
+    "event_id": "0192f3a1-7c4e-7a10-9b2e-5d1c0f6a2b12",
+    "seq": 1,
+    "occurred_at": "2026-10-06T10:00:00+00:00",
+}
+
+#: slice 2: gates, devices, policy, passes, approval requests, visits, exceptions (ids are the SEEDED ones of A)
+VISIT_CASES: tuple[Case, ...] = (
+    Case("GET", f"{SOC}/gates"),
+    Case("POST", f"{SOC}/gates", {"name": "AT-01 gate", "kind": "mixed"}),
+    Case("GET", f"{SOC}/gates/{{gate_id}}/lanes", foreign=("gate_id",)),
+    Case(
+        "POST",
+        f"{SOC}/gates/{{gate_id}}/lanes",
+        {"label": "AT-01 lane", "direction": "in"},
+        foreign=("gate_id",),
+    ),
+    Case(
+        "GET",
+        f"{SOC}/gates/{{gate_id}}/recent-destinations",
+        foreign=("gate_id",),
+        meera_authorised=False,
+    ),
+    Case("GET", f"{SOC}/gate-policy"),
+    Case("PUT", f"{SOC}/gate-policy", {"approval_expiry_seconds": 120}),
+    Case(
+        "POST",
+        f"{SOC}/devices",
+        {"kind": "terminal", "name": "AT-01 device", "gate_id": "{gate_id}", "public_key": KEY43},
+        foreign=("gate_id",),
+        meera_authorised=False,
+    ),
+    Case("GET", f"{SOC}/devices"),
+    Case("GET", f"{SOC}/devices/{{device_id}}", foreign=("device_id",)),
+    Case(
+        "POST",
+        f"{SOC}/devices/{{device_id}}/decision",
+        {"decision": "approve", "expected_version": 1},
+        foreign=("device_id",),
+    ),
+    Case(
+        "POST",
+        f"{SOC}/devices/{{device_id}}/revoke",
+        {"expected_version": 1, "reason": "AT-01 probe"},
+        foreign=("device_id",),
+    ),
+    Case(
+        "POST",
+        f"{SOC}/invitations",
+        {"unit_id": "{unit_id}", "purpose": "AT-01 probe", "windows": WINDOW},
+        foreign=("unit_id",),
+        meera_authorised=False,
+    ),
+    Case(
+        "GET",
+        f"{SOC}/invitations",
+        params={"unit_id": "{unit_id}"},
+        foreign=("unit_id",),
+        meera_authorised=False,
+    ),
+    Case(
+        "GET",
+        f"{SOC}/invitations/{{invitation_id}}",
+        foreign=("invitation_id",),
+        meera_authorised=False,
+    ),
+    Case(
+        "DELETE",
+        "/v1/invitations/{invitation_id}",
+        foreign=("invitation_id",),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        f"{SOC}/invitations/redeem",
+        {"gate_id": "{gate_id}", "qr": "x" * 40},
+        foreign=("gate_id",),
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/approval-requests",
+        {
+            "unit_id": "{unit_id}",
+            "visitor_alias": "AT-01 probe",
+            "gate_id": "{gate_id}",
+            "destination_confirmed": True,
+            "notice": NOTICE,
+        },
+        foreign=("unit_id", "gate_id"),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "GET",
+        "/v1/approval-requests/{request_id}",
+        params={"gate_id": "{gate_id}"},
+        foreign=("request_id", "gate_id"),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/approval-requests/{request_id}/decision",
+        DECISION,
+        foreign=("request_id",),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/approval-requests/{request_id}/reversal",
+        {
+            "expected_version": 2,
+            "client_action_id": DECISION["client_action_id"],
+            "reason": "AT-01 probe",
+        },
+        foreign=("request_id",),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/approval-requests/{request_id}/cancel",
+        {"expected_version": 1},
+        foreign=("request_id",),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "GET",
+        f"{SOC}/approval-requests",
+        params={"unit_id": "{unit_id}", "gate_id": "{gate_id}"},
+        foreign=("unit_id", "gate_id"),
+        meera_authorised=False,
+    ),
+    Case(
+        "GET",
+        f"{SOC}/units/{{unit_id}}/destination-hint",
+        foreign=("unit_id",),
+        meera_authorised=False,
+    ),
+    Case("GET", f"{SOC}/units/{{unit_id}}/visits", params=PURPOSE, foreign=("unit_id",)),
+    Case("GET", f"{SOC}/visits", params={**PURPOSE, "unit_id": "{unit_id}"}, foreign=("unit_id",)),
+    Case(
+        "GET", "/v1/visits/{visit_id}", params=PURPOSE, foreign=("visit_id",), society_header=True
+    ),
+    Case(
+        "POST",
+        "/v1/visits/{visit_id}/observations",
+        OBSERVATION,
+        foreign=("visit_id", "gate_id", "device_id"),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/visits/{visit_id}/stops",
+        {"unit_id": "{unit_id}", "destination_confirmed": True, "expected_version": 1},
+        foreign=("visit_id", "unit_id"),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/visits/{visit_id}/cancel",
+        {"expected_version": 1, "reason": "AT-01 probe cancel"},
+        foreign=("visit_id",),
+        society_header=True,
+        meera_authorised=False,
+    ),
+    Case("GET", f"{SOC}/exceptions"),
+    Case(
+        "POST",
+        f"{SOC}/exceptions",
+        {"kind": "other", "reason": "AT-01 probe exception", "visit_id": "{visit_id}"},
+        foreign=("visit_id",),
+        meera_authorised=False,
+    ),
+    Case(
+        "POST",
+        "/v1/exceptions/{exception_id}/transition",
+        {"action": "start_review", "expected_version": 1},
+        foreign=("exception_id",),
+        society_header=True,
+    ),
+)
+CASES = CASES + VISIT_CASES
+
 #: society-scoped routes deliberately NOT in the generic probes, and why. Each has its own test below.
 APPLICANT_ROUTE = ("POST", f"{SOC}/memberships")
 
@@ -208,7 +418,15 @@ def _subst(value: Any, ids: dict[str, uuid.UUID | str]) -> Any:
 
 def _a_ids(world: World, society: uuid.UUID | None = None) -> dict[str, uuid.UUID | str]:
     a = world.objects("mh")
+    v = visit_ids(world, "mh")
     return {
+        "gate_id": v.gate,
+        "lane_id": v.lane,
+        "device_id": v.device,
+        "invitation_id": v.invitation,
+        "request_id": v.request,
+        "visit_id": v.visit,
+        "exception_id": v.exception or uuid.uuid4(),
         "society_id": society or a.society,
         "block_id": a.ref.blocks["A"],
         "unit_id": a.ref.unit("A", "101"),
@@ -220,6 +438,11 @@ def _a_ids(world: World, society: uuid.UUID | None = None) -> dict[str, uuid.UUI
     }
 
 
+def _a_all_ids(world: World) -> set[str]:
+    """Every id of A the replays must never reveal: the slice 1 objects plus the seeded gate/visit objects."""
+    return world.objects("mh").all_ids() | visit_ids(world, "mh").all_ids()
+
+
 def _random_like(
     ids: dict[str, uuid.UUID | str], keep: tuple[str, ...] = ("society_id", "flag_key")
 ) -> dict[str, uuid.UUID | str]:
@@ -229,6 +452,7 @@ def _random_like(
 def _send(world: World, who: Any, case: Case, ids: dict[str, uuid.UUID | str]) -> Any:
     url = _fill(case.template, ids)
     params = _subst(case.params, ids) if case.params else None
+    extra = {"X-Society-Id": str(ids["society_id"])} if case.society_header else None
     if case.csv:
         return world.call(
             who,
@@ -238,7 +462,9 @@ def _send(world: World, who: Any, case: Case, ids: dict[str, uuid.UUID | str]) -
             headers={"Content-Type": "text/csv"},
             params=params,
         )
-    return world.call(who, case.method, url, json=_subst(case.body, ids), params=params)
+    return world.call(
+        who, case.method, url, json=_subst(case.body, ids), params=params, headers=extra
+    )
 
 
 # ===================================================================================================== inventory
@@ -317,9 +543,7 @@ def test_non_member_gets_nothing_from_a_on_every_route(world: World, who: str, c
     )
     assert not leaks(
         real,
-        world.objects("mh").all_ids()
-        - {str(a_ids["society_id"])}
-        - {str(v) for v in a_ids.values()},
+        _a_all_ids(world) - {str(a_ids["society_id"])} - {str(v) for v in a_ids.values()},
     )
 
 
@@ -347,12 +571,18 @@ def test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_id
         assert case.method == "GET" and real.json()["items"] == [], (who, case.key, real.text)
     else:
         assert real.status_code in (400, 403, 404), (who, case.key, real.status_code, real.text)
-    if who == "ka.secretary" and real.status_code != 200:
+    if who == "ka.secretary" and not case.meera_authorised:
+        # a guard-only or household-only route: she has standing in B but not that role, for real and made-up ids alike
+        assert real.status_code == 403 and real.json()["code"] == "not_authorised", (
+            case.key,
+            real.text,
+        )
+    elif who == "ka.secretary" and real.status_code != 200:
         # authorised in B, so the only reason left is the id: it is simply not there
         assert real.status_code in (404, 400), (case.key, real.status_code, real.text)
         if real.status_code == 404:
             assert real.json()["code"] == "not_found"
-    assert not leaks(real, world.objects("mh").all_ids() - {str(v) for v in a_ids.values()})
+    assert not leaks(real, _a_all_ids(world) - {str(v) for v in a_ids.values()})
 
 
 @pytest.mark.parametrize("who", ["ka.secretary", "farhan", "vikram"])
@@ -360,7 +590,7 @@ def test_b_lists_contain_no_a_object(world: World, who: str) -> None:
     """Every list a member of B can read, read in B's context, holds only B objects (unit/block filters naming A's ids
     just filter to nothing)."""
     person = world.login(who)
-    a_all = world.objects("mh").all_ids()
+    a_all = _a_all_ids(world)
     b = world.objects("ka")
     a = world.objects("mh")
     seen = 0
@@ -381,6 +611,14 @@ def test_b_lists_contain_no_a_object(world: World, who: str) -> None:
         (f"/v1/societies/{b.society}/role-grants", {**PURPOSE}),
         (f"/v1/societies/{b.society}", None),
         (f"/v1/societies/{b.society}/configuration", None),
+        (f"/v1/societies/{b.society}/gates", None),
+        (f"/v1/societies/{b.society}/devices", None),
+        (f"/v1/societies/{b.society}/exceptions", None),
+        (f"/v1/societies/{b.society}/gate-policy", None),
+        (f"/v1/societies/{b.society}/visits", {**PURPOSE}),
+        (f"/v1/societies/{b.society}/visits", {**PURPOSE, "unit_id": str(a.ref.unit("A", "203"))}),
+        (f"/v1/societies/{b.society}/invitations", None),
+        (f"/v1/societies/{b.society}/approval-requests", None),
     ):
         r = world.call(person, "GET", path, params=params)
         if r.status_code == 200:
@@ -482,6 +720,40 @@ def test_positive_control_the_same_ids_work_in_the_right_society(world: World) -
     # ... and the A unit she does NOT own is 404 even in A (own records only), same as in B
     other = a.ref.unit("A", "101")
     assert world.call(meera, "GET", f"/v1/societies/{a.society}/units/{other}").status_code == 404
+
+
+def test_positive_control_the_visit_ids_work_in_the_right_society(world: World) -> None:
+    """The visit replays above mean something only if the SAME seeded ids work where they belong: the guard of A reads A's
+    request and visit, A's household reads its own history, and A's secretary lists A's gates and devices."""
+    v = visit_ids(world, "mh")
+    header = {"X-Society-Id": str(v.society)}
+    guard = world.login("mh.guard1")
+    r = world.call(
+        guard,
+        "GET",
+        f"/v1/approval-requests/{v.request}",
+        params={"gate_id": str(v.gate)},
+        headers=header,
+    )
+    assert r.status_code == 200 and r.json()["id"] == str(v.request)
+    r = world.call(
+        guard, "GET", f"/v1/visits/{v.visit}", params={"gate_id": str(v.gate)}, headers=header
+    )
+    assert r.status_code in (
+        200,
+        404,
+    )  # 404 only if the first seeded visit is no longer active at the gate (it is closed)
+    ganesh = world.login("ganesh")
+    r = world.call(ganesh, "GET", f"/v1/societies/{v.society}/units/{v.unit}/visits")
+    assert r.status_code == 200 and r.json()["items"]
+    secretary = world.login("mh.secretary")
+    gates = world.call(secretary, "GET", f"/v1/societies/{v.society}/gates").json()["items"]
+    assert str(v.gate) in {g["id"] for g in gates}
+    devices = world.call(secretary, "GET", f"/v1/societies/{v.society}/devices").json()["items"]
+    assert {str(v.device), str(v.pending_device)} <= {d["id"] for d in devices}
+    assert world.call(secretary, "GET", f"/v1/societies/{v.society}/gates/{v.gate}/lanes").json()[
+        "items"
+    ]
 
 
 def test_owner_confirm_needs_proof_of_ownership_of_that_unit(world: World) -> None:

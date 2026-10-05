@@ -7,7 +7,7 @@
     "outcome": "passed",
     "message": null
   },
-  "commit": "c184f02760ff631e62e5b2230a10c4d3354f1758",
+  "commit": "4489722a0e522319ff20f9e6d4bbd66f0d4ec4ea",
   "environment": {
     "python": "3.12.3",
     "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
@@ -32,77 +32,113 @@
       "tests/acceptance/test_at02_nonresident_owner.py::test_the_matrix_says_what_the_prd_says",
       "tests/acceptance/test_at02_nonresident_owner.py::test_owner_keeps_the_ownership_record_and_liability_while_the_tenant_lives_there",
       "tests/acceptance/test_at02_nonresident_owner.py::test_secretary_without_a_step_up_is_not_authorised_but_the_owner_role_is_unaffected",
-      "tests/acceptance/test_at02_nonresident_owner.py::test_visitor_history_route_is_not_built_yet"
+      "tests/acceptance/test_at02_nonresident_owner.py::test_http_non_resident_owner_is_denied_the_tenants_visitor_history[Meera-B205-tenant-Priya]",
+      "tests/acceptance/test_at02_nonresident_owner.py::test_http_non_resident_owner_is_denied_the_tenants_visitor_history[Smita-A305-tenant-Dev-disputed-move-out]",
+      "tests/acceptance/test_at02_nonresident_owner.py::test_http_non_resident_owner_is_denied_the_tenants_visitor_history[Sanjay-C101-investment-flat]",
+      "tests/acceptance/test_at02_nonresident_owner.py::test_http_the_tenant_and_the_occupying_owner_do_read_the_history_of_their_unit",
+      "tests/acceptance/test_at02_nonresident_owner.py::test_http_everyone_else_gets_nothing",
+      "tests/acceptance/test_at02_nonresident_owner.py::test_http_owner_keeps_financial_rights_after_the_history_denial",
+      "tests/acceptance/test_at02_nonresident_owner.py::test_visitor_history_route_is_registered_and_never_lists_the_non_resident_owner"
     ],
-    "duration_s": 0.9085,
+    "duration_s": 1.2106,
     "tests": [
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_non_resident_owner_is_denied_the_visitor_history_of_their_unit[Meera-B205-tenant-Priya]",
         "outcome": "passed",
-        "duration_s": 0.0055
+        "duration_s": 0.0056
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_non_resident_owner_is_denied_the_visitor_history_of_their_unit[Smita-A305-tenant-Dev-disputed-move-out]",
         "outcome": "passed",
-        "duration_s": 0.0914
+        "duration_s": 0.0644
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_non_resident_owner_is_denied_the_visitor_history_of_their_unit[Sanjay-C101-investment-flat]",
         "outcome": "passed",
-        "duration_s": 0.0786
+        "duration_s": 0.065
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_owner_financial_rights_stay_intact[Meera-B205-tenant-Priya]",
         "outcome": "passed",
-        "duration_s": 0.0218
+        "duration_s": 0.0147
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_owner_financial_rights_stay_intact[Smita-A305-tenant-Dev-disputed-move-out]",
         "outcome": "passed",
-        "duration_s": 0.0164
+        "duration_s": 0.012
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_owner_financial_rights_stay_intact[Sanjay-C101-investment-flat]",
         "outcome": "passed",
-        "duration_s": 0.0169
+        "duration_s": 0.0135
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_residents_of_the_same_unit_do_keep_the_history",
         "outcome": "passed",
-        "duration_s": 0.2074
+        "duration_s": 0.1339
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_one_person_two_memberships_two_answers",
         "outcome": "passed",
-        "duration_s": 0.0094
+        "duration_s": 0.0088
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_a_role_in_another_society_buys_nothing_here",
         "outcome": "passed",
-        "duration_s": 0.0091
+        "duration_s": 0.0093
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_the_matrix_says_what_the_prd_says",
         "outcome": "passed",
-        "duration_s": 0.0003
+        "duration_s": 0.0004
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_owner_keeps_the_ownership_record_and_liability_while_the_tenant_lives_there",
         "outcome": "passed",
-        "duration_s": 0.2683
+        "duration_s": 0.1201
       },
       {
         "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_secretary_without_a_step_up_is_not_authorised_but_the_owner_role_is_unaffected",
         "outcome": "passed",
-        "duration_s": 0.0767
+        "duration_s": 0.0694
       },
       {
-        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_visitor_history_route_is_not_built_yet",
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_http_non_resident_owner_is_denied_the_tenants_visitor_history[Meera-B205-tenant-Priya]",
         "outcome": "passed",
-        "duration_s": 0.1068
+        "duration_s": 0.023
+      },
+      {
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_http_non_resident_owner_is_denied_the_tenants_visitor_history[Smita-A305-tenant-Dev-disputed-move-out]",
+        "outcome": "passed",
+        "duration_s": 0.0226
+      },
+      {
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_http_non_resident_owner_is_denied_the_tenants_visitor_history[Sanjay-C101-investment-flat]",
+        "outcome": "passed",
+        "duration_s": 0.0238
+      },
+      {
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_http_the_tenant_and_the_occupying_owner_do_read_the_history_of_their_unit",
+        "outcome": "passed",
+        "duration_s": 0.1426
+      },
+      {
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_http_everyone_else_gets_nothing",
+        "outcome": "passed",
+        "duration_s": 0.4179
+      },
+      {
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_http_owner_keeps_financial_rights_after_the_history_denial",
+        "outcome": "passed",
+        "duration_s": 0.0629
+      },
+      {
+        "nodeid": "tests/acceptance/test_at02_nonresident_owner.py::test_visitor_history_route_is_registered_and_never_lists_the_non_resident_owner",
+        "outcome": "passed",
+        "duration_s": 0.0007
       }
     ]
   },
   "tester": "automated/claude-code",
-  "date": "2026-10-05T18:07:10+00:00"
+  "date": "2026-10-05T20:10:39+00:00"
 }

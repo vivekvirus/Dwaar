@@ -1,15 +1,15 @@
 # Acceptance evidence index
 
-Summary: 46 no evidence yet, 2 passed.
+Summary: 44 no evidence yet, 4 passed.
 
-Generated 2026-10-05T18:07:10+00:00 by `tests/_harness/evidence.py` (`make acceptance MILESTONE=...`). Do not edit by hand. Simulated, staging and field results are different evidence classes: the `sim` column marks simulator-backed runs.
+Generated 2026-10-05T20:10:39+00:00 by `tests/_harness/evidence.py` (`make acceptance MILESTONE=...`). Do not edit by hand. Simulated, staging and field results are different evidence classes: the `sim` column marks simulator-backed runs.
 
 | AT | Milestone | Scenario | Outcome | sim | Commit | Date | Evidence |
 |---|---|---|---|---|---|---|---|
-| AT-01 | M0 | A user moves from Society A to Society B and replays object IDs that belong to A | passed | yes | c184f02760 | 2026-10-05T18:07:10+00:00 | [AT-01.json](AT-01.json) |
-| AT-02 | M0 | A non-resident owner asks for the visitor history of their tenant | passed | yes | c184f02760 | 2026-10-05T18:07:10+00:00 | [AT-02.json](AT-02.json) |
-| AT-03 | M0 | A guest request is pending and two family members decide at the same moment | no evidence yet | | | | |
-| AT-04 | M0 | An approval request times out and a queued approval from a phone arrives afterwards | no evidence yet | | | | |
+| AT-01 | M0 | A user moves from Society A to Society B and replays object IDs that belong to A | passed | yes | 4489722a0e | 2026-10-05T20:10:39+00:00 | [AT-01.json](AT-01.json) |
+| AT-02 | M0 | A non-resident owner asks for the visitor history of their tenant | passed | yes | 4489722a0e | 2026-10-05T20:10:39+00:00 | [AT-02.json](AT-02.json) |
+| AT-03 | M0 | A guest request is pending and two family members decide at the same moment | passed | yes | 4489722a0e | 2026-10-05T20:10:39+00:00 | [AT-03.json](AT-03.json) |
+| AT-04 | M0 | An approval request times out and a queued approval from a phone arrives afterwards | passed | yes | 4489722a0e | 2026-10-05T20:10:39+00:00 | [AT-04.json](AT-04.json) |
 | AT-05 | M1 | A guest QR is consumed at one gate and then presented at a second, isolated gate | no evidence yet | | | | |
 | AT-06 | M1 | The WAN stays down for 72 hours including device and gateway restarts | no evidence yet | | | | |
 | AT-07 | M1 | The gateway fails while the LAN is partitioned | no evidence yet | | | | |

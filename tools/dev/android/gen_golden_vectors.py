@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: C408
 """Generate cross-language golden vectors from the Python reference (packages/dwaar-common).
 
 Output: apps/guard-android/core/src/test/resources/golden/edge_vectors.json
@@ -12,15 +13,18 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 from uuid import UUID
 
-from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from dwaar_common.events import CanonicalJsonError, EdgeEvent, canonical_json, payload_hash
 from dwaar_common.signing import b64url_encode, key_id_for, public_key_to_b64
 
-OUT = Path(__file__).resolve().parents[3] / "apps/guard-android/core/src/test/resources/golden/edge_vectors.json"
+OUT = (
+    Path(__file__).resolve().parents[3]
+    / "apps/guard-android/core/src/test/resources/golden/edge_vectors.json"
+)
 
 CANON_INPUTS = [
     '{"b":1,"a":2}',
@@ -41,19 +45,47 @@ SEEDS = {
 }
 
 
-def event_vectors() -> list[dict]:
-    cases = []
-    specs = [
-        dict(seed="seed-a", seq=18452, type="EntryObserved", entity_version=2, policy_version=913,
-             occurred_at=datetime(2026, 10, 5, 13, 41, 7, 250000, tzinfo=UTC), clock_uncertainty_ms=120,
-             payload={"lane_id": "0192f300-0000-7000-8000-0000000000a1", "decision_source": "guard_assisted"}),
-        dict(seed="seed-b", seq=0, type="EntryObserved", entity_version=1, policy_version=0,
-             occurred_at=datetime(2026, 1, 1, 0, 0, 0, 0, tzinfo=UTC), clock_uncertainty_ms=0,
-             payload={}),
-        dict(seed="seed-a", seq=9007199254740, type="ApprovalRequested", entity_version=7, policy_version=12,
-             occurred_at=datetime(2026, 12, 31, 23, 59, 59, 999000, tzinfo=UTC), clock_uncertainty_ms=60000,
-             payload={"visitor_alias": "राजेश", "note": "tab\there \"q\"",
-                      "unit_ids": ["u-2", "u-1"], "count": 3}),
+def event_vectors() -> list[dict[str, Any]]:
+    cases: list[dict[str, Any]] = []
+    specs: list[dict[str, Any]] = [
+        dict(
+            seed="seed-a",
+            seq=18452,
+            type="EntryObserved",
+            entity_version=2,
+            policy_version=913,
+            occurred_at=datetime(2026, 10, 5, 13, 41, 7, 250000, tzinfo=UTC),
+            clock_uncertainty_ms=120,
+            payload={
+                "lane_id": "0192f300-0000-7000-8000-0000000000a1",
+                "decision_source": "guard_assisted",
+            },
+        ),
+        dict(
+            seed="seed-b",
+            seq=0,
+            type="EntryObserved",
+            entity_version=1,
+            policy_version=0,
+            occurred_at=datetime(2026, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
+            clock_uncertainty_ms=0,
+            payload={},
+        ),
+        dict(
+            seed="seed-a",
+            seq=9007199254740,
+            type="ApprovalRequested",
+            entity_version=7,
+            policy_version=12,
+            occurred_at=datetime(2026, 12, 31, 23, 59, 59, 999000, tzinfo=UTC),
+            clock_uncertainty_ms=60000,
+            payload={
+                "visitor_alias": "राजेश",
+                "note": 'tab\there "q"',
+                "unit_ids": ["u-2", "u-1"],
+                "count": 3,
+            },
+        ),
     ]
     for i, s in enumerate(specs):
         key = Ed25519PrivateKey.from_private_bytes(SEEDS[s["seed"]])
@@ -97,7 +129,9 @@ def main() -> None:
             {
                 "input_json": text,
                 "canonical": out.decode("utf-8"),
-                "sha256_hex": payload_hash(value)[len("sha256:"):] if isinstance(value, dict) else None,
+                "sha256_hex": payload_hash(value)[len("sha256:") :]
+                if isinstance(value, dict)
+                else None,
             }
         )
     for text in REJECT_INPUTS:
@@ -115,7 +149,9 @@ def main() -> None:
         "edge_events": event_vectors(),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(doc, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(doc, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8"
+    )
     print("wrote", OUT)
 
 

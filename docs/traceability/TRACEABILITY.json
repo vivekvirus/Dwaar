@@ -10,17 +10,17 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 271,
+    "files_scanned": 373,
     "files_ignored": 0,
-    "annotations": 605
+    "annotations": 788
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 15,
-      "partial": 25,
+      "done": 21,
+      "partial": 32,
       "blocked-external": 0,
-      "not-started": 180
+      "not-started": 167
     },
     "verified": {
       "verified": 0,
@@ -29,10 +29,10 @@
     },
     "by_priority": {
       "P0": {
-        "done": 8,
-        "partial": 16,
+        "done": 14,
+        "partial": 21,
         "blocked-external": 0,
-        "not-started": 114
+        "not-started": 103
       },
       "P1": {
         "done": 0,
@@ -42,16 +42,16 @@
       },
       "none": {
         "done": 7,
-        "partial": 9,
+        "partial": 11,
         "blocked-external": 0,
-        "not-started": 64
+        "not-started": 62
       }
     },
     "acceptance_in_scope": 35,
     "acceptance_by_status": {
-      "done": 2,
+      "done": 4,
       "partial": 2,
-      "not-started": 31
+      "not-started": 29
     },
     "reference_items": {
       "decision": 24,
@@ -80,6 +80,9 @@
         "services/api/dwaar_api/modules/identity/routes_people.py",
         "services/api/dwaar_api/modules/identity/store.py",
         "services/api/dwaar_api/modules/organisation/routes.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
+        "services/api/dwaar_api/modules/visits/routes_visits.py",
+        "services/api/dwaar_api/modules/visits/schemas.py",
         "services/api/migrations/0004_audit_log.sql",
         "services/api/migrations/0008_integrity_hardening.sql",
         "services/api/migrations/0009_runtime_privilege_hardening.sql"
@@ -123,6 +126,10 @@
         "tests/integration/organisation/test_rls_isolation.py::test_worker_role_is_read_only",
         "tests/integration/organisation/test_societies.py::test_list_societies_shows_only_current_grants_and_paginates",
         "tests/integration/organisation/test_units.py::test_read_permissions_masking_and_own_unit_scope",
+        "tests/integration/visits/test_gates_devices.py:3",
+        "tests/integration/visits/test_history.py:3",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::<module>",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
@@ -232,6 +239,15 @@
       "simulator_files": [],
       "tested_by": [
         "packages/dwaar-packs/tests/test_fix_round1.py:3",
+        "tests/acceptance/test_at03_family_decision_race.py::<module>",
+        "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/integration/visits/test_decisions.py:3",
+        "tests/integration/visits/test_decisions.py::test_a_decision_after_expiry_is_409_request_expired_and_issues_no_permission",
+        "tests/integration/visits/test_exceptions.py:3",
+        "tests/integration/visits/test_race.py:7",
+        "tests/integration/visits/test_race.py::<module>",
+        "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind",
+        "tests/integration/visits/test_requests.py:3",
         "tests/security/test_w1_packs.py::<module>"
       ],
       "acceptance_gates": [
@@ -241,7 +257,6 @@
       ],
       "gaps": [
         "no-implementation",
-        "acceptance-untested:AT-04",
         "acceptance-untested:AT-06",
         "acceptance-untested:AT-40"
       ],
@@ -270,7 +285,10 @@
       "tested_by": [
         "tests/acceptance/test_at02_nonresident_owner.py::<module>",
         "tests/integration/identity/test_authz.py:81",
-        "tests/integration/identity/test_authz.py::test_ownership_occupancy_and_role_are_independent"
+        "tests/integration/identity/test_authz.py::test_ownership_occupancy_and_role_are_independent",
+        "tests/integration/visits/test_decisions.py::test_only_the_household_that_lives_there_may_decide",
+        "tests/integration/visits/test_history.py:3",
+        "tests/integration/visits/test_history.py::<module>"
       ],
       "acceptance_gates": [
         "AT-02"
@@ -290,16 +308,17 @@
       "slice": 1,
       "module": "infra",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/visits/test_pii.py:4"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-implementation"
       ],
       "verification": null,
       "verified": null
@@ -345,22 +364,36 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/routes_visits.py",
+        "services/api/dwaar_api/modules/visits/visits.py",
+        "services/api/migrations/0204_access_events.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at03_family_decision_race.py::<module>",
+        "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/integration/visits/test_decisions.py:3",
+        "tests/integration/visits/test_invitations.py:4",
+        "tests/integration/visits/test_observations.py:4",
+        "tests/integration/visits/test_observations.py::<module>",
+        "tests/integration/visits/test_race.py:7",
+        "tests/integration/visits/test_race.py::test_hundreds_of_racing_decisions_one_winner_per_request",
+        "tests/integration/visits/test_requests.py:3",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::<module>",
+        "tests/integration/visits/test_schema.py::test_access_events_are_append_only_and_device_sequence_and_event_id_are_unique",
+        "tests/integration/visits/test_schema.py::test_the_database_refuses_a_manufactured_exit_time"
+      ],
       "acceptance_gates": [
         "AT-03",
         "AT-04",
         "AT-15"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-03",
-        "acceptance-untested:AT-04",
         "acceptance-untested:AT-15"
       ],
       "verification": null,
@@ -686,6 +719,8 @@
         "tests/integration/identity/test_mfa.py:89",
         "tests/integration/identity/test_mfa.py::<module>",
         "tests/integration/identity/test_verification.py:228",
+        "tests/integration/visits/test_exceptions.py:3",
+        "tests/integration/visits/test_gates_devices.py:3",
         "tests/security/test_identity_database.py:301"
       ],
       "acceptance_gates": [],
@@ -714,7 +749,8 @@
       "tested_by": [
         "tests/integration/identity/test_memberships.py:172",
         "tests/integration/identity/test_memberships.py::test_member_register_views_and_privileged_read_logging",
-        "tests/integration/identity/test_mfa.py:101"
+        "tests/integration/identity/test_mfa.py:101",
+        "tests/integration/visits/test_history.py:3"
       ],
       "acceptance_gates": [],
       "gaps": [],
@@ -894,6 +930,7 @@
         "services/api/dwaar_api/modules/identity/routes_auth.py",
         "services/api/dwaar_api/modules/identity/store.py",
         "services/api/dwaar_api/modules/organisation/permissions.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
         "services/api/migrations/0132_identity_sessions.sql",
         "services/api/migrations/0135_identity_access_functions.sql"
       ],
@@ -931,6 +968,8 @@
         "tests/integration/organisation/test_import.py::test_import_is_secretary_only",
         "tests/integration/organisation/test_societies.py::test_configure_is_secretary_only_and_uses_optimistic_versions",
         "tests/integration/organisation/test_units.py::test_write_permissions_follow_matrix",
+        "tests/integration/visits/test_decisions.py:3",
+        "tests/integration/visits/test_decisions.py::test_only_the_household_that_lives_there_may_decide",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_identity_database.py:173",
@@ -1475,6 +1514,10 @@
         "tests/integration/organisation/test_rls_isolation.py::test_worker_role_is_read_only",
         "tests/integration/organisation/test_societies.py::test_create_writes_audit_and_outbox_in_same_transaction",
         "tests/integration/organisation/test_units.py::test_duplicate_labels_across_blocks_work_but_not_within_a_block",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::<module>",
+        "tests/integration/visits/test_schema.py::test_composite_foreign_keys_refuse_references_into_another_society",
+        "tests/integration/visits/test_schema.py::test_every_visits_table_is_force_rls_with_a_society_policy",
         "tests/security/test_core_rls_isolation.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_identity_database.py:109",
@@ -1556,6 +1599,7 @@
         "tests/integration/core/test_openapi_export.py::<module>",
         "tests/integration/core/test_pagination.py::<module>",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
+        "tests/integration/visits/test_schema.py::test_every_visits_table_is_force_rls_with_a_society_policy",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_core_rls_isolation.py::<module>",
@@ -1691,6 +1735,10 @@
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::<module>",
+        "tests/integration/visits/test_schema.py::test_access_events_are_append_only_and_device_sequence_and_event_id_are_unique",
+        "tests/integration/visits/test_schema.py::test_only_one_valid_first_decision_per_request_and_decisions_are_append_only",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_w1_history.py::<module>",
         "tests/security/test_w1_history_r2.py::<module>",
@@ -2017,17 +2065,24 @@
       "slice": 3,
       "module": "services/api/modules/devices",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/gates.py",
+        "services/api/dwaar_api/modules/visits/routes_gates.py",
+        "services/api/migrations/0200_gates_lanes_devices.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/visits/test_gates_devices.py:3",
+        "tests/integration/visits/test_gates_devices.py::<module>",
+        "tests/integration/visits/test_seed_visits.py:3",
+        "tests/integration/visits/test_seed_visits.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2117,18 +2172,33 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/config.py",
+        "services/api/dwaar_api/modules/visits/invitations.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
+        "services/api/dwaar_api/modules/visits/routes_gates.py",
+        "services/api/dwaar_api/modules/visits/routes_invitations.py",
+        "services/api/dwaar_api/modules/visits/schemas.py",
+        "services/api/dwaar_api/modules/visits/tokens.py",
+        "services/api/dwaar_api/seed/steps/s400_visits.py",
+        "services/api/migrations/0201_invitations.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/visits/test_invitations.py:4",
+        "tests/integration/visits/test_invitations.py::<module>",
+        "tests/integration/visits/test_schema.py::test_a_pass_cannot_be_open_ended",
+        "tests/integration/visits/test_seed_visits.py:3",
+        "tests/integration/visits/test_seed_visits.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-05"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-05"
       ],
       "verification": null,
@@ -2145,22 +2215,36 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/approvals.py",
+        "services/api/dwaar_api/modules/visits/common.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
+        "services/api/dwaar_api/modules/visits/policy.py",
+        "services/api/dwaar_api/modules/visits/routes_approvals.py",
+        "services/api/dwaar_api/modules/visits/routes_gates.py",
+        "services/api/dwaar_api/modules/visits/schemas.py",
+        "services/api/migrations/0203_approvals.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at03_family_decision_race.py::<module>",
+        "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/integration/visits/test_decisions.py:3",
+        "tests/integration/visits/test_requests.py:3",
+        "tests/integration/visits/test_requests.py::<module>",
+        "tests/integration/visits/test_seed_visits.py:3",
+        "tests/integration/visits/test_seed_visits.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-03",
         "AT-04",
         "AT-40"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-03",
-        "acceptance-untested:AT-04",
         "acceptance-untested:AT-40"
       ],
       "verification": null,
@@ -2177,22 +2261,36 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
+        "services/api/dwaar_api/modules/visits/routes_approvals.py",
+        "services/api/dwaar_api/modules/visits/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at03_family_decision_race.py::<module>",
+        "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/integration/visits/test_decisions.py:3",
+        "tests/integration/visits/test_decisions.py::<module>",
+        "tests/integration/visits/test_decisions.py::test_a_decision_after_expiry_is_409_request_expired_and_issues_no_permission",
+        "tests/integration/visits/test_decisions.py::test_only_the_household_that_lives_there_may_decide",
+        "tests/integration/visits/test_race.py:7",
+        "tests/integration/visits/test_race.py::<module>",
+        "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind",
+        "tests/integration/visits/test_race.py::test_double_tap_with_one_idempotency_key_decides_once",
+        "tests/integration/visits/test_race.py::test_hundreds_of_racing_decisions_one_winner_per_request",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::test_only_one_valid_first_decision_per_request_and_decisions_are_append_only"
+      ],
       "acceptance_gates": [
         "AT-03",
         "AT-04"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-03",
-        "acceptance-untested:AT-04"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2207,17 +2305,23 @@
       "slice": 4,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/routes_visits.py",
+        "services/api/migrations/0202_visits.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/visits/test_observations.py:4",
+        "tests/integration/visits/test_requests.py:3",
+        "tests/integration/visits/test_requests.py::test_a_second_stop_is_a_new_request_and_approving_one_stop_authorises_only_that_stop",
+        "tests/integration/visits/test_requests.py::test_stop_rules"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2232,17 +2336,26 @@
       "slice": 3,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/routes_visits.py",
+        "services/api/dwaar_api/modules/visits/schemas.py",
+        "services/api/migrations/0204_access_events.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/visits/test_observations.py:4",
+        "tests/integration/visits/test_observations.py::<module>",
+        "tests/integration/visits/test_observations.py::test_an_exit_reconciled_as_unknown_never_gets_an_exit_time",
+        "tests/integration/visits/test_observations.py::test_egress_is_never_gated_an_exit_is_recorded_for_any_visit",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::test_the_database_refuses_a_manufactured_exit_time"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2285,18 +2398,28 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/exceptions.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
+        "services/api/dwaar_api/modules/visits/routes_visits.py",
+        "services/api/dwaar_api/modules/visits/schemas.py",
+        "services/api/migrations/0205_exceptions.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/visits/test_exceptions.py:3",
+        "tests/integration/visits/test_exceptions.py::<module>",
+        "tests/integration/visits/test_observations.py:4",
+        "tests/integration/visits/test_observations.py::test_egress_is_never_gated_an_exit_is_recorded_for_any_visit"
+      ],
       "acceptance_gates": [
         "AT-07"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-07"
       ],
       "verification": null,
@@ -2313,17 +2436,22 @@
       "slice": 4,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/routes_invitations.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/visits/test_invitations.py:4",
+        "tests/integration/visits/test_pii.py:4",
+        "tests/integration/visits/test_seed_visits.py:3",
+        "tests/integration/visits/test_seed_visits.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2363,17 +2491,26 @@
       "slice": 4,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/routes_gates.py",
+        "services/api/dwaar_api/modules/visits/routes_visits.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/visits/test_exceptions.py:3",
+        "tests/integration/visits/test_gates_devices.py:3",
+        "tests/integration/visits/test_observations.py:4",
+        "tests/integration/visits/test_observations.py::test_delivery_overstay_after_20_minutes_opens_one_exception_and_marks_the_count_stale",
+        "tests/integration/visits/test_observations.py::test_overstay_thresholds_are_configuration_per_society_and_per_booking",
+        "tests/integration/visits/test_seed_visits.py:3",
+        "tests/integration/visits/test_seed_visits.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2388,18 +2525,33 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:telephony-ivr"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/visits/__init__.py",
+        "services/api/dwaar_api/modules/visits/permissions.py",
+        "services/api/dwaar_api/modules/visits/routes_approvals.py",
+        "services/api/dwaar_api/modules/visits/routes_visits.py",
+        "services/api/dwaar_api/modules/visits/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/visits/test_history.py:3",
+        "tests/integration/visits/test_history.py::<module>",
+        "tests/integration/visits/test_invitations.py:4",
+        "tests/integration/visits/test_pii.py:4",
+        "tests/integration/visits/test_pii.py::<module>",
+        "tests/integration/visits/test_requests.py:3",
+        "tests/integration/visits/test_schema.py:5",
+        "tests/integration/visits/test_schema.py::test_no_visitor_number_column_exists_only_the_keyed_token"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -2476,6 +2628,7 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
+        "apps/guard-android/core/src/main/kotlin/app/dwaar/guard/core/edge/Ed25519.kt",
         "packages/dwaar-common/dwaar_common/events.py",
         "packages/dwaar-common/dwaar_common/signing.py"
       ],
@@ -2560,9 +2713,11 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "apps/guard-android/core/src/main/kotlin/app/dwaar/guard/core/policy/Banner.kt"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
@@ -2571,7 +2726,6 @@
         "AT-08"
       ],
       "gaps": [
-        "no-implementation",
         "no-tests",
         "acceptance-untested:AT-06",
         "acceptance-untested:AT-08"
@@ -2840,8 +2994,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-03"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -2869,9 +3022,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-03",
-        "acceptance-untested:AT-04"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -6058,8 +6209,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-03"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -6694,9 +6844,15 @@
       "id": "AT-03",
       "milestone": "M0",
       "slice": 2,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at03_family_decision_race.py::<module>",
+        "tests/integration/visits/test_race.py:7",
+        "tests/integration/visits/test_race.py::test_two_family_decisions_race_exactly_one_wins"
+      ],
+      "evidence": [
+        "docs/evidence/AT-03.json"
+      ],
       "evidence_failed": false,
       "scenario": "A guest request is pending and two family members decide at the same moment"
     },
@@ -6704,9 +6860,15 @@
       "id": "AT-04",
       "milestone": "M0",
       "slice": 2,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/integration/visits/test_race.py:7",
+        "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind"
+      ],
+      "evidence": [
+        "docs/evidence/AT-04.json"
+      ],
       "evidence_failed": false,
       "scenario": "An approval request times out and a queued approval from a phone arrives afterwards"
     },
