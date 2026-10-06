@@ -182,6 +182,46 @@ def test_seed_went_through_the_domain_paths_so_audit_and_outbox_exist(world: Wor
     assert self_issued == []
 
 
+def test_domestic_staff_are_dedicated_persons_with_no_residency_and_no_grant(world: World) -> None:
+    """Slice 4 integration: the staff seed used to borrow the person rows of plain owner-occupiers (one human = a flat owner AND a cook). They are now
+    dedicated persons (97 -> 100 people in the dataset): no membership, no role grant, one register entry each, still found by their own number."""
+    staff = world.admin_rows(
+        "SELECT s.display_name, s.person_id FROM staff s ORDER BY s.display_name"
+    )
+    assert [r[0] for r in staff] == ["Lakshmi Naik", "Raju Pardeshi", "Sunita Kamble"]
+    ids = [r[1] for r in staff]
+    assert world.admin_rows(
+        "SELECT count(*) FROM memberships WHERE person_id = ANY(%s)", (ids,)
+    ) == [(0,)]
+    assert world.admin_rows(
+        "SELECT count(*) FROM role_grants WHERE person_id = ANY(%s)", (ids,)
+    ) == [(0,)]
+    assert world.admin_rows("SELECT count(*) FROM iam.persons")[0][0] == len(all_people()) == 100
+    keys = {p.key for p in all_people()}
+    assert {"mh.staff.cook", "mh.staff.driver", "ka.staff.cook"} <= keys
+    # nobody who owns a flat is also a register entry
+    assert world.admin_rows(
+        "SELECT count(*) FROM staff s JOIN memberships m ON m.person_id = s.person_id"
+    ) == [(0,)]
+
+
+def test_no_seeded_event_payload_was_masked_by_the_outbox_guard(world: World) -> None:
+    """The outbox masks anything that looks like personal data or a secret (and warns). Two slice 4 events used key names the guard reads as secrets
+    (``credential_kind``) or carried a hex digest (read as a number): their payloads were silently corrupted by [REDACTED]. Renamed (``kind``) and dropped (the hash lives in ``document_versions``); this keeps it so."""
+    masked = world.admin_rows(
+        "SELECT event_type, count(*) FROM outbox WHERE payload::text LIKE '%%[REDACTED]%%' GROUP BY 1"
+    )
+    assert masked == []
+    kinds = world.admin_rows(
+        "SELECT payload ->> 'kind' FROM outbox WHERE event_type = 'StaffCredentialIssued'"
+    )
+    assert kinds and all(k[0] == "code" for k in kinds)
+    stored = world.admin_rows(
+        "SELECT payload ->> 'file_stored', payload ->> 'scan_state' FROM outbox WHERE event_type = 'DocumentFileUploaded'"
+    )
+    assert stored and all(r == ("true", "clean") for r in stored)
+
+
 def test_a_second_run_changes_nothing(fresh_world: World) -> None:
     w = fresh_world
     before = w.admin_rows(

@@ -346,3 +346,9 @@ def test_every_notifications_route_is_covered_by_a_probe(nw: NW) -> None:
     }
     covered = set(ROUTES)
     assert live == covered, (sorted(live - covered), sorted(covered - live))
+
+
+def probed_routes() -> list[tuple[str, str]]:
+    """(method, path template) of every route this file REALLY probes with a foreign id (the ``PROBES`` the parametrized test iterates over). The
+    AT-01 route inventory resolves these against the live app: a route that is not here fails it."""
+    return [(p.method, p.path.replace("{s}", "{society_id}")) for p in PROBES]

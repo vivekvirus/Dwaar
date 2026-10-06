@@ -275,3 +275,34 @@ Format: ID, date, owner, decision, reason / consequence.
 - `.env.example` now documents the cloud issuer key, key id, retired keys, reference key, pass signing key, visitor HMAC key, the publish-on-poll switch, per-device rate limits, every gateway commissioning
   variable and the worker variables; the stale placeholder names of the first edge section were removed (nothing read them). `make setup` generates distinct 32-byte keys for each placeholder;
   a test proves the generated values load in the cloud config, the visits config and the gateway config.
+
+### B-021 Slice 4 integration: seed, retention columns, worker grants (ADR-0020..0023)
+- Date: 2026-10-06. Owner: Viz.
+- **Seed.** The full seed in order was already idempotent for the slice 4 steps; the real non-idempotency was the edge policy: `s450_edge` published the first snapshot BEFORE the staff step, so once the manifest
+  carried staff a second run published another one per society. The publish moved to `s485_edge_policy` (after staff, before shifts); `test_seed_edge` still sees one snapshot (`seq == 1`) and two `PolicyPublished`.
+  The seeded "active" shift was a calendar-day shift that was already over in the evening (it could not take an override): it now starts three hours ago on the hour and runs 14 h.
+- **Domestic staff are dedicated persons.** The staff seed had re-used the person rows of three plain owner-occupiers to keep the person count at 97 (one human = flat owner and cook). Decision: `DOMESTIC_STAFF_PEOPLE`
+  (`mh.staff.cook`, `mh.staff.driver`, `ka.staff.cook`, numbers +91 99999 01300..01302), no membership, no grant: 97 -> 100 persons. The exact-count tests derive the count from `all_people()`; new tests assert no
+  membership/grant and no register entry that is also a resident.
+- **Masked events.** `StaffCredentialIssued` carried `credential_kind` and `DocumentFileUploaded` a hex digest; the outbox guard masks both ([REDACTED] stored). Renamed to `kind`; digest dropped from the event (it lives in
+  `document_versions`). A seeded-data test asserts nothing in the outbox is `[REDACTED]`.
+- **Retention.** Migration 0710 adds `retention_class` + `legal_hold_id` to 33 slice 4 tables (expand-only; constant defaults, no rewrite). Codes follow the PARENT record. Parents use CONSENT, STAFF, OPS, COM, DOC which are NOT classes of
+  `packages/legal-packs/retention`; pinned by `test_retention_codes.py` for the privacy slice to map. `legal_hold_id` is still insertable by the runtime roles on tables with table-level INSERT (as on the slice 2/3 tables): the
+  privacy slice must narrow it. The guard `ai_drafts` problem reported at hand-over did not reproduce (the table is society-RLS, private by owner filter); no guard was changed.
+- **Worker.** helpdesk sweep, notice publisher, poll closer, parcel reminders and shift sweep are job functions + Dramatiq actors + scheduler cadence (the sweep interval). Only polls lacked a worker grant: 0563 (`state, closes_at, version,
+  updated_at`). The custody report is NOT a job (a timer has no physical count). The shifts `summary provider` hook is deliberately unused: it would attach AI text without a person confirming (class B).
+
+### B-022 Edge manifest carries staff engagements and overrides; AT-01 inventory uses the modules' real probes
+- Date: 2026-10-06. Owner: Viz.
+- The signed manifest gains `staff {entries, ended}` and `overrides` (opaque ids, local valid hours, override expiry), built only in `edge/staff_shift_input.py` from `staff.authorisation.edge_staff_input` and `shifts.service.active_override`.
+  The gateway parser accepts them (defaults empty); the gateway's decision engine does NOT use them yet. Staff read errors fail the publish (previous snapshot keeps serving); override read errors are isolated by a savepoint.
+  The INV-08 test "visits/edge never read shift tables" now names this ONE reviewed file.
+- `DecisionIn.channel` accepts app|ivr|whatsapp|sms|guard_assisted (PRD 8.2); the HTTP route refuses the four the server establishes (422 `channel_set_by_the_server`) so a client cannot forge provenance. `model_construct` is gone.
+  `test_payload_is_validated` no longer lists `ivr` as a schema error (it is now a policy refusal, tested separately).
+- AT-01: every module exposes `probed_routes()` derived from the tables its own isolation tests iterate; `tests/acceptance/_isolation_inventory.py` resolves them against the live router. A route with no probe, or a probe on no route, fails.
+  Helpdesk and community gained the missing probes (settings PUT, lists, creates, emergency broadcast, download token). The files/AI tripwire became real replays (documents, signed downloads, AI proposals/runs/drafts/ticket sources);
+  only export and search remain a tripwire. Personas matter: Meera is also a non-resident owner in A, so "no standing in A" probes use farhan.
+- Permissions: `identity/permission_basis.py` classifies every non-matrix permission (cells, added roles, withheld roles, analogy); tests enforce equality with the registry; `docs/permissions-gaps.md` lists what the owner must confirm.
+- AI ports: AI-F01 and AI-G08 read the real helpdesk and shift data as the caller and apply confirmed proposals through `helpdesk.service.triage` / `shifts.service.attach_summary`. Emergency suggestions are never applied by the port;
+  a shift or ticket of another society is 404 before any source is read. `ticket.create` and `notice.create_draft` ports are NOT wired.
+- Test fix recorded: `test_a_forged_or_foreign_or_edited_qr_is_refused` replaced the last three signature characters with "AAA", a no-op for ~1 in 64 signatures (failed once in the full run); it now changes one full character.

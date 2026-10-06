@@ -1,4 +1,5 @@
-"""Edge: a gateway device with a deterministic LOCAL-ONLY key, two standing rules and the first signed policy snapshot (default ON).
+"""Edge: a gateway device with a deterministic LOCAL-ONLY key and two standing rules (default ON). The first signed policy snapshot is published by
+``s485_edge_policy`` (after the staff step, so that it already carries the staff engagements: one snapshot, nothing to re-publish on a second run).
 
 REQ: EDGE-04 (signed snapshot), EDGE-09 (per-device key), GATE-14 (standing rules), SOC-05 (device enrolled by a guard, approved by the
 supervisor), BUILD_BRIEF 7 (simulators are labelled; keys derived from public labels are worth nothing and local only).
@@ -20,9 +21,7 @@ from typing import Any
 from sqlalchemy import text
 
 from ...modules.edge import localkeys
-from ...modules.edge.config import EdgeConfig
 from ...modules.edge.localdev import seed_device_id
-from ...modules.edge.snapshot import publish_policy
 from ...modules.edge.standing_rules import StandingRuleCreate, create_rule
 from ...modules.visits import gates
 from ...modules.visits.schemas import DeviceDecision, DeviceEnrol
@@ -119,13 +118,8 @@ def run(ctx: SeedContext) -> None:
             "      (edge seed disabled by DWAAR_SEED_EDGE: no gateway device, standing rules or policy snapshot)"
         )
         return
-    cfg = EdgeConfig.from_environment(ctx.settings)
     for plan in s400_visits.PLANS:
         soc = ctx.society(plan.society)
         if _ensure_gateway(ctx, plan, soc) is None:
             continue
         _ensure_rules(ctx, plan, soc)
-        with ctx.tx(f"edge:publish:{plan.society}", society=soc.id, role="system") as (conn, rctx):
-            result = publish_policy(conn, rctx, cfg)
-        if result.changed:
-            ctx.count("policy_snapshots_created")

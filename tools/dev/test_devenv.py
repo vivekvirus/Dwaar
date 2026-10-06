@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -273,3 +274,60 @@ def test_make_setup_generates_distinct_local_edge_keys_and_the_apps_accept_them(
     gateway = GatewayEdgeConfig.from_env(gw_env)
     assert set(gateway.issuer_keys) == {"policy-1"}
     assert gateway.device_key_id == "edge-local-1"
+
+
+# --------------------------------------------------------------------------- every variable is documented (slice 4)
+_VAR = re.compile(r"""["'](DWAAR_[A-Z0-9]+(?:_[A-Z0-9]+)+)["']""")
+
+
+def _documented_names() -> set[str]:
+    return {
+        m.group(1)
+        for line in (ROOT / ".env.example").read_text().splitlines()
+        if (m := re.match(r"^#?\s*(DWAAR_[A-Z0-9_]+)=", line))
+    }
+
+
+def test_every_settings_field_is_documented_in_env_example() -> None:
+    """A deployer must find each core Settings variable in .env.example (the file `make setup` copies)."""
+    from dwaar_api.core.config import Settings
+
+    documented = _documented_names()
+    missing = sorted(
+        f"DWAAR_{name.upper()}"
+        for name in Settings.model_fields
+        if f"DWAAR_{name.upper()}" not in documented
+    )
+    # DWAAR_ENV is documented; the three URLs are documented under their own names.
+    assert not missing, f"undocumented Settings fields: {missing}"
+
+
+def test_every_environment_variable_read_by_product_code_is_documented() -> None:
+    """Module configs (notifications, community, ai gateway, worker, ...) read os.environ directly: each name
+    quoted in product source (not tests) must be in .env.example, so a new variable cannot ship undocumented."""
+    found: dict[str, str] = {}
+    for base in ("services", "packages"):
+        for path in (ROOT / base).rglob("*.py"):
+            parts = path.relative_to(ROOT).parts
+            if (
+                "tests" in parts
+                or ".venv" in parts
+                or "node_modules" in parts
+                or path.name.startswith("test_")
+            ):
+                continue
+            for name in _VAR.findall(path.read_text(encoding="utf-8")):
+                found.setdefault(name, str(path.relative_to(ROOT)))
+    missing = {n: where for n, where in sorted(found.items()) if n not in _documented_names()}
+    assert not missing, f"variables read by code but missing from .env.example: {missing}"
+
+
+def test_new_secrets_are_generated_by_make_setup_not_shipped() -> None:
+    values = parse_env_text((ROOT / ".env.example").read_text())
+    assert GENERATE_KEY in values["DWAAR_COMMUNITY_DOWNLOAD_KEY"]
+    assert (
+        values["DWAAR_AI_ANTHROPIC_API_KEY"] == ""
+    )  # a provider key is never generated or shipped
+    rendered = render_env_from_example((ROOT / ".env.example").read_text())
+    assert "__GENERATE" not in rendered
+    assert parse_env_text(rendered)["DWAAR_COMMUNITY_DOWNLOAD_KEY"] != GENERATE_KEY

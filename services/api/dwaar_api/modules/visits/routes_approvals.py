@@ -17,7 +17,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
-from dwaar_common.errors import InvalidSchema, NotFound
+from dwaar_common.errors import InvalidSchema, NotFound, PolicyViolation
 
 from ...core.authz import AuthContext, require
 from ...core.idempotency import IdempotentCall, idempotency_required
@@ -33,7 +33,13 @@ from . import approvals, common, gates
 from . import policy as policy_mod
 from .config import VisitsConfig
 from .deps import audience, covered, restore_canonical, visits_config
-from .schemas import ApprovalRequestCreate, CancelIn, DecisionIn, ReversalIn
+from .schemas import (
+    HTTP_DECISION_CHANNELS,
+    ApprovalRequestCreate,
+    CancelIn,
+    DecisionIn,
+    ReversalIn,
+)
 
 router = APIRouter(prefix="/v1", tags=["approvals"])
 
@@ -91,6 +97,15 @@ def decide_request(
     """PRD 12.3. The first valid decision wins (compare-and-swap in one transaction). A later caller gets 409
     ``already_decided`` with the canonical result; a decision after expiry gets 409 ``request_expired`` and issues NO
     permission. ``client_action_id`` makes a retry harmless even under a new Idempotency-Key."""
+    if body.channel not in HTTP_DECISION_CHANNELS:
+        # recorded provenance is the server's to state, never a client's claim (the notifications module sets ivr / whatsapp / sms / guard_assisted)
+        raise PolicyViolation(
+            "This decision channel cannot be claimed by a client.",
+            details={
+                "reason": "channel_set_by_the_server",
+                "allowed": sorted(HTTP_DECISION_CHANNELS),
+            },
+        )
     # An expiry that is due is PERSISTED first, in its own transaction: the decision below then fails with 409 and rolls
     # back, which must not roll the expiry (and its ApprovalEscalated event) back with it.
     with auth.tx() as conn:

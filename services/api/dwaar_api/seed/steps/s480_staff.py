@@ -3,10 +3,9 @@
 REQ: STAFF-01 (one person, separate engagements per household), STAFF-02 (attendance observations), STAFF-04 (consent receipt BEFORE any capture),
 STAFF-05 (check-in by code), PRIV-04 (an ID is stored masked to its last 4 digits; police verification as a status), PRD 8.3 seed dataset (slice 4).
 
-Honest limit of the demonstrator data: the seeded person count is asserted by ``tests/acceptance/test_seed_dataset.py`` (it equals the number of
-people in ``seed/dataset.py``), and that file is not owned by this slice. The staff of this step therefore RE-USE the person rows of the last two
-plain owner-occupiers of each society (``mh.bulk35``, ``mh.bulk36``, ``ka.bulk28``): their phone numbers identify the person, while the staff
-register carries its own display name (``Sunita Kamble`` ...). When the dataset gains dedicated staff persons, only ``PLANS`` below changes.
+Persons: the staff are DEDICATED persons of the dataset (``DOMESTIC_STAFF_PEOPLE``: ``mh.staff.cook``, ``mh.staff.driver``, ``ka.staff.cook``) with their
+own fictional numbers, no membership and no role grant. An earlier version re-used the person rows of the last plain owner-occupiers to keep the seeded person
+count fixed; that made one human a resident owner and a domestic worker at once, so the dataset (97 -> 100 persons) was extended instead.
 Staff names, numbers and the demo check-in codes are invented; the codes are printed by ``python -m dwaar_api.seed`` documentation only here.
 """
 
@@ -72,7 +71,7 @@ class StaffSpec:
 PLANS: tuple[StaffSpec, ...] = (
     StaffSpec(
         "mh",
-        "mh.bulk35",
+        "mh.staff.cook",
         "Sunita Kamble",
         "cook",
         "mr",
@@ -102,7 +101,7 @@ PLANS: tuple[StaffSpec, ...] = (
     ),
     StaffSpec(
         "mh",
-        "mh.bulk36",
+        "mh.staff.driver",
         "Raju Pardeshi",
         "driver",
         "hi",
@@ -119,7 +118,7 @@ PLANS: tuple[StaffSpec, ...] = (
     ),
     StaffSpec(
         "ka",
-        "ka.bulk28",
+        "ka.staff.cook",
         "Lakshmi Naik",
         "cook",
         "kn",

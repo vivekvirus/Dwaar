@@ -547,15 +547,21 @@ def test_a_missing_next_guard_escalates_and_never_locks_the_gate(pw: PW) -> None
 
 
 def test_nothing_in_the_gate_path_reads_the_shift_tables(pw: PW) -> None:
-    """INV-08 by construction: the visits and edge modules never import or query anything of the shifts module."""
+    """INV-08 by construction: the visits module and the edge module never import or query anything of the shifts module, with ONE reviewed exception:
+    ``edge/staff_shift_input.py`` reads the supervisor override in force (``shifts.service.active_override``) for the policy publisher (Appendix C). An
+    override only ADDS a way in for a supervisor, the section is isolated by a savepoint so a shift fault can never stop publication, and the exception
+    is pinned to that single file and that single function."""
     import pathlib
 
     root = (
         pathlib.Path(__file__).resolve().parents[3] / "services" / "api" / "dwaar_api" / "modules"
     )
     offenders = []
+    reviewed = root / "edge" / "staff_shift_input.py"
     for module in ("visits", "edge"):
         for path in (root / module).rglob("*.py"):
+            if path == reviewed:
+                continue
             text = path.read_text()
             if any(
                 w in text
@@ -569,6 +575,10 @@ def test_nothing_in_the_gate_path_reads_the_shift_tables(pw: PW) -> None:
             ):
                 offenders.append(str(path))
     assert offenders == []
+    exception = reviewed.read_text()
+    assert exception.count("shift_service.") == 1 and "shift_service.active_override(" in exception
+    assert "shift_handovers" not in exception and "guard_profiles" not in exception
+    assert "begin_nested" in exception, "the override read must be isolated by a savepoint"
 
 
 def test_an_acknowledgement_overdue_with_an_incoming_guard_escalates_with_its_own_reason(

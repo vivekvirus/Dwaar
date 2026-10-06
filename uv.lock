@@ -275,6 +275,7 @@ name = "dwaar-api"
 version = "0.1.0"
 source = { editable = "services/api" }
 dependencies = [
+    { name = "dwaar-ai-gateway" },
     { name = "dwaar-common" },
     { name = "dwaar-packs" },
     { name = "fastapi" },
@@ -291,6 +292,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dwaar-ai-gateway", editable = "services/ai-gateway" },
     { name = "dwaar-common", editable = "packages/dwaar-common" },
     { name = "dwaar-packs", editable = "packages/dwaar-packs" },
     { name = "fastapi", specifier = ">=0.115" },

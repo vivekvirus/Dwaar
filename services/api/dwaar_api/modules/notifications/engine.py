@@ -1164,11 +1164,11 @@ def execute_decision(
                         society_id=pending.society_id, role=standing.role, kind=ScopeKind.UNIT, unit_id=request["unit_id"],
                         society_wide=False, unit_ids=frozenset({request["unit_id"]}),
                     )  # fmt: skip
-                    body = DecisionIn.model_construct(
+                    body = DecisionIn(
                         decision="approve" if pending.digit == "1" else "deny",
                         expected_version=int(request["version"]),
                         client_action_id=uuid.uuid5(_NS, f"ivr|{pending.session_id}"),
-                        channel="ivr",  # type: ignore[arg-type]  # the notification slice owns the non-app channels
+                        channel="ivr",
                     )
                     policy = gate_policy.load_policy(conn)
                     approvals.decide(conn, ctx2, scope, pending.request_id, body, policy)

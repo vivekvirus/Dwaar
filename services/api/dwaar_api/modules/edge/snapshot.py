@@ -39,6 +39,7 @@ from ..visits.common import (
     _EFFECTIVE,  # noqa: PLC2701 (the single definition of "effective membership today")
 )
 from .config import SCHEMA_VERSION, EdgeConfig
+from .staff_shift_input import override_section, staff_section
 
 #: outbox event types after which a snapshot may have changed (PRD 12.4 names plus this codebase's identity/visits events)
 POLICY_RELEVANT_EVENTS: Final = frozenset(
@@ -48,6 +49,8 @@ POLICY_RELEVANT_EVENTS: Final = frozenset(
         "StandingRuleEnded", "identity.membership_changed", "identity.role_granted", "identity.role_revoked",
         "identity.hold_placed", "identity.hold_decided", "identity.reverification_required", "identity.membership_disputed",
         "identity.owner_decision", "identity.verification_case_advanced",
+        "StaffEngagementCreated", "StaffEngagementUpdated", "StaffEngagementEnded", "StaffRegistered", "StaffUpdated",
+        "SupervisorOverrideGranted", "ShiftEnded",
     }
 )  # fmt: skip
 _FALLBACK_OFFLINE: Final = {
@@ -310,6 +313,9 @@ def build_manifest(
         "standing_rules": standing,
         "timing": build_timing(conn),
         "revocations": revocations,
+        # slice 4 (AT-12, Appendix C): engagements with valid hours, and the supervisor overrides in force (see staff_shift_input)
+        "staff": staff_section(conn, now, cfg.revocation_retention_days),
+        "overrides": override_section(conn, [g["id"] for g in gates], now),
     }
 
 
@@ -428,8 +434,11 @@ def publish_policy(
             "invitations",
             "standing_rules",
             "revocations",
+            "overrides",
         )
     }
+    counts["staff_entries"] = len(manifest["staff"]["entries"])
+    counts["staff_ended"] = len(manifest["staff"]["ended"])
 
     def apply(c: Connection) -> MutationResult:
         c.execute(

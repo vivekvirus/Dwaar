@@ -249,7 +249,7 @@ def test_payload_is_validated(gate: VW) -> None:
         {**good, "decision": "allow"},
         {**good, "expected_version": 0},
         {**good, "client_action_id": "nope"},
-        {**good, "channel": "ivr"},
+        {**good, "channel": "carrier_pigeon"},
         {**good, "society_id": str(gate.soc.id)},
         {k: v for k, v in good.items() if k != "client_action_id"},
     ):
@@ -262,6 +262,41 @@ def test_payload_is_validated(gate: VW) -> None:
         == 404
     )
     assert gate.rows("SELECT state FROM approval_requests")[0][0] == "pending"
+
+
+def test_every_prd_channel_is_in_the_model_but_a_client_can_claim_only_the_app(gate: VW) -> None:
+    """PRD 8.2 names five decision channels. ``DecisionIn`` accepts all five (the notifications module builds it without ``model_construct``), but the
+    HTTP route refuses the four the SERVER establishes (a keypad press, a link opened from SMS or WhatsApp, a guard relaying): otherwise a client could
+    forge the provenance of its own decision. The request stays pending and nothing is written."""
+    from dwaar_api.modules.visits.schemas import DecisionIn
+
+    for channel in ("app", "ivr", "whatsapp", "sms", "guard_assisted"):
+        body = DecisionIn(
+            decision="approve",
+            expected_version=1,
+            client_action_id=uuid.uuid4(),
+            channel=channel,  # type: ignore[arg-type]
+        )
+        assert body.channel == channel
+    assert DecisionIn.model_fields["channel"].default == "app"
+    h = gate.household("A-101")
+    req = gate.raise_request(h.unit)
+    url = f"/v1/approval-requests/{req['id']}/decision"
+    for channel in ("ivr", "whatsapp", "sms", "guard_assisted"):
+        r = gate.call(
+            h.owner, "POST", url,
+            json={"decision": "approve", "expected_version": 1, "client_action_id": str(uuid.uuid4()), "channel": channel},
+        )  # fmt: skip
+        assert r.status_code == 422 and r.json()["code"] == "policy_violation", (channel, r.text)
+        assert r.json()["details"]["reason"] == "channel_set_by_the_server"
+    assert gate.rows("SELECT state FROM approval_requests")[0][0] == "pending"
+    assert gate.rows("SELECT count(*) FROM approval_decisions")[0][0] == 0
+    ok = gate.call(
+        h.owner, "POST", url,
+        json={"decision": "approve", "expected_version": 1, "client_action_id": str(uuid.uuid4()), "channel": "app"},
+    )  # fmt: skip
+    assert ok.status_code == 200
+    assert gate.rows("SELECT channel FROM approval_decisions")[0][0] == "app"
 
 
 # ------------------------------------------------------------------------------------------ who may decide

@@ -57,6 +57,13 @@ def _day(offset_days: int, hour: int) -> dt.datetime:
     return (today + dt.timedelta(days=offset_days, hours=hour)).astimezone(dt.UTC)
 
 
+def _on_duty_start() -> dt.datetime:
+    """The start of the shift that is ON DUTY now: three hours ago, on the hour, so its planned end (14 h later) is always in the future whatever the time
+    of day the seed runs (a calendar-day shift would already be over in the evening: an active shift past its planned end is not a believable demo and
+    cannot take a supervisor override)."""
+    return utc_now().replace(minute=0, second=0, microsecond=0) - dt.timedelta(hours=3)
+
+
 def _profiles(ctx: SeedContext, key: str, soc: SocietyRef) -> None:
     actor = ctx.person(f"{key}.secretary")
     for spec in PROFILES[key]:
@@ -202,8 +209,9 @@ def _mh(ctx: SeedContext, soc: SocietyRef, gate: uuid.UUID) -> None:
     _escalate(ctx, soc, "mh")
     _ack(ctx, soc, sup, "guard_sup", late, "mh-night-1-sup")
     ctx.count("handovers_escalated")
-    # 3: today's day shift is on duty; 4: tonight's is scheduled
-    today = _create(ctx, soc, sup, gate, g1, _day(0, 0), 14, "mh-day-2")
+    # 3: the day shift is on duty now; 4: the next one is scheduled after it
+    on_duty = _on_duty_start()
+    today = _create(ctx, soc, sup, gate, g1, on_duty, 14, "mh-day-2")
     _start(
         ctx,
         soc,
@@ -214,7 +222,7 @@ def _mh(ctx: SeedContext, soc: SocietyRef, gate: uuid.UUID) -> None:
             battery_percent=91, network="ok", relay_health="ok", sensor_health="ok", keys_count=3
         ),
     )
-    _create(ctx, soc, sup, gate, g2, _day(0, 14), 8, "mh-night-2")
+    _create(ctx, soc, sup, gate, g2, on_duty + dt.timedelta(hours=14), 8, "mh-night-2")
 
 
 def _ka(ctx: SeedContext, soc: SocietyRef, gate: uuid.UUID) -> None:
@@ -236,7 +244,7 @@ def _ka(ctx: SeedContext, soc: SocietyRef, gate: uuid.UUID) -> None:
         ctx, soc, "ka"
     )  # nobody took over and nobody signed: the handover stays ESCALATED, which is the point of this row
     ctx.count("handovers_escalated")
-    today = _create(ctx, soc, sup, gate, g1, _day(0, 0), 14, "ka-day-2")
+    today = _create(ctx, soc, sup, gate, g1, _on_duty_start(), 14, "ka-day-2")
     _start(
         ctx,
         soc,

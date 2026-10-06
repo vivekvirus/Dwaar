@@ -10,17 +10,17 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 671,
+    "files_scanned": 948,
     "files_ignored": 0,
-    "annotations": 1178
+    "annotations": 1870
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 33,
-      "partial": 42,
-      "blocked-external": 0,
-      "not-started": 145
+      "done": 67,
+      "partial": 66,
+      "blocked-external": 3,
+      "not-started": 84
     },
     "verified": {
       "verified": 0,
@@ -29,29 +29,29 @@
     },
     "by_priority": {
       "P0": {
-        "done": 24,
-        "partial": 28,
-        "blocked-external": 0,
-        "not-started": 86
+        "done": 51,
+        "partial": 44,
+        "blocked-external": 3,
+        "not-started": 40
       },
       "P1": {
-        "done": 0,
+        "done": 2,
         "partial": 0,
         "blocked-external": 0,
-        "not-started": 2
+        "not-started": 0
       },
       "none": {
-        "done": 9,
-        "partial": 14,
+        "done": 14,
+        "partial": 22,
         "blocked-external": 0,
-        "not-started": 57
+        "not-started": 44
       }
     },
     "acceptance_in_scope": 35,
     "acceptance_by_status": {
       "done": 10,
-      "partial": 0,
-      "not-started": 25
+      "partial": 7,
+      "not-started": 18
     },
     "reference_items": {
       "decision": 24,
@@ -81,11 +81,20 @@
         "apps/resident-mobile/src/domain/household.ts",
         "apps/resident-mobile/src/screens/ChooseHomeScreen.tsx",
         "services/api/dwaar_api/core/authz.py",
+        "services/api/dwaar_api/modules/ai/permissions.py",
+        "services/api/dwaar_api/modules/community/routes_notices.py",
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
         "services/api/dwaar_api/modules/identity/access.py",
         "services/api/dwaar_api/modules/identity/members.py",
         "services/api/dwaar_api/modules/identity/routes_people.py",
         "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py",
+        "services/api/dwaar_api/modules/notifications/schemas.py",
         "services/api/dwaar_api/modules/organisation/routes.py",
+        "services/api/dwaar_api/modules/parcels/__init__.py",
+        "services/api/dwaar_api/modules/shifts/schemas.py",
+        "services/api/dwaar_api/modules/staff/__init__.py",
         "services/api/dwaar_api/modules/visits/permissions.py",
         "services/api/dwaar_api/modules/visits/routes_visits.py",
         "services/api/dwaar_api/modules/visits/schemas.py",
@@ -101,7 +110,11 @@
         "apps/resident-mobile/__tests__/household.test.ts:1",
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "services/api/tests/unit/test_pagination_unit.py::<module>",
+        "tests/acceptance/test_ai_real_ports.py::<module>",
         "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/acceptance/test_at12_worker_loses_employer.py::<module>",
+        "tests/acceptance/test_at13_parcel_pickup_twice.py::<module>",
+        "tests/integration/community/test_isolation.py::<module>",
         "tests/integration/core/test_audit_outbox.py::<module>",
         "tests/integration/core/test_db_context.py::<module>",
         "tests/integration/core/test_fix_round1.py:3",
@@ -113,6 +126,7 @@
         "tests/integration/edge/test_schema.py::<module>",
         "tests/integration/edge/test_standing_rules.py:3",
         "tests/integration/edge/test_sync.py:3",
+        "tests/integration/helpdesk/test_isolation.py::<module>",
         "tests/integration/identity/test_authz.py:111",
         "tests/integration/identity/test_authz.py:157",
         "tests/integration/identity/test_authz.py:22",
@@ -130,9 +144,14 @@
         "tests/integration/identity/test_matrix.py:193",
         "tests/integration/identity/test_matrix.py:204",
         "tests/integration/identity/test_matrix.py::<module>",
+        "tests/integration/identity/test_permission_basis.py::<module>",
         "tests/integration/identity/test_verification.py:196",
         "tests/integration/identity/test_verification.py:587",
         "tests/integration/identity/test_verification.py::test_who_may_review",
+        "tests/integration/notifications/test_isolation.py:3",
+        "tests/integration/notifications/test_isolation.py::<module>",
+        "tests/integration/notifications/test_schema.py:4",
+        "tests/integration/notifications/test_schema.py::<module>",
         "tests/integration/organisation/test_rls_isolation.py::test_api_guessed_ids_across_societies_are_404",
         "tests/integration/organisation/test_rls_isolation.py::test_cannot_write_rows_for_another_society",
         "tests/integration/organisation/test_rls_isolation.py::test_society_context_sees_only_its_own_rows",
@@ -140,11 +159,18 @@
         "tests/integration/organisation/test_rls_isolation.py::test_worker_role_is_read_only",
         "tests/integration/organisation/test_societies.py::test_list_societies_shows_only_current_grants_and_paginates",
         "tests/integration/organisation/test_units.py::test_read_permissions_masking_and_own_unit_scope",
+        "tests/integration/parcels/test_isolation.py:3",
+        "tests/integration/parcels/test_isolation.py::<module>",
+        "tests/integration/shifts/test_isolation.py:3",
+        "tests/integration/shifts/test_isolation.py::<module>",
+        "tests/integration/staff/test_isolation.py:3",
+        "tests/integration/staff/test_isolation.py::<module>",
         "tests/integration/visits/test_gates_devices.py:3",
         "tests/integration/visits/test_history.py:3",
         "tests/integration/visits/test_schema.py:5",
         "tests/integration/visits/test_schema.py::<module>",
         "tests/integration/worker/test_jobs.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py::<module>",
         "tests/integration/worker/test_worker_grants.py::<module>",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
@@ -212,6 +238,9 @@
         "tests/integration/identity/test_verification.py::test_a_retried_decision_replays_instead_of_being_applied_twice",
         "tests/integration/organisation/test_import.py::test_import_replay_creates_nothing_twice",
         "tests/integration/organisation/test_units.py::test_idempotent_creation_replays_and_detects_payload_mismatch",
+        "tests/integration/staff/test_payroll.py:165",
+        "tests/integration/staff/test_payroll.py:3",
+        "tests/integration/staff/test_payroll.py::<module>",
         "tests/security/test_w1_crypto_events_money.py::<module>",
         "tests/security/test_w1_crypto_events_money_r2.py::<module>",
         "tests/security/test_w1_history.py::<module>",
@@ -248,7 +277,7 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/edge/dwaar_edge/actuator.py",
@@ -273,10 +302,15 @@
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
         "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
         "tests/acceptance/test_at08_e2e.py::<module>",
+        "tests/acceptance/test_at29_ai_unavailable.py::<module>",
+        "tests/acceptance/test_at40_cascade.py::<module>",
         "tests/integration/edge/test_standing_rules.py:3",
         "tests/integration/edge/test_sync.py:3",
         "tests/integration/edge_e2e/test_cross_check.py::<module>",
         "tests/integration/edge_e2e/test_protocol.py:3",
+        "tests/integration/notifications/test_calls.py::<module>",
+        "tests/integration/notifications/test_cascade.py::<module>",
+        "tests/integration/notifications/test_planner_properties.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
         "tests/integration/visits/test_decisions.py::test_a_decision_after_expiry_is_409_request_expired_and_issues_no_permission",
         "tests/integration/visits/test_exceptions.py:3",
@@ -292,9 +326,7 @@
         "AT-06",
         "AT-40"
       ],
-      "gaps": [
-        "acceptance-untested:AT-40"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -352,6 +384,9 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/integration/community/test_translations_emergency.py::test_the_emergency_channel_never_carries_ads_or_links_or_ai_text",
+        "tests/integration/notifications/test_categories.py:3",
+        "tests/integration/notifications/test_categories.py::<module>",
         "tests/integration/visits/test_pii.py:4"
       ],
       "acceptance_gates": [],
@@ -370,22 +405,31 @@
       "slice": 4,
       "module": "services/api/modules/ai",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
-      "adapter_files": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/ai/adapters.py",
+        "services/api/dwaar_api/modules/ai/executors.py",
+        "services/api/dwaar_api/modules/ai/ports.py",
+        "services/api/dwaar_api/modules/helpdesk/__init__.py"
+      ],
+      "adapter_files": [
+        "services/api/dwaar_api/modules/ai/adapters.py"
+      ],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_ai_real_ports.py::<module>",
+        "tests/acceptance/test_at25_malicious_document_ai.py::<module>",
+        "tests/acceptance/test_at26_stale_ai_proposal.py::<module>",
+        "tests/integration/shifts/test_shifts.py:3",
+        "tests/integration/shifts/test_shifts.py:325",
+        "tests/integration/shifts/test_shifts.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-25",
         "AT-26"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25",
-        "acceptance-untested:AT-26"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -404,6 +448,8 @@
       "blocked_by": [],
       "implemented_in": [
         "apps/resident-mobile/src/domain/status.ts",
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
+        "services/api/dwaar_api/modules/parcels/__init__.py",
         "services/api/dwaar_api/modules/visits/routes_visits.py",
         "services/api/dwaar_api/modules/visits/visits.py",
         "services/api/migrations/0204_access_events.sql",
@@ -422,6 +468,9 @@
         "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at07_e2e.py::<module>",
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
+        "tests/acceptance/test_at11_notification_fallback.py::<module>",
+        "tests/acceptance/test_at13_parcel_pickup_twice.py::<module>",
+        "tests/acceptance/test_at40_cascade.py::<module>",
         "tests/integration/edge/test_projection.py::<module>",
         "tests/integration/edge/test_sync.py:3",
         "tests/integration/edge/test_sync.py::<module>",
@@ -430,6 +479,13 @@
         "tests/integration/edge_e2e/test_cross_check.py::<module>",
         "tests/integration/edge_e2e/test_protocol.py:3",
         "tests/integration/edge_e2e/test_protocol.py::<module>",
+        "tests/integration/parcels/test_claims_reminders.py:3",
+        "tests/integration/parcels/test_claims_reminders.py::<module>",
+        "tests/integration/parcels/test_flow.py::<module>",
+        "tests/integration/parcels/test_pickup.py:3",
+        "tests/integration/parcels/test_pickup.py::<module>",
+        "tests/integration/staff/test_payroll.py:3",
+        "tests/integration/staff/test_payroll.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
         "tests/integration/visits/test_invitations.py:4",
         "tests/integration/visits/test_observations.py:4",
@@ -464,19 +520,27 @@
       "slice": 5,
       "module": "services/api/modules/billing",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/shifts/test_shifts.py:183",
+        "tests/integration/shifts/test_shifts.py:3",
+        "tests/integration/shifts/test_shifts.py:500",
+        "tests/integration/shifts/test_shifts.py::<module>",
+        "tests/integration/staff/test_attendance.py:3",
+        "tests/integration/staff/test_attendance.py::<module>",
+        "tests/integration/staff/test_engagements.py:3",
+        "tests/integration/staff/test_engagements.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-22",
         "AT-47"
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-22",
         "acceptance-untested:AT-47"
       ],
@@ -528,6 +592,7 @@
         "packages/dwaar-packs/dwaar_packs/approvals.py",
         "packages/dwaar-packs/dwaar_packs/frozen.py",
         "packages/dwaar-packs/dwaar_packs/rule_values.py",
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
         "services/api/dwaar_api/modules/organisation/packs.py",
         "services/api/dwaar_api/seed/steps/s010_packs.py"
       ],
@@ -539,6 +604,9 @@
         "packages/dwaar-packs/tests/test_legal_rules.py::test_at38_300_members_20_attendees",
         "packages/dwaar-packs/tests/test_legal_rules.py::test_maharashtra_appendix_a_rule_keys_exact",
         "packages/dwaar-packs/tests/test_packs_validation.py::<module>",
+        "tests/integration/core/test_retention_codes.py:3",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_a_valid_document_round_trips_and_a_bad_calendar_is_refused",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_malformed_sla_documents_are_rejected",
         "tests/integration/identity/test_phone.py:71",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_approved_pack_content_is_immutable_and_changed_draft_updates",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_shipped_packs_load_from_files_unapproved_and_reload_is_a_noop",
@@ -574,13 +642,17 @@
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/shifts/test_guard_profile_training.py:3",
+        "tests/integration/shifts/test_guard_profile_training.py::<module>",
+        "tests/integration/shifts/test_i18n_keys.py:3",
+        "tests/integration/shifts/test_i18n_keys.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-35",
         "AT-48"
       ],
       "gaps": [
-        "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
       ],
@@ -995,6 +1067,7 @@
         "apps/admin-web/src/server/session.ts",
         "apps/admin-web/src/server/tokens.ts",
         "apps/admin-web/src/server/upstream.ts",
+        "services/api/dwaar_api/modules/ai/permissions.py",
         "services/api/dwaar_api/modules/identity/glue.py",
         "services/api/dwaar_api/modules/identity/routes_auth.py",
         "services/api/dwaar_api/modules/identity/store.py",
@@ -1009,6 +1082,7 @@
         "apps/admin-web/e2e/sessions.spec.ts:5",
         "services/api/tests/unit/test_authz_decide.py::<module>",
         "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/acceptance/test_at26_stale_ai_proposal.py::<module>",
         "tests/integration/core/test_fix_round1.py:3",
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/identity/test_authz.py:170",
@@ -1021,6 +1095,7 @@
         "tests/integration/identity/test_authz.py::test_role_claims_in_the_jwt_are_ignored",
         "tests/integration/identity/test_issuer.py:165",
         "tests/integration/identity/test_issuer.py:30",
+        "tests/integration/identity/test_permission_basis.py::<module>",
         "tests/integration/identity/test_sessions.py:106",
         "tests/integration/identity/test_sessions.py:120",
         "tests/integration/identity/test_sessions.py:134",
@@ -1130,7 +1205,9 @@
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/modules/identity/routes_auth.py",
-        "services/api/dwaar_api/modules/identity/store.py"
+        "services/api/dwaar_api/modules/identity/store.py",
+        "services/api/dwaar_api/modules/notifications/devices.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -1140,7 +1217,9 @@
         "tests/integration/identity/test_phone.py:53",
         "tests/integration/identity/test_phone.py:71",
         "tests/integration/identity/test_phone.py:83",
-        "tests/integration/identity/test_phone.py::<module>"
+        "tests/integration/identity/test_phone.py::<module>",
+        "tests/integration/notifications/test_devices.py:3",
+        "tests/integration/notifications/test_devices.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [],
@@ -1219,6 +1298,7 @@
         "tests/integration/identity/test_memberships.py::test_applying_creates_a_pending_membership_and_a_case_and_no_access",
         "tests/integration/identity/test_memberships.py::test_no_sign_up_path_can_assign_platform_committee_or_any_role",
         "tests/integration/identity/test_memberships.py::test_otp_login_and_membership_requests_never_write_a_grant_or_a_role",
+        "tests/integration/identity/test_permission_basis.py::<module>",
         "tests/integration/organisation/test_societies.py::test_only_platform_or_org_admin_can_create",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_w1_errors_logging.py::<module>",
@@ -1377,7 +1457,7 @@
       "slice": 3,
       "module": "apps/resident-mobile",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "apps/resident-mobile/src/domain/status.ts",
@@ -1392,9 +1472,7 @@
       "acceptance_gates": [
         "AT-11"
       ],
-      "gaps": [
-        "acceptance-untested:AT-11"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1461,18 +1539,25 @@
       "slice": 4,
       "module": "services/api/modules/privacy",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/helpdesk/__init__.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_a_disputed_member_can_also_use_the_normal_helpdesk",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_a_pending_member_gets_no_other_helpdesk_access",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_a_resident_can_raise_a_support_issue_while_the_membership_is_not_settled",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_support_requests_are_not_open_to_strangers_or_rejected_members",
+        "tests/integration/helpdesk/test_seed.py:3",
+        "tests/integration/helpdesk/test_seed.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-23"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-23"
       ],
       "verification": null,
@@ -1495,17 +1580,29 @@
         "apps/admin-web/src/i18n/index.ts",
         "apps/resident-mobile/src/i18n/index.ts",
         "packages/i18n/src/index.ts",
+        "services/api/dwaar_api/modules/shifts/__init__.py",
+        "services/api/dwaar_api/modules/shifts/permissions.py",
+        "services/api/dwaar_api/modules/shifts/routes.py",
+        "services/api/dwaar_api/modules/shifts/schemas.py",
         "tools/i18n_check.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/shifts/test_guard_profile_training.py:3",
+        "tests/integration/shifts/test_guard_profile_training.py::<module>",
+        "tests/integration/shifts/test_i18n_keys.py:3",
+        "tests/integration/shifts/test_i18n_keys.py::<module>",
+        "tests/integration/shifts/test_isolation.py:3",
+        "tests/integration/shifts/test_isolation.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-35",
         "AT-48"
       ],
       "gaps": [
-        "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
       ],
@@ -1523,19 +1620,30 @@
       "slice": 4,
       "module": "apps/guard-android",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/shifts/__init__.py",
+        "services/api/dwaar_api/modules/shifts/permissions.py",
+        "services/api/dwaar_api/modules/shifts/routes.py",
+        "services/api/dwaar_api/modules/shifts/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/shifts/test_guard_profile_training.py:102",
+        "tests/integration/shifts/test_guard_profile_training.py:3",
+        "tests/integration/shifts/test_guard_profile_training.py::<module>",
+        "tests/integration/shifts/test_isolation.py:3",
+        "tests/integration/shifts/test_isolation.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-35",
         "AT-48"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-35",
         "acceptance-untested:AT-48"
       ],
@@ -1593,11 +1701,16 @@
       "tested_by": [
         "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
         "tests/acceptance/test_seed_dataset.py::<module>",
+        "tests/integration/ai/test_schema.py::<module>",
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
         "tests/integration/edge/test_schema.py:4",
         "tests/integration/identity/test_authz.py:111",
         "tests/integration/identity/test_authz.py::test_membership_in_a_does_not_reach_society_b_or_its_object_ids",
+        "tests/integration/notifications/test_isolation.py:3",
+        "tests/integration/notifications/test_isolation.py::<module>",
+        "tests/integration/notifications/test_schema.py:4",
+        "tests/integration/notifications/test_schema.py::<module>",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/integration/organisation/test_rls_isolation.py::test_api_guessed_ids_across_societies_are_404",
         "tests/integration/organisation/test_rls_isolation.py::test_cannot_write_rows_for_another_society",
@@ -1608,6 +1721,12 @@
         "tests/integration/organisation/test_rls_isolation.py::test_worker_role_is_read_only",
         "tests/integration/organisation/test_societies.py::test_create_writes_audit_and_outbox_in_same_transaction",
         "tests/integration/organisation/test_units.py::test_duplicate_labels_across_blocks_work_but_not_within_a_block",
+        "tests/integration/parcels/test_isolation.py:3",
+        "tests/integration/parcels/test_isolation.py::<module>",
+        "tests/integration/shifts/test_isolation.py:3",
+        "tests/integration/shifts/test_isolation.py::<module>",
+        "tests/integration/staff/test_isolation.py:3",
+        "tests/integration/staff/test_isolation.py::<module>",
         "tests/integration/visits/test_schema.py:5",
         "tests/integration/visits/test_schema.py::<module>",
         "tests/integration/visits/test_schema.py::test_composite_foreign_keys_refuse_references_into_another_society",
@@ -1693,6 +1812,7 @@
         "tests/integration/core/test_openapi_export.py::<module>",
         "tests/integration/core/test_pagination.py::<module>",
         "tests/integration/edge/test_schema.py:4",
+        "tests/integration/notifications/test_schema.py:4",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/integration/visits/test_schema.py::test_every_visits_table_is_force_rls_with_a_society_policy",
         "tests/integration/worker/test_worker_grants.py::<module>",
@@ -1755,15 +1875,20 @@
       "slice": 1,
       "module": "services/api/modules/platform_admin",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/core/middleware.py",
-        "services/api/dwaar_api/modules/organisation/routes.py"
+        "services/api/dwaar_api/modules/organisation/routes.py",
+        "services/api/dwaar_api/seed/steps/s700_ai.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at29_ai_unavailable.py::<module>",
+        "tests/integration/ai/test_failure_modes.py::<module>",
+        "tests/integration/ai/test_seed_ai.py:3",
+        "tests/integration/ai/test_seed_ai.py::<module>",
         "tests/integration/core/test_ratelimit.py::<module>",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_feature_flags_are_per_society_and_versioned",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_quotas_per_society"
@@ -1771,9 +1896,7 @@
       "acceptance_gates": [
         "AT-29"
       ],
-      "gaps": [
-        "acceptance-untested:AT-29"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -1832,7 +1955,11 @@
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
         "tests/integration/edge/test_schema.py:4",
+        "tests/integration/notifications/test_schema.py:4",
+        "tests/integration/notifications/test_schema.py::<module>",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
+        "tests/integration/parcels/test_race.py:81",
+        "tests/integration/parcels/test_race.py::<module>",
         "tests/integration/visits/test_schema.py:5",
         "tests/integration/visits/test_schema.py::<module>",
         "tests/integration/visits/test_schema.py::test_access_events_are_append_only_and_device_sequence_and_event_id_are_unique",
@@ -2327,7 +2454,7 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/modules/visits/__init__.py",
@@ -2360,9 +2487,7 @@
         "AT-04",
         "AT-40"
       ],
-      "gaps": [
-        "acceptance-untested:AT-40"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2617,17 +2742,18 @@
       "slice": 3,
       "module": "apps/guard-android",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/shifts/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/shifts/test_shifts.py:3"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2645,6 +2771,7 @@
       "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "services/api/dwaar_api/modules/shifts/routes.py",
         "services/api/dwaar_api/modules/visits/__init__.py",
         "services/api/dwaar_api/modules/visits/routes_gates.py",
         "services/api/dwaar_api/modules/visits/routes_visits.py"
@@ -2652,6 +2779,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/integration/shifts/test_shifts.py:3",
         "tests/integration/visits/test_exceptions.py:3",
         "tests/integration/visits/test_gates_devices.py:3",
         "tests/integration/visits/test_observations.py:4",
@@ -2692,6 +2820,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/integration/notifications/test_lockscreen_masking.py:3",
         "tests/integration/visits/test_history.py:3",
         "tests/integration/visits/test_history.py::<module>",
         "tests/integration/visits/test_invitations.py:4",
@@ -2911,6 +3040,7 @@
         "services/api/dwaar_api/modules/edge/routes_device.py",
         "services/api/dwaar_api/modules/edge/snapshot.py",
         "services/api/dwaar_api/seed/steps/s450_edge.py",
+        "services/api/dwaar_api/seed/steps/s485_edge_policy.py",
         "services/api/migrations/0300_edge_policy_snapshots.sql",
         "services/api/migrations/0314_worker_edge_publisher.sql",
         "services/edge/dwaar_edge/config.py",
@@ -3202,18 +3332,29 @@
       "slice": 2,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/catalog.py",
+        "services/api/dwaar_api/modules/notifications/categories.py",
+        "services/api/dwaar_api/modules/notifications/templates.py",
+        "services/api/dwaar_api/seed/steps/s590_notifications.py",
+        "services/api/migrations/0500_notifications_core.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/notifications/test_categories.py:3",
+        "tests/integration/notifications/test_categories.py::<module>",
+        "tests/integration/notifications/test_schema.py:4",
+        "tests/integration/notifications/test_seed_notifications.py:3",
+        "tests/integration/notifications/test_seed_notifications.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-39"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
         "acceptance-untested:AT-39"
       ],
       "verification": null,
@@ -3230,21 +3371,36 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:push"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/engine.py",
+        "services/api/dwaar_api/modules/notifications/providers/base.py",
+        "services/api/dwaar_api/modules/notifications/providers/simulators.py",
+        "services/api/dwaar_api/modules/notifications/routes_ops.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py",
+        "services/api/dwaar_api/modules/notifications/service.py",
+        "services/api/dwaar_api/modules/notifications/views.py"
+      ],
       "adapter_files": [],
-      "simulator_files": [],
-      "tested_by": [],
+      "simulator_files": [
+        "services/api/dwaar_api/modules/notifications/providers/simulators.py"
+      ],
+      "tested_by": [
+        "tests/acceptance/test_at11_notification_fallback.py::<module>",
+        "tests/integration/notifications/test_schema.py:4",
+        "tests/integration/notifications/test_schema.py::<module>",
+        "tests/integration/notifications/test_states.py:3",
+        "tests/integration/notifications/test_states.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-11"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-11"
+        "no-adapter"
       ],
       "verification": null,
       "verified": null
@@ -3267,22 +3423,47 @@
         "provider:telephony-ivr",
         "provider:whatsapp"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/households.py",
+        "services/api/dwaar_api/modules/notifications/planner.py",
+        "services/api/dwaar_api/modules/notifications/providers/simulators.py",
+        "services/api/dwaar_api/modules/notifications/routes_ops.py",
+        "services/api/dwaar_api/modules/notifications/runner.py",
+        "services/worker/dwaar_worker/notification_jobs.py"
+      ],
       "adapter_files": [],
-      "simulator_files": [],
+      "simulator_files": [
+        "services/api/dwaar_api/modules/notifications/providers/simulators.py"
+      ],
       "tested_by": [
-        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_cascade_defaults"
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_cascade_defaults",
+        "services/worker/tests/unit/test_notification_jobs.py:4",
+        "services/worker/tests/unit/test_notification_jobs.py::<module>",
+        "tests/acceptance/test_at40_cascade.py::<module>",
+        "tests/integration/notifications/test_calls.py:3",
+        "tests/integration/notifications/test_calls.py::<module>",
+        "tests/integration/notifications/test_cascade.py:179",
+        "tests/integration/notifications/test_cascade.py:242",
+        "tests/integration/notifications/test_cascade.py:299",
+        "tests/integration/notifications/test_cascade.py:3",
+        "tests/integration/notifications/test_cascade.py:34",
+        "tests/integration/notifications/test_cascade.py::<module>",
+        "tests/integration/notifications/test_planner_properties.py:3",
+        "tests/integration/notifications/test_planner_properties.py::<module>",
+        "tests/integration/notifications/test_schema.py:4",
+        "tests/integration/notifications/test_seed_notifications.py:3",
+        "tests/integration/notifications/test_seed_notifications.py::<module>",
+        "tests/integration/notifications/test_smoke.py::<module>",
+        "tests/integration/notifications/test_worker_jobs.py:4",
+        "tests/integration/notifications/test_worker_jobs.py::<module>"
       ],
       "acceptance_gates": [
         "AT-11",
         "AT-40"
       ],
       "gaps": [
-        "acceptance-untested:AT-11",
-        "acceptance-untested:AT-40",
-        "no-adapter",
-        "no-implementation",
-        "no-simulator"
+        "no-adapter"
       ],
       "verification": null,
       "verified": null
@@ -3298,19 +3479,24 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/worker/tests/unit/test_notification_jobs.py:4",
+        "services/worker/tests/unit/test_notification_jobs.py::<module>",
+        "tests/integration/notifications/test_states.py::<module>",
+        "tests/integration/notifications/test_worker_jobs.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-03"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3325,20 +3511,25 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py",
+        "services/api/dwaar_api/modules/notifications/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/notifications/test_isolation.py:3",
+        "tests/integration/notifications/test_isolation.py::<module>",
+        "tests/integration/notifications/test_states.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-03",
         "AT-04"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3353,19 +3544,27 @@
       "slice": 4,
       "module": "apps/resident-mobile",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/providers/simulators.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py",
+        "services/api/dwaar_api/modules/notifications/schemas.py"
+      ],
       "adapter_files": [],
-      "simulator_files": [],
-      "tested_by": [],
+      "simulator_files": [
+        "services/api/dwaar_api/modules/notifications/providers/simulators.py"
+      ],
+      "tested_by": [
+        "tests/acceptance/test_at11_notification_fallback.py::<module>",
+        "tests/integration/notifications/test_devices.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-11"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-11"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -3381,19 +3580,24 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_ops.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/notifications/test_budget_metrics.py::<module>",
+        "tests/integration/notifications/test_devices.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-11"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-11"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -3409,17 +3613,21 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_resident.py",
+        "services/api/dwaar_api/modules/notifications/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/notifications/test_lockscreen_masking.py:3",
+        "tests/integration/notifications/test_lockscreen_masking.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3434,23 +3642,33 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:telephony-ivr"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_ops.py",
+        "services/api/dwaar_api/modules/notifications/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at11_notification_fallback.py::<module>",
+        "tests/integration/notifications/test_calls.py::<module>",
+        "tests/integration/notifications/test_cascade.py:242",
+        "tests/integration/notifications/test_isolation.py::<module>",
+        "tests/integration/notifications/test_lockscreen_masking.py:3",
+        "tests/integration/notifications/test_lockscreen_masking.py::<module>",
+        "tests/integration/notifications/test_schema.py:4"
+      ],
       "acceptance_gates": [
         "AT-11",
         "AT-40"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-11",
-        "acceptance-untested:AT-40"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -3466,21 +3684,31 @@
       "slice": 4,
       "module": "services/api/modules/notifications",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:sms-dlt"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/notifications/__init__.py",
+        "services/api/dwaar_api/modules/notifications/routes_ops.py",
+        "services/api/dwaar_api/modules/notifications/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at40_cascade.py::<module>",
+        "tests/integration/notifications/test_budget_metrics.py::<module>",
+        "tests/integration/notifications/test_categories.py:3",
+        "tests/integration/notifications/test_categories.py::<module>",
+        "tests/integration/notifications/test_seed_notifications.py:3",
+        "tests/integration/notifications/test_seed_notifications.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-40"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-40"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -3496,17 +3724,29 @@
       "slice": 4,
       "module": "services/api/modules/parcels",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/parcels/__init__.py",
+        "services/api/dwaar_api/modules/parcels/permissions.py",
+        "services/api/dwaar_api/modules/parcels/routes.py",
+        "services/api/dwaar_api/modules/parcels/schemas.py",
+        "services/api/dwaar_api/modules/parcels/service.py",
+        "services/api/dwaar_api/seed/steps/s470_parcels.py",
+        "services/api/migrations/0400_parcels.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/parcels/test_consent.py:131",
+        "tests/integration/parcels/test_consent.py:3",
+        "tests/integration/parcels/test_consent.py::<module>",
+        "tests/integration/parcels/test_flow.py:20",
+        "tests/integration/parcels/test_flow.py:3",
+        "tests/integration/parcels/test_flow.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3521,20 +3761,31 @@
       "slice": 4,
       "module": "services/api/modules/parcels",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/parcels/__init__.py",
+        "services/api/dwaar_api/modules/parcels/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at13_parcel_pickup_twice.py::<module>",
+        "tests/integration/parcels/test_flow.py:144",
+        "tests/integration/parcels/test_flow.py:63",
+        "tests/integration/parcels/test_flow.py::<module>",
+        "tests/integration/parcels/test_isolation.py:3",
+        "tests/integration/parcels/test_isolation.py::<module>",
+        "tests/integration/parcels/test_race.py:3",
+        "tests/integration/parcels/test_race.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:126",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-13"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-13"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3549,20 +3800,37 @@
       "slice": 4,
       "module": "services/api/modules/parcels",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/parcels/__init__.py",
+        "services/api/dwaar_api/modules/parcels/config.py",
+        "services/api/dwaar_api/modules/parcels/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at13_parcel_pickup_twice.py::<module>",
+        "tests/integration/parcels/test_consent.py:24",
+        "tests/integration/parcels/test_consent.py:3",
+        "tests/integration/parcels/test_consent.py::<module>",
+        "tests/integration/parcels/test_isolation.py:3",
+        "tests/integration/parcels/test_isolation.py::<module>",
+        "tests/integration/parcels/test_pickup.py:117",
+        "tests/integration/parcels/test_pickup.py:170",
+        "tests/integration/parcels/test_pickup.py:26",
+        "tests/integration/parcels/test_pickup.py:3",
+        "tests/integration/parcels/test_pickup.py::<module>",
+        "tests/integration/parcels/test_race.py:20",
+        "tests/integration/parcels/test_race.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:126",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-13"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-13"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3577,20 +3845,26 @@
       "slice": 4,
       "module": "services/api/modules/parcels",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/parcels/__init__.py",
+        "services/api/dwaar_api/modules/parcels/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/parcels/test_claims_reminders.py:27",
+        "tests/integration/parcels/test_claims_reminders.py:3",
+        "tests/integration/parcels/test_claims_reminders.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:126",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-13"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-13"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3605,17 +3879,27 @@
       "slice": 4,
       "module": "services/api/modules/parcels",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/parcels/__init__.py",
+        "services/api/dwaar_api/modules/parcels/jobs.py",
+        "services/api/dwaar_api/modules/parcels/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/parcels/test_claims_reminders.py:164",
+        "tests/integration/parcels/test_claims_reminders.py:3",
+        "tests/integration/parcels/test_claims_reminders.py:78",
+        "tests/integration/parcels/test_claims_reminders.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:126",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3630,17 +3914,23 @@
       "slice": 4,
       "module": "services/api/modules/parcels",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/parcels/__init__.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/parcels/test_consent.py:131",
+        "tests/integration/parcels/test_consent.py:3",
+        "tests/integration/parcels/test_consent.py::<module>",
+        "tests/integration/parcels/test_pickup.py:148",
+        "tests/integration/parcels/test_pickup.py:3",
+        "tests/integration/parcels/test_pickup.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3655,20 +3945,42 @@
       "slice": 4,
       "module": "services/api/modules/staff",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/staff_shift_input.py",
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/authorisation.py",
+        "services/api/dwaar_api/modules/staff/permissions.py",
+        "services/api/dwaar_api/modules/staff/routes.py",
+        "services/api/dwaar_api/modules/staff/schemas.py",
+        "services/api/dwaar_api/modules/staff/service.py",
+        "services/api/dwaar_api/seed/steps/s480_staff.py",
+        "services/api/migrations/0430_staff.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at12_worker_loses_employer.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py:96",
+        "tests/integration/shifts/test_seed_shifts.py::<module>",
+        "tests/integration/staff/test_attendance.py:3",
+        "tests/integration/staff/test_attendance.py::<module>",
+        "tests/integration/staff/test_consent_and_register.py:3",
+        "tests/integration/staff/test_consent_and_register.py::<module>",
+        "tests/integration/staff/test_engagements.py:181",
+        "tests/integration/staff/test_engagements.py:211",
+        "tests/integration/staff/test_engagements.py:29",
+        "tests/integration/staff/test_engagements.py:3",
+        "tests/integration/staff/test_engagements.py::<module>",
+        "tests/integration/staff/test_isolation.py:3",
+        "tests/integration/staff/test_isolation.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-12"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-12"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3683,17 +3995,28 @@
       "slice": 4,
       "module": "services/api/modules/staff",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/attendance.py",
+        "services/api/dwaar_api/modules/staff/payroll.py",
+        "services/api/dwaar_api/modules/staff/routes.py",
+        "services/api/dwaar_api/modules/staff/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/staff/test_attendance.py:172",
+        "tests/integration/staff/test_attendance.py:3",
+        "tests/integration/staff/test_attendance.py:94",
+        "tests/integration/staff/test_attendance.py::<module>",
+        "tests/integration/staff/test_payroll.py:3",
+        "tests/integration/staff/test_payroll.py:37",
+        "tests/integration/staff/test_payroll.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3708,20 +4031,26 @@
       "slice": 4,
       "module": "services/api/modules/staff",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/staff_shift_input.py",
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at12_worker_loses_employer.py::<module>",
+        "tests/integration/staff/test_engagements.py:289",
+        "tests/integration/staff/test_engagements.py:3",
+        "tests/integration/staff/test_engagements.py:406",
+        "tests/integration/staff/test_engagements.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-12"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-12"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3736,17 +4065,27 @@
       "slice": 4,
       "module": "services/api/modules/staff",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/routes.py",
+        "services/api/dwaar_api/modules/staff/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>",
+        "tests/integration/staff/test_consent_and_register.py:3",
+        "tests/integration/staff/test_consent_and_register.py:33",
+        "tests/integration/staff/test_consent_and_register.py:351",
+        "tests/integration/staff/test_consent_and_register.py::<module>",
+        "tests/integration/staff/test_isolation.py:3",
+        "tests/integration/staff/test_isolation.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3761,17 +4100,23 @@
       "slice": 4,
       "module": "services/api/modules/staff",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/staff/test_attendance.py:27",
+        "tests/integration/staff/test_attendance.py:3",
+        "tests/integration/staff/test_attendance.py::<module>",
+        "tests/integration/staff/test_no_face_matching.py:3",
+        "tests/integration/staff/test_no_face_matching.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3786,17 +4131,38 @@
       "slice": 4,
       "module": "services/api/modules/shifts",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/shifts/__init__.py",
+        "services/api/dwaar_api/modules/shifts/config.py",
+        "services/api/dwaar_api/modules/shifts/jobs.py",
+        "services/api/dwaar_api/modules/shifts/permissions.py",
+        "services/api/dwaar_api/modules/shifts/routes.py",
+        "services/api/dwaar_api/modules/shifts/schemas.py",
+        "services/api/dwaar_api/modules/shifts/service.py",
+        "services/api/dwaar_api/seed/steps/s490_shifts.py",
+        "services/api/migrations/0460_shifts.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/shifts/test_isolation.py:3",
+        "tests/integration/shifts/test_isolation.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py:47",
+        "tests/integration/shifts/test_seed_shifts.py::<module>",
+        "tests/integration/shifts/test_shifts.py:113",
+        "tests/integration/shifts/test_shifts.py:224",
+        "tests/integration/shifts/test_shifts.py:3",
+        "tests/integration/shifts/test_shifts.py:39",
+        "tests/integration/shifts/test_shifts.py:419",
+        "tests/integration/shifts/test_shifts.py:500",
+        "tests/integration/shifts/test_shifts.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3811,17 +4177,28 @@
       "slice": 4,
       "module": "services/api/modules/shifts",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/shifts/__init__.py",
+        "services/api/dwaar_api/modules/shifts/permissions.py",
+        "services/api/dwaar_api/modules/shifts/routes.py",
+        "services/api/dwaar_api/modules/shifts/schemas.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/acceptance/test_ai_real_ports.py:3",
+        "tests/acceptance/test_ai_real_ports.py::<module>",
+        "tests/integration/shifts/test_isolation.py:3",
+        "tests/integration/shifts/test_isolation.py::<module>",
+        "tests/integration/shifts/test_shifts.py:275",
+        "tests/integration/shifts/test_shifts.py:3",
+        "tests/integration/shifts/test_shifts.py:325",
+        "tests/integration/shifts/test_shifts.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3836,17 +4213,42 @@
       "slice": 4,
       "module": "services/api/modules/helpdesk",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
+        "services/api/dwaar_api/modules/helpdesk/permissions.py",
+        "services/api/dwaar_api/modules/helpdesk/routes.py",
+        "services/api/dwaar_api/modules/helpdesk/schemas.py",
+        "services/api/dwaar_api/modules/helpdesk/service.py",
+        "services/api/dwaar_api/modules/helpdesk/settings.py",
+        "services/api/dwaar_api/modules/helpdesk/sla.py",
+        "services/api/dwaar_api/seed/steps/s530_helpdesk.py",
+        "services/api/migrations/0530_helpdesk_settings.sql",
+        "services/api/migrations/0531_tickets.sql",
+        "services/api/migrations/0532_ticket_history.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_guard_is_create_only_and_gets_the_procedure_without_reading_anything",
+        "tests/integration/helpdesk/test_permissions.py::<module>",
+        "tests/integration/helpdesk/test_seed.py:3",
+        "tests/integration/helpdesk/test_seed.py::<module>",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_emergency_does_not_wait_for_the_calendar",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_holidays_and_non_working_days_are_skipped",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_malformed_sla_documents_are_rejected",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_pause_extends_the_due_instant_by_the_stopped_time",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_pilot_defaults_follow_prd_9_7",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_working_seconds_between_and_day_length",
+        "tests/integration/helpdesk/test_sla_arithmetic.py::test_working_time_counts_only_opening_hours",
+        "tests/integration/helpdesk/test_sla_clock.py::<module>",
+        "tests/integration/helpdesk/test_ticket_flow.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py:3",
+        "tests/integration/worker/test_slice4_jobs.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3861,17 +4263,24 @@
       "slice": 4,
       "module": "services/api/modules/helpdesk",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
+        "services/api/dwaar_api/modules/helpdesk/duplicates.py",
+        "services/api/dwaar_api/modules/helpdesk/routes.py",
+        "services/api/dwaar_api/modules/helpdesk/views.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/helpdesk/test_duplicates_visibility.py::<module>",
+        "tests/integration/helpdesk/test_isolation.py::<module>",
+        "tests/integration/helpdesk/test_seed.py:3",
+        "tests/integration/helpdesk/test_seed.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3886,9 +4295,12 @@
       "slice": 4,
       "module": "services/api/modules/helpdesk",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
+        "services/api/dwaar_api/modules/helpdesk/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
@@ -3896,9 +4308,7 @@
         "AT-29"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-29"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -3914,17 +4324,23 @@
       "slice": 4,
       "module": "services/api/modules/helpdesk",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
+        "services/api/dwaar_api/modules/helpdesk/settings.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/helpdesk/test_closure_reopen_settings.py::<module>",
+        "tests/integration/helpdesk/test_seed.py:3",
+        "tests/integration/helpdesk/test_seed.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py:3",
+        "tests/integration/worker/test_slice4_jobs.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3939,17 +4355,28 @@
       "slice": 4,
       "module": "services/api/modules/helpdesk",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/helpdesk/__init__.py",
+        "services/api/dwaar_api/modules/helpdesk/hazards.py",
+        "services/api/dwaar_api/modules/helpdesk/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_an_unsafe_observation_is_never_left_as_a_draft",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_general_procedure_is_the_fallback_and_editing_is_secretary_only",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_guard_is_create_only_and_gets_the_procedure_without_reading_anything",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_hazard_rules_are_deterministic",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_hazard_work_goes_to_a_qualified_contractor_not_in_house_staff",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_missing_procedure_says_so_plainly",
+        "tests/integration/helpdesk/test_emergency_ux07.py::test_unsafe_lift_report_shows_the_procedure_at_once_and_alerts",
+        "tests/integration/helpdesk/test_seed.py:3",
+        "tests/integration/helpdesk/test_seed.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3964,17 +4391,29 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/__init__.py",
+        "services/api/dwaar_api/modules/community/notices.py",
+        "services/api/dwaar_api/modules/community/permissions.py",
+        "services/api/dwaar_api/modules/community/routes_notices.py",
+        "services/api/dwaar_api/modules/community/schemas.py",
+        "services/api/dwaar_api/seed/steps/s570_community.py",
+        "services/api/migrations/0560_notices.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_isolation.py::<module>",
+        "tests/integration/community/test_notices_lifecycle.py::<module>",
+        "tests/integration/community/test_permissions.py::<module>",
+        "tests/integration/community/test_seed.py:3",
+        "tests/integration/community/test_seed.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -3989,18 +4428,26 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
+        "services/api/dwaar_api/modules/community/routes_notices.py",
         "tools/i18n_check.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_seed.py::<module>",
+        "tests/integration/community/test_translations_emergency.py::test_a_legal_human_translation_needs_another_reviewer_than_its_translator",
+        "tests/integration/community/test_translations_emergency.py::test_a_machine_draft_needs_a_human_and_is_never_shown_unreviewed_for_legal_notices",
+        "tests/integration/community/test_translations_emergency.py::test_a_routine_notice_shows_unreviewed_translations_but_labels_them",
+        "tests/integration/community/test_translations_emergency.py::test_legal_translations_are_hidden_from_readers_until_reviewed_and_a_reviewed_text_is_immutable",
+        "tests/integration/community/test_translations_emergency.py::test_translation_input_rules",
+        "tests/integration/community/test_translations_emergency.py::test_unreviewed_legal_or_safety_translation_blocks_publication",
+        "tests/integration/shifts/test_i18n_keys.py:3"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4015,17 +4462,20 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/routes_notices.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_notices_lifecycle.py::test_an_ai_drafted_notice_cannot_be_published_without_human_approval",
+        "tests/integration/community/test_notices_lifecycle.py::test_the_database_itself_refuses_an_unapproved_ai_publication",
+        "tests/integration/community/test_seed.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4040,17 +4490,28 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/config.py",
+        "services/api/dwaar_api/modules/community/documents.py",
+        "services/api/dwaar_api/modules/community/routes_documents.py",
+        "services/api/migrations/0561_documents.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_documents.py::test_a_document_goes_from_draft_to_published_with_hash_dates_and_authority",
+        "tests/integration/community/test_documents.py::test_a_new_version_supersedes_and_a_published_version_is_immutable",
+        "tests/integration/community/test_documents.py::test_access_levels_decide_who_sees_and_downloads_what",
+        "tests/integration/community/test_documents.py::test_permissions_and_validation",
+        "tests/integration/community/test_documents.py::test_withdrawing_a_version_or_changing_its_bytes_stops_the_download",
+        "tests/integration/community/test_documents.py::test_withdrawing_hides_a_version_but_keeps_the_record",
+        "tests/integration/community/test_isolation.py::<module>",
+        "tests/integration/community/test_seed.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4065,17 +4526,22 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/routes_notices.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_translations_emergency.py::test_a_replayed_emergency_request_does_not_spend_the_allowance_twice",
+        "tests/integration/community/test_translations_emergency.py::test_emergency_broadcasts_are_rate_limited_per_person_and_per_society",
+        "tests/integration/community/test_translations_emergency.py::test_other_staff_and_residents_cannot_broadcast",
+        "tests/integration/community/test_translations_emergency.py::test_privileged_roles_can_issue_an_emergency_broadcast",
+        "tests/integration/community/test_translations_emergency.py::test_the_emergency_channel_never_carries_ads_or_links_or_ai_text"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4090,17 +4556,26 @@
       "slice": 4,
       "module": "services/api/modules/notices",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/polls.py",
+        "services/api/dwaar_api/modules/community/routes_polls.py",
+        "services/api/dwaar_api/modules/community/wording.py",
+        "services/api/migrations/0562_polls.sql",
+        "services/api/migrations/0563_worker_poll_close.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_isolation.py::<module>",
+        "tests/integration/community/test_polls.py::<module>",
+        "tests/integration/community/test_polls.py::test_no_binding_vote_route_exists_and_the_database_cannot_represent_one",
+        "tests/integration/community/test_seed.py::<module>",
+        "tests/integration/worker/test_slice4_jobs.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4879,20 +5354,23 @@
       "labels": [
         "LEGAL"
       ],
-      "status": "not-started",
+      "status": "blocked-external",
       "blocked_by": [
         "LEGAL",
         "approval:counsel"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/staff/test_consent_and_register.py:3",
+        "tests/integration/staff/test_consent_and_register.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4909,21 +5387,30 @@
       "labels": [
         "LEGAL"
       ],
-      "status": "not-started",
+      "status": "blocked-external",
       "blocked_by": [
         "LEGAL"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/staff/__init__.py",
+        "services/api/dwaar_api/modules/staff/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py::<module>",
+        "tests/integration/staff/test_consent_and_register.py:249",
+        "tests/integration/staff/test_consent_and_register.py:3",
+        "tests/integration/staff/test_consent_and_register.py:309",
+        "tests/integration/staff/test_consent_and_register.py::<module>",
+        "tests/integration/staff/test_no_face_matching.py:3",
+        "tests/integration/staff/test_no_face_matching.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-02"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -4940,7 +5427,7 @@
       "labels": [
         "LEGAL"
       ],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "LEGAL",
         "approval:counsel"
@@ -4948,11 +5435,12 @@
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/staff/test_no_face_matching.py:3"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-implementation"
       ],
       "verification": null,
       "verified": null
@@ -4979,7 +5467,9 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
-        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_retention_classes"
+        "packages/dwaar-packs/tests/test_ops_and_tax.py::test_retention_classes",
+        "tests/integration/core/test_retention_codes.py:3",
+        "tests/integration/core/test_retention_codes.py::<module>"
       ],
       "acceptance_gates": [
         "AT-23"
@@ -5192,7 +5682,7 @@
       "labels": [
         "LEGAL"
       ],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "LEGAL",
         "approval:ai-provider-terms"
@@ -5200,11 +5690,14 @@
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_pii.py::<module>",
+        "tests/integration/ai/test_guardrails.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "module-level-marks-only",
+        "no-implementation"
       ],
       "verification": null,
       "verified": null
@@ -5222,18 +5715,20 @@
       "labels": [
         "LEGAL"
       ],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "LEGAL"
       ],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/core/test_retention_codes.py:3",
+        "tests/integration/core/test_retention_codes.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-implementation"
       ],
       "verification": null,
       "verified": null
@@ -5445,19 +5940,38 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "blocked-external",
       "blocked_by": [
         "approval:ai-provider-terms",
         "provider:ai-model"
       ],
-      "implemented_in": [],
-      "adapter_files": [],
-      "simulator_files": [],
-      "tested_by": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/__init__.py",
+        "services/ai-gateway/dwaar_ai_gateway/boundary.py",
+        "services/ai-gateway/dwaar_ai_gateway/config.py",
+        "services/ai-gateway/dwaar_ai_gateway/pipeline.py",
+        "services/ai-gateway/dwaar_ai_gateway/providers/anthropic_adapter.py",
+        "services/ai-gateway/dwaar_ai_gateway/providers/registry.py",
+        "services/ai-gateway/dwaar_ai_gateway/providers/simulator.py",
+        "services/api/dwaar_api/modules/ai/__init__.py",
+        "services/api/dwaar_api/modules/ai/service.py",
+        "services/api/migrations/0700_ai_runs_action_proposals.sql"
+      ],
+      "adapter_files": [
+        "services/ai-gateway/dwaar_ai_gateway/providers/anthropic_adapter.py"
+      ],
+      "simulator_files": [
+        "services/ai-gateway/dwaar_ai_gateway/providers/simulator.py"
+      ],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_anthropic_sdk_mock_transport.py::<module>",
+        "services/ai-gateway/tests/unit/test_providers_and_prompts.py::<module>",
+        "tests/integration/ai/test_proposals.py::<module>",
+        "tests/integration/ai/test_schema.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5473,22 +5987,27 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "approval:ai-provider-terms"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/policy.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_policy_binding_guardrails.py::<module>",
+        "tests/acceptance/test_at25_malicious_document_ai.py::<module>",
+        "tests/integration/ai/test_injection_api.py::<module>",
+        "tests/integration/ai/test_isolation.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-01",
         "AT-25"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5504,19 +6023,25 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/injection.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_evals_and_isolation.py::<module>",
+        "services/ai-gateway/tests/unit/test_injection_and_validation.py::<module>",
+        "tests/acceptance/test_at25_malicious_document_ai.py::<module>",
+        "tests/integration/ai/test_guardrails.py::<module>",
+        "tests/integration/ai/test_injection_api.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-25"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5532,21 +6057,30 @@
       "slice": 4,
       "module": "services/api/modules/ai",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/binding.py",
+        "services/api/dwaar_api/modules/ai/permissions.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_policy_binding_guardrails.py::<module>",
+        "tests/acceptance/test_ai_real_ports.py::<module>",
+        "tests/acceptance/test_at26_stale_ai_proposal.py::<module>",
+        "tests/integration/ai/test_confirm.py::<module>",
+        "tests/integration/ai/test_guardrails.py::<module>",
+        "tests/integration/ai/test_isolation.py::<module>",
+        "tests/integration/ai/test_proposals.py::<module>",
+        "tests/integration/ai/test_schema.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-25",
         "AT-26"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25",
-        "acceptance-untested:AT-26"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5562,16 +6096,19 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/pii.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_pii.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5587,19 +6124,25 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/config.py",
+        "services/api/migrations/0702_ai_controls.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_pipeline_features.py::<module>",
+        "tests/acceptance/test_at29_ai_unavailable.py::<module>",
+        "tests/integration/ai/test_failure_modes.py::<module>",
+        "tests/integration/ai/test_seed_ai.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-29"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-29"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5615,16 +6158,22 @@
       "slice": 4,
       "module": "packages/prompts",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/paths.py",
+        "services/ai-gateway/dwaar_ai_gateway/prompts.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_evals_and_isolation.py::<module>",
+        "services/ai-gateway/tests/unit/test_providers_and_prompts.py::<module>",
+        "tests/integration/ai/test_feedback.py::<module>"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5640,19 +6189,24 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/ai/routes.py",
+        "services/api/migrations/0701_ai_drafts_feedback.sql"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_pipeline_features.py::<module>",
+        "tests/integration/ai/test_feedback.py::<module>",
+        "tests/integration/ai/test_proposals.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-29"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-29"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -5718,15 +6272,16 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/ai/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -5843,15 +6398,16 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/ai/routes.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -5868,15 +6424,16 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/lexicon.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -5968,18 +6525,22 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:ai-model"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/ports.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_ai_real_ports.py:3"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -5995,17 +6556,20 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:ai-model"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/asr.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
+        "no-adapter",
+        "no-simulator",
         "no-tests"
       ],
       "verification": null,
@@ -6035,8 +6599,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-11"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -6065,8 +6628,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -6109,15 +6671,16 @@
       "slice": 5,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/ports.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
         "no-tests"
       ],
       "verification": null,
@@ -6161,21 +6724,24 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:ai-model"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/ai-gateway/dwaar_ai_gateway/ports.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_ai_real_ports.py:3"
+      ],
       "acceptance_gates": [
         "AT-25"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -6204,6 +6770,7 @@
       "tested_by": [
         "tests/integration/core/test_fix_round1.py:3",
         "tests/integration/core/test_fix_round1.py::<module>",
+        "tests/integration/notifications/test_lockscreen_masking.py:3",
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_w1_errors_logging.py::<module>",
         "tests/security/test_w1_errors_logging_r2.py::<module>",
@@ -6235,7 +6802,8 @@
       "simulator_files": [],
       "tested_by": [
         "tests/integration/edge/test_status.py:3",
-        "tests/integration/edge/test_status.py::<module>"
+        "tests/integration/edge/test_status.py::<module>",
+        "tests/integration/notifications/test_budget_metrics.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [],
@@ -6713,21 +7281,26 @@
       "slice": 4,
       "module": "services/ai-gateway",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "provider:ai-model"
       ],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_pipeline_features.py::<module>",
+        "tests/acceptance/test_at29_ai_unavailable.py::<module>",
+        "tests/integration/ai/test_failure_modes.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-29"
       ],
       "gaps": [
+        "module-level-marks-only",
+        "no-adapter",
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-29"
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -6847,17 +7420,24 @@
       "slice": 4,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/config.py",
+        "services/api/dwaar_api/modules/community/files.py",
+        "services/api/dwaar_api/modules/community/routes_documents.py",
+        "services/api/dwaar_api/modules/community/scanner.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/community/test_documents.py::test_an_infected_file_is_never_kept_or_published",
+        "tests/integration/community/test_documents.py::test_scanner_and_storage_adapters_and_configuration",
+        "tests/integration/community/test_documents.py::test_uploads_are_validated_by_type_content_and_size",
+        "tests/integration/community/test_documents.py::test_without_a_configured_scanner_nothing_can_be_published_fail_closed"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -6872,19 +7452,26 @@
       "slice": 4,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/community/config.py",
+        "services/api/dwaar_api/modules/community/routes_documents.py",
+        "services/api/dwaar_api/modules/community/storage.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/community/test_documents.py::test_a_signed_url_is_issued_after_an_access_check_and_serves_the_exact_bytes",
+        "tests/integration/community/test_documents.py::test_drafts_can_be_previewed_by_drafters_only_after_a_clean_scan",
+        "tests/integration/community/test_documents.py::test_possession_of_the_url_does_not_outlive_the_persons_access",
+        "tests/integration/community/test_documents.py::test_the_url_expires_and_a_forged_one_is_the_same_404",
+        "tests/integration/community/test_documents.py::test_withdrawing_a_version_or_changing_its_bytes_stops_the_download"
+      ],
       "acceptance_gates": [
         "AT-01"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -7006,12 +7593,17 @@
       "slice": 6,
       "module": "tests/security",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/ai-gateway/tests/unit/test_evals_and_isolation.py::<module>",
+        "services/ai-gateway/tests/unit/test_injection_and_validation.py::<module>",
+        "tests/acceptance/test_at25_malicious_document_ai.py::<module>",
+        "tests/integration/ai/test_injection_api.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-01",
         "AT-02",
@@ -7019,8 +7611,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-25"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -7168,7 +7759,8 @@
       "slice": 1,
       "status": "done",
       "tests": [
-        "tests/acceptance/test_at01_cross_society_isolation.py::<module>"
+        "tests/acceptance/test_at01_cross_society_isolation.py::<module>",
+        "tests/integration/ai/test_isolation.py::<module>"
       ],
       "evidence": [
         "docs/evidence/AT-01.json"
@@ -7287,8 +7879,10 @@
       "id": "AT-11",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at11_notification_fallback.py::<module>"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "A resident's phone is force-stopped or notification permission is denied"
@@ -7297,8 +7891,13 @@
       "id": "AT-12",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at12_worker_loses_employer.py::<module>",
+        "tests/integration/shifts/test_seed_shifts.py:3",
+        "tests/integration/shifts/test_seed_shifts.py:96",
+        "tests/integration/staff/test_engagements.py:406"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "A domestic worker loses one of three employers"
@@ -7307,8 +7906,10 @@
       "id": "AT-13",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at13_parcel_pickup_twice.py::<module>"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "A parcel pickup is attempted twice"
@@ -7397,8 +7998,11 @@
       "id": "AT-25",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at25_malicious_document_ai.py::<module>",
+        "tests/integration/ai/test_injection_api.py::<module>"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "A malicious document instructs the AI to export data about neighbours"
@@ -7407,8 +8011,11 @@
       "id": "AT-26",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at26_stale_ai_proposal.py::<module>",
+        "tests/integration/ai/test_confirm.py::<module>"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "An AI proposal is confirmed after the user's role or the target has changed"
@@ -7417,8 +8024,11 @@
       "id": "AT-29",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at29_ai_unavailable.py::<module>",
+        "tests/integration/ai/test_failure_modes.py::<module>"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "The AI provider is unavailable or the society's AI budget is exhausted"
@@ -7501,8 +8111,11 @@
       "id": "AT-40",
       "milestone": "M1",
       "slice": 4,
-      "status": "not-started",
-      "tests": [],
+      "status": "partial",
+      "tests": [
+        "tests/acceptance/test_at40_cascade.py::<module>",
+        "tests/integration/notifications/test_cascade.py:179"
+      ],
       "evidence": [],
       "evidence_failed": false,
       "scenario": "No device acknowledges an approval request for 10 seconds"

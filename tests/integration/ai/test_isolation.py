@@ -34,6 +34,34 @@ ROUTES = {
 }
 
 
+#: the routes probed with a foreign OBJECT id (a proposal or run of society A used from society B); ``body`` markers are filled in by the test
+FOREIGN_ID_CASES: tuple[tuple[str, str, str | dict[str, str] | None], ...] = (
+    ("GET", "/v1/ai/proposals/{id}", None),
+    ("POST", "/v1/ai/proposals/{id}/confirm", "CONFIRM"),
+    ("POST", "/v1/ai/feedback", "FEEDBACK"),
+)
+#: the routes probed by naming society A with the token of a person who is nobody in A (resident-level and admin-level routes)
+NAMING_A_AS_RESIDENT: tuple[tuple[str, str, str | dict[str, object] | None], ...] = (
+    ("GET", "/v1/ai/features", None),
+    ("GET", "/v1/ai/proposals", None),
+    ("POST", "/v1/ai/proposals", {"feature_id": "AI-R07", "inputs": {"text": "x", "target_language": "hi"}}),
+    ("GET", "/v1/ai/drafts", None),
+    ("POST", "/v1/ai/feedback", "FEEDBACK"),
+)  # fmt: skip
+NAMING_A_AS_ADMIN: tuple[tuple[str, str, dict[str, object] | None], ...] = (
+    ("GET", "/v1/ai/status", None),
+    ("GET", "/v1/ai/runs", None),
+    ("GET", "/v1/ai/providers", None),
+    ("PUT", "/v1/ai/controls", {"kill_switch": True}),
+)
+
+
+def probed_routes() -> list[tuple[str, str]]:
+    """(method, path template) of every /v1/ai route REALLY probed with a foreign id or a foreign society: the tables the tests iterate over. The AT-01
+    route inventory resolves these against the live app: a route that is not here fails it."""
+    return [(m, p) for m, p, _b in (*FOREIGN_ID_CASES, *NAMING_A_AS_RESIDENT, *NAMING_A_AS_ADMIN)]
+
+
 @pytest.fixture
 def two(aw: AW) -> AW:
     aw.set_quota(100)
@@ -69,13 +97,14 @@ def test_a_member_of_one_society_gets_nothing_from_another_on_any_route(two: AW)
     two.vw.idh.seed_membership(two.other.id, b_owner.id, two.other.units["A-101"], "owner")
     other = two.other.id
     cases = [
-        ("GET", f"/v1/ai/proposals/{pid}", None),
         (
-            "POST",
-            f"/v1/ai/proposals/{pid}/confirm",
-            {"payload_hash": b["proposal"]["payload_hash"]},
-        ),
-        ("POST", "/v1/ai/feedback", {"run_id": run_id, "outcome": "rejected"}),
+            method,
+            path.replace("{id}", pid),
+            {"payload_hash": b["proposal"]["payload_hash"]}
+            if body == "CONFIRM"
+            else ({"run_id": run_id, "outcome": "rejected"} if body == "FEEDBACK" else None),
+        )
+        for method, path, body in FOREIGN_ID_CASES
     ]
     for method, path, body in cases:
         r = two.call(b_owner, method, path, json=body, society=other)
@@ -109,26 +138,12 @@ def test_a_member_of_one_society_gets_nothing_from_another_on_any_route(two: AW)
         == 0
     )
     # naming A with B's token: no standing in A => 404 on every route
-    for method, path, body in [
-        ("GET", "/v1/ai/features", None),
-        ("GET", "/v1/ai/proposals", None),
-        (
-            "POST",
-            "/v1/ai/proposals",
-            {"feature_id": "AI-R07", "inputs": {"text": "x", "target_language": "hi"}},
-        ),
-        ("GET", "/v1/ai/drafts", None),
-        ("POST", "/v1/ai/feedback", {"run_id": run_id, "outcome": "rejected"}),
-    ]:
+    for method, path, body in NAMING_A_AS_RESIDENT:
+        body = {"run_id": run_id, "outcome": "rejected"} if body == "FEEDBACK" else body
         assert two.call(b_owner, method, path, json=body, society=two.soc.id).status_code == 404, (
             path
         )
-    for method, path, body in [
-        ("GET", "/v1/ai/status", None),
-        ("GET", "/v1/ai/runs", None),
-        ("GET", "/v1/ai/providers", None),
-        ("PUT", "/v1/ai/controls", {"kill_switch": True}),
-    ]:
+    for method, path, body in NAMING_A_AS_ADMIN:
         assert (
             two.call(two.other_secretary, method, path, json=body, society=two.soc.id).status_code
             == 404

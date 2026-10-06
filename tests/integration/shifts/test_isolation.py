@@ -180,3 +180,9 @@ def test_every_shifts_route_has_an_isolation_case(pw: PW) -> None:
     }
     covered = {(c.method, shape(c.template)) for c in CASES}
     assert routes == covered, (routes - covered, covered - routes)
+
+
+def probed_routes() -> list[tuple[str, str]]:
+    """(method, path template) of every route this file REALLY probes with a foreign id: the table the parametrized test iterates over. The AT-01
+    route inventory (``tests/acceptance/test_at01_cross_society_isolation.py``) resolves these against the live app: a route that is not here fails it."""
+    return [(c.method, c.template) for c in CASES]

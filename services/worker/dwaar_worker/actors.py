@@ -6,6 +6,7 @@ so a replayed or duplicated message is harmless: the jobs are idempotent (jobs.p
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -37,6 +38,12 @@ class Actors:
     publish_policy: Any
     sweep_visits: Any
     notifications_tick: Any = None
+    #: slice 4: each is a trigger-only actor over a plain job function in ``jobs.py`` (idempotent, so a duplicate message is harmless)
+    helpdesk_sweep: Any = None
+    notices_publish_due: Any = None
+    polls_close_due: Any = None
+    parcels_reminders: Any = None
+    shifts_sweep: Any = None
 
 
 def build_actors(broker: dramatiq.Broker, runtime: Runtime, config: WorkerConfig) -> Actors:
@@ -67,4 +74,20 @@ def build_actors(broker: dramatiq.Broker, runtime: Runtime, config: WorkerConfig
             runtime.db, runtime.providers or ProviderSet(), cfg=runtime.notifications
         )
 
-    return Actors(edge_publish_policy, visits_sweep, notifications_tick)
+    def _sweep_actor(name: str, job: Callable[[Database], jobs.JobResult]) -> Any:
+        @dramatiq.actor(broker=broker, queue_name=config.queue, actor_name=name, max_retries=3)
+        def sweep() -> None:
+            runtime.last[name] = job(runtime.db)  # type: ignore[index]
+
+        return sweep
+
+    return Actors(
+        edge_publish_policy,
+        visits_sweep,
+        notifications_tick,
+        helpdesk_sweep=_sweep_actor("helpdesk_sweep", jobs.sweep_helpdesk),
+        notices_publish_due=_sweep_actor("notices_publish_due", jobs.publish_due_notices),
+        polls_close_due=_sweep_actor("polls_close_due", jobs.close_due_polls),
+        parcels_reminders=_sweep_actor("parcels_reminders", jobs.send_parcel_reminders),
+        shifts_sweep=_sweep_actor("shifts_sweep", jobs.sweep_shifts),
+    )

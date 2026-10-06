@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import uuid
 from typing import Any
 
 import psycopg
@@ -362,3 +363,21 @@ def test_residents_cannot_place_or_read_proxy_calls(nw: NW) -> None:
     path = nw.s(f"approval-requests/{request['id']}/proxy-calls")
     assert nw.call(owner, "POST", path, json={"target": "primary"}).status_code == 403
     assert nw.call(owner, "GET", nw.s(f"proxy-calls/{request['id']}")).status_code == 403
+
+
+def test_the_keypad_decision_is_built_with_the_validated_public_model() -> None:
+    """The slice 4 workaround (``DecisionIn.model_construct`` with a ``type: ignore``) is gone: the model accepts the PRD's channels, so the decision a
+    keypad press produces is validated like any other (unknown fields, version bounds, channel)."""
+    import pathlib
+
+    root = (
+        pathlib.Path(__file__).resolve().parents[3] / "services/api/dwaar_api/modules/notifications"
+    )
+    offenders = [str(p) for p in root.rglob("*.py") if "model_construct" in p.read_text()]
+    assert offenders == []
+    from dwaar_api.modules.visits.schemas import DecisionIn
+
+    body = DecisionIn(
+        decision="approve", expected_version=1, client_action_id=uuid.uuid4(), channel="ivr"
+    )
+    assert body.channel == "ivr"

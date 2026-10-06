@@ -270,7 +270,9 @@ def upload_content(
         new_version = _bump_doc(c, doc, {}, moment)
         return MutationResult(
             doc_id, new_version, after={"scan_state": info["scan_state"]},
-            event_payload={"document_id": doc_id, "version_id": version_id, "scan_state": info["scan_state"], "sha256": info["sha256"]},
+            # no digest in the event: a hex digest is read by the outbox's personal-data guard as a number and masked piecemeal, so it would travel corrupted.
+            # The hash lives in document_versions (sha256) and in the audit row of the version; consumers read it there.
+            event_payload={"document_id": doc_id, "version_id": version_id, "scan_state": info["scan_state"], "file_stored": info["sha256"] is not None},
         )  # fmt: skip
 
     mutation(

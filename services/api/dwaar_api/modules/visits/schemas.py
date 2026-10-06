@@ -219,14 +219,23 @@ class ApprovalRequestCreate(Strict):
         return _plate(value)
 
 
+DecisionChannel = Literal["app", "ivr", "whatsapp", "sms", "guard_assisted"]
+#: channels a household member's own signed-in app session may claim over HTTP. The others describe HOW the server learned the decision
+#: (a keypad press on a masked call, a link opened from SMS or WhatsApp, a guard relaying it) and are recorded only by trusted server-side
+#: callers (the notifications module): a client that could post ``channel: "guard_assisted"`` would forge the provenance of its own decision.
+HTTP_DECISION_CHANNELS: Final = frozenset({"app"})
+
+
 class DecisionIn(Strict):
-    """PRD 12.3 exactly: decision, expected_version, client_action_id (plus an optional channel; only ``app`` is open to
-    this API, the other channels belong to the notification slice)."""
+    """PRD 12.3 / 8.2: decision, expected_version, client_action_id and the decision ``channel`` (app | ivr | whatsapp | sms | guard_assisted).
+
+    The model accepts every channel of the data model so that the notifications module builds it without a workaround; the HTTP route refuses
+    the non-``app`` ones (``HTTP_DECISION_CHANNELS``)."""
 
     decision: Literal["approve", "deny"]
     expected_version: Version
     client_action_id: uuid.UUID
-    channel: Literal["app"] = "app"
+    channel: DecisionChannel = "app"
 
 
 class ReversalIn(Strict):

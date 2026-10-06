@@ -494,7 +494,7 @@ def issue_credential(
         )
         return MutationResult(
             staff_id, int(row["version"]) + 1, after={"credential_kind": body.kind, "issued": True},
-            event_payload={"staff_id": staff_id, "credential_kind": body.kind},
+            event_payload={"staff_id": staff_id, "kind": body.kind},
         )  # fmt: skip
 
     mutation(

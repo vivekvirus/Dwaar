@@ -42,6 +42,7 @@ from dwaar_common.ids import uuid7
 from ...core.audit import MutationResult, mutation
 from ...core.authz import AuthContext
 from . import executors
+from .adapters import HelpdeskTicketSource, ShiftEventSource
 from .ports import AiRuntime
 from .schemas import ConfirmBody, ControlsPut, FeedbackBody, ProposalCreate
 
@@ -219,6 +220,21 @@ def create(
             raise NotFound() from None
         if not auth.scope.covers_unit(unit):
             raise NotFound()  # a unit the caller does not hold looks like a unit that does not exist
+    if auth.scope.role not in spec.roles:
+        raise NotAuthorised()  # decided before any data is looked up (the gateway makes the same decision; this just keeps the answer first)
+    if spec.id == "AI-G08" and isinstance(rt.sources.get("AI-G08"), ShiftEventSource):
+        shift = body.inputs.get("shift_id")
+        try:
+            shift_uuid = uuid.UUID(shift) if isinstance(shift, str) else None
+        except ValueError:
+            shift_uuid = None
+        known = (
+            shift_uuid is not None
+            and conn.execute(text("SELECT 1 FROM shifts WHERE id = :i"), {"i": shift_uuid}).first()
+            is not None
+        )
+        if not known:
+            raise NotFound()  # a shift of another society looks exactly like a shift that does not exist (RLS decides what this connection sees)
     caller = caller_of(auth, body.language)
     av = availability(conn, auth.scope.society_id, feature_id, spec.uses_model)
     sources: Sequence[Any] = ()
@@ -229,6 +245,8 @@ def create(
             reason_override = "data_source_not_available"  # the ticket / shift module is not installed: the ordinary screens remain
         else:
             sources = _fetch_sources(spec.id, port, caller, body.inputs)
+            if spec.id == "AI-F01" and not sources and isinstance(port, HelpdeskTicketSource):
+                raise NotFound()  # none of the named tickets is one this caller may triage: indistinguishable from unknown ids
     locations = location_directory(conn, auth) if spec.id == "AI-R02" else None
     if reason_override:
         res = GatewayResult("unavailable", spec.id, "none", reason=reason_override)

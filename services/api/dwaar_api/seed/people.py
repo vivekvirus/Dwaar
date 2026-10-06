@@ -11,11 +11,19 @@ import hashlib
 
 import pyotp
 
-from .dataset import BULK, OPERATOR, RESIDENT_PEOPLE, STAFF_PEOPLE, Person, bulk_people
+from .dataset import (
+    BULK,
+    DOMESTIC_STAFF_PEOPLE,
+    OPERATOR,
+    RESIDENT_PEOPLE,
+    STAFF_PEOPLE,
+    Person,
+    bulk_people,
+)
 
 
 def all_people() -> list[Person]:
-    people = [OPERATOR, *STAFF_PEOPLE, *RESIDENT_PEOPLE]
+    people = [OPERATOR, *STAFF_PEOPLE, *DOMESTIC_STAFF_PEOPLE, *RESIDENT_PEOPLE]
     for spec in BULK:
         people.extend(bulk_people(spec))
     numbers = [p.n for p in people]

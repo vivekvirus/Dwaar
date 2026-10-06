@@ -73,6 +73,42 @@ def scope_cases() -> list[Case]:
     ]  # fmt: skip
 
 
+DOC_BODY = {
+    "doc_type": "minutes",
+    "title": "Isolation probe minutes",
+    "authority": "Probe committee",
+}
+#: routes with no object id: a list or a create. Probed two ways: the caller NAMES the other society (the same 404 as an unknown society, nothing created)
+#: and a list of society A never shows an object of society B. ``(actor, method, path, body)``.
+LIST_AND_CREATE: tuple[tuple[str, str, str, dict[str, Any] | None], ...] = (
+    ("sec", "GET", "/v1/notices", None),
+    (
+        "com",
+        "POST",
+        "/v1/notices",
+        {"title": "Isolation probe", "body": "Isolation probe body text"},
+    ),
+    ("sec", "GET", "/v1/documents", None),
+    ("com", "POST", "/v1/documents", DOC_BODY),
+    ("sec", "GET", "/v1/polls", None),
+    ("com", "POST", "/v1/polls", POLL_BODY),
+    ("sec", "POST", "/v1/emergency-broadcasts", {"message": "Isolation probe"}),
+)
+DOWNLOAD_PROBE = (
+    "GET",
+    "/v1/downloads/{token}",
+)  # probed by test_a_download_token_cannot_cross_societies
+
+
+def probed_routes() -> list[tuple[str, str]]:
+    """(method, path template) of every community route REALLY probed with a foreign id, a foreign society or a foreign token: the case tables the tests
+    iterate over. The AT-01 route inventory resolves these against the live app: a route that is not here fails it."""
+    cases = [*notice_cases("{own}"), *document_cases("{own}"), *poll_cases(), *scope_cases()]
+    paths = [(c.method, c.path.replace(X, "{id}")) for c in cases]
+    paths += [(m, p) for _a, m, p, _b in LIST_AND_CREATE]
+    return [*paths, DOWNLOAD_PROBE]
+
+
 def run(cw: World, who, case: Case, x: str, extra: dict[str, str] | None = None) -> Any:
     path = case.path.replace(X, x)
     for key, value in (extra or {}).items():
@@ -315,3 +351,43 @@ def test_a_download_token_cannot_cross_societies(cw) -> None:
         assert (
             r.status_code == 404 and r.json()["code"] == "not_found" and PDF[:20] not in r.content
         )
+
+
+def test_lists_and_creates_show_nothing_of_the_other_society_and_create_nothing_in_it(cw) -> None:
+    foreign = cw.second_society()
+    sec_b, com_b = cw.staff("secretary", soc=foreign), cw.staff("committee", soc=foreign)
+    people_b = {"sec": sec_b, "com": com_b}
+    people_a = {"sec": cw.staff("secretary"), "com": cw.staff("committee")}
+    for (
+        actor,
+        method,
+        path,
+        body,
+    ) in LIST_AND_CREATE:  # society B builds its own objects first (through its own API)
+        if method == "POST":
+            assert cw.call(
+                people_b[actor], method, path, society=foreign.id, json=body
+            ).status_code in (200, 201), (path, actor)
+    before = {
+        t: cw.rows(f"SELECT count(*) FROM {t} WHERE society_id = %s", (cw.soc.id,))[0][0]
+        for t in ("notices", "documents", "polls")
+    }  # fmt: skip
+    for actor, method, path, body in LIST_AND_CREATE:
+        # B's staff name society A: no standing there, so the same 404 as a society that does not exist, and nothing is created
+        named = cw.call(people_b[actor], method, path, society=cw.soc.id, json=body)
+        unknown = cw.call(people_b[actor], method, path, society=uuid.uuid4(), json=body)
+        assert named.status_code == 404 and normal(named) == normal(unknown), (
+            method,
+            path,
+            named.text,
+        )
+        if method == "GET":  # A's own list holds nothing of B's
+            mine = cw.call(people_a[actor], method, path)
+            assert mine.status_code == 200, (path, mine.text)
+            for leak in ("Isolation probe", str(foreign.id)):
+                assert leak not in mine.text, (path, leak)
+    after = {
+        t: cw.rows(f"SELECT count(*) FROM {t} WHERE society_id = %s", (cw.soc.id,))[0][0]
+        for t in ("notices", "documents", "polls")
+    }  # fmt: skip
+    assert after == before, "nothing was created in society A by B's staff"

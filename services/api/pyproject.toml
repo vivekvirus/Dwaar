@@ -6,6 +6,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
   "dwaar-common",
   "dwaar-packs",
+  "dwaar-ai-gateway",
   "fastapi>=0.115",
   "uvicorn[standard]>=0.30",
   "pydantic>=2.7",
@@ -21,6 +22,7 @@ dependencies = [
 [tool.uv.sources]
 dwaar-common = { workspace = true }
 dwaar-packs = { workspace = true }
+dwaar-ai-gateway = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

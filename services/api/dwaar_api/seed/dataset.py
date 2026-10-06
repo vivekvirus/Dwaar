@@ -215,6 +215,20 @@ STAFF_GRANTS: Final = (
 )
 # fmt: on
 
+# ---------------------------------------------------------------------------------------------- domestic staff persons (slice 4)
+#: People who WORK for households (STAFF-01), not residents: dedicated rows on their own fictional numbers, so that a cook is never also the owner of a
+#: flat in the demonstrator data (an earlier version of the staff seed borrowed the person rows of "plain owner-occupiers", which made one human a
+#: resident owner and a domestic worker at once and put a staff phone in a membership). They hold NO membership and NO role grant; the staff register
+#: step creates their register entries, consent receipts and engagements. Adds three persons to the dataset (97 -> 100); the seed tests derive the person
+#: count from ``all_people()``.
+# fmt: off
+DOMESTIC_STAFF_PEOPLE: Final = (
+    _p("mh.staff.cook", "Sunita Kamble", 1300, "mr", "domestic cook with three employers in MH (AT-12); not a resident"),
+    _p("mh.staff.driver", "Raju Pardeshi", 1301, "hi", "family driver, one employer in MH; not a resident"),
+    _p("ka.staff.cook", "Lakshmi Naik", 1302, "kn", "domestic cook, one employer in KA; not a resident"),
+)
+# fmt: on
+
 # ---------------------------------------------------------------------------------------------- named resident personas
 # fmt: off
 RESIDENT_PEOPLE: Final = (

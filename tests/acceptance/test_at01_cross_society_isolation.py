@@ -39,8 +39,9 @@ from dwaar_api.modules.edge import localdev, localkeys
 from dwaar_api.modules.edge.auth import sign_request_headers
 from dwaar_common.events import EdgeEvent
 from dwaar_common.signing import sign_edge_event
+from tests.acceptance._isolation_inventory import module_coverage
 from tests.acceptance._visits_world import visit_ids
-from tests.acceptance._world import DATASET, World, leaks, shape
+from tests.acceptance._world import DATASET, Session, World, leaks, shape
 
 pytestmark = [
     pytest.mark.simulation,
@@ -545,60 +546,77 @@ def _send(world: World, who: Any, case: Case, ids: dict[str, uuid.UUID | str]) -
 
 
 # ===================================================================================================== inventory
-def test_route_inventory(world: World) -> None:
-    """Every route of the running app is either probed here or classified as own-person/public. A new route (a later
-    slice adds files, exports, search, AI ...) fails this test until it is added to ``CASES`` or ``GLOBAL_ROUTES``."""
-    covered = {c.key for c in CASES} | {APPLICANT_ROUTE} | set(GLOBAL_ROUTES)
+def _live_routes(world: World) -> set[tuple[str, str]]:
     live: set[tuple[str, str]] = set()
     for route in iter_api_routes(world.app):
         for method in route.methods or ():
             if method not in {"HEAD", "OPTIONS"}:
                 live.add((method, route.path))
-    missing = sorted(live - covered)
+    return live
+
+
+def test_route_inventory(world: World) -> None:
+    """Every route of the running app is probed here, classified as own-person/public, or covered by a REAL isolation probe of its module.
+
+    Slice 4 added seven modules (notifications, parcels, staff, shifts, helpdesk, community, AI). Their routes are NOT allow-listed: each module's
+    ``tests/integration/<module>/test_isolation.py`` replays another society's ids against its routes, and ``module_coverage`` resolves those probe tables
+    against the live router. A new route that no probe lands on fails here; so does a probe that lands on no live route."""
+    live = _live_routes(world)
+    own = {c.key for c in CASES} | {APPLICANT_ROUTE} | set(GLOBAL_ROUTES)
+    by_module, stale_probes = module_coverage(world.app)
+    assert stale_probes == {}, f"module probes that land on no live route: {stale_probes}"
+    probed = set().union(*by_module.values())
+    missing = sorted(live - own - probed)
     assert not missing, (
-        "routes not covered by AT-01 (add them to CASES with their foreign ids, or classify them in GLOBAL_ROUTES): "
+        "routes with no isolation probe (add a foreign-id case to the module's test_isolation.py and its probed_routes(), or an AT-01 Case): "
         f"{missing}"
     )
-    stale = sorted(covered - live)
+    stale = sorted(own - live)
     assert not stale, f"AT-01 table names routes that no longer exist: {stale}"
+    for name, routes in by_module.items():
+        assert routes, f"module {name} probes no live route at all"
+        assert not (routes & own), (
+            f"{name}: routes {sorted(routes & own)} are probed twice (AT-01 table and module); keep one"
+        )
 
 
-def test_files_exports_search_and_ai_do_not_exist_yet(world: World) -> None:
-    """PRD AT-01 also names files, export, search and AI. None exists in slice 1: the inventory above is the tripwire,
-    and the obvious paths answer the generic 404 (never someone else's data). Exercised end-to-end when slices add them."""
-    fragments = (
-        "/file",
-        "export",
-        "search",
-        "retriev",
-        "/ai",
-        "assistant",
-        "document",
-        "upload",
-        "download",
-    )
+def test_every_module_probe_table_covers_its_whole_route_family(world: World) -> None:
+    """The families the modules own are covered completely, by name: no module may keep a route outside its own probes."""
+    by_module, _ = module_coverage(world.app)
+    families = {
+        "notifications": ("/push-tokens", "/device-diagnostics", "/notification", "/proxy-calls", "/device-health", "/cascade-attempts"),
+        "parcels": ("/v1/parcel", "/v1/parcels"),
+        "staff": ("/v1/staff", "/v1/attendance", "/v1/payroll"),
+        "shifts": ("/v1/shifts", "/v1/handovers", "/v1/guards"),
+        "helpdesk": ("/v1/tickets", "/v1/helpdesk", "/support-requests"),
+        "community": ("/v1/notices", "/v1/documents", "/v1/downloads", "/v1/polls", "/v1/emergency-broadcasts"),
+        "ai": ("/v1/ai",),
+    }  # fmt: skip
+    live = _live_routes(world)
+    for name, fragments in families.items():
+        family = {r for r in live if any(f in r[1] for f in fragments)}
+        assert family, name
+        assert family <= by_module[name], (
+            f"{name}: routes without a probe of their own module: {sorted(family - by_module[name])}"
+        )
+
+
+def test_exports_and_search_still_do_not_exist(world: World) -> None:
+    """PRD AT-01 names files, export, search and AI. Slice 4 added documents, downloads and AI: those are now exercised for real (the tests below).
+    EXPORT and SEARCH still have no endpoint: this tripwire stays until a slice adds them, and the obvious paths answer the generic 404."""
+    fragments = ("export", "search", "retriev", "assistant", "/file", "migration")
     names = sorted(
         route.path
         for route in iter_api_routes(world.app)
         if any(f in route.path.lower() for f in fragments)
     )
-    assert names == [], (
-        f"a files/export/search/AI route now exists; add its replay to AT-01: {names}"
-    )
+    assert names == [], f"an export or search route now exists; add its replay to AT-01: {names}"
     meera = world.login("ka.secretary")
     b = world.objects("ka").society
-    a = world.objects("mh")
-    for tail in (
-        f"files/{uuid.uuid4()}",
-        f"exports/{uuid.uuid4()}",
-        "search?q=Sahyadri",
-        f"documents/{a.memberships[0]}",
-        f"ai/conversations/{uuid.uuid4()}",
-    ):
+    for tail in (f"exports/{uuid.uuid4()}", "search?q=Sahyadri", f"files/{uuid.uuid4()}"):
         r = world.call(meera, "GET", f"/v1/societies/{b}/{tail}")
         assert r.status_code == 404, (tail, r.status_code, r.text)
         assert r.json()["code"] == "not_found"
-        assert not leaks(r, a.all_ids())
 
 
 # ===================================================================================================== A path
@@ -1263,3 +1281,265 @@ def test_a_revoked_device_loses_access_at_once_and_only_that_device(fresh_world:
     r = dev_a.call("GET", "/v1/edge/policy?after=0")
     assert r.status_code == 403 and "manifest" not in r.text  # no data at all
     assert dev_b.call("GET", "/v1/edge/policy?after=0").status_code == 200
+
+
+# ===================================================================================================== files, downloads and AI (slice 4)
+# PRD AT-01: "No A data from API, files, export, search or AI". Documents, signed downloads and AI exist since slice 4: these tests replace the old
+# tripwire for them with real replays of A's object ids from B. (Exports and search do not exist: ``test_exports_and_search_still_do_not_exist``.)
+def _hdr(society: uuid.UUID) -> dict[str, str]:
+    return {"X-Society-Id": str(society)}
+
+
+def _same_as_unknown(
+    world: World,
+    who: Session,
+    method: str,
+    path_a: str,
+    path_random: str,
+    society: uuid.UUID,
+    **kw: Any,
+) -> Any:
+    extra = _hdr(society) | kw.pop("headers", {})
+    real = world.call(who, method, path_a, headers=extra, **kw)
+    made_up = world.call(who, method, path_random, headers=extra, **kw)
+    assert real.status_code == 404 and real.json()["code"] == "not_found", (
+        path_a,
+        real.status_code,
+        real.text,
+    )
+    assert shape(real) == shape(made_up), (
+        f"{path_a}: an id of society A is distinguishable from an unknown id"
+    )
+    return real
+
+
+def _society_a_document(world: World, tmp_path: Any) -> tuple[uuid.UUID, str, str, Any]:
+    """Society A publishes a document with real bytes (a labelled stub scanner and a local object store, simulation=true), through its own API."""
+    from dwaar_api.modules.community.config import CommunityConfig
+    from dwaar_api.modules.community.scanner import StubScanner
+    from dwaar_api.modules.community.storage import LocalDiskStore
+    from tests.integration.community.test_documents import PDF
+
+    root = tmp_path / "objects"
+    world.app.state.community_config = CommunityConfig.from_environment(
+        world.settings,
+        {"DWAAR_COMMUNITY_STORAGE_DIR": str(root), "DWAAR_COMMUNITY_SCANNER": "stub"},
+    )
+    world.app.state.community_store = LocalDiskStore(root)
+    world.app.state.community_scanner = StubScanner()
+    a = world.objects("mh").society
+    committee, secretary = world.login("mh.committee1"), world.login("mh.secretary")
+    doc = world.call(
+        committee, "POST", "/v1/documents", headers=_hdr(a),
+        json={"doc_type": "minutes", "title": "AT-01 private minutes of society A", "authority": "Managing committee A", "access_level": "all_residents"},
+    ).json()["document"]  # fmt: skip
+    ver = world.call(
+        committee,
+        "POST",
+        f"/v1/documents/{doc['id']}/versions",
+        headers=_hdr(a),
+        json={"effective_from": "2026-04-01"},
+    ).json()["version"]
+    up = world.call(
+        committee, "PUT", f"/v1/documents/{doc['id']}/versions/{ver['id']}/content",
+        headers={**_hdr(a), "Content-Type": "application/pdf"}, content=PDF,
+    )  # fmt: skip
+    assert up.status_code == 200, up.text
+    pub = world.call(
+        secretary,
+        "POST",
+        f"/v1/documents/{doc['id']}/versions/{ver['id']}/publish",
+        headers=_hdr(a),
+        json={},
+    )
+    assert pub.status_code == 200, pub.text
+    return a, doc["id"], ver["id"], PDF
+
+
+def test_a_document_of_a_is_unreachable_from_b_through_every_document_route(
+    fresh_world: World, tmp_path: Any
+) -> None:
+    from tests.integration.community.test_documents import PDF
+
+    world = fresh_world
+    a, doc, ver, _bytes = _society_a_document(world, tmp_path)
+    b = world.objects("ka").society
+    meera = world.login("ka.secretary")
+    rand_doc, rand_ver = str(uuid.uuid4()), str(uuid.uuid4())
+    # positive control: the rightful reader in A gets the document, a signed URL and the bytes
+    ganesh = world.login("ganesh")
+    got = world.call(ganesh, "GET", f"/v1/documents/{doc}", headers=_hdr(a))
+    assert (
+        got.status_code == 200
+        and got.json()["document"]["title"] == "AT-01 private minutes of society A"
+    )
+    url = world.call(
+        ganesh, "POST", f"/v1/documents/{doc}/versions/{ver}/download-url", headers=_hdr(a), json={}
+    )
+    assert url.status_code == 200, url.text
+    served = world.call(None, "GET", url.json()["url"])
+    assert served.status_code == 200 and served.content == PDF
+    # the same ids from B (Meera is the secretary of B and still nobody in A): the answer is the answer for an unknown id
+    for method, tail, body in (
+        ("GET", "", None),
+        ("POST", "/versions", {"effective_from": "2026-04-01"}),
+        ("POST", "/versions/{v}/scan", {}),
+        ("POST", "/versions/{v}/publish", {}),
+        ("POST", "/versions/{v}/withdraw", {"reason": "AT-01 probe"}),
+        ("POST", "/versions/{v}/download-url", {}),
+    ):
+        path_a = f"/v1/documents/{doc}{tail.replace('{v}', ver)}"
+        path_r = f"/v1/documents/{rand_doc}{tail.replace('{v}', rand_ver)}"
+        real = _same_as_unknown(world, meera, method, path_a, path_r, b, json=body)
+        assert not leaks(real, {doc, ver, str(a)}), path_a
+    put_a = f"/v1/documents/{doc}/versions/{ver}/content"
+    put_r = f"/v1/documents/{rand_doc}/versions/{rand_ver}/content"
+    _same_as_unknown(
+        world,
+        meera,
+        "PUT",
+        put_a,
+        put_r,
+        b,
+        content=PDF,
+        headers={"Content-Type": "application/pdf"},
+    )
+    # B's own list holds nothing of A's vault
+    listed = world.call(meera, "GET", "/v1/documents", headers=_hdr(b))
+    assert (
+        listed.status_code == 200
+        and not leaks(listed, {doc, ver})
+        and "private minutes" not in listed.text
+    )
+    # a person with no standing in A who names A: the generic 404 as well
+    stranger = world.call(world.login("farhan"), "GET", f"/v1/documents/{doc}", headers=_hdr(a))
+    assert stranger.status_code == 404 and not leaks(stranger, {doc, ver})
+    # nothing changed in A through any of it
+    assert world.admin_rows("SELECT state FROM document_versions WHERE id = %s", (ver,)) == [
+        ("published",)
+    ]
+
+
+def test_a_signed_download_of_a_cannot_be_used_by_or_for_b(
+    fresh_world: World, tmp_path: Any
+) -> None:
+    from dwaar_api.modules.community import files
+    from tests.integration.community.test_documents import PDF
+
+    world = fresh_world
+    a, doc, ver, _bytes = _society_a_document(world, tmp_path)
+    b = world.objects("ka").society
+    key = world.app.state.community_config.download_key
+    farhan = world.login(
+        "farhan"
+    )  # a member of B only (Meera is also a non-resident owner in A, so a claim for her would rightly be served)
+    ganesh = world.login("ganesh")
+    expiry = 2**31
+    for claim in (
+        files.DownloadClaim(
+            a, uuid.UUID(ver), farhan.person_id, farhan.session_id, expiry
+        ),  # A's version, for a person with no standing in A
+        files.DownloadClaim(
+            b, uuid.UUID(ver), farhan.person_id, farhan.session_id, expiry
+        ),  # A's version under B's society
+        files.DownloadClaim(
+            b, uuid.UUID(ver), ganesh.person_id, ganesh.session_id, expiry
+        ),  # A's resident, but B's society
+    ):
+        r = world.call(None, "GET", f"/v1/downloads/{files.issue_token(key, claim)}")
+        assert r.status_code == 404 and r.json()["code"] == "not_found", claim
+        assert PDF[:20] not in r.content and not leaks(r, {doc, ver, str(a)})
+    # a forged token (no key) and a made-up one are the same 404
+    assert world.call(None, "GET", f"/v1/downloads/{uuid.uuid4()}").status_code == 404
+    # revoking the reader's session kills an outstanding URL for A as well (re-resolved on every use)
+    url = world.call(
+        ganesh, "POST", f"/v1/documents/{doc}/versions/{ver}/download-url", headers=_hdr(a), json={}
+    ).json()["url"]
+    assert world.call(None, "GET", url).status_code == 200
+    out = world.call(ganesh, "POST", "/v1/auth/logout")
+    assert out.status_code in (200, 204), out.text
+    assert world.call(None, "GET", url).status_code == 404
+
+
+def test_ai_proposals_runs_drafts_and_sources_of_a_are_unreachable_from_b(
+    fresh_world: World,
+) -> None:
+    world = fresh_world
+    a, b = world.objects("mh").society, world.objects("ka").society
+    ganesh, meera = world.login("ganesh"), world.login("ka.secretary")
+    made = world.call(
+        ganesh, "POST", "/v1/ai/proposals", headers=_hdr(a),
+        json={"feature_id": "AI-R07", "inputs": {"text": "Please keep the stairwell clear of bicycles", "target_language": "hi"}},
+    ).json()  # fmt: skip
+    assert made["status"] == "ok" and made["simulation"] is True, (
+        made
+    )  # the labelled simulator, no model quality claimed
+    pid, run_id, digest = made["proposal"]["id"], made["run_id"], made["proposal"]["payload_hash"]
+    ids = {pid, run_id, digest, str(a)}
+    for method, path_a, path_r, body in (
+        ("GET", f"/v1/ai/proposals/{pid}", f"/v1/ai/proposals/{uuid.uuid4()}", None),
+        (
+            "POST",
+            f"/v1/ai/proposals/{pid}/confirm",
+            f"/v1/ai/proposals/{uuid.uuid4()}/confirm",
+            {"payload_hash": digest},
+        ),
+    ):
+        real = _same_as_unknown(world, meera, method, path_a, path_r, b, json=body)
+        assert not leaks(real, ids) and "stairwell" not in real.text
+    fb_real = world.call(
+        meera,
+        "POST",
+        "/v1/ai/feedback",
+        headers=_hdr(b),
+        json={"run_id": run_id, "outcome": "rejected"},
+    )
+    fb_rand = world.call(
+        meera,
+        "POST",
+        "/v1/ai/feedback",
+        headers=_hdr(b),
+        json={"run_id": str(uuid.uuid4()), "outcome": "rejected"},
+    )
+    assert (
+        fb_real.status_code == 404 and shape(fb_real) == shape(fb_rand) and not leaks(fb_real, ids)
+    )
+    # B's lists, audit view and status hold nothing of A
+    for path in ("/v1/ai/proposals", "/v1/ai/drafts", "/v1/ai/runs"):
+        r = world.call(meera, "GET", path, headers=_hdr(b))
+        assert r.status_code == 200 and r.json()["items"] == [], (path, r.text)
+    assert (
+        world.call(meera, "GET", "/v1/ai/status", headers=_hdr(b)).json()["budget"]["used_today"]
+        == 0
+    )
+    # naming A with the token of a person who is a member of B only (Meera is also a non-resident owner in A, so she is not the right persona here)
+    farhan = world.login("farhan")
+    for method, path, body in (
+        ("GET", "/v1/ai/proposals", None),
+        ("GET", "/v1/ai/runs", None),
+        ("PUT", "/v1/ai/controls", {"kill_switch": True}),
+    ):
+        assert world.call(farhan, method, path, headers=_hdr(a), json=body).status_code == 404, path
+    assert world.admin_rows("SELECT count(*) FROM ai_society_controls") == [(0,)], (
+        "B's secretary changed nothing in A"
+    )
+    # A's TICKET named to the retrieval-backed triage feature from B: the source never returns it (404, like an unknown id)
+    ticket = world.call(
+        world.login("neha"), "POST", "/v1/tickets", headers=_hdr(a),
+        json={"scope": "society", "category": "common_area", "title": "AT-01 private A ticket", "description": "Only society A may read this"},
+    ).json()["ticket"]  # fmt: skip
+    t_real = _same_as_unknown(
+        world,
+        meera,
+        "POST",
+        "/v1/ai/proposals",
+        "/v1/ai/proposals",
+        b,
+        json={"feature_id": "AI-F01", "inputs": {"ticket_ids": [ticket["id"]]}},
+    )
+    assert not leaks(t_real, {ticket["id"]}) and "private A ticket" not in t_real.text
+    # and A's own run is untouched, with its audit trail intact
+    assert world.admin_rows("SELECT outcome FROM ai_runs WHERE id = %s", (run_id,))[0][0] is None
+    assert world.admin_rows("SELECT state FROM action_proposals WHERE id = %s", (pid,)) == [
+        ("proposed",)
+    ]

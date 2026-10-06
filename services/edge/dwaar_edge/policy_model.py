@@ -120,6 +120,43 @@ class Revocation(_M):
     version: int = Field(ge=0)
 
 
+Weekday = Literal["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+LocalTime = Annotated[str, StringConstraints(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")]
+
+
+class StaffEntry(_M):
+    """One ENGAGEMENT of one domestic worker with one household (never one entry per person: ending one employer keeps the others, AT-12).
+
+    ``staff_ref`` is the opaque code printed on the worker's card; the times are Asia/Kolkata local valid hours. No name, phone, ID number or photo."""
+
+    engagement_id: uuid.UUID
+    staff_ref: Annotated[str, StringConstraints(pattern=r"^[A-Z2-7]{10}$")]
+    unit_id: uuid.UUID
+    days: list[Weekday]
+    from_local: LocalTime
+    to_local: LocalTime
+    effective_from: date
+    effective_to: date | None = None
+
+
+class StaffEnded(_M):
+    engagement_id: uuid.UUID
+    ended_at: datetime
+
+
+class StaffSection(_M):
+    entries: list[StaffEntry] = Field(default_factory=list)
+    ended: list[StaffEnded] = Field(default_factory=list)
+
+
+class GateOverride(_M):
+    """A supervisor override in force at one gate; it carries its own expiry (end of the shift), so the gateway never relies on the publish cadence."""
+
+    override_id: uuid.UUID
+    gate_id: uuid.UUID
+    valid_until: datetime
+
+
 class Manifest(_M):
     gates: list[Gate] = Field(default_factory=list)
     lanes: list[Lane] = Field(default_factory=list)
@@ -129,6 +166,9 @@ class Manifest(_M):
     standing_rules: list[StandingRule] = Field(default_factory=list)
     timing: Timing
     revocations: list[Revocation] = Field(default_factory=list)
+    # slice 4 (additive: a snapshot without them still verifies, a gateway that predates them would have rejected them, so they ship with this schema)
+    staff: StaffSection = Field(default_factory=StaffSection)
+    overrides: list[GateOverride] = Field(default_factory=list)
 
 
 class Snapshot(_M):

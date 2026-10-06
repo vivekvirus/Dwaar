@@ -256,7 +256,9 @@ def test_a_forged_or_foreign_or_edited_qr_is_refused(gate: VW) -> None:
         tampered,
         "garbage",
         "a.b",
-        inv["qr"][:-3] + "AAA",
+        # change one FULL base64 character of the signature (the third from the end): replacing the last three with "AAA" was a no-op for the
+        # ~1 in 64 signatures that already end in "AAA", so this test failed by chance (seen once in the slice 4 full run)
+        inv["qr"][:-3] + ("B" if inv["qr"][-3] == "A" else "A") + inv["qr"][-2:],
         body,
     ):
         r = redeem(gate, qr=bad if len(bad) >= 20 else bad + "x" * 20)

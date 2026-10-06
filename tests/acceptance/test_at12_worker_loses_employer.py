@@ -9,8 +9,9 @@ Dataset: the real seed (``s480_staff``): Sunita Kamble, a cook, works for the Pa
 
 What is proven: after the Pawars end THEIR engagement (with a reason, through their own API call) the other two engagements are untouched in the
 database, in what each household reads, in what the guard sees at their hours, and in the INPUT the edge policy publisher consumes
-(``authorisation.edge_staff_input``: the ended one is listed as ended, the other two stay in ``entries``). Not proven here: that a real gateway
-applied the new snapshot (slice 3 proves snapshot delivery; the publisher wiring of this input is a request to the edge module, see the slice report).
+(``authorisation.edge_staff_input``: the ended one is listed as ended, the other two stay in ``entries``) AND in the next SIGNED SNAPSHOT that
+``publish_policy`` produces (last two tests; the gateway's own parser accepts the new ``staff`` and ``overrides`` sections). Not proven here: that a real
+gateway applied the new snapshot, and the gateway's decision engine does not yet read the staff section (it parses and stores it): see the slice 4 report.
 """
 
 from __future__ import annotations
@@ -162,3 +163,120 @@ def test_the_ended_employer_cannot_touch_the_other_employers_engagements(
         )
         assert r.status_code == 404, "not his engagement: indistinguishable from an unknown one"
     assert all(r[2] is None for r in _engagements(world).values())
+
+
+# ------------------------------------------------------------------------------------------------------------ through the publisher (slice 4 integration)
+def _publish(world: World, society: Any, *, now: dt.datetime | None = None) -> Any:
+    from dwaar_api.modules.edge.snapshot import latest_snapshot, publish_policy
+
+    cfg = world.app.state.edge_config
+    ctx = RequestContext(society, None, "system", None)
+    with world.database.app_tx(ctx) as conn:
+        result = publish_policy(conn, ctx, cfg, now=now)
+    with world.database.app_tx(ctx) as conn:
+        snap = latest_snapshot(conn)
+    assert snap is not None and snap["seq"] == result.seq
+    return result, snap
+
+
+def test_the_next_signed_snapshot_keeps_the_other_two_engagements_when_one_employer_ends(
+    fresh_world: World,
+) -> None:
+    """AT-12 end to end through ``publish_policy``: the manifest the gateway receives lists one entry per ENGAGEMENT; ending the Pawars' engagement
+    changes the next snapshot (the ended one moves to ``ended``) and leaves the other two entries byte-identical."""
+    world = fresh_world
+    mh = world.society_ref("mh").id
+    eng = _engagements(world)
+    _first_result, first = _publish(world, mh)
+    entries = {e["engagement_id"]: e for e in first["manifest"]["staff"]["entries"]}
+    assert {str(r[1]) for r in eng.values()} <= set(entries), (
+        "all three employers are in the first snapshot"
+    )
+    cook_refs = {entries[str(r[1])]["staff_ref"] for r in eng.values()}
+    assert len(cook_refs) == 1, "one person, three engagements"
+    assert first["manifest"]["staff"]["ended"] == []
+
+    ended = world.call(
+        world.login("ganesh"), "POST", f"/v1/staff-engagements/{eng['A 203'][1]}/end",
+        json={"expected_version": eng["A 203"][3], "reason": "Moved the cook to the new house in Pune"},
+        headers={"X-Society-Id": str(mh)},
+    )  # fmt: skip
+    assert ended.status_code == 200, ended.text
+    result, second = _publish(world, mh)
+    assert result.changed and result.reason == "changed" and second["seq"] == first["seq"] + 1
+    now_entries = {e["engagement_id"]: e for e in second["manifest"]["staff"]["entries"]}
+    gone = str(eng["A 203"][1])
+    assert gone not in now_entries, "the ended engagement no longer authorises anything at the gate"
+    for unit in ("A 101", "B 205"):
+        key = str(eng[unit][1])
+        assert now_entries[key] == entries[key], (
+            f"{unit}: the other employers' entries are untouched"
+        )
+    assert [e["engagement_id"] for e in second["manifest"]["staff"]["ended"]] == [gone]
+    # nothing personal travels: opaque ids and local valid hours only
+    blob = repr(second["manifest"]["staff"])
+    assert "Sunita" not in blob and "Kamble" not in blob and "+91" not in blob
+    # the snapshot is signed, and the GATEWAY's own parser (extra=forbid everywhere) accepts the new sections
+    from dwaar_api.modules.edge.snapshot import snapshot_document
+    from dwaar_edge.policy_model import Snapshot
+
+    parsed = Snapshot.model_validate(snapshot_document(second))
+    assert {str(e.engagement_id) for e in parsed.manifest.staff.entries} == set(now_entries)
+    assert parsed.manifest.staff.ended[0].engagement_id.hex == uuid_hex(gone)
+    # idempotent: publishing again with nothing changed writes nothing
+    again, _ = _publish(world, mh)
+    assert not again.changed and again.reason == "unchanged"
+
+
+def uuid_hex(value: str) -> str:
+    return value.replace("-", "")
+
+
+def test_a_supervisor_override_in_force_travels_in_the_snapshot_with_its_own_expiry(
+    fresh_world: World,
+) -> None:
+    """Appendix C through the publisher: an override granted at a gate by the supervisor of the ACTIVE shift appears in the next snapshot with a
+    ``valid_until`` that never outlives the shift, the gateway's parser accepts it, and ending the shift removes it from the following snapshot."""
+    world = fresh_world
+    mh = world.society_ref("mh").id
+    _, before = _publish(world, mh)
+    assert before["manifest"]["overrides"] == []
+    shift = world.admin_rows(
+        "SELECT id, gate_id, planned_end FROM shifts WHERE society_id = %s AND state = 'active' ORDER BY id LIMIT 1",
+        (mh,),
+    )[0]
+    sup = world.login("mh.guard_sup")
+    granted = world.call(
+        sup, "POST", f"/v1/shifts/{shift[0]}/overrides",
+        json={"reason": "Barrier sensor fault: verified by the supervisor", "minutes": 30},
+        headers={"X-Society-Id": str(mh)},
+    )  # fmt: skip
+    assert granted.status_code == 201, granted.text
+    result, after = _publish(world, mh)
+    assert result.changed and result.reason == "changed"
+    [published] = after["manifest"]["overrides"]
+    assert published["gate_id"] == str(shift[1])
+    valid_until = dt.datetime.fromisoformat(published["valid_until"].replace("Z", "+00:00"))
+    assert dt.datetime.now(dt.UTC) < valid_until <= shift[2], "an override never outlives its shift"
+    from dwaar_api.modules.edge.snapshot import snapshot_document
+    from dwaar_edge.policy_model import Snapshot
+
+    parsed = Snapshot.model_validate(snapshot_document(after))
+    assert [str(o.gate_id) for o in parsed.manifest.overrides] == [str(shift[1])]
+    ended = world.call(
+        world.login("mh.guard1"), "POST", f"/v1/shifts/{shift[0]}/end",
+        json={"checklist": {"parcels_counted": 0, "inside_records_reviewed": True}},
+        headers={"X-Society-Id": str(mh)},
+    )  # fmt: skip
+    # whichever guard holds the shift ends it; if the seeded guard is not the holder the supervisor does (the route allows both)
+    if ended.status_code != 200:
+        ended = world.call(
+            sup, "POST", f"/v1/shifts/{shift[0]}/end",
+            json={"checklist": {"parcels_counted": 0, "inside_records_reviewed": True}},
+            headers={"X-Society-Id": str(mh)},
+        )  # fmt: skip
+    assert ended.status_code == 200, ended.text
+    _, last = _publish(world, mh)
+    assert last["manifest"]["overrides"] == [], (
+        "the shift ended: the override is gone from the next snapshot"
+    )

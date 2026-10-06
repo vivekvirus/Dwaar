@@ -17,6 +17,7 @@ from fastapi import APIRouter, FastAPI
 from dwaar_ai_gateway.config import GatewayConfig
 from dwaar_ai_gateway.pipeline import Gateway
 
+from .adapters import install as install_adapters
 from .permissions import permissions
 from .ports import AiRuntime
 from .routes import router as _routes
@@ -40,7 +41,11 @@ def register(app: FastAPI) -> None:
     if isinstance(getattr(app.state, "ai", None), AiRuntime):
         return
     config = dataclasses.replace(GatewayConfig.from_env(), environment=app.state.settings.env.value)
-    app.state.ai = AiRuntime(gateway=Gateway(config))
+    runtime = AiRuntime(gateway=Gateway(config))
+    install_adapters(
+        runtime, app.state.db
+    )  # AI-F01 and AI-G08 over the real helpdesk and shift services
+    app.state.ai = runtime
     log.info(
         "ai gateway ready: provider=%s simulators_allowed=%s",
         config.provider,

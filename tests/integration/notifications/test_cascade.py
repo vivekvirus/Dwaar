@@ -365,17 +365,27 @@ def test_every_dispatch_and_withdrawal_leaves_an_audit_row_and_an_outbox_event(n
         nw.tick(t0 + secs(at))
     nw.decide(owner, request)
     nw.tick(t0 + secs(25))
-    dispatches = nw.rows("SELECT payload FROM outbox WHERE event_type = 'notification.dispatched' ORDER BY occurred_at")
+    dispatches = nw.rows(
+        "SELECT payload FROM outbox WHERE event_type = 'notification.dispatched' ORDER BY occurred_at"
+    )
     assert [p[0]["channel"] for p in dispatches] == ["push", "push", "ivr_call"]
     assert all(p[0]["outcome"] == "provider_accepted" for p in dispatches)
-    assert nw.rows("SELECT count(*) FROM audit_log WHERE operation = 'notification.dispatch'") == [(3,)]
+    assert nw.rows("SELECT count(*) FROM audit_log WHERE operation = 'notification.dispatch'") == [
+        (3,)
+    ]
     withdrawn = nw.rows("SELECT payload FROM outbox WHERE event_type = 'notification.withdrawn'")
-    assert len(withdrawn) == 1 and withdrawn[0][0]["status"] == "approved" and withdrawn[0][0]["withdrawn"] >= 1
-    assert nw.rows("SELECT count(*) FROM audit_log WHERE operation = 'notification.withdraw'") == [(1,)]
+    assert (
+        len(withdrawn) == 1
+        and withdrawn[0][0]["status"] == "approved"
+        and withdrawn[0][0]["withdrawn"] >= 1
+    )
+    assert nw.rows("SELECT count(*) FROM audit_log WHERE operation = 'notification.withdraw'") == [
+        (1,)
+    ]
     for op in ("notification.cascade.start", "notification.cascade.close"):
         assert nw.rows("SELECT count(*) FROM audit_log WHERE operation = %s", (op,)) == [(1,)]
     # no audit row or event of this slice carries a person's name, a number or a message text
-    blob = str(nw.rows("SELECT diff_masked FROM audit_log WHERE operation LIKE 'notification.%%'")) + str(
-        nw.rows("SELECT payload FROM outbox WHERE event_type LIKE 'notification.%%'")
-    )
+    blob = str(
+        nw.rows("SELECT diff_masked FROM audit_log WHERE operation LIKE 'notification.%%'")
+    ) + str(nw.rows("SELECT payload FROM outbox WHERE event_type LIKE 'notification.%%'"))
     assert "Test Visitor" not in blob and "+91" not in blob and "Open Dwaar" not in blob

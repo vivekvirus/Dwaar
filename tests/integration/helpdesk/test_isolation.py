@@ -206,27 +206,41 @@ def test_every_ticket_route_answers_a_foreign_id_like_a_random_one(hw) -> None:
     )
 
 
+PROC = {"headline": "Probe headline", "steps": "Probe steps for the isolation test"}
+SETTINGS_BODY = {
+    "working_days": [1, 2, 3, 4, 5], "opens_at": "09:00:00", "closes_at": "18:00:00",
+    "sla": {"emergency": {"ack": {"mode": "clock", "minutes": 2}}},
+}  # fmt: skip
+#: (actor, method, path, body): every route that takes the society from ``X-Society-Id`` (or the path) and no object id. ``{foreign}`` is replaced by the
+#: id of the other society (the same 404 as an unknown one is required); the table is what the test iterates over AND what AT-01's inventory reads.
+NAMING_CALLS: tuple[tuple[str, str, str, dict[str, Any] | None], ...] = (
+    ("sec", "GET", "/v1/tickets", None),
+    ("res", "GET", "/v1/tickets", None),
+    ("res", "POST", "/v1/tickets", {"scope": "society", "category": "other", "title": "Isolation probe"}),
+    ("sec", "GET", "/v1/helpdesk/settings", None),
+    ("sec", "PUT", "/v1/helpdesk/settings", SETTINGS_BODY),
+    ("sec", "GET", "/v1/helpdesk/emergency-procedures", None),
+    ("sec", "PUT", "/v1/helpdesk/emergency-procedures/lift", PROC),
+    ("res", "GET", "/v1/helpdesk/emergency-procedures", None),
+    ("res", "POST", "/v1/societies/{foreign}/support-requests", {"title": "Isolation probe"}),
+    ("res", "GET", "/v1/societies/{foreign}/support-requests", None),
+)  # fmt: skip
+
+
+def probed_routes() -> list[tuple[str, str]]:
+    """(method, path) of every helpdesk route REALLY probed with a foreign id or a foreign society: the ticket cases and ``NAMING_CALLS``. The AT-01
+    route inventory resolves these against the live app: a route that is not here fails it."""
+    return [
+        (c.method, c.path.replace("{x}", "{id}").split("?")[0]) for c in cases("{id}", "{own}")
+    ] + [(method, path) for _who, method, path, _body in NAMING_CALLS]
+
+
 def test_naming_a_foreign_society_is_the_same_404_as_an_unknown_one(hw) -> None:
     foreign = hw.second_society()
-    sec = hw.staff("secretary")
-    res = hw.resident(hw.unit("A-101"), "owner")
-    proc = {"headline": "Probe headline", "steps": "Probe steps for the isolation test"}
-    calls = [
-        (sec, "GET", "/v1/tickets", None),
-        (res, "GET", "/v1/tickets", None),
-        (
-            res,
-            "POST",
-            "/v1/tickets",
-            {"scope": "society", "category": "other", "title": "Isolation probe"},
-        ),
-        (sec, "GET", "/v1/helpdesk/settings", None),
-        (sec, "PUT", "/v1/helpdesk/emergency-procedures/lift", proc),
-        (res, "GET", "/v1/helpdesk/emergency-procedures", None),
-        (res, "POST", f"/v1/societies/{foreign.id}/support-requests", {"title": "Isolation probe"}),
-        (res, "GET", f"/v1/societies/{foreign.id}/support-requests", None),
-    ]
-    for who, method, path, body in calls:
+    people = {"sec": hw.staff("secretary"), "res": hw.resident(hw.unit("A-101"), "owner")}
+    for who_key, method, path, body in NAMING_CALLS:
+        who = people[who_key]
+        path = path.replace("{foreign}", str(foreign.id))
         a = hw.call(who, method, path, json=body, society=foreign.id)
         b = hw.call(
             who,
@@ -241,6 +255,10 @@ def test_naming_a_foreign_society_is_the_same_404_as_an_unknown_one(hw) -> None:
         hw.rows("SELECT count(*) FROM emergency_procedures WHERE society_id = %s", (foreign.id,))[
             0
         ][0]
+        == 0
+    )
+    assert (
+        hw.rows("SELECT count(*) FROM helpdesk_settings WHERE society_id = %s", (foreign.id,))[0][0]
         == 0
     )
 
