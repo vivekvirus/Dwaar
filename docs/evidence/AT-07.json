@@ -7,7 +7,7 @@
     "outcome": "passed",
     "message": null
   },
-  "commit": "1b15ab928a56940de88483579ca7116e1cb65bfe",
+  "commit": "23071f327caf4af10cfdcc3e0fdc40b30185740f",
   "environment": {
     "python": "3.12.3",
     "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
@@ -15,7 +15,7 @@
     "DWAAR_ENV": "unset",
     "simulation": true,
     "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
-    "tree_dirty": true,
+    "tree_dirty": false,
     "clouds": [
       "fakecloud",
       "realcloud"
@@ -31,44 +31,44 @@
       "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_restricted_mode_correct_single_use_limits_then_reconcile",
       "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_a_gate_without_its_gateway_never_allows_on_timeout_or_unknown_state"
     ],
-    "duration_s": 3.3652,
+    "duration_s": 3.3213,
     "tests": [
       {
         "nodeid": "tests/acceptance/test_at07_e2e.py::test_restricted_mode_correct_single_use_limits_then_reconcile[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0412,
+        "duration_s": 0.0432,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at07_e2e.py::test_restricted_mode_correct_single_use_limits_then_reconcile[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.8319,
+        "duration_s": 1.529,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at07_e2e.py::test_a_gate_without_its_gateway_never_allows_on_timeout_or_unknown_state[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0181,
+        "duration_s": 0.0163,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at07_e2e.py::test_a_gate_without_its_gateway_never_allows_on_timeout_or_unknown_state[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.4145,
+        "duration_s": 1.6717,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_restricted_mode_correct_single_use_limits_then_reconcile",
         "outcome": "passed",
-        "duration_s": 0.0427
+        "duration_s": 0.044
       },
       {
         "nodeid": "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_a_gate_without_its_gateway_never_allows_on_timeout_or_unknown_state",
         "outcome": "passed",
-        "duration_s": 0.0167
+        "duration_s": 0.0171
       }
     ]
   },
   "tester": "automated/claude-code",
-  "date": "2026-10-06T01:59:03+00:00"
+  "date": "2026-10-06T02:48:08+00:00"
 }

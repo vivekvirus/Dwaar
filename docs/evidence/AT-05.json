@@ -7,7 +7,7 @@
     "outcome": "passed",
     "message": null
   },
-  "commit": "1b15ab928a56940de88483579ca7116e1cb65bfe",
+  "commit": "23071f327caf4af10cfdcc3e0fdc40b30185740f",
   "environment": {
     "python": "3.12.3",
     "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
@@ -15,7 +15,7 @@
     "DWAAR_ENV": "unset",
     "simulation": true,
     "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
-    "tree_dirty": true,
+    "tree_dirty": false,
     "clouds": [
       "fakecloud",
       "realcloud"
@@ -43,112 +43,112 @@
       "tests/acceptance/test_at05_wrong_gate_replay.py::test_gateway_arbitrates_an_unbound_single_use_pass_across_gates_while_the_lan_works",
       "tests/acceptance/test_at05_wrong_gate_replay.py::test_expired_pass_requires_confirmation_never_silent_allow"
     ],
-    "duration_s": 8.7218,
+    "duration_s": 8.6316,
     "tests": [
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_gate_bound_qr_consumed_at_gate_a_is_not_silently_accepted_at_gate_b[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0353,
+        "duration_s": 0.0352,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_gate_bound_qr_consumed_at_gate_a_is_not_silently_accepted_at_gate_b[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.4595,
+        "duration_s": 1.4727,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_qr_for_another_society_or_forged_signature_is_denied_not_confirmed[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0193,
+        "duration_s": 0.0219,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_qr_for_another_society_or_forged_signature_is_denied_not_confirmed[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.3102,
+        "duration_s": 1.2792,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_isolated_gates_gate_bound_pass_is_consumed_locally_and_rejected_at_the_other_gate[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0162,
+        "duration_s": 0.019,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_isolated_gates_gate_bound_pass_is_consumed_locally_and_rejected_at_the_other_gate[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.5903,
+        "duration_s": 1.2879,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_isolated_gates_cannot_promise_global_single_use_for_an_unbound_pass[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0248,
+        "duration_s": 0.0265,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_isolated_gates_cannot_promise_global_single_use_for_an_unbound_pass[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.338,
+        "duration_s": 1.6404,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_gateway_arbitrates_an_unbound_single_use_pass_across_gates_while_the_lan_works[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0238,
+        "duration_s": 0.0316,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_gateway_arbitrates_an_unbound_single_use_pass_across_gates_while_the_lan_works[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.2993,
+        "duration_s": 1.323,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_expired_pass_requires_confirmation_never_silent_allow[fakecloud]",
         "outcome": "passed",
-        "duration_s": 0.0187,
+        "duration_s": 0.021,
         "cloud": "fakecloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_e2e.py::test_expired_pass_requires_confirmation_never_silent_allow[realcloud]",
         "outcome": "passed",
-        "duration_s": 1.47,
+        "duration_s": 1.3307,
         "cloud": "realcloud"
       },
       {
         "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_gate_bound_qr_consumed_at_gate_a_is_not_silently_accepted_at_gate_b",
         "outcome": "passed",
-        "duration_s": 0.0268
+        "duration_s": 0.0316
       },
       {
         "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_qr_for_another_society_or_forged_signature_is_denied_not_confirmed",
         "outcome": "passed",
-        "duration_s": 0.0153
+        "duration_s": 0.0212
       },
       {
         "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_isolated_gates_gate_bound_pass_is_consumed_locally_and_rejected_at_the_other_gate",
         "outcome": "passed",
-        "duration_s": 0.0127
+        "duration_s": 0.0171
       },
       {
         "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_isolated_gates_cannot_promise_global_single_use_for_an_unbound_pass",
         "outcome": "passed",
-        "duration_s": 0.0255
+        "duration_s": 0.0294
       },
       {
         "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_gateway_arbitrates_an_unbound_single_use_pass_across_gates_while_the_lan_works",
         "outcome": "passed",
-        "duration_s": 0.0189
+        "duration_s": 0.0235
       },
       {
         "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_expired_pass_requires_confirmation_never_silent_allow",
         "outcome": "passed",
-        "duration_s": 0.017
+        "duration_s": 0.0197
       }
     ]
   },
   "tester": "automated/claude-code",
-  "date": "2026-10-06T01:59:03+00:00"
+  "date": "2026-10-06T02:48:08+00:00"
 }
