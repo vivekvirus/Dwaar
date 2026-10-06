@@ -2,8 +2,9 @@
 -- REQ: AI-SYS-08 ('what will be saved'; an easy correction route), AI-SYS-07 / PRD 12.1 (POST /v1/ai/feedback: run id, outcome, correction ->
 --      stored, feeds evaluation), G6/PRIV-14 (the correction text is REDACTED before storage), INV-01, PRIV-15 (AI payloads inherit retention).
 --
--- ai_drafts are PRIVATE to their owner inside the society: a RESTRICTIVE policy on app.person_id sits next to the society policy, so even a
--- query that forgets the owner filter returns only the caller's own drafts.
+-- ai_drafts are PRIVATE to their owner inside the society. Enforcement is in the application (every query filters owner_id = the caller; a test
+-- proves another resident and the secretary see none): the platform's catalog guard allows ONLY app.society_id in a policy (ADR-0004), so a
+-- person-level RESTRICTIVE policy was tried and is deliberately NOT used.
 
 CREATE TABLE ai_drafts (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
@@ -25,9 +26,6 @@ CREATE TABLE ai_drafts (
 CREATE INDEX ai_drafts_owner_idx ON ai_drafts (society_id, owner_id, created_at DESC, id DESC);
 SELECT dwaar_enable_society_rls('ai_drafts', 'SELECT, INSERT', 'SELECT');
 GRANT UPDATE (status, version) ON TABLE ai_drafts TO dwaar_app;
-CREATE POLICY ai_drafts_owner_only ON ai_drafts AS RESTRICTIVE FOR ALL
-    USING (owner_id = nullif(current_setting('app.person_id', true), '')::uuid)
-    WITH CHECK (owner_id = nullif(current_setting('app.person_id', true), '')::uuid);
 
 CREATE TABLE ai_feedback (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v7(),

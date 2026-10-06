@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import uuid
 
 import pytest
 from psycopg import errors
@@ -62,10 +61,6 @@ def test_every_ai_table_forces_row_level_security_with_the_standard_policy_and_t
             "SELECT has_table_privilege('dwaar_app', %s, 'DELETE'), has_table_privilege('dwaar_worker', %s, 'DELETE')",
             (t, t),
         ) == [(False, False)], t
-    assert "ai_drafts_owner_only" in {
-        r[0]
-        for r in seeded.rows("SELECT polname FROM pg_policy WHERE polrelid = 'ai_drafts'::regclass")
-    }
 
 
 def test_missing_or_foreign_context_sees_zero_rows(seeded: AW) -> None:
@@ -267,11 +262,12 @@ def test_ai_runs_has_no_column_that_could_hold_a_raw_prompt(seeded: AW) -> None:
     )
 
 
-def test_drafts_have_a_restrictive_owner_policy_even_for_a_query_without_an_owner_filter(
+def test_drafts_are_owner_private_through_the_api_because_the_platform_allows_only_society_policies(
     seeded: AW,
 ) -> None:
-    db = seeded.vw.idh.db
+    """The core catalog guard allows only app.society_id in policies, so privacy of a draft inside the society is the API's job (owner filter)."""
     owner = seeded.people["owner1"]
+    other = seeded.person("owner2", unit="A-102", kind="owner")
     (pid,) = seeded.rows("SELECT id FROM action_proposals")[0]
     seeded.confirm(
         owner,
@@ -280,16 +276,13 @@ def test_drafts_have_a_restrictive_owner_policy_even_for_a_query_without_an_owne
             "payload_hash": seeded.rows("SELECT payload_hash FROM action_proposals")[0][0],
         },
     )
-    with db.app_conn(seeded.soc.id, owner.id) as conn:
-        assert conn.execute("SELECT count(*) FROM ai_drafts").fetchone()[0] == 1
-    with db.app_conn(seeded.soc.id, uuid.uuid4()) as conn:
-        assert (
-            conn.execute("SELECT count(*) FROM ai_drafts").fetchone()[0] == 0
-        )  # same society, another person
-    with db.app_conn(seeded.soc.id) as conn:
-        assert (
-            conn.execute("SELECT count(*) FROM ai_drafts").fetchone()[0] == 0
-        )  # no person context at all
+    assert len(seeded.call(owner, "GET", "/v1/ai/drafts").json()["items"]) == 1
+    for who in (other, seeded.vw.secretary):
+        assert seeded.call(who, "GET", "/v1/ai/drafts").json()["items"] == []
+    assert {
+        r[0]
+        for r in seeded.rows("SELECT polname FROM pg_policy WHERE polrelid = 'ai_drafts'::regclass")
+    } == {"dwaar_society_isolation"}
 
 
 def test_feedback_is_append_only_and_one_per_actor_and_run(seeded: AW) -> None:

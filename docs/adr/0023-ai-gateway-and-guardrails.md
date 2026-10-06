@@ -117,7 +117,7 @@ AI-R07 translation (class B; original always returned; legal/safety text flagged
 threatening language flagged, publishing needs committee approval, draft only), AI-R06 notification health (deterministic catalogue by manufacturer, never claims delivery, steps NOT verified on devices), AI-R02 voice/text complaint
 (consent, 60 s, location resolved to the caller's OWN unit ids or a known common area, otherwise "choose"; wrong block/flat is critical; resident edits and confirms; no auto-submit; emergency words raise urgency and add "call the guard"),
 AI-F01 triage and AI-G08 handover as interfaces + simulator handlers over narrow input ports (`TicketSource`, `ShiftSource`, tested with fakes; handover always keeps every unresolved critical item, deterministically), AI-C05 as an interface only (`BillRunSource`, registered unavailable).
-Commands: `ai.save_draft` (self-contained; private to its owner by a RESTRICTIVE RLS policy), `notice.create_draft`, `ticket.create`, `ticket.apply_triage`, `shift.save_handover` (ports; a missing module answers 503 and leaves the proposal open;
+Commands: `ai.save_draft` (self-contained; private to its owner by an owner filter in the API; RLS is by society only because the core catalog guard allows no other policy GUC), `notice.create_draft`, `ticket.create`, `ticket.apply_triage`, `shift.save_handover` (ports; a missing module answers 503 and leaves the proposal open;
 `notice.create_draft` falls back to a private draft).
 
 ## Consequences
