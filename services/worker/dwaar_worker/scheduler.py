@@ -22,7 +22,7 @@ def run_scheduler(
     clock: Callable[[], float] = time.monotonic,
 ) -> int:
     """Send each actor when its interval has elapsed; returns the number of messages sent. The first round is immediate."""
-    due = {"publish": 0.0, "sweep": 0.0}
+    due = {"publish": 0.0, "sweep": 0.0, "notify": 0.0}
     sent = 0
     start = clock()
     while not should_stop():
@@ -35,5 +35,10 @@ def run_scheduler(
             actors.sweep_visits.send()
             due["sweep"] = elapsed + config.sweep_interval_s
             sent += 1
-        sleep(min(1.0, config.policy_interval_s, config.sweep_interval_s))
+        notify = getattr(actors, "notifications_tick", None)
+        if notify is not None and elapsed >= due["notify"]:
+            notify.send()
+            due["notify"] = elapsed + config.notify_interval_s
+            sent += 1
+        sleep(min(1.0, config.policy_interval_s, config.sweep_interval_s, config.notify_interval_s))
     return sent

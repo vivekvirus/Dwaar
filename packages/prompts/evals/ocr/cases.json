@@ -1,0 +1,13 @@
+{
+ "set": "ocr-placeholder",
+ "prd_minimum": "200 varied redacted vendor bills; 100 IDs and RCs",
+ "gate": ">=98% exact key fields; 100% arithmetic checks; uncertain fields surfaced",
+ "status": "NOT BUILT: AI-A01/AI-G04 OCR is M2; no cases authored",
+ "annotator_agreement": {
+  "annotators": 0,
+  "method": "single author (build team)",
+  "cohens_kappa": null,
+  "status": "not_measured"
+ },
+ "cases": []
+}

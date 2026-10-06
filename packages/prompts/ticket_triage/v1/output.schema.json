@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI-F01 output v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "results"
+  ],
+  "properties": {
+    "results": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ticket_id",
+          "category",
+          "priority",
+          "team",
+          "duplicate_of",
+          "reason"
+        ],
+        "properties": {
+          "ticket_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "category": {
+            "enum": [
+              "plumbing",
+              "electrical",
+              "lift",
+              "parking",
+              "security",
+              "housekeeping",
+              "noise",
+              "water_supply",
+              "civil",
+              "other"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "low",
+              "normal",
+              "high",
+              "emergency"
+            ]
+          },
+          "team": {
+            "enum": [
+              "maintenance",
+              "electrical",
+              "plumbing",
+              "lift_vendor",
+              "security",
+              "housekeeping",
+              "office"
+            ]
+          },
+          "duplicate_of": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300
+          }
+        }
+      }
+    }
+  }
+}

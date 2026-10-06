@@ -1,0 +1,13 @@
+{
+ "set": "groundedness-placeholder",
+ "prd_minimum": "300 authorised questions plus 100 absent or conflicting cases",
+ "gate": ">=95% supported answers; >=95% correct abstention",
+ "status": "NOT BUILT: AI-R01 grounded Q&A is M2; no cases authored",
+ "annotator_agreement": {
+  "annotators": 0,
+  "method": "single author (build team)",
+  "cohens_kappa": null,
+  "status": "not_measured"
+ },
+ "cases": []
+}

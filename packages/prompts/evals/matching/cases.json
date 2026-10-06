@@ -1,0 +1,13 @@
+{
+ "set": "matching-placeholder",
+ "prd_minimum": "500 labelled matched and ambiguous records",
+ "gate": "top-3 recall >=95%; no autonomous ambiguous posting",
+ "status": "NOT BUILT: AI-A02 reconciliation is M2; no cases authored",
+ "annotator_agreement": {
+  "annotators": 0,
+  "method": "single author (build team)",
+  "cohens_kappa": null,
+  "status": "not_measured"
+ },
+ "cases": []
+}

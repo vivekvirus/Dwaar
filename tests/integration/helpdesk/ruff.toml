@@ -1,0 +1,5 @@
+# Tests here assert on several response fields at once (status + code + reason); PT018/PT012 would only add noise.
+extend = "../../../pyproject.toml"
+
+[lint]
+extend-ignore = ["PT018", "PT012", "S608", "S105", "S106", "E501"]

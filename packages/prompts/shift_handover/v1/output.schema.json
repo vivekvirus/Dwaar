@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI-G08 output v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "narrative",
+    "item_notes"
+  ],
+  "properties": {
+    "narrative": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "item_notes": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "note"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 300
+          }
+        }
+      }
+    }
+  }
+}

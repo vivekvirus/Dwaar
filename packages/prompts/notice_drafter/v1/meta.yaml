@@ -1,0 +1,12 @@
+feature_id: AI-C01
+name: Notice and circular drafter
+version: v1
+schema_version: "1"
+risk_class: B
+tier: draft
+status: active
+authored: 2026-10-06
+human_review_required: true   # prompts change what residents see: review before promotion (AI-SYS-07)
+eval_sets: [access_injection, pii]
+changelog:
+  - v1: initial version; evaluated ONLY against the simulator provider, which measures nothing about model quality.

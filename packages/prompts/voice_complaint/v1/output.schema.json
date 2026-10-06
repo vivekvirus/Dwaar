@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI-R02 output v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "location_ref",
+    "category",
+    "description",
+    "urgency_suggestion",
+    "missing_fields"
+  ],
+  "properties": {
+    "location_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "text"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "unit",
+            "common_area",
+            "unknown"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 120
+        }
+      }
+    },
+    "category": {
+      "enum": [
+        "plumbing",
+        "electrical",
+        "lift",
+        "parking",
+        "security",
+        "housekeeping",
+        "noise",
+        "water_supply",
+        "civil",
+        "other"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1500
+    },
+    "urgency_suggestion": {
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "emergency"
+      ]
+    },
+    "missing_fields": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "maxLength": 60
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "authored_before_redactor": true,
+  "decoys": 338,
+  "generator_version": 1,
+  "identifier_spans": 574,
+  "note": "Frozen. Do not edit to fit the redactor; publish golden_v2 instead (see build_golden.py).",
+  "per_type": {
+    "aadhaar": 63,
+    "account": 64,
+    "email": 66,
+    "gstin": 50,
+    "ifsc": 48,
+    "pan": 50,
+    "phone": 153,
+    "plate": 80
+  },
+  "samples": 500,
+  "seed": 20261107,
+  "set": "pii-golden-v1",
+  "sha256": "4e2ae17920f5952a9ec24d0a54ae52e225782dfde62574eaad9a9641a8947499",
+  "synthetic": true
+}

@@ -1,0 +1,5 @@
+# Evaluation-set generators: seeded pseudo-random data on purpose (never security-sensitive), asserts check the generated data.
+extend = "../../pyproject.toml"
+
+[lint]
+extend-ignore = ["T201", "S311", "S101", "B007", "RUF005", "RUF001", "E741"]

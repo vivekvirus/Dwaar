@@ -1,0 +1,5 @@
+# Tests here assert on several response fields at once (status + code + reason) and unpack fixtures they do not all use; PT018/PT012/RUF059 would only add noise.
+extend = "../../../pyproject.toml"
+
+[lint]
+extend-ignore = ["PT018", "PT012", "S608", "RUF059", "RUF015", "SIM117", "PLC0415", "PT011", "RUF005"]

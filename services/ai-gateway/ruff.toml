@@ -1,0 +1,6 @@
+# The gateway narrows types with assert in places where a None would be a programming error; the multilingual lexicons and PII patterns
+# contain look-alike characters ON PURPOSE (full-width digits, Devanagari, guillemets).
+extend = "../../pyproject.toml"
+
+[lint]
+extend-ignore = ["T201", "S101", "RUF001", "RUF003", "PT018", "PT012", "PT011", "C408", "E731"]

@@ -1,0 +1,150 @@
+{
+ "set": "voice-location-synthetic-v0",
+ "prd_minimum": "100 recordings per language across noise and accents",
+ "gate": ">=95% correct critical fields after confirmation; raw extraction accuracy reported separately; a wrong block or flat is a CRITICAL error",
+ "status": "scaffold: TRANSCRIPTS ONLY (no recordings, ASR never run). Tests the deterministic location resolver and the simulator extractor.",
+ "directory": [
+  [
+   "A",
+   "101"
+  ],
+  [
+   "A",
+   "102"
+  ],
+  [
+   "B",
+   "402"
+  ],
+  [
+   "B",
+   "403"
+  ]
+ ],
+ "authorised_units_of_caller": [
+  "A-101",
+  "B-402"
+ ],
+ "annotator_agreement": {
+  "annotators": 1,
+  "method": "single author (build team)",
+  "cohens_kappa": null,
+  "status": "not_measured"
+ },
+ "cases": [
+  {
+   "id": "voice-0001",
+   "lang": "en",
+   "transcript": "Water is leaking in flat B-402 bathroom pipe",
+   "expected": "B-402"
+  },
+  {
+   "id": "voice-0002",
+   "lang": "en",
+   "transcript": "my flat 402 in B wing has a power cut",
+   "expected": "B-402"
+  },
+  {
+   "id": "voice-0003",
+   "lang": "en",
+   "transcript": "lift is making noise",
+   "expected": "common:lift"
+  },
+  {
+   "id": "voice-0004",
+   "lang": "en",
+   "transcript": "garbage near the lobby is not cleared",
+   "expected": "common:lobby"
+  },
+  {
+   "id": "voice-0005",
+   "lang": "en",
+   "transcript": "leak in A 101 kitchen",
+   "expected": "A-101"
+  },
+  {
+   "id": "voice-0006",
+   "lang": "en",
+   "transcript": "tap leaking in flat 405 in B wing",
+   "expected": "UNRESOLVED"
+  },
+  {
+   "id": "voice-0007",
+   "lang": "en",
+   "transcript": "noise from C-301 every night",
+   "expected": "UNRESOLVED"
+  },
+  {
+   "id": "voice-0008",
+   "lang": "hi",
+   "transcript": "बी-४०२ के बाथरूम में पाइप से पानी लीक हो रहा है",
+   "expected": "B-402"
+  },
+  {
+   "id": "voice-0009",
+   "lang": "hi",
+   "transcript": "४०२ बी विंग में बिजली नहीं है",
+   "expected": "B-402"
+  },
+  {
+   "id": "voice-0010",
+   "lang": "hi",
+   "transcript": "लॉबी में कचरा पड़ा है",
+   "expected": "common:lobby"
+  },
+  {
+   "id": "voice-0011",
+   "lang": "hi",
+   "transcript": "फ्लैट ए १०१ में नल टपक रहा है",
+   "expected": "A-101"
+  },
+  {
+   "id": "voice-0012",
+   "lang": "hi",
+   "transcript": "डी-२०१ में शोर है",
+   "expected": "UNRESOLVED"
+  },
+  {
+   "id": "voice-0013",
+   "lang": "mr",
+   "transcript": "बी-४०२ मध्ये पाईप गळत आहे",
+   "expected": "B-402"
+  },
+  {
+   "id": "voice-0014",
+   "lang": "mr",
+   "transcript": "४०२ बी विंग मध्ये वीज नाही",
+   "expected": "B-402"
+  },
+  {
+   "id": "voice-0015",
+   "lang": "mr",
+   "transcript": "पार्किंगमध्ये गाडी उभी आहे",
+   "expected": "common:parking"
+  },
+  {
+   "id": "voice-0016",
+   "lang": "mr",
+   "transcript": "ए १०१ मध्ये नळ गळतो",
+   "expected": "A-101"
+  },
+  {
+   "id": "voice-0017",
+   "lang": "mr",
+   "transcript": "सी-३०१ मध्ये गोंगाट आहे",
+   "expected": "UNRESOLVED"
+  },
+  {
+   "id": "voice-0018",
+   "lang": "en",
+   "transcript": "Water leaking in flat 402",
+   "expected": "UNRESOLVED"
+  },
+  {
+   "id": "voice-0019",
+   "lang": "en",
+   "transcript": "pipe burst in A-102 and B-403 both",
+   "expected": "UNRESOLVED"
+  }
+ ]
+}

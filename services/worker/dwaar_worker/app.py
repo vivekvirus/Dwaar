@@ -11,6 +11,8 @@ import dramatiq
 from dwaar_api.core.config import load_settings
 from dwaar_api.core.db import Database
 from dwaar_api.modules.edge.config import EdgeConfig
+from dwaar_api.modules.notifications.config import NotificationsConfig
+from dwaar_api.modules.notifications.providers import ProviderSet, SimulatedProviders
 
 from .actors import Actors, Runtime, build_actors
 from .broker import make_redis_broker
@@ -20,5 +22,16 @@ config = WorkerConfig.from_env()
 settings = load_settings()
 broker = make_redis_broker(config)
 dramatiq.set_broker(broker)
-runtime = Runtime(Database.from_settings(settings), EdgeConfig.from_environment(settings))
+notifications = NotificationsConfig.from_environment(settings)
+# Real vendor adapters are not built (D-21): outside local/test the set is empty, every send is recorded as ``provider_not_configured`` and the guard
+# is shown the assisted options and the intercom / office process.
+providers = (
+    ProviderSet.from_simulators(SimulatedProviders()) if notifications.simulation else ProviderSet()
+)
+runtime = Runtime(
+    Database.from_settings(settings),
+    EdgeConfig.from_environment(settings),
+    providers=providers,
+    notifications=notifications,
+)
 actors: Actors = build_actors(broker, runtime, config)

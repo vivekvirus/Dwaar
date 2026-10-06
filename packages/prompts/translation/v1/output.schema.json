@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI-R07 output v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "translated_text",
+    "source_language",
+    "target_language",
+    "legal_or_safety_flag",
+    "flag_reasons"
+  ],
+  "properties": {
+    "translated_text": {
+      "type": "string",
+      "maxLength": 6000
+    },
+    "source_language": {
+      "enum": [
+        "en",
+        "hi",
+        "mr",
+        "unknown"
+      ]
+    },
+    "target_language": {
+      "enum": [
+        "en",
+        "hi",
+        "mr"
+      ]
+    },
+    "legal_or_safety_flag": {
+      "type": "boolean"
+    },
+    "flag_reasons": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "maxLength": 240
+      }
+    }
+  }
+}

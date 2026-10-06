@@ -1,0 +1,121 @@
+{
+  "catalogue_version": 1,
+  "machine_drafted_languages": [
+    "hi",
+    "mr"
+  ],
+  "review": "Steps are written from general knowledge of Android vendor settings. They are NOT verified on each device model and menu names change between OS versions: [VERIFY] on real devices before relying on them (AI-R06 target 'measured acknowledgement improvement' is a field measurement, not claimed here).",
+  "disclaimer": {
+    "en": "These steps can reduce missed alerts. They cannot guarantee that a notification is delivered; the guard may still call you.",
+    "hi": "ये कदम छूटे अलर्ट कम कर सकते हैं, पर सूचना मिलने की गारंटी नहीं दे सकते; गार्ड आपको फोन भी कर सकता है।",
+    "mr": "या पायऱ्या चुकलेल्या सूचना कमी करू शकतात, पण सूचना मिळण्याची हमी देऊ शकत नाहीत; गार्ड तुम्हाला फोन देखील करू शकतो."
+  },
+  "issues": {
+    "notifications_disabled": {
+      "en": "Turn notifications on for Dwaar in the phone's app settings.",
+      "hi": "फोन की ऐप सेटिंग में Dwaar के लिए नोटिफिकेशन चालू करें।",
+      "mr": "फोनच्या ॲप सेटिंगमध्ये Dwaar साठी सूचना सुरू करा."
+    },
+    "channel_blocked": {
+      "en": "Open Dwaar notification settings and allow the 'Visitor at the gate' channel with sound.",
+      "hi": "Dwaar नोटिफिकेशन सेटिंग में 'गेट पर आगंतुक' चैनल को ध्वनि के साथ अनुमति दें।",
+      "mr": "Dwaar सूचना सेटिंगमध्ये 'गेटवरील पाहुणा' चॅनेल आवाजासह परवानगी द्या."
+    },
+    "battery_optimisation": {
+      "en": "Set battery usage for Dwaar to 'Unrestricted' so the phone does not stop the app in the background.",
+      "hi": "Dwaar के लिए बैटरी उपयोग 'अप्रतिबंधित' रखें ताकि फोन ऐप को बैकग्राउंड में बंद न करे।",
+      "mr": "Dwaar साठी बॅटरी वापर 'अमर्यादित' ठेवा म्हणजे फोन ॲप बंद करणार नाही."
+    },
+    "background_restricted": {
+      "en": "Allow background activity and background data for Dwaar.",
+      "hi": "Dwaar के लिए बैकग्राउंड गतिविधि और बैकग्राउंड डेटा की अनुमति दें।",
+      "mr": "Dwaar साठी बॅकग्राउंड ॲक्टिव्हिटी आणि बॅकग्राउंड डेटा परवानगी द्या."
+    },
+    "autostart_off": {
+      "en": "Turn on 'Autostart' for Dwaar in the phone's security or app-launch settings.",
+      "hi": "फोन की सुरक्षा या ऐप-लॉन्च सेटिंग में Dwaar के लिए 'ऑटोस्टार्ट' चालू करें।",
+      "mr": "फोनच्या सुरक्षा किंवा ॲप-लाँच सेटिंगमध्ये Dwaar साठी 'ऑटोस्टार्ट' सुरू करा."
+    },
+    "do_not_disturb": {
+      "en": "Allow Dwaar to break through Do Not Disturb for visitor and emergency alerts, or turn Do Not Disturb off.",
+      "hi": "आगंतुक और आपातकालीन अलर्ट के लिए Dwaar को 'परेशान न करें' के बावजूद आने दें, या उसे बंद करें।",
+      "mr": "पाहुणे आणि आणीबाणी सूचनांसाठी Dwaar ला 'व्यत्यय आणू नका' मोडमध्ये परवानगी द्या किंवा तो बंद करा."
+    },
+    "app_not_recent": {
+      "en": "Do not swipe Dwaar away from recent apps; on some phones that stops alerts. Lock it in recent apps if your phone allows.",
+      "hi": "Dwaar को हाल के ऐप्स से स्वाइप न करें; कुछ फोन पर इससे अलर्ट रुक जाते हैं। फोन अनुमति दे तो इसे रीसेंट ऐप्स में लॉक करें।",
+      "mr": "Dwaar ला अलीकडील ॲप्समधून स्वाइप करू नका; काही फोनवर अलर्ट थांबतात. फोन परवानगी देत असल्यास ते लॉक करा."
+    }
+  },
+  "manufacturers": {
+    "xiaomi": {
+      "names": [
+        "xiaomi",
+        "redmi",
+        "poco",
+        "mi"
+      ],
+      "extra": {
+        "autostart_off": "Security app > Permissions > Autostart > Dwaar on.",
+        "battery_optimisation": "Settings > Apps > Dwaar > Battery saver > No restrictions."
+      }
+    },
+    "oppo": {
+      "names": [
+        "oppo",
+        "realme",
+        "oneplus"
+      ],
+      "extra": {
+        "autostart_off": "Settings > Apps > Dwaar > Allow auto-launch.",
+        "battery_optimisation": "Settings > Battery > Dwaar > Allow background activity."
+      }
+    },
+    "vivo": {
+      "names": [
+        "vivo",
+        "iqoo"
+      ],
+      "extra": {
+        "autostart_off": "Settings > Apps > Autostart > Dwaar on.",
+        "battery_optimisation": "Settings > Battery > Background power consumption > Dwaar > Allow."
+      }
+    },
+    "samsung": {
+      "names": [
+        "samsung"
+      ],
+      "extra": {
+        "battery_optimisation": "Settings > Apps > Dwaar > Battery > Unrestricted; also remove Dwaar from 'Sleeping apps'.",
+        "app_not_recent": "Recent apps > tap the Dwaar icon > Keep open."
+      }
+    },
+    "huawei": {
+      "names": [
+        "huawei",
+        "honor"
+      ],
+      "extra": {
+        "autostart_off": "Settings > Apps > App launch > Dwaar > Manage manually: allow auto-launch, secondary launch and run in background."
+      }
+    },
+    "motorola": {
+      "names": [
+        "motorola",
+        "moto"
+      ],
+      "extra": {
+        "battery_optimisation": "Settings > Apps > Dwaar > Battery > Unrestricted."
+      }
+    },
+    "google": {
+      "names": [
+        "google",
+        "pixel",
+        "nothing",
+        "generic"
+      ],
+      "extra": {}
+    }
+  }
+}

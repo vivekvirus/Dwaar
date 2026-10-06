@@ -1,0 +1,581 @@
+{
+ "set": "classification-synthetic-v0",
+ "prd_minimum": "500 labelled tickets per language",
+ "gate": "macro-F1 >= 0.90; emergency false negatives reviewed separately",
+ "status": "scaffold: 81 of 1500 cases authored; labelled by the build team; circular for the simulator (same author as its rules)",
+ "annotator_agreement": {
+  "annotators": 1,
+  "method": "single author (build team)",
+  "cohens_kappa": null,
+  "status": "not_measured"
+ },
+ "cases": [
+  {
+   "id": "cls-0001",
+   "lang": "en",
+   "text": "Water leaking from the pipe under the kitchen sink",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0002",
+   "lang": "en",
+   "text": "The tap in the bathroom is leaking all day",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0003",
+   "lang": "en",
+   "text": "Drain is blocked and sewage smell near the toilet",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0004",
+   "lang": "en",
+   "text": "The switch board in the living room is not working",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0005",
+   "lang": "en",
+   "text": "Wiring near the meter box looks loose",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0006",
+   "lang": "en",
+   "text": "Power cut only in my flat since morning",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0007",
+   "lang": "en",
+   "text": "Lift is making a grinding noise",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0008",
+   "lang": "en",
+   "text": "The lift door does not close properly",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0009",
+   "lang": "en",
+   "text": "Lift stops between floors sometimes",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0010",
+   "lang": "en",
+   "text": "A stranger's car is parked in my slot",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0011",
+   "lang": "en",
+   "text": "Visitor parking is always full of resident bikes",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0012",
+   "lang": "en",
+   "text": "Parking line markings have faded",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0013",
+   "lang": "en",
+   "text": "Garbage is not collected from the dustbin",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0014",
+   "lang": "en",
+   "text": "The staircase cleaning has not happened this week",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0015",
+   "lang": "en",
+   "text": "Dirty floor near the lobby",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0016",
+   "lang": "en",
+   "text": "Loud music from the party next door at midnight",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0017",
+   "lang": "en",
+   "text": "Construction noise continues after 9 pm",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0018",
+   "lang": "en",
+   "text": "Neighbours shouting and noise every night",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0019",
+   "lang": "en",
+   "text": "A crack has appeared in the bedroom wall",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0020",
+   "lang": "en",
+   "text": "Paint is peeling and seepage on the ceiling",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0021",
+   "lang": "en",
+   "text": "Tiles in the passage wall are loose",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0022",
+   "lang": "en",
+   "text": "A stranger entered the building without the guard noticing",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0023",
+   "lang": "en",
+   "text": "Gate light is off and security is lax",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0024",
+   "lang": "en",
+   "text": "Theft of a bicycle from the podium",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0025",
+   "lang": "en",
+   "text": "There is smoke and fire in the electrical room",
+   "category": "electrical",
+   "emergency": true
+  },
+  {
+   "id": "cls-0026",
+   "lang": "en",
+   "text": "Strong gas smell in the corridor",
+   "category": "other",
+   "emergency": true
+  },
+  {
+   "id": "cls-0027",
+   "lang": "en",
+   "text": "Someone is stuck in the lift",
+   "category": "lift",
+   "emergency": true
+  },
+  {
+   "id": "cls-0028",
+   "lang": "hi",
+   "text": "रसोई के सिंक के नीचे पाइप से पानी लीक हो रहा है",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0029",
+   "lang": "hi",
+   "text": "बाथरूम का नल पूरे दिन टपक रहा है",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0030",
+   "lang": "hi",
+   "text": "नाली जाम है और टॉयलेट के पास बदबू आ रही है",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0031",
+   "lang": "hi",
+   "text": "बैठक की स्विच बोर्ड काम नहीं कर रही",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0032",
+   "lang": "hi",
+   "text": "मीटर बॉक्स के पास तार ढीले दिख रहे हैं",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0033",
+   "lang": "hi",
+   "text": "सुबह से सिर्फ मेरे फ्लैट में बिजली नहीं है",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0034",
+   "lang": "hi",
+   "text": "लिफ्ट से घिसने की आवाज आ रही है",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0035",
+   "lang": "hi",
+   "text": "लिफ्ट का दरवाज़ा ठीक से बंद नहीं होता",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0036",
+   "lang": "hi",
+   "text": "लिफ्ट कभी कभी बीच में रुक जाती है",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0037",
+   "lang": "hi",
+   "text": "मेरी पार्किंग जगह पर किसी की गाड़ी खड़ी है",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0038",
+   "lang": "hi",
+   "text": "विज़िटर पार्किंग हमेशा बाइक से भरी रहती है",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0039",
+   "lang": "hi",
+   "text": "पार्किंग की लाइनें मिट गई हैं",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0040",
+   "lang": "hi",
+   "text": "डस्टबिन से कचरा नहीं उठाया गया",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0041",
+   "lang": "hi",
+   "text": "इस हफ्ते सीढ़ियों की सफाई नहीं हुई",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0042",
+   "lang": "hi",
+   "text": "लॉबी के पास फर्श गंदा है",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0043",
+   "lang": "hi",
+   "text": "आधी रात को पड़ोस की पार्टी में तेज़ संगीत",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0044",
+   "lang": "hi",
+   "text": "रात 9 बजे के बाद भी निर्माण का शोर",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0045",
+   "lang": "hi",
+   "text": "हर रात पड़ोसियों का शोर",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0046",
+   "lang": "hi",
+   "text": "शयनकक्ष की दीवार में दरार आ गई है",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0047",
+   "lang": "hi",
+   "text": "छत पर पेंट उखड़ रहा है और सीलन है",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0048",
+   "lang": "hi",
+   "text": "गलियारे की दीवार की टाइलें ढीली हैं",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0049",
+   "lang": "hi",
+   "text": "एक अजनबी गार्ड के बिना देखे इमारत में घुस गया",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0050",
+   "lang": "hi",
+   "text": "गेट की लाइट बंद है और सुरक्षा ढीली है",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0051",
+   "lang": "hi",
+   "text": "पोडियम से साइकिल की चोरी हुई",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0052",
+   "lang": "hi",
+   "text": "बिजली के कमरे में धुआं और आग है",
+   "category": "electrical",
+   "emergency": true
+  },
+  {
+   "id": "cls-0053",
+   "lang": "hi",
+   "text": "गलियारे में गैस की तेज़ गंध है",
+   "category": "other",
+   "emergency": true
+  },
+  {
+   "id": "cls-0054",
+   "lang": "hi",
+   "text": "कोई लिफ्ट में फंस गया है",
+   "category": "lift",
+   "emergency": true
+  },
+  {
+   "id": "cls-0055",
+   "lang": "mr",
+   "text": "स्वयंपाकघरातील पाईपमधून पाणी गळती होत आहे",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0056",
+   "lang": "mr",
+   "text": "बाथरूमचा नळ दिवसभर गळत आहे",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0057",
+   "lang": "mr",
+   "text": "नाली तुंबली आहे आणि शौचालयाजवळ दुर्गंधी आहे",
+   "category": "plumbing",
+   "emergency": false
+  },
+  {
+   "id": "cls-0058",
+   "lang": "mr",
+   "text": "हॉलमधील स्विच बोर्ड चालत नाही",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0059",
+   "lang": "mr",
+   "text": "मीटर बॉक्सजवळ तार सैल दिसत आहेत",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0060",
+   "lang": "mr",
+   "text": "सकाळपासून फक्त माझ्या फ्लॅटमध्ये वीज नाही",
+   "category": "electrical",
+   "emergency": false
+  },
+  {
+   "id": "cls-0061",
+   "lang": "mr",
+   "text": "लिफ्टमधून घासल्याचा आवाज येतो",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0062",
+   "lang": "mr",
+   "text": "लिफ्टचा दरवाजा नीट बंद होत नाही",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0063",
+   "lang": "mr",
+   "text": "लिफ्ट कधी कधी मध्येच थांबते",
+   "category": "lift",
+   "emergency": false
+  },
+  {
+   "id": "cls-0064",
+   "lang": "mr",
+   "text": "माझ्या पार्किंगच्या जागी दुसऱ्याची गाडी उभी आहे",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0065",
+   "lang": "mr",
+   "text": "पाहुण्यांची पार्किंग नेहमी बाईकने भरलेली असते",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0066",
+   "lang": "mr",
+   "text": "पार्किंगच्या रेषा पुसल्या आहेत",
+   "category": "parking",
+   "emergency": false
+  },
+  {
+   "id": "cls-0067",
+   "lang": "mr",
+   "text": "कचरा कुंडीतून कचरा उचलला गेला नाही",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0068",
+   "lang": "mr",
+   "text": "या आठवड्यात जिन्याची स्वच्छता झाली नाही",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0069",
+   "lang": "mr",
+   "text": "लॉबीजवळ फरशी घाणेरडी आहे",
+   "category": "housekeeping",
+   "emergency": false
+  },
+  {
+   "id": "cls-0070",
+   "lang": "mr",
+   "text": "मध्यरात्री शेजारच्या पार्टीत मोठे संगीत",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0071",
+   "lang": "mr",
+   "text": "रात्री ९ नंतरही बांधकामाचा गोंगाट",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0072",
+   "lang": "mr",
+   "text": "दररोज रात्री शेजाऱ्यांचा आवाज",
+   "category": "noise",
+   "emergency": false
+  },
+  {
+   "id": "cls-0073",
+   "lang": "mr",
+   "text": "बेडरूमच्या भिंतीला तडा गेला आहे",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0074",
+   "lang": "mr",
+   "text": "छतावर रंग उखडत आहे आणि ओलावा आहे",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0075",
+   "lang": "mr",
+   "text": "पॅसेजच्या भिंतीच्या फरशा सैल आहेत",
+   "category": "civil",
+   "emergency": false
+  },
+  {
+   "id": "cls-0076",
+   "lang": "mr",
+   "text": "एक अनोळखी व्यक्ती गार्डला न दिसता इमारतीत शिरली",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0077",
+   "lang": "mr",
+   "text": "गेटचा दिवा बंद आहे आणि सुरक्षा ढिसाळ आहे",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0078",
+   "lang": "mr",
+   "text": "पोडियममधून सायकलची चोरी झाली",
+   "category": "security",
+   "emergency": false
+  },
+  {
+   "id": "cls-0079",
+   "lang": "mr",
+   "text": "इलेक्ट्रिक रूममध्ये धूर आणि आग आहे",
+   "category": "electrical",
+   "emergency": true
+  },
+  {
+   "id": "cls-0080",
+   "lang": "mr",
+   "text": "कॉरिडॉरमध्ये गॅसचा तीव्र वास आहे",
+   "category": "other",
+   "emergency": true
+  },
+  {
+   "id": "cls-0081",
+   "lang": "mr",
+   "text": "कोणीतरी लिफ्टमध्ये अडकले आहे",
+   "category": "lift",
+   "emergency": true
+  }
+ ]
+}

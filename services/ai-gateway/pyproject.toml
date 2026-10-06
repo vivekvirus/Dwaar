@@ -9,7 +9,14 @@ dependencies = [
   "uvicorn[standard]>=0.30",
   "pydantic>=2.7",
   "httpx>=0.27",
+  "jsonschema>=4.21",
+  "pyyaml>=6.0",
 ]
+
+[project.optional-dependencies]
+# The official SDK is OPTIONAL: the Anthropic adapter is disabled unless DWAAR_AI_ANTHROPIC_API_KEY is set AND this extra is installed
+# (the provider registry reports "not configured: <missing dependency>" to authorised admins otherwise).
+anthropic = ["anthropic>=0.40"]
 
 [tool.uv.sources]
 dwaar-common = { workspace = true }
@@ -20,3 +27,5 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["dwaar_ai_gateway"]
+
+# NOTE: the versioned prompt files and evaluation sets live in packages/prompts (repository files, AI-SYS-07); DWAAR_PROMPTS_DIR overrides.

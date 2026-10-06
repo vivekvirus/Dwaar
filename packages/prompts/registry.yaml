@@ -1,0 +1,13 @@
+# Prompt registry (AI-SYS-07). One entry per model-backed feature: the ACTIVE version, an optional CANARY version with a rollout
+# percentage (society bucket = sha256(society_id) mod 100), and nothing else. A per-society or per-feature ROLLBACK needs no
+# deploy: the API stores a version pin / disabled state in the database (ai_feature_controls) which overrides this file.
+# A candidate version is promoted only after `python -m dwaar_ai_gateway.evals.regression` passes (it prints that targets are release
+# gates, NOT achieved results, and that the simulator provider measures no model quality).
+registry_version: 1
+features:
+  AI-R07: {dir: translation, active: v1, canary: null, canary_percent: 0}
+  AI-C12: {dir: poll_wording, active: v1, canary: null, canary_percent: 0}
+  AI-C01: {dir: notice_drafter, active: v1, canary: null, canary_percent: 0}
+  AI-R02: {dir: voice_complaint, active: v1, canary: null, canary_percent: 0}
+  AI-F01: {dir: ticket_triage, active: v1, canary: null, canary_percent: 0}
+  AI-G08: {dir: shift_handover, active: v1, canary: null, canary_percent: 0}

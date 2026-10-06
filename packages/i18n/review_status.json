@@ -8,11 +8,25 @@
     "notifications",
     "visitor",
     "consent",
-    "finance"
+    "finance",
+    "ai",
+    "ops",
+    "community",
+    "staff"
   ],
   "locales": {
     "en": {
+      "ai": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
       "common": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "community": {
         "machine_drafted": false,
         "human_reviewed": false,
         "reviewer": null
@@ -47,7 +61,22 @@
         "human_reviewed": false,
         "reviewer": null
       },
+      "parcels": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
       "resident": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "shifts": {
+        "machine_drafted": false,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "staff": {
         "machine_drafted": false,
         "human_reviewed": false,
         "reviewer": null
@@ -64,7 +93,17 @@
       }
     },
     "hi": {
+      "ai": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
       "common": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "community": {
         "machine_drafted": true,
         "human_reviewed": false,
         "reviewer": null
@@ -99,7 +138,22 @@
         "human_reviewed": false,
         "reviewer": null
       },
+      "parcels": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
       "resident": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "shifts": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "staff": {
         "machine_drafted": true,
         "human_reviewed": false,
         "reviewer": null
@@ -116,7 +170,17 @@
       }
     },
     "mr": {
+      "ai": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
       "common": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "community": {
         "machine_drafted": true,
         "human_reviewed": false,
         "reviewer": null
@@ -151,7 +215,22 @@
         "human_reviewed": false,
         "reviewer": null
       },
+      "parcels": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
       "resident": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "shifts": {
+        "machine_drafted": true,
+        "human_reviewed": false,
+        "reviewer": null
+      },
+      "staff": {
         "machine_drafted": true,
         "human_reviewed": false,
         "reviewer": null
