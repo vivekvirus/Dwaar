@@ -82,6 +82,9 @@ def me(
     cfg, device = _cfg(request), signed.device
     db: Database = request.app.state.db
     with db.app_tx(_ctx(device, signed.request_id)) as conn:
+        seen = conn.execute(
+            text("SELECT last_seen_at FROM devices WHERE id = :d"), {"d": device.id}
+        ).scalar_one()
         _touch(conn, device, cfg)
         _ensure_state(conn, device)
         latest = latest_snapshot(conn)
@@ -101,7 +104,7 @@ def me(
             "state": device.state,
             "key_id": device.key_id,
             "simulation": device.simulation,
-            "last_seen_at": device.last_seen_at,
+            "last_seen_at": seen,
         },
         "policy": {
             "latest_seq": latest["seq"] if latest else 0,

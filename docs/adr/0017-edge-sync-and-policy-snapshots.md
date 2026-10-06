@@ -5,7 +5,7 @@
 - Deciders: Viz (owner), build team (slice 3, backend)
 - Related: PRD 9.3 (EDGE-01..10, authority split, outage runbook), 9.2 (GATE-05/06/07/14), 12.1 / 12.3 / 12.4, 7.4 (offline ordering), 13 (edge
   policy publisher), 14 (NFR-02..10), 16 (AT-05..AT-08), Appendix C; INV-01, INV-03, INV-07; ADR-0004 (RLS), ADR-0005 (audit/outbox), ADR-0006
-  (registry), ADR-0013 (visits); code: `services/api/dwaar_api/modules/edge/`, migrations `0300-0312`, seed step `s450_edge.py`; contract:
+  (registry), ADR-0013 (visits); code: `services/api/dwaar_api/modules/edge/`, migrations `0300-0313`, seed step `s450_edge.py`; contract:
   `docs/contracts/edge-sync.md`; tests: `tests/integration/edge/`
 
 ## Context
@@ -20,9 +20,11 @@ The edge agent (`services/edge`) is built in parallel against `docs/contracts/ed
 ### 1. Device authentication: per-device Ed25519 request signature (not mTLS)
 
 Each request carries `X-Dwaar-Device`, `X-Dwaar-Timestamp` (+-120 s) and `X-Dwaar-Signature` over `METHOD \n PATH?QUERY \n TIMESTAMP \n sha256(body)`.
-The device row (slice 2, public key at enrolment) is read on **every** request through the `SECURITY DEFINER` function `edge_device_for_auth`
-(migration 0312; the society is not known before the lookup and every society table is FORCE RLS), so revocation is immediate and nothing is
-cached. All authentication failures are one identical 401; a valid signature from a pending/rejected/revoked device is 403 with no data. A per-IP
+The device's public key (slice 2, at enrolment) is read on **every** request through the reviewed `SECURITY DEFINER` function
+`edge.device_for_auth` over `edge.device_directory` (migration 0312). The society is not known before the lookup and every society table is FORCE
+RLS, so the directory follows the identity module's pattern (`iam.person_access_index`): a global index with `society_ref` (not `society_id`), kept in
+step by triggers on `devices` in the same transaction as every change, with NO table privilege for any runtime role. Nothing is cached, so a
+revocation is visible to the very next request (tested). All authentication failures are one identical 401; a valid signature from a pending/rejected/revoked device is 403 with no data. A per-IP
 bucket guards the pre-authentication path, a per-device bucket the rest (`dwaar_rate_limit_take`). Logs carry a reason code and a hash of the
 claimed device id, never a header, a signature, a key or a timestamp. **Not claimed:** mTLS with per-device certificates (EDGE-09) is a
 deployment-layer control; a captured request can replay inside the 120 s window, which is harmless because both endpoints are idempotent
@@ -90,7 +92,8 @@ an entry with a larger uncertainty is recorded but **not applied** (`rejected_tr
 ### 5. Exceptions and migrations that touch slice 2 tables
 
 Migration 0311 replaces `exceptions_kind_check` to add `clock_implausible` and `edge_quarantine` (all slice 2 kinds unchanged). Migration 0312 adds
-a SELECT policy on `devices` for `dwaar_owner` that is only active while the lookup function runs. No visits source file was edited.
+the `edge` schema, the directory and an AFTER trigger on `devices` (no RLS policy of `devices` changes; the existing catalog guards stay green). No visits
+source file was edited.
 
 ### 6. Metrics for OBS-02 (`metrics.py`)
 

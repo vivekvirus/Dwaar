@@ -10,8 +10,9 @@ brief was ambiguous the cloud behaviour below is the contract.
 2. Invitation entries in the policy manifest carry one **extra** key `windows: [{start, end}]` (explicit ISO-8601 windows, ordered). A
    recurring pass is a list of windows; `window_start`/`window_end` are only the outer bounds. An edge that honours only the outer bounds
    would accept a milk-vendor pass at 15:00. Edges MUST use `windows` when present.
-3. Each outcome carries `index` (position in the request `events` array) and, when relevant, `reason`, `original_status`, `exception_id`,
-   `access_event_recorded`. Unknown outcome keys must be ignored.
+3. Each outcome carries `index` (position in the request `events` array) and `seq`, and, when relevant, `reason`, `original_status`,
+   `original_reason`, `replayed`, `exception_id`, `access_event_recorded`, `outcome` (the transition note) and `clock_flag`. Unknown outcome keys
+   must be ignored.
 4. `GET /v1/edge/keys` (device-signed) lists the policy issuer public keys (`active` and `retired`) so an edge can verify snapshots and
    survive key rotation. A real deployment pins the first key at provisioning; local development derives it (section 8).
 5. `GET /v1/edge/me` (device-signed) returns the device record, society, key id, policy cursor, sync cursor and `server_time` (the edge may
@@ -178,7 +179,7 @@ Body 1 MiB, 500 events, per-device token bucket (`DWAAR_EDGE_RATE_CAPACITY`, `DW
 
 Everything below is derived from public labels and is **never** accepted outside `DWAAR_ENV=local|test`.
 
-* Seed society `mh` has an edge gateway device named `Main gate edge gateway` (active, gate `Main Gate`, `simulation=true`).
+* `DWAAR_SEED_EDGE=1 make seed` (opt-in; see ADR-0017 7) gives seed society `mh` an edge gateway device named `Main gate edge gateway` (active, gate `Main Gate`, `simulation=true`), society `ka` one named `Tower gate edge gateway`, two standing rules and the first signed snapshot.
   `python -m dwaar_api.modules.edge.localdev` prints its ids, the Ed25519 seed (`sha256(b"dwaar-local-edge-device|mh:Main gate edge gateway")`,
   base64url) and the policy issuer public key (`sha256(b"dwaar-local-edge-policy-issuer")` as seed).
 * Production: `DWAAR_EDGE_POLICY_SIGNING_KEY` (seed, b64url), `DWAAR_EDGE_POLICY_KEY_ID`, `DWAAR_EDGE_RETIRED_KEYS` (`id:pubkey,...`),

@@ -164,7 +164,7 @@ def test_device_lookup_function_is_reviewed_narrow_and_not_a_backdoor(ew: EdgeWo
     def can_execute(role: str) -> bool:
         return bool(
             ew.rows(
-                "SELECT has_function_privilege(%s, 'edge_device_for_auth(uuid)', 'EXECUTE')",
+                "SELECT has_function_privilege(%s, 'edge.device_for_auth(uuid)', 'EXECUTE')",
                 (role,),
             )[0][0]
         )
@@ -172,35 +172,77 @@ def test_device_lookup_function_is_reviewed_narrow_and_not_a_backdoor(ew: EdgeWo
     assert (
         can_execute("dwaar_app") and not can_execute("dwaar_worker") and not can_execute("public")
     )
-    meta = ew.rows(
-        "SELECT prosecdef, proconfig FROM pg_proc WHERE proname = 'edge_device_for_auth'"
-    )[0]
+    meta = ew.rows("SELECT prosecdef, proconfig FROM pg_proc WHERE proname = 'device_for_auth'")[0]
     assert meta[0] is True and any("search_path" in c for c in meta[1])
     with ew.idh.db.app_conn() as conn:  # no society context at all
         row = conn.execute(
-            "SELECT society_id, state, key_id FROM edge_device_for_auth(%s)", (dev.device_id,)
+            "SELECT society_id, state, key_id FROM edge.device_for_auth(%s)", (dev.device_id,)
         ).fetchone()
         assert row is not None and row[0] == ew.soc.id and row[1] == "active"
         assert conn.execute(
-            "SELECT count(*) FROM edge_device_for_auth(%s)", (uuid.uuid4(),)
+            "SELECT count(*) FROM edge.device_for_auth(%s)", (uuid.uuid4(),)
         ).fetchone() == (0,)
-        # the function leaves the door shut behind it, and the flag is useless to the application role
-        assert conn.execute("SELECT current_setting('dwaar.edge_auth', true)").fetchone() in {
-            ("",),
-            (None,),
-        }
-        conn.execute("SELECT set_config('dwaar.edge_auth', '1', true)")
-        assert conn.execute("SELECT count(*) FROM devices").fetchone() == (0,)
         cols = [
             d.name
             for d in conn.execute(
-                "SELECT * FROM edge_device_for_auth(%s)", (dev.device_id,)
+                "SELECT * FROM edge.device_for_auth(%s)", (dev.device_id,)
             ).description
             or []
         ]
+        assert conn.execute("SELECT count(*) FROM devices").fetchone() == (
+            0,
+        )  # the function is the only door, and it is a narrow one
     assert (
         "requested_by" not in cols and "capabilities" not in cols
     )  # nothing beyond what authentication needs
+
+
+def test_the_directory_has_no_table_privilege_for_runtime_roles_and_follows_every_device_change(
+    ew: EdgeWorld,
+) -> None:
+    dev = ew.edge_device(approve=False)
+
+    def priv(role: str, kind: str) -> bool:
+        return bool(
+            ew.rows("SELECT has_table_privilege(%s, 'edge.device_directory', %s)", (role, kind))[0][
+                0
+            ]
+        )
+
+    assert not any(
+        priv(r, k)
+        for r in ("dwaar_app", "dwaar_worker", "public")
+        for k in ("SELECT", "INSERT", "UPDATE", "DELETE")
+    )
+    with ew.idh.db.app_conn() as conn, pytest.raises(psycopg.errors.InsufficientPrivilege):
+        conn.execute("SELECT * FROM edge.device_directory")
+
+    def state() -> str:
+        return str(
+            ew.rows(
+                "SELECT state FROM edge.device_directory WHERE device_id = %s", (dev.device_id,)
+            )[0][0]
+        )
+
+    assert state() == "pending_approval"
+    version = ew.device_version(dev.device_id)
+    ew.call(
+        ew.guard_sup,
+        "POST",
+        ew.s(f"devices/{dev.device_id}/decision"),
+        json={"decision": "approve", "expected_version": version},
+    )
+    assert state() == "active"
+    ew.revoke_device(dev)
+    assert (
+        state() == "revoked"
+    )  # the same transaction that revoked the device changed what authentication sees
+    # a row for every device, with the same key as the device record
+    mismatches = ew.rows(
+        "SELECT count(*) FROM devices d LEFT JOIN edge.device_directory x ON x.device_id = d.id"
+        " WHERE x.device_id IS NULL OR x.public_key <> d.public_key OR x.state <> d.state OR x.society_ref <> d.society_id"
+    )[0][0]
+    assert mismatches == 0
 
 
 def test_the_application_role_cannot_forge_a_snapshot_for_another_society(ew: EdgeWorld) -> None:

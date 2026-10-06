@@ -15,7 +15,6 @@ the reason; the reason goes to the log as a code next to a keyed-free hash of th
 
 from __future__ import annotations
 
-import datetime as dt
 import hashlib
 import logging
 import uuid
@@ -64,7 +63,6 @@ class EdgeDevice:
     state: str
     key_id: str
     simulation: bool
-    last_seen_at: dt.datetime | None
     public_key: str
 
 
@@ -162,7 +160,7 @@ def authenticate(request: Request, body: bytes) -> EdgeDevice:
         raise RateLimited(retry_after=pre.retry_after_seconds)
     with db.app_tx() as conn:
         row = (
-            conn.execute(text("SELECT * FROM edge_device_for_auth(:d)"), {"d": device_id})
+            conn.execute(text("SELECT * FROM edge.device_for_auth(:d)"), {"d": device_id})
             .mappings()
             .first()
         )
@@ -213,7 +211,6 @@ def authenticate(request: Request, body: bytes) -> EdgeDevice:
         state=row["state"],
         key_id=row["key_id"],
         simulation=bool(row["simulation"]),
-        last_seen_at=row["last_seen_at"],
         public_key=row["public_key"],
     )
 
