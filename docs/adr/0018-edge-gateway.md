@@ -166,3 +166,10 @@ protection would be asked to prove), Python 3.12, loopback networking, one proce
 - The Android terminal UI and Room cache (a later slice) mirror `StandaloneTerminal`; its behaviour here is the specification, not the app.
 - Fresh remote approval itself (household push cascade) is a cloud flow; the edge only provides the explicit fallback path.
 - Backups: `backup()` and `backup_rotating()` exist and are tested; scheduling them is a deployment task.
+
+## Update (slice 3 integration, ADR-0019)
+
+"Real cloud wiring" is no longer a gap: the gateway runs against the real API (`tests/integration/edge_e2e/`). `GET /v1/edge/keys` IS used, once, at commissioning
+(`python -m dwaar_edge.provision`), to pin the issuer and guest-pass keys; the gateway still verifies snapshots against pinned keys only. Changes made on this side: `Retry-After` is honoured
+(clamped to one hour), a revoked pass no longer reads as fully used (`Invitation.cloud_used`), standalone observations carry the pass's `max_uses` so an expired pass is not judged as a
+single-use pass, and `__main__` documents the society-gateway enrolment rule (no gate binding). The "Integration notes for the cloud side" above are resolved by ADR-0019 decision 1.

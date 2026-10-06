@@ -13,7 +13,7 @@ JS_PROJECTS := $(wildcard apps/*/package.json packages/contracts/package.json pa
 API_PORT ?= $(or $(DWAAR_API_PORT),8000)
 MILESTONE ?=
 
-.PHONY: help setup db-up db-down db-reset migrate seed api lint format typecheck test acceptance trace
+.PHONY: help setup db-up db-down db-reset migrate seed api worker scheduler lint format typecheck test acceptance trace
 
 help: ## list targets
 	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | sed -E 's/:.*##/\t/' | sort
@@ -40,6 +40,12 @@ seed: ## load synthetic demo data (DWAAR_ENV=local); says so if not implemented 
 
 api: ## run the API with reload on $(API_PORT); no raw uvicorn access log (OBS-01); Ctrl-C to stop
 	$(UV_RUN) python tools/dev/devenv.py exec -- uvicorn dwaar_api.main:app --reload --no-access-log --host 127.0.0.1 --port $(API_PORT)
+
+worker: ## run the Dramatiq workers (policy publisher, visits sweep); needs Redis at DWAAR_REDIS_URL; Ctrl-C to stop
+	$(UV_RUN) python tools/dev/devenv.py exec -- dramatiq dwaar_worker.app --processes 1 --threads 2
+
+scheduler: ## send the periodic worker triggers (policy publish, visits sweep); needs Redis; Ctrl-C to stop
+	$(UV_RUN) python tools/dev/devenv.py exec -- python -m dwaar_worker
 
 lint: ## ruff check + format check
 	$(UV_RUN) ruff check .

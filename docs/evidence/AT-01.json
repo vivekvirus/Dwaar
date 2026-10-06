@@ -7,7 +7,7 @@
     "outcome": "passed",
     "message": null
   },
-  "commit": "041121a8d85ed2bda2ffd48c72714c36810756b9",
+  "commit": "1b15ab928a56940de88483579ca7116e1cb65bfe",
   "environment": {
     "python": "3.12.3",
     "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
@@ -15,7 +15,7 @@
     "DWAAR_ENV": "unset",
     "simulation": true,
     "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
-    "tree_dirty": false
+    "tree_dirty": true
   },
   "dataset": "dwaar-seed-v1: two synthetic societies (Maharashtra CHS 3 blocks/240 units, Karnataka association 2 blocks/180 units), invented people on fictional numbers +91 99999 0nnnn, loaded by python -m dwaar_api.seed",
   "trace": {
@@ -148,6 +148,24 @@
       "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/exceptions-vikram]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/exceptions/{exception_id}/transition-farhan]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/exceptions/{exception_id}/transition-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/edge/policy/publish-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/edge/policy/publish-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/policy-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/policy-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/status-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/status-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine0-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine0-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine1-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine1-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules0-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules0-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules1-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules1-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/standing-rules-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/standing-rules-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/standing-rules/{rule_id}-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/standing-rules/{rule_id}-vikram]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-ka.secretary]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-farhan]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-vikram]",
@@ -277,6 +295,18 @@
       "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/exceptions/{exception_id}/transition-ka.secretary]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/exceptions/{exception_id}/transition-farhan]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/exceptions/{exception_id}/transition-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/edge/quarantine-ka.secretary]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/edge/quarantine-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/edge/quarantine-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/standing-rules-ka.secretary]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/standing-rules-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/standing-rules-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/standing-rules-ka.secretary]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/standing-rules-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/standing-rules-vikram]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/standing-rules/{rule_id}-ka.secretary]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/standing-rules/{rule_id}-farhan]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/standing-rules/{rule_id}-vikram]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_b_lists_contain_no_a_object[ka.secretary]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_b_lists_contain_no_a_object[farhan]",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_b_lists_contain_no_a_object[vikram]",
@@ -291,1372 +321,1552 @@
       "tests/acceptance/test_at01_cross_society_isolation.py::test_database_rls_hides_a_from_b_on_every_society_table",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_database_refuses_writes_and_cross_society_references",
       "tests/acceptance/test_at01_cross_society_isolation.py::test_database_identity_internals_are_not_readable_by_the_runtime_role",
-      "tests/acceptance/test_at01_cross_society_isolation.py::test_session_user_is_the_restricted_role"
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_session_user_is_the_restricted_role",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_device_signed_routes_serve_a_device_only_its_own_society",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_a_device_cannot_authenticate_as_another_societys_device_or_use_human_routes",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_a_device_cannot_write_into_the_other_society_and_foreign_entities_or_places_change_nothing_there[mh]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_a_device_cannot_write_into_the_other_society_and_foreign_entities_or_places_change_nothing_there[ka]",
+      "tests/acceptance/test_at01_cross_society_isolation.py::test_a_revoked_device_loses_access_at_once_and_only_that_device"
     ],
-    "duration_s": 57.9812,
+    "duration_s": 89.4859,
     "tests": [
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_route_inventory",
         "outcome": "passed",
-        "duration_s": 6.105
+        "duration_s": 6.0041
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_files_exports_search_and_ai_do_not_exist_yet",
         "outcome": "passed",
-        "duration_s": 0.4923
+        "duration_s": 0.6518
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.2202
+        "duration_s": 0.2557
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.2148
+        "duration_s": 0.2666
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/configuration-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1503
+        "duration_s": 0.1878
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/configuration-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1405
+        "duration_s": 0.1816
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/feature-flags-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1527
+        "duration_s": 0.1975
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/feature-flags-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1544
+        "duration_s": 0.2095
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/quotas-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1612
+        "duration_s": 0.1991
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/quotas-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1495
+        "duration_s": 0.1958
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PATCH {society_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.15
+        "duration_s": 0.2067
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PATCH {society_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1527
+        "duration_s": 0.1912
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PUT {society_id}/feature-flags/{flag_key}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1671
+        "duration_s": 0.182
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PUT {society_id}/feature-flags/{flag_key}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1753
+        "duration_s": 0.1962
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PUT {society_id}/quotas-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1634
+        "duration_s": 0.1784
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PUT {society_id}/quotas-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1606
+        "duration_s": 0.1926
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/blocks-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1553
+        "duration_s": 0.1828
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/blocks-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1594
+        "duration_s": 0.2031
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/blocks-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1621
+        "duration_s": 0.1895
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/blocks-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1645
+        "duration_s": 0.1846
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/blocks/{block_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1603
+        "duration_s": 0.193
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/blocks/{block_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1729
+        "duration_s": 0.2089
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PATCH {society_id}/blocks/{block_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1677
+        "duration_s": 0.1995
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PATCH {society_id}/blocks/{block_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1683
+        "duration_s": 0.1762
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/blocks/{block_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1591
+        "duration_s": 0.2001
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/blocks/{block_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1565
+        "duration_s": 0.1957
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1713
+        "duration_s": 0.2015
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1728
+        "duration_s": 0.2059
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/units-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1603
+        "duration_s": 0.1797
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/units-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1578
+        "duration_s": 0.2071
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units/{unit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1643
+        "duration_s": 0.1968
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units/{unit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1514
+        "duration_s": 0.1852
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PATCH {society_id}/units/{unit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1456
+        "duration_s": 0.1869
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PATCH {society_id}/units/{unit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1453
+        "duration_s": 0.1784
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/units/{unit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1637
+        "duration_s": 0.1828
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/units/{unit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1553
+        "duration_s": 0.2272
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/units:import-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1748
+        "duration_s": 0.2436
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/units:import-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1666
+        "duration_s": 0.2037
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/memberships0-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1798
+        "duration_s": 0.1865
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/memberships0-vikram]",
         "outcome": "passed",
-        "duration_s": 0.154
+        "duration_s": 0.2039
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/memberships1-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1677
+        "duration_s": 0.2073
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/memberships1-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1475
+        "duration_s": 0.197
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/verification-cases-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1534
+        "duration_s": 0.189
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/verification-cases-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1474
+        "duration_s": 0.1784
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/verification-cases/{case_id}/advance-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1445
+        "duration_s": 0.1857
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/verification-cases/{case_id}/advance-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1504
+        "duration_s": 0.1806
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/memberships/{membership_id}/dispute-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1524
+        "duration_s": 0.1994
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/memberships/{membership_id}/dispute-vikram]",
         "outcome": "passed",
-        "duration_s": 0.144
+        "duration_s": 0.1935
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/memberships/{membership_id}/holds-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1477
+        "duration_s": 0.2043
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/memberships/{membership_id}/holds-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1535
+        "duration_s": 0.1902
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/memberships/{membership_id}/holds-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1616
+        "duration_s": 0.1853
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/memberships/{membership_id}/holds-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1479
+        "duration_s": 0.1953
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/holds/{hold_id}/appeal-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1715
+        "duration_s": 0.2209
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/holds/{hold_id}/appeal-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1597
+        "duration_s": 0.2108
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/holds/{hold_id}/decide-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1457
+        "duration_s": 0.1967
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/holds/{hold_id}/decide-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1457
+        "duration_s": 0.1946
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/role-grants-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1577
+        "duration_s": 0.1737
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/role-grants-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1534
+        "duration_s": 0.1901
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/role-grants-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1471
+        "duration_s": 0.2228
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/role-grants-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1642
+        "duration_s": 0.1917
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/role-grants/{grant_id}/revoke-farhan]",
         "outcome": "passed",
-        "duration_s": 0.155
+        "duration_s": 0.1947
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/role-grants/{grant_id}/revoke-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1564
+        "duration_s": 0.2142
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gates-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1589
+        "duration_s": 0.2085
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gates-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1444
+        "duration_s": 0.2142
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/gates-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1336
+        "duration_s": 0.1917
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/gates-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1354
+        "duration_s": 0.1992
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gates/{gate_id}/lanes-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1414
+        "duration_s": 0.1947
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gates/{gate_id}/lanes-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1614
+        "duration_s": 0.2357
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/gates/{gate_id}/lanes-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1478
+        "duration_s": 0.1948
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/gates/{gate_id}/lanes-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1583
+        "duration_s": 0.1973
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gates/{gate_id}/recent-destinations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1412
+        "duration_s": 0.212
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gates/{gate_id}/recent-destinations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1452
+        "duration_s": 0.1968
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gate-policy-farhan]",
         "outcome": "passed",
-        "duration_s": 0.146
+        "duration_s": 0.1953
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/gate-policy-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1475
+        "duration_s": 0.1898
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PUT {society_id}/gate-policy-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1524
+        "duration_s": 0.1996
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[PUT {society_id}/gate-policy-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1527
+        "duration_s": 0.2152
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/devices-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1371
+        "duration_s": 0.2116
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/devices-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1338
+        "duration_s": 0.2191
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/devices-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1361
+        "duration_s": 0.212
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/devices-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1422
+        "duration_s": 0.2094
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/devices/{device_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1456
+        "duration_s": 0.2411
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/devices/{device_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1396
+        "duration_s": 0.2107
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/devices/{device_id}/decision-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1511
+        "duration_s": 0.2107
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/devices/{device_id}/decision-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1512
+        "duration_s": 0.2017
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/devices/{device_id}/revoke-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1463
+        "duration_s": 0.2135
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/devices/{device_id}/revoke-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1537
+        "duration_s": 0.2426
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/invitations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1638
+        "duration_s": 0.2207
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/invitations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1517
+        "duration_s": 0.2309
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/invitations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1457
+        "duration_s": 0.2267
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/invitations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1553
+        "duration_s": 0.2274
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/invitations/{invitation_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.139
+        "duration_s": 0.2005
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/invitations/{invitation_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1541
+        "duration_s": 0.2161
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE /v1/invitations/{invitation_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1595
+        "duration_s": 0.1948
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE /v1/invitations/{invitation_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1534
+        "duration_s": 0.2093
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/invitations/redeem-farhan]",
         "outcome": "passed",
-        "duration_s": 0.148
+        "duration_s": 0.1861
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/invitations/redeem-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1547
+        "duration_s": 0.1899
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1493
+        "duration_s": 0.1823
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1553
+        "duration_s": 0.1812
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET /v1/approval-requests/{request_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1585
+        "duration_s": 0.1818
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET /v1/approval-requests/{request_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1652
+        "duration_s": 0.1885
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests/{request_id}/decision-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1446
+        "duration_s": 0.1816
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests/{request_id}/decision-vikram]",
         "outcome": "passed",
-        "duration_s": 0.157
+        "duration_s": 0.2101
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests/{request_id}/reversal-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1506
+        "duration_s": 0.2191
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests/{request_id}/reversal-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1544
+        "duration_s": 0.1989
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests/{request_id}/cancel-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1488
+        "duration_s": 0.1896
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/approval-requests/{request_id}/cancel-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1489
+        "duration_s": 0.1799
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/approval-requests-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1517
+        "duration_s": 0.1777
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/approval-requests-vikram]",
         "outcome": "passed",
-        "duration_s": 0.145
+        "duration_s": 0.1763
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units/{unit_id}/destination-hint-farhan]",
         "outcome": "passed",
-        "duration_s": 0.16
+        "duration_s": 0.1831
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units/{unit_id}/destination-hint-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1665
+        "duration_s": 0.1873
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units/{unit_id}/visits-farhan]",
         "outcome": "passed",
-        "duration_s": 0.178
+        "duration_s": 0.2232
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/units/{unit_id}/visits-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1704
+        "duration_s": 0.208
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/visits-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1497
+        "duration_s": 0.1986
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/visits-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1477
+        "duration_s": 0.2071
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET /v1/visits/{visit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1428
+        "duration_s": 0.2001
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET /v1/visits/{visit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1652
+        "duration_s": 0.2025
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/visits/{visit_id}/observations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1546
+        "duration_s": 0.2202
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/visits/{visit_id}/observations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1619
+        "duration_s": 0.2053
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/visits/{visit_id}/stops-farhan]",
         "outcome": "passed",
-        "duration_s": 0.164
+        "duration_s": 0.201
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/visits/{visit_id}/stops-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1824
+        "duration_s": 0.2005
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/visits/{visit_id}/cancel-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1731
+        "duration_s": 0.1953
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/visits/{visit_id}/cancel-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1996
+        "duration_s": 0.2042
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/exceptions-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1916
+        "duration_s": 0.2046
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/exceptions-vikram]",
         "outcome": "passed",
-        "duration_s": 0.2049
+        "duration_s": 0.19
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/exceptions-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1744
+        "duration_s": 0.1952
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/exceptions-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1749
+        "duration_s": 0.1868
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/exceptions/{exception_id}/transition-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1821
+        "duration_s": 0.1934
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST /v1/exceptions/{exception_id}/transition-vikram]",
         "outcome": "passed",
-        "duration_s": 0.158
+        "duration_s": 0.1919
       },
       {
-        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-ka.secretary]",
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/edge/policy/publish-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1738
+        "duration_s": 0.1775
       },
       {
-        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-farhan]",
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/edge/policy/publish-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.1701
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/policy-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1899
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/policy-vikram]",
         "outcome": "passed",
         "duration_s": 0.1972
       },
       {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/status-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1996
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/status-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.1846
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine0-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1978
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine0-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.1945
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine1-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.194
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/edge/quarantine1-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.2203
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules0-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.2006
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules0-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.2003
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules1-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1925
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[GET {society_id}/standing-rules1-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.209
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/standing-rules-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1947
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[POST {society_id}/standing-rules-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.1847
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/standing-rules/{rule_id}-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.2022
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_non_member_gets_nothing_from_a_on_every_route[DELETE {society_id}/standing-rules/{rule_id}-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.1992
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-ka.secretary]",
+        "outcome": "passed",
+        "duration_s": 0.1983
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1933
+      },
+      {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/blocks/{block_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1637
+        "duration_s": 0.1967
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[PATCH {society_id}/blocks/{block_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1776
+        "duration_s": 0.1883
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[PATCH {society_id}/blocks/{block_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1725
+        "duration_s": 0.198
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[PATCH {society_id}/blocks/{block_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.175
+        "duration_s": 0.1835
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/blocks/{block_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.177
+        "duration_s": 0.2043
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/blocks/{block_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1487
+        "duration_s": 0.1916
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/blocks/{block_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1761
+        "duration_s": 0.184
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/units-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1617
+        "duration_s": 0.2068
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/units-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1467
+        "duration_s": 0.1815
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/units-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1486
+        "duration_s": 0.1727
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1513
+        "duration_s": 0.1883
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1518
+        "duration_s": 0.1694
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1402
+        "duration_s": 0.1693
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[PATCH {society_id}/units/{unit_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1529
+        "duration_s": 0.1872
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[PATCH {society_id}/units/{unit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1445
+        "duration_s": 0.1833
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[PATCH {society_id}/units/{unit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1352
+        "duration_s": 0.2004
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/units/{unit_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1581
+        "duration_s": 0.1957
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/units/{unit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1448
+        "duration_s": 0.1741
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/units/{unit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1463
+        "duration_s": 0.18
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/memberships-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1586
+        "duration_s": 0.1937
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/memberships-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1503
+        "duration_s": 0.1908
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/memberships-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1549
+        "duration_s": 0.18
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/verification-cases/{case_id}/advance-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.3089
+        "duration_s": 0.1908
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/verification-cases/{case_id}/advance-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1833
+        "duration_s": 0.1894
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/verification-cases/{case_id}/advance-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1645
+        "duration_s": 0.1873
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/memberships/{membership_id}/dispute-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1578
+        "duration_s": 0.1904
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/memberships/{membership_id}/dispute-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1652
+        "duration_s": 0.1777
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/memberships/{membership_id}/dispute-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1576
+        "duration_s": 0.1859
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/memberships/{membership_id}/holds-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1767
+        "duration_s": 0.1946
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/memberships/{membership_id}/holds-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1786
+        "duration_s": 0.1739
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/memberships/{membership_id}/holds-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1516
+        "duration_s": 0.1665
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/memberships/{membership_id}/holds-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1557
+        "duration_s": 0.1813
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/memberships/{membership_id}/holds-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1551
+        "duration_s": 0.1951
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/memberships/{membership_id}/holds-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1383
+        "duration_s": 0.1891
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/holds/{hold_id}/appeal-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1478
+        "duration_s": 0.2029
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/holds/{hold_id}/appeal-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1555
+        "duration_s": 0.1859
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/holds/{hold_id}/appeal-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1462
+        "duration_s": 0.1837
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/holds/{hold_id}/decide-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1797
+        "duration_s": 0.1884
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/holds/{hold_id}/decide-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1781
+        "duration_s": 0.1791
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/holds/{hold_id}/decide-vikram]",
         "outcome": "passed",
-        "duration_s": 0.165
+        "duration_s": 0.1923
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/role-grants-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1758
+        "duration_s": 0.2135
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/role-grants-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1491
+        "duration_s": 0.1713
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/role-grants-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1611
+        "duration_s": 0.1885
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/role-grants/{grant_id}/revoke-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1499
+        "duration_s": 0.1975
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/role-grants/{grant_id}/revoke-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1407
+        "duration_s": 0.1859
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/role-grants/{grant_id}/revoke-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1413
+        "duration_s": 0.1882
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/gates/{gate_id}/lanes-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1686
+        "duration_s": 0.2097
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/gates/{gate_id}/lanes-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1561
+        "duration_s": 0.2128
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/gates/{gate_id}/lanes-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1529
+        "duration_s": 0.1912
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/gates/{gate_id}/lanes-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1742
+        "duration_s": 0.211
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/gates/{gate_id}/lanes-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1519
+        "duration_s": 0.1877
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/gates/{gate_id}/lanes-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1552
+        "duration_s": 0.2244
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/gates/{gate_id}/recent-destinations-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1695
+        "duration_s": 0.2332
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/gates/{gate_id}/recent-destinations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1462
+        "duration_s": 0.2254
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/gates/{gate_id}/recent-destinations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1365
+        "duration_s": 0.1927
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1365
+        "duration_s": 0.2098
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1417
+        "duration_s": 0.2248
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1286
+        "duration_s": 0.2332
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/devices/{device_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1464
+        "duration_s": 0.2452
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/devices/{device_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1428
+        "duration_s": 0.2209
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/devices/{device_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1336
+        "duration_s": 0.2124
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices/{device_id}/decision-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1514
+        "duration_s": 0.2142
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices/{device_id}/decision-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1319
+        "duration_s": 0.2111
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices/{device_id}/decision-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1401
+        "duration_s": 0.2069
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices/{device_id}/revoke-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1503
+        "duration_s": 0.2199
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices/{device_id}/revoke-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1401
+        "duration_s": 0.2153
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/devices/{device_id}/revoke-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1526
+        "duration_s": 0.214
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/invitations-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.16
+        "duration_s": 0.2027
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/invitations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1521
+        "duration_s": 0.1996
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/invitations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1575
+        "duration_s": 0.193
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/invitations-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.145
+        "duration_s": 0.2106
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/invitations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1392
+        "duration_s": 0.2048
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/invitations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1453
+        "duration_s": 0.2068
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/invitations/{invitation_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1583
+        "duration_s": 0.1992
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/invitations/{invitation_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1572
+        "duration_s": 0.2126
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/invitations/{invitation_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1671
+        "duration_s": 0.2032
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE /v1/invitations/{invitation_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1478
+        "duration_s": 0.2218
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE /v1/invitations/{invitation_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1459
+        "duration_s": 0.2174
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE /v1/invitations/{invitation_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1504
+        "duration_s": 0.2199
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/invitations/redeem-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1367
+        "duration_s": 0.2118
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/invitations/redeem-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1467
+        "duration_s": 0.2012
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/invitations/redeem-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1493
+        "duration_s": 0.1912
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1449
+        "duration_s": 0.2015
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1354
+        "duration_s": 0.1895
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1294
+        "duration_s": 0.1983
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET /v1/approval-requests/{request_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1361
+        "duration_s": 0.1812
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET /v1/approval-requests/{request_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1529
+        "duration_s": 0.1964
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET /v1/approval-requests/{request_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1665
+        "duration_s": 0.2243
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/decision-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1486
+        "duration_s": 0.1831
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/decision-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1779
+        "duration_s": 0.2099
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/decision-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1658
+        "duration_s": 0.2039
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/reversal-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1426
+        "duration_s": 0.1997
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/reversal-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1552
+        "duration_s": 0.2059
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/reversal-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1515
+        "duration_s": 0.2199
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/cancel-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1334
+        "duration_s": 0.202
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/cancel-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1357
+        "duration_s": 0.2035
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/approval-requests/{request_id}/cancel-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1455
+        "duration_s": 0.1958
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/approval-requests-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1327
+        "duration_s": 0.2142
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/approval-requests-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1315
+        "duration_s": 0.1949
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/approval-requests-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1425
+        "duration_s": 0.2057
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}/destination-hint-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1335
+        "duration_s": 0.1934
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}/destination-hint-farhan]",
         "outcome": "passed",
-        "duration_s": 0.145
+        "duration_s": 0.1897
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}/destination-hint-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1484
+        "duration_s": 0.1777
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}/visits-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1478
+        "duration_s": 0.1922
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}/visits-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1458
+        "duration_s": 0.173
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/units/{unit_id}/visits-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1471
+        "duration_s": 0.1902
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/visits-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1516
+        "duration_s": 0.197
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/visits-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1421
+        "duration_s": 0.196
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/visits-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1374
+        "duration_s": 0.198
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET /v1/visits/{visit_id}-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1504
+        "duration_s": 0.2151
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET /v1/visits/{visit_id}-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1496
+        "duration_s": 0.2097
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET /v1/visits/{visit_id}-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1544
+        "duration_s": 0.1979
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/observations-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.143
+        "duration_s": 0.1948
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/observations-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1486
+        "duration_s": 0.1891
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/observations-vikram]",
         "outcome": "passed",
-        "duration_s": 0.144
+        "duration_s": 0.1904
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/stops-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1717
+        "duration_s": 0.202
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/stops-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1511
+        "duration_s": 0.2198
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/stops-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1422
+        "duration_s": 0.1884
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/cancel-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1433
+        "duration_s": 0.1907
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/cancel-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1362
+        "duration_s": 0.2157
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/visits/{visit_id}/cancel-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1454
+        "duration_s": 0.2405
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/exceptions-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1346
+        "duration_s": 0.2073
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/exceptions-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1385
+        "duration_s": 0.1968
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/exceptions-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1427
+        "duration_s": 0.1819
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/exceptions/{exception_id}/transition-ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.1541
+        "duration_s": 0.1984
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/exceptions/{exception_id}/transition-farhan]",
         "outcome": "passed",
-        "duration_s": 0.1419
+        "duration_s": 0.2099
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST /v1/exceptions/{exception_id}/transition-vikram]",
         "outcome": "passed",
-        "duration_s": 0.1617
+        "duration_s": 0.192
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/edge/quarantine-ka.secretary]",
+        "outcome": "passed",
+        "duration_s": 0.1985
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/edge/quarantine-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.1917
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/edge/quarantine-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.191
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/standing-rules-ka.secretary]",
+        "outcome": "passed",
+        "duration_s": 0.2141
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/standing-rules-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.2037
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[GET {society_id}/standing-rules-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.2079
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/standing-rules-ka.secretary]",
+        "outcome": "passed",
+        "duration_s": 0.1837
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/standing-rules-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.197
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[POST {society_id}/standing-rules-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.199
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/standing-rules/{rule_id}-ka.secretary]",
+        "outcome": "passed",
+        "duration_s": 0.3861
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/standing-rules/{rule_id}-farhan]",
+        "outcome": "passed",
+        "duration_s": 0.2142
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_switching_to_b_and_replaying_a_ids_is_indistinguishable_from_unknown_ids[DELETE {society_id}/standing-rules/{rule_id}-vikram]",
+        "outcome": "passed",
+        "duration_s": 0.1923
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_b_lists_contain_no_a_object[ka.secretary]",
         "outcome": "passed",
-        "duration_s": 0.355
+        "duration_s": 0.3487
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_b_lists_contain_no_a_object[farhan]",
         "outcome": "passed",
-        "duration_s": 0.2846
+        "duration_s": 0.3167
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_b_lists_contain_no_a_object[vikram]",
         "outcome": "passed",
-        "duration_s": 0.3223
+        "duration_s": 0.285
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_header_and_body_cannot_smuggle_the_other_society",
         "outcome": "passed",
-        "duration_s": 0.0405
+        "duration_s": 0.0332
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_own_overview_lists_only_own_societies",
         "outcome": "passed",
-        "duration_s": 0.0917
+        "duration_s": 0.0815
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_mover_has_no_standing_in_a_anymore",
         "outcome": "passed",
-        "duration_s": 0.0519
+        "duration_s": 0.0457
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_positive_control_the_same_ids_work_in_the_right_society",
         "outcome": "passed",
-        "duration_s": 0.0379
+        "duration_s": 0.0362
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_positive_control_the_visit_ids_work_in_the_right_society",
         "outcome": "passed",
-        "duration_s": 0.3761
+        "duration_s": 0.3237
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_owner_confirm_needs_proof_of_ownership_of_that_unit",
         "outcome": "passed",
-        "duration_s": 0.1363
+        "duration_s": 0.1297
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_applying_to_join_a_society_reveals_nothing_and_grants_nothing",
         "outcome": "passed",
-        "duration_s": 4.7666
+        "duration_s": 4.5508
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_membership_that_ends_takes_effect_on_the_live_token",
         "outcome": "passed",
-        "duration_s": 4.9047
+        "duration_s": 4.5793
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_database_rls_hides_a_from_b_on_every_society_table",
         "outcome": "passed",
-        "duration_s": 0.3963
+        "duration_s": 0.4298
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_database_refuses_writes_and_cross_society_references",
         "outcome": "passed",
-        "duration_s": 0.0209
+        "duration_s": 0.0218
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_database_identity_internals_are_not_readable_by_the_runtime_role",
         "outcome": "passed",
-        "duration_s": 0.0225
+        "duration_s": 0.0243
       },
       {
         "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_session_user_is_the_restricted_role",
         "outcome": "passed",
-        "duration_s": 0.0046
+        "duration_s": 0.0045
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_device_signed_routes_serve_a_device_only_its_own_society",
+        "outcome": "passed",
+        "duration_s": 0.2867
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_a_device_cannot_authenticate_as_another_societys_device_or_use_human_routes",
+        "outcome": "passed",
+        "duration_s": 0.0554
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_a_device_cannot_write_into_the_other_society_and_foreign_entities_or_places_change_nothing_there[mh]",
+        "outcome": "passed",
+        "duration_s": 4.9435
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_a_device_cannot_write_into_the_other_society_and_foreign_entities_or_places_change_nothing_there[ka]",
+        "outcome": "passed",
+        "duration_s": 4.7236
+      },
+      {
+        "nodeid": "tests/acceptance/test_at01_cross_society_isolation.py::test_a_revoked_device_loses_access_at_once_and_only_that_device",
+        "outcome": "passed",
+        "duration_s": 4.6583
       }
     ]
   },
   "tester": "automated/claude-code",
-  "date": "2026-10-05T21:56:56+00:00"
+  "date": "2026-10-06T01:59:03+00:00"
 }

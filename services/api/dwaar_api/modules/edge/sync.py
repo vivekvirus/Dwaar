@@ -14,6 +14,7 @@ touch the same visit is retried (the whole batch is idempotent).
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import hashlib
 import json
@@ -62,6 +63,8 @@ CREDENTIAL_KINDS: Final = frozenset(
     {"qr", "code", "guard_assisted", "resident_app", "rfid", "anpr", "none"}
 )
 EXIT_BASES: Final = frozenset({"scanned", "observed", "reconciled_unknown"})
+#: namespace of the visit ids derived for edge-local pass entries (ADR-0019): the gateway-minted movement id is NOT used as a primary key
+EDGE_VISIT_NAMESPACE: Final = uuid.UUID("b3a0c2d4-5e6f-4a81-9c27-0d4e6f8a1b3c")
 OBSERVATION_TYPES: Final = frozenset({"EntryObserved", "ExitObserved"})
 #: words that must never appear as a payload key: data minimisation (EDGE-04) mirrored on the way in
 FORBIDDEN_PAYLOAD_WORDS: Final = frozenset(
@@ -124,6 +127,7 @@ class Transition:
     note: str
     status: str  # accepted | rejected_transition
     exception: tuple[str, str, bool | None] | None = None  # kind, reason, entry_happened
+    project: bool = False  # an edge-local PASS entry the cloud knows: project it onto a visit and the pass use (ADR-0019)
 
 
 @dataclass
@@ -144,6 +148,12 @@ def _raw_digest(raw: Any) -> str:
             "ascii", "replace"
         )
     return hashlib.sha256(data).hexdigest()
+
+
+def edge_visit_id(society_id: uuid.UUID, movement_id: uuid.UUID) -> uuid.UUID:
+    """The cloud visit that represents an edge-local pass movement. Derived, so an exit finds it again and a device can never pick (or probe)
+    the primary key of another society's visit."""
+    return uuid.uuid5(EDGE_VISIT_NAMESPACE, f"{society_id}:{movement_id}")
 
 
 def _safe_seq(value: Any) -> int | None:
@@ -314,17 +324,20 @@ def decide_unmatched(
                 False, "entry_after_revocation", "rejected_transition",
                 ("unauthorised_entry", "Entry observed with a pass that was revoked before the entry (the gateway policy was stale)", True),
             )  # fmt: skip
+    known_pass = isinstance(invitation, Mapping)
     if decision_source == "supervisor_override":
         return Transition(
             False, "override_entry_recorded", "accepted",
             ("manual_entry", "Entry recorded by the gateway under a supervisor override: review the override", True),
+            project=known_pass,
         )  # fmt: skip
     if conflict:
         return Transition(
             False, "edge_conflict_recorded", "accepted",
             ("other", f"The gateway flagged this entry ({conflict[:80]}): review", True),
+            project=known_pass,
         )  # fmt: skip
-    return Transition(False, "edge_entry_recorded", "accepted")
+    return Transition(False, "edge_entry_recorded", "accepted", project=known_pass)
 
 
 # ------------------------------------------------------------------------------------------ the processor
@@ -350,6 +363,7 @@ class BatchProcessor:
         )  # approved pack + society policy (INV-10)
         self.metrics = metrics
         self.received = utc_now()
+        self.outage_s = 0
         self.ledger = _Ledger()
 
     # ------------------------------------------------------------------ batch
@@ -368,10 +382,15 @@ class BatchProcessor:
         )
         state = conn.execute(
             text(
-                "SELECT highest_contiguous_seq, max_seq_seen FROM edge_device_state WHERE device_id = :d"
+                "SELECT highest_contiguous_seq, max_seq_seen, last_sync_at FROM edge_device_state WHERE device_id = :d"
             ),
             {"d": device.id},
         ).one()
+        # a gateway that was cut off for longer than the policy age limit legitimately uploads events older than that limit (NFR-09: 72 h and
+        # more are buffered): the time since its LAST batch explains their age, so only an age beyond the outage itself is a clock problem
+        self.outage_s = (
+            0 if state[2] is None else max(0, int((self.received - state[2]).total_seconds()))
+        )
         self._preload(raw_events)
         outcomes = [self._process(i, raw) for i, raw in enumerate(raw_events)]
         high_seen = max(
@@ -661,7 +680,7 @@ class BatchProcessor:
         flag = clock.assess(
             occurred_at=event.occurred_at, received_at=self.received,
             clock_uncertainty_ms=event.clock_uncertainty_ms, uncertainty_limit_ms=self.uncertainty_limit_ms,
-            max_age_s=self.max_age_s, future_grace_ms=self.cfg.future_grace_ms,
+            max_age_s=max(self.max_age_s, self.outage_s), future_grace_ms=self.cfg.future_grace_ms,
         )  # fmt: skip
         flag_exception: uuid.UUID | None = None
         if flag is not None and event.type not in OBSERVATION_TYPES:
@@ -759,6 +778,7 @@ class BatchProcessor:
     ) -> Outcome:
         conn, device = self.conn, self.device
         payload = event.payload
+        self._invitation = None
         problem = self._observation_problem(event)
         if problem is not None:
             return self._quarantine(index, raw, digest, problem, event.seq, event.event_id)
@@ -766,12 +786,14 @@ class BatchProcessor:
         decision_source = str(payload.get("decision_source", "cached_policy"))
         credential_kind = str(payload.get("credential_kind", "none"))
         exit_basis = str(payload.get("exit_basis", "observed"))
+        derived = edge_visit_id(device.society_id, event.entity_id)
         visit = (
             conn.execute(
                 text(
-                    "SELECT id, state, authorised_until, version FROM visits WHERE id = :id FOR UPDATE"
+                    "SELECT id, state, authorised_until, version FROM visits WHERE id = ANY(:ids)"
+                    " ORDER BY (id = :id) DESC LIMIT 1 FOR UPDATE"
                 ),
-                {"id": event.entity_id},
+                {"ids": [event.entity_id, derived], "id": event.entity_id},
             )
             .mappings()
             .first()
@@ -785,6 +807,14 @@ class BatchProcessor:
         else:
             transition = self._unmatched(event, decision_source)
         visit_id = visit["id"] if visit is not None else None
+        projected = False
+        if (
+            transition.project and event.type == "EntryObserved"
+        ):  # project is only ever set for a pass the cloud knows
+            transition, visit_id = self._project_pass_entry(
+                event, transition, derived, gate_id, decision_source
+            )
+            projected = True
         exception_id: uuid.UUID | None = None
         if transition.exception is not None:
             kind, reason, happened = transition.exception
@@ -850,7 +880,7 @@ class BatchProcessor:
                 if row is None:  # pragma: no cover
                     raise RuntimeError("visit changed under lock")
             self._ledger_insert(
-                c, event, status=transition.status, reason=transition.note, projected=transition.changed, flag=flag,
+                c, event, status=transition.status, reason=transition.note, projected=transition.changed or projected, flag=flag,
                 access_event_id=access_id, exception_id=exception_id,
             )  # fmt: skip
             return MutationResult(
@@ -858,7 +888,7 @@ class BatchProcessor:
                 after={
                     "visit_id": visit_id, "type": event.type, "outcome": transition.note, "gate_id": gate_id,
                     "device_id": device.id, "seq": event.seq, "visit_state_before": visit["state"] if visit else None,
-                    "permission_created": False,
+                    "permission_created": False, "visit_projected": projected,
                 },
                 event_payload={
                     "event_id": event.event_id, "visit_id": visit_id, "gate_id": gate_id, "device_id": device.id,
@@ -892,7 +922,10 @@ class BatchProcessor:
             invitation_id = _safe_uuid(raw_invitation)
             found = (
                 conn.execute(
-                    text("SELECT state, revoked_at FROM invitations WHERE id = :id"),
+                    text(
+                        "SELECT id, state, revoked_at, unit_id, kind, visitor_alias, people_count, max_uses, uses, created_by"
+                        " FROM invitations WHERE id = :id FOR UPDATE"
+                    ),
                     {"id": invitation_id},
                 )
                 .mappings()
@@ -901,6 +934,9 @@ class BatchProcessor:
                 else None
             )
             invitation = dict(found) if found is not None else UNKNOWN_INVITATION
+            self._invitation = dict(found) if found is not None else None
+        else:
+            self._invitation = None
         prior = (
             event.type == "ExitObserved"
             and conn.execute(
@@ -963,6 +999,99 @@ class BatchProcessor:
         return None
 
     _resolved_place: tuple[uuid.UUID, uuid.UUID | None]
+    _invitation: dict[str, Any] | None = None
+
+    def _project_pass_entry(
+        self,
+        event: EdgeEvent,
+        transition: Transition,
+        visit_id: uuid.UUID,
+        gate_id: uuid.UUID,
+        decision_source: str,
+    ) -> tuple[Transition, uuid.UUID]:
+        """Project an accepted edge pass entry onto the cloud: a visit that is ``inside`` and one more use of the pass (ADR-0019).
+
+        The gateway decided from its signed policy and the gate saw the person walk in, so this records facts: it creates NO permission
+        (INV-07; the visit says ``authorised_until = entered_at``, the permission was consumed by the entry itself). A pass whose allowed uses
+        the cloud had already counted (for example redeemed online meanwhile) still gets its visit, so the person inside is visible, plus a
+        supervisor exception. A late entry whose exit was already recorded becomes an ``exited`` visit.
+        """
+        conn, device = self.conn, self.device
+        inv = self._invitation
+        assert inv is not None  # noqa: S101
+        movement = event.entity_id
+        used_up = int(inv["uses"]) >= int(inv["max_uses"])
+        if used_up:
+            why = "Pass used more often than allowed: the cloud had already counted every permitted use"
+            current = transition.exception
+            transition = dataclasses.replace(
+                transition,
+                note=transition.note if current else "edge_entry_pass_overused",
+                exception=(current[0], f"{current[1]}; {why}", True)
+                if current
+                else ("unauthorised_entry", why, True),
+            )
+        later_exit = conn.execute(
+            text(
+                "SELECT occurred_at FROM edge_events WHERE entity_id = :e AND event_type = 'ExitObserved' ORDER BY seq LIMIT 1"
+            ),
+            {"e": movement},
+        ).first()
+        source = "supervisor_override" if decision_source == "supervisor_override" else "invitation"
+
+        def apply(c: Connection) -> MutationResult:
+            uses = None
+            if not used_up:
+                row = c.execute(
+                    text(
+                        "UPDATE invitations SET uses = uses + 1,"
+                        " state = CASE WHEN state = 'active' AND uses + 1 >= max_uses THEN 'consumed' ELSE state END,"
+                        " version = version + 1 WHERE id = :id AND state IN ('active', 'expired') AND uses < max_uses"
+                        " RETURNING uses"
+                    ),
+                    {"id": inv["id"]},
+                ).first()
+                uses = None if row is None else int(row[0])
+            exited = later_exit is not None
+            c.execute(
+                text(
+                    "INSERT INTO visits (id, society_id, kind, state, visitor_alias, invitation_id, gate_id, people_count,"
+                    " authorisation_source, authorised_at, authorised_until, entered_at, exited_at, exit_basis,"
+                    " confidence_inside, consent_recorded, created_by)"
+                    " VALUES (:id, :s, :kind, :state, :alias, :inv, :g, :n, :src, :occ, :occ, :occ, :xat, :xb, :conf, false, :by)"
+                ),
+                {
+                    "id": visit_id, "s": device.society_id, "kind": inv["kind"], "state": "exited" if exited else "inside",
+                    "alias": inv["visitor_alias"] or "Guest", "inv": inv["id"], "g": gate_id,
+                    "n": inv["people_count"], "src": source, "occ": event.occurred_at,
+                    "xat": later_exit[0] if later_exit else None, "xb": "observed" if exited else None,
+                    "conf": "none" if exited else "observed", "by": inv["created_by"],
+                },
+            )  # fmt: skip
+            c.execute(
+                text(
+                    "INSERT INTO visit_stops (id, society_id, visit_id, unit_id, seq, authorised, state)"
+                    " VALUES (:id, :s, :v, :u, 1, true, 'authorised')"
+                ),
+                {"id": uuid7(), "s": device.society_id, "v": visit_id, "u": inv["unit_id"]},
+            )
+            return MutationResult(
+                visit_id, 1,
+                after={
+                    "state": "exited" if exited else "inside", "source": source, "invitation_id": inv["id"],
+                    "invitation_uses": uses, "gate_id": gate_id, "projected_from_edge": True, "permission_created": False,
+                },
+                event_payload={
+                    "visit_id": visit_id, "unit_id": inv["unit_id"], "source": source, "invitation_id": inv["id"],
+                    "device_id": device.id, "seq": event.seq,
+                },
+            )  # fmt: skip
+
+        mutation(
+            conn, self.ctx, operation="edge.pass_entry_projected", object_type="visit",
+            event_type="VisitEntered", apply=apply,
+        )  # fmt: skip
+        return transition, visit_id
 
 
 def _conflict_reason(exc: IntegrityError) -> str:

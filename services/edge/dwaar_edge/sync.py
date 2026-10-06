@@ -41,10 +41,17 @@ log = logging.getLogger("dwaar_edge.sync")
 
 DATE_RESOLUTION_MS: Final = 1000  # HTTP Date has one-second resolution
 TIMESTAMP_RETRY_SKEW_S: Final = 60
+MAX_RETRY_AFTER_S: Final = 3600.0  # never obey a Retry-After longer than an hour (a hostile or broken cloud must not park the gateway)
 
 
 class TransportError(Exception):
-    """Network-level failure (no response)."""
+    """Network-level failure (no response), or a response the client treats as 'try again later'.
+
+    ``retry_after_s`` carries the cloud's ``Retry-After`` (429 / 503): the next attempt waits at least that long (ADR-0019)."""
+
+    def __init__(self, message: str = "", *, retry_after_s: float | None = None) -> None:
+        super().__init__(message)
+        self.retry_after_s = retry_after_s
 
 
 @dataclass(frozen=True)
@@ -53,6 +60,9 @@ class TransportResponse:
     json: Any = None
     server_time: datetime | None = None  # authenticated cloud time (HTTP Date), if any
     elapsed_ms: int = 0
+    retry_after_s: float | None = (
+        None  # the cloud's Retry-After in seconds (429 / 503), if it sent one
+    )
 
 
 class Transport(Protocol):
@@ -91,7 +101,14 @@ class HttpxTransport:
                 data = resp.json()
             except ValueError:
                 data = None
-        return TransportResponse(resp.status_code, data, server_time, elapsed)
+        retry_after: float | None = None
+        raw_retry = resp.headers.get("retry-after")
+        if raw_retry:
+            try:
+                retry_after = min(max(float(raw_retry), 0.0), MAX_RETRY_AFTER_S)
+            except ValueError:
+                retry_after = None
+        return TransportResponse(resp.status_code, data, server_time, elapsed, retry_after)
 
     def close(self) -> None:
         self._client.close()
@@ -181,13 +198,15 @@ class SyncClient:
         return resp
 
     # ---- backoff -------------------------------------------------------------------------------------
-    def _fail(self, reason: str) -> float:
-        """Exponential backoff with FULL jitter: delay ~ U(0, min(cap, base * 2^n))."""
+    def _fail(self, reason: str, retry_after_s: float | None = None) -> float:
+        """Exponential backoff with FULL jitter: delay ~ U(0, min(cap, base * 2^n)), and never earlier than the cloud's Retry-After."""
         self._failures += 1
         ceiling = min(
             self.config.backoff_cap_s, self.config.backoff_base_s * (2 ** min(self._failures, 30))
         )
         delay = self.rng.uniform(0, ceiling)
+        if retry_after_s is not None:
+            delay = max(delay, retry_after_s)
         self.gateway.sync_info.update(
             {"last_error": reason, "consecutive_failures": self._failures}
         )
@@ -222,7 +241,7 @@ class SyncClient:
             self._pull_policy_next = False
             return "applied"
         self.gateway.note_cloud_contact() if resp.status < 500 else None
-        raise TransportError(f"policy status {resp.status}")
+        raise TransportError(f"policy status {resp.status}", retry_after_s=resp.retry_after_s)
 
     # ---- events -------------------------------------------------------------------------------------------
     def push_batch(self) -> SyncResult:
@@ -257,7 +276,7 @@ class SyncClient:
             self.gateway.sync_info["auth_failed"] = True
             raise TransportError(f"authentication refused ({resp.status})")
         if resp.status != 200 or not isinstance(resp.json, dict):
-            raise TransportError(f"sync status {resp.status}")
+            raise TransportError(f"sync status {resp.status}", retry_after_s=resp.retry_after_s)
         self.gateway.sync_info["auth_failed"] = False
         data = resp.json
         sent_ids = {str(r.event_id) for r in rows}
@@ -303,7 +322,7 @@ class SyncClient:
         except TransportError as exc:
             total.policy = "failed"
             total.failed = str(exc)
-            total.next_delay_s = self._fail(str(exc))
+            total.next_delay_s = self._fail(str(exc), exc.retry_after_s)
             return total
         throttle_started = time.monotonic()
         for _ in range(self.config.max_batches_per_cycle):
@@ -311,7 +330,7 @@ class SyncClient:
                 part = self.push_batch()
             except TransportError as exc:
                 total.failed = str(exc)
-                total.next_delay_s = self._fail(str(exc))
+                total.next_delay_s = self._fail(str(exc), exc.retry_after_s)
                 return total
             if part.batches == 0:
                 break

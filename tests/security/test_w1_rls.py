@@ -175,7 +175,11 @@ def test_role_level_custom_guc_default_cannot_be_planted_on_the_worker_either(
 #: dwaar_rate_limit_take: the only way to touch rate_limit_buckets (the runtime roles hold no table privileges
 #: there); it takes a caller-chosen key, validates its parameters and never reads or writes anything else.
 REVIEWED_RUNTIME_DEFINERS = frozenset(
-    {"dwaar_rate_limit_take(text,integer,double precision,integer)"}
+    {
+        "dwaar_rate_limit_take(text,integer,double precision,integer)",
+        # migration 0104: the worker lists the active society ids (ids only, worker-only EXECUTE, owner-only policy behind a transaction flag)
+        "dwaar_active_society_ids()",
+    }
 )
 
 
@@ -196,6 +200,8 @@ def test_every_security_definer_function_is_locked_down(db: DbHandle) -> None:
         assert not public, f"{sig} is SECURITY DEFINER and executable by PUBLIC"
         if sig not in REVIEWED_RUNTIME_DEFINERS:
             assert not (app or worker), f"{sig} is SECURITY DEFINER and executable by runtime roles"
+        if sig == "dwaar_active_society_ids()":
+            assert worker and not app, "the society listing is the worker's alone"
         assert config and any(c.startswith("search_path=") for c in config), (
             f"{sig}: no pinned search_path"
         )
@@ -493,14 +499,31 @@ def test_role_scoped_cross_society_policies_are_reviewed_not_silently_accepted(
 
 
 def test_worker_cannot_forge_outbox_events(db: DbHandle) -> None:
+    """Migration 0010 (slice 3) lets a job write the outbox row of its OWN mutation, so the worker now holds column-level INSERT on the content
+    columns, exactly like the API role. What it must never hold is the ability to FORGE delivery state or history: the delivery columns are not
+    insertable, there is no table-level privilege, and the society row policy still binds every INSERT to the society context
+    (tests/integration/worker/test_worker_grants.py proves the context rules with real inserts)."""
+    delivery = ("published_at", "attempts", "next_attempt_at", "last_error")
     with db.admin_conn() as conn:
         # column-level INSERT grants (outbox and audit_log delivery/time columns are server-set) count too
         row = conn.execute(
             "SELECT has_any_column_privilege('dwaar_worker', 'outbox', 'INSERT'),"
             " has_any_column_privilege('dwaar_worker', 'audit_log', 'INSERT'),"
-            " has_any_column_privilege('dwaar_app', 'outbox', 'INSERT')"
+            " has_any_column_privilege('dwaar_app', 'outbox', 'INSERT'),"
+            " has_table_privilege('dwaar_worker', 'outbox', 'INSERT')"
         ).fetchone()
-    assert row == (False, True, True)
+        forgeable = [
+            c
+            for role in ("dwaar_worker", "dwaar_app")
+            for c in delivery
+            if conn.execute(
+                "SELECT has_column_privilege(%s, 'outbox', %s, 'INSERT')", (role, c)
+            ).fetchone()[0]  # type: ignore[index]
+        ]
+    assert row == (True, True, True, False)
+    assert forgeable == [], (
+        "no runtime role may insert an event that is born published or with a delivery history"
+    )
 
 
 # ------------------------------------------------------------------------------------------------

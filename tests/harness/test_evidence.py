@@ -314,3 +314,32 @@ def test_without_flags_nothing_is_written(tmp_path: Path) -> None:
     )  # fmt: skip
     assert result.returncode == 0, result.output
     assert not out.exists()
+
+
+def test_evidence_records_which_cloud_an_edge_scenario_ran_against() -> None:
+    fake = record(
+        "tests/acceptance/test_at06_e2e.py::t[fakecloud]", ["AT-06"], PASS, simulation=True
+    )
+    real = record(
+        "tests/acceptance/test_at06_e2e.py::t[realcloud]", ["AT-06"], PASS, simulation=True
+    )
+    fake.cloud, real.cloud = "fakecloud", "realcloud"
+    plain = record(
+        "tests/acceptance/test_at06_wan_down_72h.py::t", ["AT-06"], PASS, simulation=True
+    )
+    doc = build_at_evidence(
+        "AT-06",
+        [fake, real, plain],
+        {"AT-06": {"milestone": "M1"}},
+        commit="c",
+        environment=ENV,
+        now=NOW,
+    )
+    assert doc["environment"]["clouds"] == ["fakecloud", "realcloud"]
+    assert doc["environment"]["simulation"] is True
+    clouds = {t["nodeid"]: t.get("cloud") for t in doc["trace"]["tests"]}
+    assert clouds == {fake.nodeid: "fakecloud", real.nodeid: "realcloud", plain.nodeid: None}
+    only = build_at_evidence(
+        "AT-06", [plain], {"AT-06": {"milestone": "M1"}}, commit="c", environment=ENV, now=NOW
+    )
+    assert "clouds" not in only["environment"]  # tests that name no cloud claim none

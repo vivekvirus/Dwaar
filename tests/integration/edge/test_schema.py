@@ -75,17 +75,20 @@ def test_least_privilege_grants(ew: EdgeWorld) -> None:
     def priv(role: str, table: str, kind: str) -> bool:
         return bool(ew.rows("SELECT has_table_privilege(%s, %s, %s)", (role, table, kind))[0][0])
 
+    # Slice 3 integration (migration 0314, ADR-0019): the worker's policy publisher may INSERT exactly these two tables (and nothing else of
+    # the edge tables); every other edge table stays read-only for the worker. The worker never UPDATEs at table level and never DELETEs.
+    worker_inserts = {"policy_snapshots", "edge_credential_refs"}
     for table in TABLES:
         assert priv("dwaar_app", table, "SELECT") and priv("dwaar_app", table, "INSERT"), table
         assert not priv("dwaar_app", table, "DELETE") and not priv(
             "dwaar_app", table, "TRUNCATE"
         ), table
-        assert priv("dwaar_worker", table, "SELECT") and not priv(
-            "dwaar_worker", table, "INSERT"
-        ), table
+        assert priv("dwaar_worker", table, "SELECT"), table
+        assert priv("dwaar_worker", table, "INSERT") == (table in worker_inserts), table
         assert not priv("dwaar_worker", table, "UPDATE") and not priv(
             "dwaar_worker", table, "DELETE"
         ), table
+        assert not priv("dwaar_worker", table, "TRUNCATE"), table
     for table in APPEND_ONLY:
         assert not priv("dwaar_app", table, "UPDATE"), table
 
@@ -106,6 +109,13 @@ def test_least_privilege_grants(ew: EdgeWorld) -> None:
         "dwaar_app", "standing_rules", "params"
     )
     assert not col("dwaar_app", "standing_rules", "unit_id")
+    # the worker publisher: the revocation columns of a credential reference and nothing more; the policy history stays append-only
+    assert col("dwaar_worker", "edge_credential_refs", "revoked_at") and not col(
+        "dwaar_worker", "edge_credential_refs", "credential_ref"
+    )
+    assert not col("dwaar_worker", "policy_snapshots", "signature") and not col(
+        "dwaar_worker", "standing_rules", "state"
+    )
 
 
 def test_composite_foreign_keys_make_a_cross_society_reference_impossible(ew: EdgeWorld) -> None:

@@ -89,6 +89,14 @@ class Invitation(_M):
     kind: str = Field(max_length=40)
     visitor_alias: str | None = Field(default=None, max_length=80)
 
+    @property
+    def cloud_used(self) -> int:
+        """Uses the cloud has counted. A REVOKED pass is published with ``uses_remaining = 0`` whatever it used (ADR-0019), so that number
+        says nothing about use and must not turn a legitimate earlier entry into a "pass reused" conflict."""
+        if (self.revoked_version or 0) > 0:
+            return 0
+        return self.max_uses - self.uses_remaining
+
 
 class StandingRule(_M):
     unit_id: uuid.UUID

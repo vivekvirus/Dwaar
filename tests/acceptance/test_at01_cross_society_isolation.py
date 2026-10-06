@@ -35,6 +35,10 @@ import pytest
 from psycopg import errors as pgerr
 
 from dwaar_api.core.authz import iter_api_routes
+from dwaar_api.modules.edge import localdev, localkeys
+from dwaar_api.modules.edge.auth import sign_request_headers
+from dwaar_common.events import EdgeEvent
+from dwaar_common.signing import sign_edge_event
 from tests.acceptance._visits_world import visit_ids
 from tests.acceptance._world import DATASET, World, leaks, shape
 
@@ -364,6 +368,38 @@ VISIT_CASES: tuple[Case, ...] = (
 )
 CASES = CASES + VISIT_CASES
 
+#: slice 3: the society-facing routes of the edge module (publish, status, quarantine, standing rules). The edge's OWN endpoints
+#: (/v1/edge/*) carry no society: the society comes from the signed device row; they are classified in GLOBAL_ROUTES and have their
+#: own isolation tests below (``test_device_signed_routes_*``).
+EDGE_CASES: tuple[Case, ...] = (
+    Case("POST", f"{SOC}/edge/policy/publish"),
+    Case("GET", f"{SOC}/edge/policy"),
+    Case("GET", f"{SOC}/edge/status"),
+    Case("GET", f"{SOC}/edge/quarantine"),
+    Case(
+        "GET", f"{SOC}/edge/quarantine", params={"device_id": "{device_id}"}, foreign=("device_id",)
+    ),
+    Case("GET", f"{SOC}/standing-rules"),
+    Case("GET", f"{SOC}/standing-rules", params={"unit_id": "{unit_id}"}, foreign=("unit_id",)),
+    Case(
+        "POST",
+        f"{SOC}/standing-rules",
+        {
+            "unit_id": "{unit_id}",
+            "rule_kind": "leave_at_gate",
+            "visit_kind": "delivery",
+            "start_local": "22:00",
+            "end_local": "06:00",
+        },
+        foreign=("unit_id",),
+        meera_authorised=False,
+    ),
+    Case(
+        "DELETE", f"{SOC}/standing-rules/{{rule_id}}", foreign=("rule_id",), meera_authorised=False
+    ),
+)
+CASES = CASES + EDGE_CASES
+
 #: society-scoped routes deliberately NOT in the generic probes, and why. Each has its own test below.
 APPLICANT_ROUTE = ("POST", f"{SOC}/memberships")
 
@@ -396,6 +432,16 @@ GLOBAL_ROUTES: dict[tuple[str, str], str] = {
     ("GET", "/v1/dev/otp"): "labelled simulator endpoint (local/test only)",
     ("GET", "/.well-known/openid-configuration"): "simulator discovery (local/test only)",
     ("GET", "/.well-known/jwks.json"): "simulator public keys (local/test only)",
+    (
+        "GET",
+        "/v1/edge/me",
+    ): "device-signed: the society comes from the signed device row; tests below",
+    ("GET", "/v1/edge/keys"): "device-signed: public trust anchors only; tests below",
+    ("GET", "/v1/edge/policy"): "device-signed: the device's OWN society snapshot; tests below",
+    (
+        "POST",
+        "/v1/edge/sync/batches",
+    ): "device-signed: writes only into the device's OWN society; tests below",
     ("POST", "/v1/societies"): "platform operators only (society.create)",
     ("GET", "/v1/societies"): "the caller's societies only (tested below)",
 }
@@ -416,6 +462,32 @@ def _subst(value: Any, ids: dict[str, uuid.UUID | str]) -> Any:
     return value
 
 
+def edge_ids(world: World, key: str = "mh") -> dict[str, uuid.UUID]:
+    """Seeded edge objects of one society (oracle): a standing rule, the society gateway, the signed snapshots."""
+    sid = world.society_ref(key).id
+
+    def first(sql: str) -> uuid.UUID:
+        rows = world.admin_rows(sql, (sid,))
+        assert rows, sql
+        return rows[0][0]  # type: ignore[no-any-return]
+
+    out = {
+        "gateway_id": first(
+            "SELECT id FROM devices WHERE society_id = %s AND kind = 'gateway' ORDER BY created_at, id LIMIT 1"
+        ),
+        "snapshot_id": first(
+            "SELECT id FROM policy_snapshots WHERE society_id = %s ORDER BY seq LIMIT 1"
+        ),
+    }
+    rules = world.admin_rows(
+        "SELECT id FROM standing_rules WHERE society_id = %s ORDER BY created_at, id LIMIT 1",
+        (sid,),
+    )
+    if rules:  # only society A (mh) is seeded with standing rules
+        out["rule_id"] = rules[0][0]
+    return out
+
+
 def _a_ids(world: World, society: uuid.UUID | None = None) -> dict[str, uuid.UUID | str]:
     a = world.objects("mh")
     v = visit_ids(world, "mh")
@@ -434,13 +506,18 @@ def _a_ids(world: World, society: uuid.UUID | None = None) -> dict[str, uuid.UUI
         "case_id": a.cases[0],
         "hold_id": a.holds[0],
         "grant_id": a.grants[0],
+        "rule_id": edge_ids(world, "mh")["rule_id"],  # society A is seeded with standing rules
         "flag_key": "binding_governance",
     }
 
 
 def _a_all_ids(world: World) -> set[str]:
     """Every id of A the replays must never reveal: the slice 1 objects plus the seeded gate/visit objects."""
-    return world.objects("mh").all_ids() | visit_ids(world, "mh").all_ids()
+    return (
+        world.objects("mh").all_ids()
+        | visit_ids(world, "mh").all_ids()
+        | {str(v) for v in edge_ids(world, "mh").values()}
+    )
 
 
 def _random_like(
@@ -960,3 +1037,229 @@ def test_session_user_is_the_restricted_role(world: World) -> None:
         ).fetchone()
     assert row == ("dwaar_app", False, False)
     assert isinstance(world.db, object) and psycopg  # keep the import honest for type checkers
+
+
+# ===================================================================================================== device-signed routes (slice 3)
+class _Device:
+    """A seeded edge gateway (local-only derived key): signs requests exactly as docs/contracts/edge-sync.md says."""
+
+    def __init__(self, world: World, key: str, name: str) -> None:
+        info = localdev.describe(key, name)
+        self.world = world
+        self.society = uuid.UUID(str(info["society_id"]))
+        self.id = uuid.UUID(str(info["device_id"]))
+        self.key = localkeys.device_private_key(str(info["device_label"]))
+        self._seq = 0
+
+    def call(
+        self,
+        method: str,
+        target: str,
+        body: bytes = b"",
+        *,
+        as_device: uuid.UUID | None = None,
+        extra: dict[str, str] | None = None,
+    ) -> Any:
+        headers = sign_request_headers(self.key, as_device or self.id, method, target, body)
+        if body:
+            headers["Content-Type"] = "application/json"
+        headers.update(extra or {})
+        return self.world.client.request(method, target, headers=headers, content=body or None)
+
+    def event(
+        self,
+        society: uuid.UUID | None,
+        entity: uuid.UUID,
+        payload: dict[str, Any],
+        *,
+        etype: str = "EntryObserved",
+    ) -> dict[str, Any]:
+        from datetime import UTC, datetime
+
+        self._seq += 1
+        ev = EdgeEvent.build(
+            society_id=society or self.society, device_id=self.id, seq=self._seq, entity_id=entity, entity_version=1, type=etype,
+            policy_version=1, payload=payload, occurred_at=datetime.now(UTC), clock_uncertainty_ms=10,
+        )  # fmt: skip
+        return sign_edge_event(self.key, ev).to_wire()
+
+    def sync(self, events: list[dict[str, Any]]) -> Any:
+        import json
+
+        body = json.dumps({"device_id": str(self.id), "events": events}).encode()
+        return self.call("POST", "/v1/edge/sync/batches", body)
+
+
+def _devices(world: World) -> tuple[_Device, _Device]:
+    return _Device(world, "mh", localkeys.SEED_DEVICE_NAME), _Device(
+        world, "ka", "Tower gate edge gateway"
+    )
+
+
+def test_device_signed_routes_serve_a_device_only_its_own_society(world: World) -> None:
+    """The society of a device request is the SIGNED DEVICE ROW: header, query and body cannot move it, and each society's gateway
+    reads its own snapshot and nothing of the other's (every id of the other society is absent)."""
+    dev_a, dev_b = _devices(world)
+    a_ids, b_ids = (
+        world.objects("mh").all_ids() | visit_ids(world, "mh").all_ids(),
+        world.objects("ka").all_ids() | visit_ids(world, "ka").all_ids(),
+    )
+    for dev, mine, other in ((dev_a, a_ids, b_ids), (dev_b, b_ids, a_ids)):
+        me = dev.call("GET", "/v1/edge/me")
+        assert me.status_code == 200 and me.json()["device"]["society_id"] == str(dev.society)
+        pol = dev.call("GET", "/v1/edge/policy?after=0")
+        assert pol.status_code == 200 and pol.json()["society_id"] == str(dev.society)
+        assert not leaks(pol, other) and not leaks(me, other)
+        assert leaks(pol, mine), (
+            "positive control: the device's own society objects ARE in its snapshot"
+        )
+        # the smuggling attempts change nothing: a header, a query parameter naming the other society
+        smuggle = dev.call(
+            "GET",
+            f"/v1/edge/policy?after=0&society_id={next(iter(other))}",
+            extra={"X-Society-Id": str(dev_b.society if dev is dev_a else dev_a.society)},
+        )
+        assert smuggle.status_code in (200, 422, 400)
+        if smuggle.status_code == 200:
+            assert smuggle.json()["society_id"] == str(dev.society) and not leaks(smuggle, other)
+    keys_a, keys_b = (
+        dev_a.call("GET", "/v1/edge/keys").json(),
+        dev_b.call("GET", "/v1/edge/keys").json(),
+    )
+    assert keys_a == keys_b  # public trust anchors only: identical, nothing society-specific
+
+
+def test_a_device_cannot_authenticate_as_another_societys_device_or_use_human_routes(
+    world: World,
+) -> None:
+    dev_a, dev_b = _devices(world)
+    stolen = dev_a.call("GET", "/v1/edge/me", as_device=dev_b.id)  # A's key, B's device id
+    unknown = dev_a.call("GET", "/v1/edge/me", as_device=uuid.uuid4())
+    assert stolen.status_code == unknown.status_code == 401
+    assert shape(stolen) == shape(unknown), (
+        "a real foreign device id answers exactly like a made-up one"
+    )
+    # a device signature is not a person: the society-scoped (human) routes refuse it, own society or not
+    for soc in (dev_a.society, dev_b.society):
+        for tail in ("edge/status", "edge/policy", "standing-rules", "edge/quarantine"):
+            r = dev_a.call("GET", f"/v1/societies/{soc}/{tail}")
+            assert r.status_code in (401, 403, 404), (tail, r.status_code)
+            assert r.status_code != 200
+
+
+@pytest.mark.parametrize("attacker_key", ["mh", "ka"])
+def test_a_device_cannot_write_into_the_other_society_and_foreign_entities_or_places_change_nothing_there(
+    fresh_world: World, attacker_key: str
+) -> None:
+    """Writes: events that NAME the other society (its id, its gate and lane, its visit, its pass) sent by this society's gateway are
+    quarantined or recorded in the SENDER's society only. The victim's tables, visit states and counters are bit-for-bit unchanged."""
+    w = fresh_world
+    dev_a, dev_b = _devices(w)
+    attacker, victim = (dev_a, dev_b) if attacker_key == "mh" else (dev_b, dev_a)
+    vkey = "ka" if attacker_key == "mh" else "mh"
+    v = visit_ids(w, vkey)
+
+    def snapshot_of_victim() -> list[Any]:
+        sql = (
+            "SELECT count(*) FROM edge_events WHERE society_id = %s",
+            "SELECT count(*) FROM access_events WHERE society_id = %s",
+            "SELECT count(*) FROM edge_quarantine WHERE society_id = %s",
+            "SELECT id, state, version FROM visits WHERE society_id = %s ORDER BY id",
+            "SELECT count(*) FROM exceptions WHERE society_id = %s",
+            "SELECT id, uses, state, version FROM invitations WHERE society_id = %s ORDER BY id",
+            "SELECT count(*) FROM audit_log WHERE society_id = %s",
+            "SELECT count(*) FROM outbox WHERE society_id = %s",
+            "SELECT count(*) FROM visit_stops WHERE society_id = %s",
+        )
+        return [w.admin_rows(q, (victim.society,)) for q in sql]
+
+    before = snapshot_of_victim()
+    place = {
+        "gate_id": str(v.gate),
+        "lane_id": str(v.lane),
+        "decision_source": "cached_policy",
+        "credential_kind": "none",
+    }
+    victim_visit = (
+        v.visit or uuid.uuid4()
+    )  # society ka has no seeded visit: a made-up id still must not reach anything
+    own_gate = {
+        "gate_id": str(visit_ids(w, attacker_key).gate)
+    }  # a society gateway names the gate of each observation
+    batch = [
+        attacker.event(
+            victim.society, uuid.uuid4(), {"decision_source": "cached_policy", **own_gate}
+        ),  # claims the victim society
+        attacker.event(
+            None, uuid.uuid4(), place
+        ),  # the victim's gate and lane named by this society's device
+        attacker.event(
+            None,
+            victim_visit,
+            {"decision_source": "cached_policy", "credential_kind": "none", **own_gate},
+        ),  # the victim's visit as the entity
+        attacker.event(
+            None, victim_visit, {"exit_basis": "observed", **own_gate}, etype="ExitObserved"
+        ),
+        attacker.event(
+            None,
+            uuid.uuid4(),
+            {"decision_source": "cached_policy", "invitation_id": str(v.invitation), **own_gate},
+        ),  # the victim's pass id
+    ]
+    r = attacker.sync(batch)
+    assert r.status_code == 200, r.text
+    outcomes = r.json()["outcomes"]
+    assert outcomes[0]["status"] == "quarantined" and outcomes[0]["reason"] == "wrong_society"
+    assert outcomes[1]["status"] == "quarantined" and outcomes[1]["reason"] in {
+        "unknown_lane",
+        "gate_unresolved",
+        "unknown_gate",
+        "device_wrong_gate",
+    }
+    victim_ids = (
+        w.objects(vkey).all_ids() | v.all_ids() | {str(x) for x in edge_ids(w, vkey).values()}
+    )
+    assert outcomes[2]["status"] in {"accepted", "rejected_transition"} and outcomes[3][
+        "status"
+    ] in {"accepted", "rejected_transition"}
+    assert not leaks(r, victim_ids), "the answer echoes nothing of the victim society"
+    # the victim's pass id is merely an unknown pass for the sender: judged and flagged in the SENDER's society, never touching the victim
+    assert (
+        outcomes[4]["status"] == "rejected_transition"
+        and outcomes[4]["reason"] == "entry_unknown_invitation"
+    )
+    assert snapshot_of_victim() == before, "nothing in the other society changed"
+    # the victim's own gateway still reaches its data and only its data
+    ok = victim.call("GET", "/v1/edge/policy?after=0")
+    assert ok.status_code == 200 and ok.json()["society_id"] == str(victim.society)
+    # what the sender caused is recorded in the sender's society (proof the events were processed, not dropped)
+    assert (
+        w.admin_rows(
+            "SELECT count(*) FROM edge_quarantine WHERE society_id = %s", (attacker.society,)
+        )[0][0]
+        >= 2
+    )
+    assert (
+        w.admin_rows(
+            "SELECT count(*) FROM access_events WHERE society_id = %s", (attacker.society,)
+        )[0][0]
+        >= 3
+    )  # events 2, 3 and 4
+
+
+def test_a_revoked_device_loses_access_at_once_and_only_that_device(fresh_world: World) -> None:
+    w = fresh_world
+    dev_a, dev_b = _devices(w)
+    assert dev_a.call("GET", "/v1/edge/me").status_code == 200
+    with (
+        w.db.admin_conn() as conn
+    ):  # revocation through the oracle: the API path is covered in tests/integration/edge/test_auth.py
+        conn.execute("SELECT set_config('app.society_id', %s, true)", (str(dev_a.society),))  # type: ignore[call-overload]
+        conn.execute(  # type: ignore[call-overload]
+            "UPDATE devices SET state = 'revoked', revoked_by = requested_by, revoked_at = now(), version = version + 1 WHERE id = %s",
+            (dev_a.id,),
+        )
+    r = dev_a.call("GET", "/v1/edge/policy?after=0")
+    assert r.status_code == 403 and "manifest" not in r.text  # no data at all
+    assert dev_b.call("GET", "/v1/edge/policy?after=0").status_code == 200

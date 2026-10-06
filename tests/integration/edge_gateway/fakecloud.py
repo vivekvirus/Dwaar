@@ -1,9 +1,15 @@
 """FakeCloud: an in-process implementation of the edge <-> cloud CONTRACT (clearly NOT the real API).
 
-A later integration step wires the real ``dwaar_api.modules.edge``. This fake implements exactly the shared
-contract the edge client codes to: signed requests (X-Dwaar-Device/Timestamp/Signature), GET /v1/edge/policy,
-POST /v1/edge/sync/batches with per-event outcomes, highest contiguous seq, gaps and a policy cursor. It also
-offers fault injection (down, lost responses, slow link) so crash/partition scenarios are testable.
+The REAL cloud (``dwaar_api.modules.edge``) is wired in ``tests/integration/edge_e2e`` and the acceptance scenarios run against both
+(``tests/acceptance/test_at0N_e2e.py``). This fake implements the shared contract the edge client codes to: signed requests
+(X-Dwaar-Device/Timestamp/Signature), GET /v1/edge/policy, POST /v1/edge/sync/batches with per-event outcomes, highest contiguous seq,
+gaps and a policy cursor. It also offers fault injection (down, lost responses, slow link) so crash/partition scenarios are testable.
+
+Conformance with the real cloud (``tests/integration/edge_e2e/test_conformance.py``) holds for: request authentication (120 s window),
+size and count caps (413), signature / society / device checks, duplicate and conflicting seq handling, payload size, acknowledgement and
+gap arithmetic, the policy cursor (200 / 204 / 409). It DIFFERS, on purpose, in the entity state machine: this fake keeps a toy
+``entities`` table (an entry for a known entity is ``rejected_transition``); the real cloud treats an unknown ``entity_id`` as an
+edge-local movement and judges it by its payload (ADR-0019), projects pass entries onto visits and raises supervisor exceptions.
 """
 
 from __future__ import annotations
@@ -24,7 +30,8 @@ from dwaar_common.timeutil import parse_iso_utc
 from dwaar_edge.sync import TransportError, TransportResponse
 
 MAX_EVENTS = 500
-MAX_BYTES = 1_000_000
+MAX_BYTES = 1_048_576  # the cloud's cap (1 MiB); the gateway sends at most 1,000,000 B
+MAX_PAYLOAD_BYTES = 2_048
 
 
 @dataclass
@@ -98,7 +105,7 @@ class FakeCloud:
             stamp = parse_iso_utc(ts)
         except ValueError:
             return False
-        if abs(stamp - now) > timedelta(minutes=5):
+        if abs(stamp - now) > timedelta(seconds=120):
             return False
         canonical = f"{method}\n{path}\n{ts}\n{hashlib.sha256(body).hexdigest()}".encode()
         return verify_bytes(key, canonical, sig)
@@ -120,8 +127,12 @@ class FakeCloud:
             device_id=uuid.UUID(device),
         )
         outcomes = []
-        for wire in events:
-            outcomes.append(self._one(device, ring, wire))
+        for index, wire in enumerate(events):
+            outcome = self._one(device, ring, wire)
+            outcome["index"] = index
+            if isinstance(wire, dict) and isinstance(wire.get("seq"), int):
+                outcome["seq"] = wire["seq"]
+            outcomes.append(outcome)
         self.outcome_log.extend(outcomes)
         seqs = sorted(s for (d, s) in self.by_device_seq if d == device)
         high, gaps = 0, []
@@ -159,13 +170,28 @@ class FakeCloud:
             return {"event_id": eid, "status": "quarantined", "reason": "malformed"}
         if event.society_id != self.society_id:
             self.quarantine[eid] = "wrong_society"
+            self.by_device_seq[(device, event.seq)] = (
+                eid  # disposed (like the real cloud): it never becomes a gap
+            )
             return {"event_id": eid, "status": "quarantined", "reason": "wrong_society"}
         if not ring.verify_event(device, event):
             self.quarantine[eid] = "bad_signature"
             self.by_device_seq[(device, event.seq)] = eid  # seen, so it never becomes a gap
             return {"event_id": eid, "status": "quarantined", "reason": "bad_signature"}
-        if eid in self.events or (device, event.seq) in self.by_device_seq:
+        if eid in self.events:
             return {"event_id": eid, "status": "duplicate"}
+        if (
+            (device, event.seq) in self.by_device_seq
+        ):  # same seq, another event: both observations are kept elsewhere, this one is refused
+            self.quarantine[eid] = "seq_conflict"
+            return {"event_id": eid, "status": "quarantined", "reason": "seq_conflict"}
+        if (
+            len(json.dumps(event.payload, separators=(",", ":"), sort_keys=True).encode())
+            > MAX_PAYLOAD_BYTES
+        ):
+            self.quarantine[eid] = "payload_too_large"
+            self.by_device_seq[(device, event.seq)] = eid  # disposed: it never becomes a gap
+            return {"event_id": eid, "status": "quarantined", "reason": "payload_too_large"}
         state = self.entities.get(str(event.entity_id))
         if event.type == "EntryObserved":
             if state is not None:

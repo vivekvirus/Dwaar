@@ -7,42 +7,88 @@
     "outcome": "passed",
     "message": null
   },
-  "commit": "efb25901b369d7758145ea4753a432567e23002c",
+  "commit": "1b15ab928a56940de88483579ca7116e1cb65bfe",
   "environment": {
     "python": "3.12.3",
-    "postgres": "not used in this run",
-    "postgres_mode": null,
+    "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
+    "postgres_mode": "ephemeral",
     "DWAAR_ENV": "unset",
     "simulation": true,
     "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
-    "tree_dirty": true
+    "tree_dirty": true,
+    "clouds": [
+      "fakecloud",
+      "realcloud"
+    ]
   },
-  "dataset": "edge-synthetic-v1: invented society, two gates (A main, B service), guard terminals A/B, one supervisor terminal, invented opaque credential refs (no names, no phones); injected clock; in-process FakeCloud implementing the edge contract",
+  "dataset": "edge-synthetic-v1: invented society, two gates (A main, B service), guard terminals A/B, one supervisor terminal, invented opaque credential refs (no names, no phones); injected clock; in-process FakeCloud implementing the edge contract | e2e: FakeCloud and the REAL API (uvicorn loopback, ephemeral PostgreSQL), virtual clock; edge-synthetic-v1: invented society, two gates (A main, B service), guard terminals A/B, one supervisor terminal, invented opaque credential refs (no names, no phones); injected clock; in-process FakeCloud implementing the edge contract",
   "trace": {
     "pytest_nodeids": [
+      "tests/acceptance/test_at06_e2e.py::test_72_hour_outage_with_restarts_cached_flows_work_fresh_approvals_fall_back_events_recover[fakecloud]",
+      "tests/acceptance/test_at06_e2e.py::test_72_hour_outage_with_restarts_cached_flows_work_fresh_approvals_fall_back_events_recover[realcloud]",
+      "tests/acceptance/test_at06_e2e.py::test_restart_with_clock_wrong_and_no_wan_still_serves_cached_resident_flows[fakecloud]",
+      "tests/acceptance/test_at06_e2e.py::test_restart_with_clock_wrong_and_no_wan_still_serves_cached_resident_flows[realcloud]",
+      "tests/acceptance/test_at06_e2e.py::test_policy_older_than_valid_until_goes_guard_assisted_even_for_known_residents[fakecloud]",
+      "tests/acceptance/test_at06_e2e.py::test_policy_older_than_valid_until_goes_guard_assisted_even_for_known_residents[realcloud]",
       "tests/acceptance/test_at06_wan_down_72h.py::test_72_hour_outage_with_restarts_cached_flows_work_fresh_approvals_fall_back_events_recover",
       "tests/acceptance/test_at06_wan_down_72h.py::test_restart_with_clock_wrong_and_no_wan_still_serves_cached_resident_flows",
       "tests/acceptance/test_at06_wan_down_72h.py::test_policy_older_than_valid_until_goes_guard_assisted_even_for_known_residents"
     ],
-    "duration_s": 0.5135,
+    "duration_s": 6.8938,
     "tests": [
+      {
+        "nodeid": "tests/acceptance/test_at06_e2e.py::test_72_hour_outage_with_restarts_cached_flows_work_fresh_approvals_fall_back_events_recover[fakecloud]",
+        "outcome": "passed",
+        "duration_s": 0.4541,
+        "cloud": "fakecloud"
+      },
+      {
+        "nodeid": "tests/acceptance/test_at06_e2e.py::test_72_hour_outage_with_restarts_cached_flows_work_fresh_approvals_fall_back_events_recover[realcloud]",
+        "outcome": "passed",
+        "duration_s": 3.01,
+        "cloud": "realcloud"
+      },
+      {
+        "nodeid": "tests/acceptance/test_at06_e2e.py::test_restart_with_clock_wrong_and_no_wan_still_serves_cached_resident_flows[fakecloud]",
+        "outcome": "passed",
+        "duration_s": 0.0332,
+        "cloud": "fakecloud"
+      },
+      {
+        "nodeid": "tests/acceptance/test_at06_e2e.py::test_restart_with_clock_wrong_and_no_wan_still_serves_cached_resident_flows[realcloud]",
+        "outcome": "passed",
+        "duration_s": 1.5006,
+        "cloud": "realcloud"
+      },
+      {
+        "nodeid": "tests/acceptance/test_at06_e2e.py::test_policy_older_than_valid_until_goes_guard_assisted_even_for_known_residents[fakecloud]",
+        "outcome": "passed",
+        "duration_s": 0.019,
+        "cloud": "fakecloud"
+      },
+      {
+        "nodeid": "tests/acceptance/test_at06_e2e.py::test_policy_older_than_valid_until_goes_guard_assisted_even_for_known_residents[realcloud]",
+        "outcome": "passed",
+        "duration_s": 1.4037,
+        "cloud": "realcloud"
+      },
       {
         "nodeid": "tests/acceptance/test_at06_wan_down_72h.py::test_72_hour_outage_with_restarts_cached_flows_work_fresh_approvals_fall_back_events_recover",
         "outcome": "passed",
-        "duration_s": 0.4673
+        "duration_s": 0.4258
       },
       {
         "nodeid": "tests/acceptance/test_at06_wan_down_72h.py::test_restart_with_clock_wrong_and_no_wan_still_serves_cached_resident_flows",
         "outcome": "passed",
-        "duration_s": 0.0257
+        "duration_s": 0.0316
       },
       {
         "nodeid": "tests/acceptance/test_at06_wan_down_72h.py::test_policy_older_than_valid_until_goes_guard_assisted_even_for_known_residents",
         "outcome": "passed",
-        "duration_s": 0.0205
+        "duration_s": 0.0158
       }
     ]
   },
   "tester": "automated/claude-code",
-  "date": "2026-10-06T00:16:50+00:00"
+  "date": "2026-10-06T01:59:03+00:00"
 }

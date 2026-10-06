@@ -17,6 +17,7 @@ from sqlalchemy import Connection, text
 
 from dwaar_common.errors import DependencyUnavailable, InvalidSchema, StaleVersion
 from dwaar_common.ids import uuid7
+from dwaar_common.signing import public_key_to_b64
 from dwaar_common.timeutil import format_iso_utc, utc_now
 
 from ...core.authz import public_route
@@ -121,7 +122,21 @@ def me(
 def issuer_keys(
     request: Request, signed: Annotated[SignedEdgeRequest, Depends(signed_edge_request)]
 ) -> dict[str, Any]:
-    return {"keys": _cfg(request).key_list()}
+    """Trust anchors for provisioning: policy issuer keys (``keys``) and the guest-pass QR verification keys (``pass_keys``).
+
+    Both are PUBLIC halves. A gateway pins them at commissioning (ADR-0019); it never takes a key from a snapshot."""
+    body: dict[str, Any] = {"keys": _cfg(request).key_list(), "pass_keys": []}
+    visits = getattr(request.app.state, "visits_config", None)
+    if visits is not None:
+        body["pass_keys"] = [
+            {
+                "key_id": visits.key_id,
+                "public_key": public_key_to_b64(visits.signing_key.public_key()),
+                "status": "active",
+                "simulation": bool(visits.simulation),
+            }
+        ]
+    return body
 
 
 # REQ: EDGE-04, GATE-06, GATE-14

@@ -147,6 +147,11 @@ class StandaloneTerminal:
         }
         if invitation is not None:
             ob["invitation_id"] = str(invitation)
+            known = None if self.bundle is None else self.bundle.invitations.get(invitation)
+            if known is not None:
+                ob["max_uses"] = (
+                    known.max_uses
+                )  # the gateway may no longer hold the pass when this is reconciled (expired passes leave the policy)
         if alias:
             ob["alias"] = alias
         self.observations.append(ob)

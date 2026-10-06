@@ -85,6 +85,8 @@ strict = true
 plugins = ["pydantic.mypy"]
 explicit_package_bases = true
 namespace_packages = true
+# One module name per file even when a service imports another (the worker imports dwaar_api): the package roots are the mypy_path.
+mypy_path = "services/api:services/worker:services/edge:services/ai-gateway:packages/dwaar-common:packages/dwaar-packs"
 warn_unreachable = true
 # Source packages, shared tooling and the harness. Later agents add their package globs
 # here only if they live outside these patterns.

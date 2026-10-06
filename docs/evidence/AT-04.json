@@ -7,7 +7,7 @@
     "outcome": "passed",
     "message": null
   },
-  "commit": "041121a8d85ed2bda2ffd48c72714c36810756b9",
+  "commit": "1b15ab928a56940de88483579ca7116e1cb65bfe",
   "environment": {
     "python": "3.12.3",
     "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
@@ -15,7 +15,7 @@
     "DWAAR_ENV": "unset",
     "simulation": true,
     "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
-    "tree_dirty": false
+    "tree_dirty": true
   },
   "dataset": "dwaar-seed-v1: two synthetic societies (Maharashtra CHS 3 blocks/240 units, Karnataka association 2 blocks/180 units), invented people on fictional numbers +91 99999 0nnnn, loaded by python -m dwaar_api.seed",
   "trace": {
@@ -25,30 +25,30 @@
       "tests/acceptance/test_at04_expired_request.py::test_real_clock_the_request_expires_by_itself_and_the_queued_approval_is_refused",
       "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind"
     ],
-    "duration_s": 80.0963,
+    "duration_s": 79.8166,
     "tests": [
       {
         "nodeid": "tests/acceptance/test_at04_expired_request.py::test_a_queued_approval_after_expiry_issues_no_permission",
         "outcome": "passed",
-        "duration_s": 4.7469
+        "duration_s": 5.3811
       },
       {
         "nodeid": "tests/acceptance/test_at04_expired_request.py::test_a_denied_request_and_an_expired_one_stay_closed_whoever_answers_late",
         "outcome": "passed",
-        "duration_s": 4.9312
+        "duration_s": 4.7061
       },
       {
         "nodeid": "tests/acceptance/test_at04_expired_request.py::test_real_clock_the_request_expires_by_itself_and_the_queued_approval_is_refused",
         "outcome": "passed",
-        "duration_s": 66.6781
+        "duration_s": 66.504
       },
       {
         "nodeid": "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind",
         "outcome": "passed",
-        "duration_s": 3.7401
+        "duration_s": 3.2254
       }
     ]
   },
   "tester": "automated/claude-code",
-  "date": "2026-10-05T21:56:56+00:00"
+  "date": "2026-10-06T01:59:03+00:00"
 }

@@ -1,10 +1,11 @@
-"""Edge: a gateway device with a deterministic LOCAL-ONLY key, two standing rules and the first signed policy snapshot (opt-in).
+"""Edge: a gateway device with a deterministic LOCAL-ONLY key, two standing rules and the first signed policy snapshot (default ON).
 
 REQ: EDGE-04 (signed snapshot), EDGE-09 (per-device key), GATE-14 (standing rules), SOC-05 (device enrolled by a guard, approved by the
 supervisor), BUILD_BRIEF 7 (simulators are labelled; keys derived from public labels are worth nothing and local only).
 
-OPT-IN: runs only when ``DWAAR_SEED_EDGE`` is ``1``/``true``. The slice 2 seed tests assert the exact device list of the visits seed, so a
-default-on extra device would break them; flip the default when those expectations are updated (reported as a blocked request).
+DEFAULT ON (slice 3 integration, ADR-0019): runs unless ``DWAAR_SEED_EDGE`` is ``0``/``false``/``no``/``off``. The gateway is a SOCIETY gateway:
+it is enrolled WITHOUT a gate binding, because a gate-bound device may only report for its own gate and the seeded societies have more than one
+gate (a bound gateway would see every other gate's events quarantined as ``device_wrong_gate``).
 
 The gateway of society ``mh`` is named ``Main gate edge gateway`` and its Ed25519 seed is ``sha256(b"dwaar-local-edge-device|mh:Main gate
 edge gateway")`` (docs/contracts/edge-sync.md section 8; ``python -m dwaar_api.modules.edge.localdev`` prints everything the edge needs).
@@ -35,7 +36,7 @@ _GATEWAY_NAMES = {"mh": localkeys.SEED_DEVICE_NAME, "ka": "Tower gate edge gatew
 
 
 def enabled() -> bool:
-    return os.environ.get("DWAAR_SEED_EDGE", "").strip().lower() in {"1", "true", "yes"}
+    return os.environ.get("DWAAR_SEED_EDGE", "").strip().lower() not in {"0", "false", "no", "off"}
 
 
 def _ensure_gateway(
@@ -63,7 +64,7 @@ def _ensure_gateway(
         with ctx.tx(scope, society=soc.id, person=guard, role="guard") as (conn, rctx):
             created = gates.enrol_device(
                 conn, rctx, soc.id,
-                DeviceEnrol(kind="gateway", name=name, gate_id=gate[0], public_key=key, firmware="edge-sim-0.1",
+                DeviceEnrol(kind="gateway", name=name, gate_id=None, public_key=key, firmware="edge-sim-0.1",
                             capabilities={"edge": True, "simulation": True}, simulation=True),
             )  # fmt: skip
         device_id = uuid.UUID(str(created["id"]))
@@ -115,7 +116,7 @@ def _ensure_rules(ctx: SeedContext, plan: s400_visits.SocietyPlan, soc: SocietyR
 def run(ctx: SeedContext) -> None:
     if not enabled():
         ctx.say(
-            "      (edge seed is opt-in: set DWAAR_SEED_EDGE=1 to add the gateway device, standing rules and a policy snapshot)"
+            "      (edge seed disabled by DWAAR_SEED_EDGE: no gateway device, standing rules or policy snapshot)"
         )
         return
     cfg = EdgeConfig.from_environment(ctx.settings)

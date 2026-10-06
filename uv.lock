@@ -330,6 +330,7 @@ version = "0.1.0"
 source = { editable = "services/worker" }
 dependencies = [
     { name = "dramatiq", extra = ["redis"] },
+    { name = "dwaar-api" },
     { name = "dwaar-common" },
     { name = "httpx" },
     { name = "psycopg", extra = ["binary"] },
@@ -340,6 +341,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "dramatiq", extras = ["redis"], specifier = ">=1.17" },
+    { name = "dwaar-api", editable = "services/api" },
     { name = "dwaar-common", editable = "packages/dwaar-common" },
     { name = "httpx", specifier = ">=0.27" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },

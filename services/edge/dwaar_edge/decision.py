@@ -355,7 +355,7 @@ def _uses(
     led = request.ledger
     standalone = request.mode is OperatingMode.RESTRICTED_STANDALONE
     gate_bound_here = inv.gate_id is not None and inv.gate_id == request.gate_id
-    cloud_used = inv.max_uses - inv.uses_remaining
+    cloud_used = inv.cloud_used
     used = max(cloud_used, led.used_total)
     remaining = inv.max_uses - used
     ev = {**ev, "max_uses": inv.max_uses, "uses_remaining_local": max(0, remaining)}

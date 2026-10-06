@@ -14,7 +14,7 @@ import uuid
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from dwaar_common.ids import uuid7
-from dwaar_common.signing import key_id_for, public_key_to_b64
+from dwaar_common.signing import key_id_for, private_key_from_b64, public_key_to_b64
 
 from ...seed.ids import deterministic_ids, scoped_uuid
 from . import localkeys
@@ -38,7 +38,15 @@ def describe(
     society_key: str = localkeys.SEED_SOCIETY_KEY, name: str = localkeys.SEED_DEVICE_NAME
 ) -> dict[str, object]:
     label = f"{society_key}:{name}"
-    issuer = Ed25519PrivateKey.from_private_bytes(localkeys.issuer_seed()).public_key()
+    configured = os.environ.get(
+        "DWAAR_EDGE_POLICY_SIGNING_KEY", ""
+    ).strip()  # `make setup` generates one: the API then signs with it
+    issuer = (
+        private_key_from_b64(configured).public_key()
+        if configured
+        else Ed25519PrivateKey.from_private_bytes(localkeys.issuer_seed()).public_key()
+    )
+    key_id = os.environ.get("DWAAR_EDGE_POLICY_KEY_ID", "").strip() if configured else ""
     return {
         "simulation": True,
         "society_id": str(scoped_uuid(f"society:{society_key}")),
@@ -47,7 +55,7 @@ def describe(
         "device_label": label,
         "device_seed_b64url": localkeys.device_seed_b64(label),
         "device_public_key": localkeys.device_public_key_b64(label),
-        "policy_issuer_key_id": key_id_for(issuer),
+        "policy_issuer_key_id": key_id or key_id_for(issuer),
         "policy_issuer_public_key": public_key_to_b64(issuer),
     }
 

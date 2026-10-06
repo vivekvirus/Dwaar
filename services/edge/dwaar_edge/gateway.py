@@ -1002,8 +1002,12 @@ class Gateway:
         device_id: uuid.UUID,
         movement_id: uuid.UUID,
         now: datetime,
+        max_uses_hint: int | None = None,
     ) -> bool:
-        """Turn a reservation (or a guard-confirmed entry) into a consumed use. True if it exceeds the pass."""
+        """Turn a reservation (or a guard-confirmed entry) into a consumed use. True if it exceeds the pass.
+
+        ``max_uses_hint`` is the limit the observer knew when it let the visitor in: a pass that has since LEFT the policy (its window ended;
+        the cloud only publishes live passes) must not be judged against a guessed limit of one (ADR-0019)."""
         if invitation_id is None:
             return False
         if reservation_id is not None:
@@ -1032,8 +1036,8 @@ class Gateway:
                 str(movement_id),
             ),
         )
-        max_uses = 1 if inv is None else inv.max_uses
-        cloud_used = 0 if inv is None else inv.max_uses - inv.uses_remaining
+        max_uses = inv.max_uses if inv is not None else (max_uses_hint or 1)
+        cloud_used = 0 if inv is None else inv.cloud_used
         return bool(max(used, cloud_used) >= max_uses)
 
     def _review(
@@ -1593,7 +1597,7 @@ class Gateway:
                 "SELECT COUNT(*) FROM pass_uses WHERE invitation_id=? AND state IN ('held','consumed')",
                 (str(invitation_id),),
             ).fetchone()[0]
-            left = inv.max_uses - max(inv.max_uses - inv.uses_remaining, used)
+            left = inv.max_uses - max(inv.cloud_used, used)
             if sum(allocations.values()) > left:
                 raise InvalidRequest("allocation exceeds remaining uses", code="invalid_allocation")
             c.execute("DELETE FROM quota_escrow WHERE invitation_id=?", (str(invitation_id),))
@@ -1704,8 +1708,16 @@ class Gateway:
                         fake,
                         True,
                     )
+                    hint = ob.get("max_uses")
                     conflict = self._consume_pass(
-                        c, inv, None, gate_id, actor.device_id, entity, clock.now
+                        c,
+                        inv,
+                        None,
+                        gate_id,
+                        actor.device_id,
+                        entity,
+                        clock.now,
+                        int(hint) if isinstance(hint, int) and hint > 0 else None,
                     )
                     etype, version = "EntryObserved", 1
                 elif kind == "exit":

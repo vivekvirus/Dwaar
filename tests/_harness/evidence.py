@@ -121,6 +121,9 @@ class TestRecord:
     duration_s: float = 0.0
     message: str | None = None
     wasxfail: bool = False
+    cloud: str | None = (
+        None  # which cloud an edge scenario talked to ("fakecloud" | "realcloud"), from the `cloud` fixture parameter
+    )
 
     @property
     def outcome(self) -> str:
@@ -150,6 +153,7 @@ class TestRecord:
             "ats": self.ats,
             "milestone": self.milestone,
             "simulation": self.simulation,
+            **({"cloud": self.cloud} if self.cloud else {}),
             "message": self.message,
         }
 
@@ -218,6 +222,7 @@ def build_at_evidence(
     milestones = [r.milestone for r in records if r.milestone]
     datasets = list(dict.fromkeys(r.dataset for r in records if r.dataset))
     simulation = any(r.simulation for r in records)
+    clouds = sorted({r.cloud for r in records if r.cloud})
     return {
         "id": at_id,
         "milestone": item.get("milestone") or (milestones[0] if milestones else None),
@@ -225,13 +230,23 @@ def build_at_evidence(
         "expected": item.get("expected"),
         "observed": {"outcome": verdict, "message": message},
         "commit": commit,
-        "environment": {**environment, "simulation": simulation},
+        "environment": {
+            **environment,
+            "simulation": simulation,
+            # edge scenarios say which cloud they ran against: the in-process FakeCloud, or the REAL API over real HTTP (both simulations)
+            **({"clouds": clouds} if clouds else {}),
+        },
         "dataset": "; ".join(datasets) if datasets else DEFAULT_DATASET,
         "trace": {
             "pytest_nodeids": [r.nodeid for r in records],
             "duration_s": round(sum(r.duration_s for r in records), 4),
             "tests": [
-                {"nodeid": r.nodeid, "outcome": r.outcome, "duration_s": round(r.duration_s, 4)}
+                {
+                    "nodeid": r.nodeid,
+                    "outcome": r.outcome,
+                    "duration_s": round(r.duration_s, 4),
+                    **({"cloud": r.cloud} if r.cloud else {}),
+                }
                 for r in records
             ],
         },
@@ -329,6 +344,13 @@ def write_outputs(
 
 
 # --------------------------------------------------------------------------- pytest hooks
+
+
+def _cloud_of(item: pytest.Item) -> str | None:
+    """The ``cloud`` parameter of a parametrised edge scenario, if the test has one."""
+    callspec = getattr(item, "callspec", None)
+    value = None if callspec is None else callspec.params.get("cloud")
+    return value if isinstance(value, str) else None
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -450,6 +472,7 @@ class EvidencePlugin:
                     milestone=milestone,
                     simulation=item.get_closest_marker("simulation") is not None,
                     dataset=dataset,
+                    cloud=_cloud_of(item),
                 )
         if errors:
             raise pytest.UsageError("invalid test markers:\n  " + "\n  ".join(errors))

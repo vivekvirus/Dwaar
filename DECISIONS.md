@@ -227,3 +227,51 @@ Format: ID, date, owner, decision, reason / consequence.
 - The guard's "current gate" is the gate the guard names until shifts exist (slice 4); expiry is evaluated lazily and by an idempotent expire job.
 - Open: `dwaar_worker` lacks INSERT on `outbox` (sweep/expiry jobs run as `dwaar_app` for now); GUARD_SUP actions to be folded into the identity matrix.
 
+
+### B-013 Edge-local pass entries are projected onto visits and pass uses; residents and overrides are recorded, not projected (ADR-0019)
+- Date: 2026-10-06. Owner: Viz.
+- The gateway mints its own movement ids. Decision (PRD EDGE-07, INV-07): every observation is an `access_events` row; legitimate cached-policy resident entries, exits of known movements and
+  guard-assisted entries raise **no** exception and create no visit; an accepted entry of a pass the cloud knows becomes one `inside` visit (id `uuid5(society, movement)`, not the movement id), one
+  `visit_stops` row and one use of the pass, in one transaction with audit and outbox (`VisitEntered`); a pass already counted out still gets its visit plus a supervisor exception and is never counted
+  beyond `max_uses`; unknown or revoked-before-entry passes, remote decisions without a cloud visit, overrides and emergency entries raise supervisor exceptions and stay recorded; the gateway's
+  advisory `review` flag stays in the stored payload and does not flood the queue. The projection creates no permission.
+
+### B-014 Trust anchors are provisioned, never taken from a snapshot; pass keys are published beside issuer keys
+- Date: 2026-10-06. Owner: Viz.
+- `GET /v1/edge/keys` also returns `pass_keys`; `python -m dwaar_edge.provision` fetches both with the device key and prints `DWAAR_EDGE_ISSUER_KEYS` / `DWAAR_EDGE_PASS_KEYS`. First use is trust-on-first-use
+  unless the installer compares the printed fingerprints out of band (documented); a rotation needs re-provisioning. mTLS (EDGE-09) remains not implemented.
+
+### B-015 A society gateway is enrolled without a gate binding; the edge seed is default ON
+- Date: 2026-10-06. Owner: Viz.
+- A gate-bound device may report only for its gate (`device_wrong_gate`), kept as is (an existing test asserts it). The seeded gateways serve societies with more than one gate, so they are enrolled unbound.
+  `DWAAR_SEED_EDGE` defaults to on (`0/false/no/off` disables). Slice 2's `test_seed_visits` counts changed with justification: devices 3 -> 5 (two gateways), `device.enrol_request` 3 -> 5,
+  `device.approve` 2 -> 4; nothing else of the visits seed changed.
+
+### B-016 Gateway honours Retry-After; a revoked pass does not read as used; a departed pass keeps the limit its observer knew
+- Date: 2026-10-06. Owner: Viz.
+- Backoff stays exponential with full jitter but never earlier than `Retry-After` (clamped to 3,600 s). `uses_remaining` of a revoked pass is 0 by contract and is not a use count
+  (`Invitation.cloud_used`). Standalone observations carry `max_uses` so a pass that left the policy (last window over) is not judged as single-use.
+
+### B-017 The stale-clock flag allows for an outage
+- Date: 2026-10-06. Owner: Viz.
+- An event is `stale` only when older than `max(policy_age_limit, time since the device's previous batch)`: 72 h and longer outages (NFR-09) no longer produce `clock_implausible` exceptions for honest buffered events;
+  a wrong clock (older than the silence itself) is still flagged. First-ever batches keep the 72 h rule.
+
+### B-018 Worker jobs, grants and listing of societies
+- Date: 2026-10-06. Owner: Viz.
+- `services/worker` runs the policy publisher and the visits sweep as plain functions plus Dramatiq actors (Redis from `DWAAR_REDIS_URL`; `StubBroker` in tests, Redis never started by a test). New additive grants:
+  0010 (outbox INSERT, content columns, society context still required), 0104 (`dwaar_active_society_ids()`, SECURITY DEFINER, worker-only, ids only: the worker still cannot read `societies`),
+  0206 (invitations UPDATE state/version), 0314 (policy snapshots, credential references, revocation counter). The 0010 slot is the requested core migration; 0104 sits after `societies` exists, in the org range.
+  `publish_on_poll` stays the default until a deployment sets it false. `dwaar-worker` depends on `dwaar-api` (uv.lock updated offline); `mypy_path` lists the package roots so one file has one module name.
+
+### B-019 End-to-end evidence is simulated and says which cloud it used
+- Date: 2026-10-06. Owner: Viz.
+- AT-05..AT-08 run end to end against the real API (`tests/acceptance/test_at0{5,6,7,8}_e2e.py`, parametrised `fakecloud` | `realcloud`, same assertions; REAL-ONLY extras are marked). Evidence JSON records
+  `environment.clouds` and a per-test `cloud`; `environment.simulation` stays true. The virtual clock follows monotonic time on both sides; PostgreSQL's own `clock_timestamp()` stays real and the harness moves
+  `revoked_at` to virtual time where a scenario needs it (labelled). FakeCloud now conforms on authentication window, caps, seq conflicts, payload size and wrong-society disposal; differences that remain are listed and asserted.
+
+### B-020 Local keys for the edge are generated by `make setup`
+- Date: 2026-10-06. Owner: Viz.
+- `.env.example` now documents the cloud issuer key, key id, retired keys, reference key, pass signing key, visitor HMAC key, the publish-on-poll switch, per-device rate limits, every gateway commissioning
+  variable and the worker variables; the stale placeholder names of the first edge section were removed (nothing read them). `make setup` generates distinct 32-byte keys for each placeholder;
+  a test proves the generated values load in the cloud config, the visits config and the gateway config.

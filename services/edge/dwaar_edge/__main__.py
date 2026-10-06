@@ -3,6 +3,9 @@
 Binds the local API to ``DWAAR_EDGE_BIND`` (default 127.0.0.1): there are no inbound internet ports (EDGE-09);
 set it to the security-LAN address at commissioning. Starts the background sync worker only if
 ``DWAAR_EDGE_CLOUD_URL`` is set. Issues no hardware command at any point.
+
+Commissioning (docs/adr/0019): the gateway is enrolled in the cloud as a SOCIETY gateway, i.e. WITHOUT a gate binding (a gate-bound device may only report
+for its own gate, and one gateway serves every gate of the society); its trust anchors come from ``python -m dwaar_edge.provision``.
 """
 
 from __future__ import annotations

@@ -14,6 +14,7 @@ from tests._harness.pgcluster import PgClusterError, find_pg_bin, free_port
 from tools.dev import devenv, seed
 from tools.dev.devenv import (
     GENERATE_KEY,
+    generate_key,
     init_env,
     load_env,
     parse_env_text,
@@ -201,3 +202,74 @@ def test_pg_sh_lifecycle_on_private_root() -> None:
         pg("destroy")
         shutil.rmtree(root, ignore_errors=True)
     assert pg("status").returncode == 3
+
+
+# --------------------------------------------------------------------------- slice 3: edge and worker variables
+def _edge_vars_read_by_code() -> set[str]:
+    import re
+
+    used: set[str] = set()
+    for pattern in (
+        "services/edge/dwaar_edge/*.py",
+        "services/api/dwaar_api/modules/edge/*.py",
+        "services/api/dwaar_api/seed/steps/s450_edge.py",
+        "services/worker/dwaar_worker/*.py",
+    ):
+        for path in ROOT.glob(pattern):
+            used |= set(
+                re.findall(
+                    r"\b(DWAAR_(?:EDGE|WORKER|SEED_EDGE)[A-Z0-9_]*)\b",
+                    path.read_text(encoding="utf-8"),
+                )
+            )
+    return used - {"DWAAR" + "_EDGE_"}  # a prefix literal in the code, not a variable
+
+
+def test_every_edge_and_worker_variable_the_code_reads_is_documented_in_env_example() -> None:
+    import re
+
+    documented = set(
+        re.findall(r"^#?\s*(DWAAR_[A-Z0-9_]+)=", (ROOT / ".env.example").read_text(), re.M)
+    )
+    assert sorted(_edge_vars_read_by_code() - documented) == []
+    for name in (
+        "DWAAR_EDGE_POLICY_SIGNING_KEY", "DWAAR_EDGE_POLICY_KEY_ID", "DWAAR_EDGE_RETIRED_KEYS", "DWAAR_EDGE_REF_KEY",
+        "DWAAR_EDGE_ISSUER_KEYS", "DWAAR_EDGE_PASS_KEYS", "DWAAR_EDGE_DEVICE_KEY", "DWAAR_EDGE_TOKEN_KEY", "DWAAR_EDGE_PII_KEYS",
+    ):  # fmt: skip
+        assert name in documented, name
+
+
+def test_make_setup_generates_distinct_local_edge_keys_and_the_apps_accept_them() -> None:
+    """``make setup`` renders .env.example: every edge key placeholder becomes its own 32-byte key, and the cloud edge config and the
+    gateway config really load from the result (no empty or malformed key)."""
+    from dwaar_api.core.config import load_settings
+    from dwaar_api.modules.edge.config import EdgeConfig as CloudEdgeConfig
+    from dwaar_api.modules.visits.config import VisitsConfig
+    from dwaar_edge.config import EdgeConfig as GatewayEdgeConfig
+
+    values = parse_env_text(render_env_from_example((ROOT / ".env.example").read_text()))
+    keys = [
+        values[n]
+        for n in (
+            "DWAAR_EDGE_POLICY_SIGNING_KEY", "DWAAR_EDGE_REF_KEY", "DWAAR_EDGE_DEVICE_KEY", "DWAAR_EDGE_TOKEN_KEY",
+            "DWAAR_PASS_SIGNING_KEY", "DWAAR_VISITOR_HMAC_KEY",
+        )
+    ]  # fmt: skip
+    assert len(set(keys)) == len(keys)
+    assert all(len(base64.urlsafe_b64decode(k + "=" * (-len(k) % 4))) == 32 for k in keys)
+    env = {**values, "DWAAR_ENV": "staging", "DWAAR_DATABASE_URL": "postgresql://dwaar_app:x@127.0.0.1:5/d", "DWAAR_CURSOR_SIGNING_KEY": generate_key(),
+           "DWAAR_OIDC_ISSUER_URL": "https://idp.example", "DWAAR_OIDC_JWKS_URL": "https://idp.example/jwks"}  # fmt: skip
+    settings = load_settings(env)
+    cloud = CloudEdgeConfig.from_environment(
+        settings, env
+    )  # a non-local environment: the keys MUST come from the generated values
+    assert cloud.signer.public_key_b64
+    assert len(cloud.ref_key) == 32
+    assert VisitsConfig.from_environment(settings, env).key_id
+    import uuid
+
+    gw_env = {**env, "DWAAR_EDGE_SOCIETY_ID": str(uuid.uuid4()), "DWAAR_EDGE_DEVICE_ID": str(uuid.uuid4()),
+              "DWAAR_EDGE_ISSUER_KEYS": f"policy-1={cloud.signer.public_key_b64}"}  # fmt: skip
+    gateway = GatewayEdgeConfig.from_env(gw_env)
+    assert set(gateway.issuer_keys) == {"policy-1"}
+    assert gateway.device_key_id == "edge-local-1"

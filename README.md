@@ -36,6 +36,14 @@ make db-down    # stop the dev database
 * `.env` is git-ignored and created once by `make setup`; the process environment overrides `.env`, which overrides
   `.env.example`. Add every new variable to `.env.example` with a comment.
 
+## Edge gateway and worker (local simulation)
+
+`make seed` also enrols a society **gateway** per demo society (simulation, a key derived from a public label) and publishes a first signed policy snapshot; `DWAAR_SEED_EDGE=0` skips it.
+The on-site gateway (`services/edge`, `python -m dwaar_edge`) is commissioned like this: a guard requests the enrolment with the gateway's PUBLIC key, a different supervisor approves it, then
+`python -m dwaar_edge.provision` (device-signed `GET /v1/edge/keys`) prints the issuer and guest-pass keys to pin as `DWAAR_EDGE_ISSUER_KEYS` / `DWAAR_EDGE_PASS_KEYS`. See ADR-0018 and ADR-0019.
+Background jobs (policy publisher, visits expiry and overstay sweep): `make worker` (Dramatiq on `DWAAR_REDIS_URL`, needs Redis) and `make scheduler`; the job functions themselves need no Redis.
+The edge and cloud have run against each other only in simulation (`tests/integration/edge_e2e`, `docs/reports/slice-3.md`).
+
 ## Local demo
 
 `make seed` fills the dev database with a synthetic dataset (PRD 8.3, slice 1 part). It refuses to run unless

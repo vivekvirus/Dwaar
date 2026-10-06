@@ -44,18 +44,22 @@ def test_gates_lanes_and_devices(seeded: World) -> None:
     assert _one(w, "SELECT count(*) FROM lanes") == 4
     devices = w.admin_rows("SELECT name, state, simulation FROM devices ORDER BY name")
     assert devices == [
+        # slice 3 (edge seed default ON, ADR-0019): one society gateway per society, enrolled and approved through the same audited paths
+        ("Main gate edge gateway", "active", True),
         ("Main gate terminal", "active", True),
         (
             "Pedestrian gate handheld",
             "pending_approval",
             True,
         ),  # left pending on purpose: the supervisor's queue is not empty
+        ("Tower gate edge gateway", "active", True),
         ("Tower gate terminal", "active", True),
     ]
     # requested by a guard, decided by somebody else (maker != checker)
     assert w.admin_rows("SELECT count(*) FROM devices WHERE decided_by = requested_by")[0][0] == 0
-    assert _one(w, "SELECT count(*) FROM audit_log WHERE operation = 'device.enrol_request'") == 3
-    assert _one(w, "SELECT count(*) FROM audit_log WHERE operation = 'device.approve'") == 2
+    # 3 terminals/handhelds of the visits seed + 2 gateways of the edge seed = 5 requests; 2 + 2 = 4 approvals (the handheld stays pending)
+    assert _one(w, "SELECT count(*) FROM audit_log WHERE operation = 'device.enrol_request'") == 5
+    assert _one(w, "SELECT count(*) FROM audit_log WHERE operation = 'device.approve'") == 4
 
 
 def test_passes_are_explicit_windows_one_revoked_one_phone_free(seeded: World) -> None:

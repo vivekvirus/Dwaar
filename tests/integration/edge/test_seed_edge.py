@@ -51,11 +51,14 @@ def signed(w: World, method: str, target: str, body: bytes = b"") -> Any:
     return w.client.request(method, target, headers=headers, content=body or None)
 
 
-def test_step_is_opt_in(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_step_is_on_by_default_and_can_be_switched_off(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("DWAAR_SEED_EDGE", raising=False)
-    assert s450_edge.enabled() is False
+    assert s450_edge.enabled() is True  # slice 3: default on (ADR-0019)
     monkeypatch.setenv("DWAAR_SEED_EDGE", "1")
     assert s450_edge.enabled() is True
+    for off in ("0", "false", "no", "off", "OFF"):
+        monkeypatch.setenv("DWAAR_SEED_EDGE", off)
+        assert s450_edge.enabled() is False
     assert s450_edge.ORDER == 450 and s450_edge.ORDER not in {
         m.ORDER for m in seed.discover_steps() if m is not s450_edge
     }

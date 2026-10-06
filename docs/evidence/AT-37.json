@@ -1,0 +1,36 @@
+{
+  "id": "AT-37",
+  "milestone": "M1",
+  "scenario": "A Maharashtra pack has the general-body interest set to 18 percent",
+  "expected": "Bill-run preview fails against the 12 percent simple cap and cannot be approved",
+  "observed": {
+    "outcome": "passed",
+    "message": null
+  },
+  "commit": "1b15ab928a56940de88483579ca7116e1cb65bfe",
+  "environment": {
+    "python": "3.12.3",
+    "postgres": "16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)",
+    "postgres_mode": "ephemeral",
+    "DWAAR_ENV": "unset",
+    "simulation": false,
+    "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+    "tree_dirty": true
+  },
+  "dataset": "synthetic data created by the test itself (invented identities, no real PII)",
+  "trace": {
+    "pytest_nodeids": [
+      "packages/dwaar-packs/tests/test_legal_rules.py::test_at37_interest_18_pct_exceeds_12_pct_cap"
+    ],
+    "duration_s": 0.0167,
+    "tests": [
+      {
+        "nodeid": "packages/dwaar-packs/tests/test_legal_rules.py::test_at37_interest_18_pct_exceeds_12_pct_cap",
+        "outcome": "passed",
+        "duration_s": 0.0167
+      }
+    ]
+  },
+  "tester": "automated/claude-code",
+  "date": "2026-10-06T01:59:03+00:00"
+}

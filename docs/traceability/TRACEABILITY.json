@@ -10,9 +10,9 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 637,
+    "files_scanned": 671,
     "files_ignored": 0,
-    "annotations": 1091
+    "annotations": 1178
   },
   "summary": {
     "requirements_in_scope": 220,
@@ -49,8 +49,8 @@
     },
     "acceptance_in_scope": 35,
     "acceptance_by_status": {
-      "done": 8,
-      "partial": 2,
+      "done": 10,
+      "partial": 0,
       "not-started": 25
     },
     "reference_items": {
@@ -91,7 +91,8 @@
         "services/api/dwaar_api/modules/visits/schemas.py",
         "services/api/migrations/0004_audit_log.sql",
         "services/api/migrations/0008_integrity_hardening.sql",
-        "services/api/migrations/0009_runtime_privilege_hardening.sql"
+        "services/api/migrations/0009_runtime_privilege_hardening.sql",
+        "services/api/migrations/0104_worker_society_index.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -143,6 +144,8 @@
         "tests/integration/visits/test_history.py:3",
         "tests/integration/visits/test_schema.py:5",
         "tests/integration/visits/test_schema.py::<module>",
+        "tests/integration/worker/test_jobs.py::<module>",
+        "tests/integration/worker/test_worker_grants.py::<module>",
         "tests/security/test_core_authn.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
@@ -262,12 +265,18 @@
         "services/edge/tests/unit/test_gateway_flows.py::<module>",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/acceptance/test_at07_e2e.py::<module>",
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
         "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/acceptance/test_at08_e2e.py::<module>",
         "tests/integration/edge/test_standing_rules.py:3",
         "tests/integration/edge/test_sync.py:3",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3",
         "tests/integration/visits/test_decisions.py:3",
         "tests/integration/visits/test_decisions.py::test_a_decision_after_expiry_is_409_request_expired_and_issues_no_permission",
         "tests/integration/visits/test_exceptions.py:3",
@@ -275,6 +284,7 @@
         "tests/integration/visits/test_race.py::<module>",
         "tests/integration/visits/test_race.py::test_decisions_racing_the_expiry_never_leave_a_permission_behind",
         "tests/integration/visits/test_requests.py:3",
+        "tests/integration/worker/test_jobs.py::<module>",
         "tests/security/test_w1_packs.py::<module>"
       ],
       "acceptance_gates": [
@@ -407,12 +417,19 @@
         "services/edge/tests/unit/test_gateway_flows.py::<module>",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_e2e.py::<module>",
+        "tests/acceptance/test_at07_e2e.py::<module>",
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
+        "tests/integration/edge/test_projection.py::<module>",
         "tests/integration/edge/test_sync.py:3",
         "tests/integration/edge/test_sync.py::<module>",
         "tests/integration/edge/test_transitions.py:3",
         "tests/integration/edge/test_transitions.py::<module>",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3",
+        "tests/integration/edge_e2e/test_protocol.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
         "tests/integration/visits/test_invitations.py:4",
         "tests/integration/visits/test_observations.py:4",
@@ -1678,6 +1695,7 @@
         "tests/integration/edge/test_schema.py:4",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/integration/visits/test_schema.py::test_every_visits_table_is_force_rls_with_a_society_policy",
+        "tests/integration/worker/test_worker_grants.py::<module>",
         "tests/security/test_core_authz.py::<module>",
         "tests/security/test_core_errors_logging.py::<module>",
         "tests/security/test_core_rls_isolation.py::<module>",
@@ -1711,7 +1729,8 @@
       "status": "partial",
       "blocked_by": [],
       "implemented_in": [
-        "services/api/dwaar_api/core/config.py"
+        "services/api/dwaar_api/core/config.py",
+        "services/worker/dwaar_worker/config.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -1818,6 +1837,7 @@
         "tests/integration/visits/test_schema.py::<module>",
         "tests/integration/visits/test_schema.py::test_access_events_are_append_only_and_device_sequence_and_event_id_are_unique",
         "tests/integration/visits/test_schema.py::test_only_one_valid_first_decision_per_request_and_decisions_are_append_only",
+        "tests/integration/worker/test_worker_grants.py::<module>",
         "tests/security/test_core_rls_isolation.py::test_every_society_table_has_force_rls_and_a_society_policy",
         "tests/security/test_w1_history.py::<module>",
         "tests/security/test_w1_history_r2.py::<module>",
@@ -2271,6 +2291,7 @@
         "services/api/dwaar_api/modules/visits/tokens.py",
         "services/api/dwaar_api/seed/steps/s400_visits.py",
         "services/api/migrations/0201_invitations.sql",
+        "services/edge/dwaar_edge/provision.py",
         "services/edge/dwaar_edge/qr.py"
       ],
       "adapter_files": [],
@@ -2278,8 +2299,10 @@
       "tested_by": [
         "apps/resident-mobile/__tests__/invite-visitors-profile.test.tsx:1",
         "apps/resident-mobile/__tests__/qr-real.test.tsx:1",
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
         "tests/integration/edge/test_policy.py:3",
+        "tests/integration/edge_e2e/test_protocol.py:3",
         "tests/integration/visits/test_invitations.py:4",
         "tests/integration/visits/test_invitations.py::<module>",
         "tests/integration/visits/test_schema.py::test_a_pass_cannot_be_open_ended",
@@ -2315,7 +2338,8 @@
         "services/api/dwaar_api/modules/visits/routes_approvals.py",
         "services/api/dwaar_api/modules/visits/routes_gates.py",
         "services/api/dwaar_api/modules/visits/schemas.py",
-        "services/api/migrations/0203_approvals.sql"
+        "services/api/migrations/0203_approvals.sql",
+        "services/api/migrations/0206_worker_visit_sweep.sql"
       ],
       "adapter_files": [],
       "simulator_files": [],
@@ -2327,7 +2351,9 @@
         "tests/integration/visits/test_requests.py:3",
         "tests/integration/visits/test_requests.py::<module>",
         "tests/integration/visits/test_seed_visits.py:3",
-        "tests/integration/visits/test_seed_visits.py::<module>"
+        "tests/integration/visits/test_seed_visits.py::<module>",
+        "tests/integration/worker/test_actors.py::<module>",
+        "tests/integration/worker/test_jobs.py::<module>"
       ],
       "acceptance_gates": [
         "AT-03",
@@ -2446,13 +2472,16 @@
       "tested_by": [
         "services/edge/tests/unit/test_gateway_flows.py::test_exit_is_recorded_at_the_real_time_and_unmatched_exits_are_flagged",
         "services/edge/tests/unit/test_gateway_flows.py::test_inside_confidence_turns_stale_instead_of_inventing_an_exit",
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/integration/edge/test_projection.py::<module>",
         "tests/integration/visits/test_observations.py:4",
         "tests/integration/visits/test_observations.py::<module>",
         "tests/integration/visits/test_observations.py::test_an_exit_reconciled_as_unknown_never_gets_an_exit_time",
         "tests/integration/visits/test_observations.py::test_egress_is_never_gated_an_exit_is_recorded_for_any_visit",
         "tests/integration/visits/test_schema.py:5",
-        "tests/integration/visits/test_schema.py::test_the_database_refuses_a_manufactured_exit_time"
+        "tests/integration/visits/test_schema.py::test_the_database_refuses_a_manufactured_exit_time",
+        "tests/integration/worker/test_jobs.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [],
@@ -2484,12 +2513,16 @@
       "tested_by": [
         "services/edge/tests/unit/test_decision.py::<module>",
         "services/edge/tests/unit/test_gateway_flows.py::test_photo_or_ocr_match_alone_never_creates_entitlement",
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/acceptance/test_at07_e2e.py::<module>",
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
         "tests/integration/edge/test_movements.py::<module>",
         "tests/integration/edge/test_policy.py:3",
         "tests/integration/edge/test_policy.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3",
         "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr02_decision_latency_50k_credentials_20_per_second_burst"
       ],
       "acceptance_gates": [
@@ -2528,6 +2561,7 @@
         "services/edge/tests/unit/test_api.py::<module>",
         "services/edge/tests/unit/test_gateway_flows.py::test_emergency_entry_needs_defined_authority_and_reason_and_works_offline",
         "services/edge/tests/unit/test_gateway_flows.py::test_override_expires_at_shift_end_and_needs_a_reason",
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
         "tests/integration/edge/test_movements.py::<module>",
         "tests/integration/visits/test_exceptions.py:3",
@@ -2624,7 +2658,9 @@
         "tests/integration/visits/test_observations.py::test_delivery_overstay_after_20_minutes_opens_one_exception_and_marks_the_count_stale",
         "tests/integration/visits/test_observations.py::test_overstay_thresholds_are_configuration_per_society_and_per_booking",
         "tests/integration/visits/test_seed_visits.py:3",
-        "tests/integration/visits/test_seed_visits.py::<module>"
+        "tests/integration/visits/test_seed_visits.py::<module>",
+        "tests/integration/worker/test_actors.py::<module>",
+        "tests/integration/worker/test_jobs.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [],
@@ -2706,10 +2742,12 @@
         "services/edge/tests/unit/test_decision.py::test_standing_deny_beats_allow_and_clock_fault_blocks_automatic_allow",
         "services/edge/tests/unit/test_decision.py::test_standing_rule_effective_window_respected",
         "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/acceptance/test_at08_e2e.py::<module>",
         "tests/integration/edge/test_seed_edge.py:4",
         "tests/integration/edge/test_seed_edge.py::<module>",
         "tests/integration/edge/test_standing_rules.py:3",
-        "tests/integration/edge/test_standing_rules.py::<module>"
+        "tests/integration/edge/test_standing_rules.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3"
       ],
       "acceptance_gates": [
         "AT-06"
@@ -2822,7 +2860,10 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "services/edge/tests/unit/test_integration_fixes.py:3",
+        "services/edge/tests/unit/test_integration_fixes.py::<module>",
         "services/edge/tests/unit/test_sync.py::<module>",
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
         "tests/integration/edge/test_auth.py::<module>",
         "tests/integration/edge/test_performance.py:3",
@@ -2833,6 +2874,11 @@
         "tests/integration/edge/test_schema.py::<module>",
         "tests/integration/edge/test_sync.py:3",
         "tests/integration/edge/test_sync.py::<module>",
+        "tests/integration/edge_e2e/test_conformance.py::<module>",
+        "tests/integration/edge_e2e/test_cross_check.py:3",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3",
+        "tests/integration/edge_e2e/test_protocol.py::<module>",
         "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr09_72_hours_60000_events_with_restarts_no_loss",
         "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr10_reconcile_60000_events_at_5mbps_SIMULATED"
       ],
@@ -2866,15 +2912,19 @@
         "services/api/dwaar_api/modules/edge/snapshot.py",
         "services/api/dwaar_api/seed/steps/s450_edge.py",
         "services/api/migrations/0300_edge_policy_snapshots.sql",
+        "services/api/migrations/0314_worker_edge_publisher.sql",
         "services/edge/dwaar_edge/config.py",
         "services/edge/dwaar_edge/policy.py",
         "services/edge/dwaar_edge/policy_model.py",
-        "services/edge/dwaar_edge/sync.py"
+        "services/edge/dwaar_edge/provision.py",
+        "services/edge/dwaar_edge/sync.py",
+        "services/worker/dwaar_worker/jobs.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "services/edge/tests/unit/test_contract_shape.py::<module>",
+        "services/edge/tests/unit/test_integration_fixes.py::<module>",
         "services/edge/tests/unit/test_policy.py::<module>",
         "tests/integration/edge/test_config.py:3",
         "tests/integration/edge/test_config.py::<module>",
@@ -2884,7 +2934,13 @@
         "tests/integration/edge/test_schema.py::<module>",
         "tests/integration/edge/test_seed_edge.py:4",
         "tests/integration/edge/test_seed_edge.py::<module>",
-        "tests/integration/edge/test_status.py:3"
+        "tests/integration/edge/test_status.py:3",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3",
+        "tests/integration/worker/test_actors.py:3",
+        "tests/integration/worker/test_actors.py::<module>",
+        "tests/integration/worker/test_jobs.py:3",
+        "tests/integration/worker/test_jobs.py::<module>"
       ],
       "acceptance_gates": [],
       "gaps": [],
@@ -2922,11 +2978,15 @@
         "services/edge/tests/unit/test_decision.py::test_guest_offline_entitlement_max_two_hours_even_if_policy_says_more",
         "services/edge/tests/unit/test_decision.py::test_guest_wrong_gate_requires_supervisor_confirmation",
         "services/edge/tests/unit/test_gateway_flows.py::test_clock_going_backwards_disables_guest_automation_and_is_recorded",
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
         "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/acceptance/test_at08_e2e.py::<module>",
         "tests/integration/edge/test_clock.py:3",
-        "tests/integration/edge/test_clock.py::<module>"
+        "tests/integration/edge/test_clock.py::<module>",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>"
       ],
       "acceptance_gates": [
         "AT-06",
@@ -2957,7 +3017,9 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at07_e2e.py::<module>",
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>"
       ],
       "acceptance_gates": [
@@ -2991,13 +3053,23 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at05_e2e.py::<module>",
+        "tests/acceptance/test_at06_e2e.py::<module>",
+        "tests/acceptance/test_at07_e2e.py::<module>",
+        "tests/acceptance/test_at08_e2e.py::<module>",
         "tests/integration/edge/test_movements.py:4",
         "tests/integration/edge/test_movements.py::<module>",
+        "tests/integration/edge/test_projection.py:3",
+        "tests/integration/edge/test_projection.py::<module>",
         "tests/integration/edge/test_schema.py:4",
         "tests/integration/edge/test_sync.py:3",
         "tests/integration/edge/test_sync.py::<module>",
         "tests/integration/edge/test_transitions.py:3",
-        "tests/integration/edge/test_transitions.py::<module>"
+        "tests/integration/edge/test_transitions.py::<module>",
+        "tests/integration/edge_e2e/test_conformance.py::<module>",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3",
+        "tests/integration/edge_e2e/test_protocol.py::<module>"
       ],
       "acceptance_gates": [
         "AT-05",
@@ -3060,6 +3132,7 @@
         "services/api/migrations/0312_edge_device_auth.sql",
         "services/edge/dwaar_edge/actuator.py",
         "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/provision.py",
         "services/edge/dwaar_edge/store.py",
         "services/edge/dwaar_edge/tokens.py"
       ],
@@ -3071,7 +3144,8 @@
         "tests/integration/edge/test_seed_edge.py:4",
         "tests/integration/edge/test_seed_edge.py::<module>",
         "tests/integration/edge/test_status.py:3",
-        "tests/integration/edge/test_status.py::<module>"
+        "tests/integration/edge/test_status.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3"
       ],
       "acceptance_gates": [
         "AT-06"
@@ -3103,13 +3177,15 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
-        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>"
+        "tests/acceptance/test_at07_e2e.py::<module>",
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
+        "tests/integration/edge_e2e/test_cross_check.py::<module>",
+        "tests/integration/edge_e2e/test_protocol.py:3"
       ],
       "acceptance_gates": [
         "AT-24"
       ],
       "gaps": [
-        "module-level-marks-only",
         "acceptance-untested:AT-24"
       ],
       "verification": null,
@@ -6321,6 +6397,8 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/integration/edge_e2e/test_performance.py:4",
+        "tests/integration/edge_e2e/test_performance.py::<module>",
         "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr02_decision_latency_50k_credentials_20_per_second_burst"
       ],
       "acceptance_gates": [],
@@ -6519,7 +6597,9 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/integration/edge_e2e/test_performance.py::<module>",
         "tests/integration/edge_gateway/test_crash.py::<module>",
         "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr09_72_hours_60000_events_with_restarts_no_loss"
       ],
@@ -6556,6 +6636,7 @@
       "tested_by": [
         "tests/integration/edge/test_performance.py:3",
         "tests/integration/edge/test_performance.py::<module>",
+        "tests/integration/edge_e2e/test_performance.py::<module>",
         "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr10_reconcile_60000_events_at_5mbps_SIMULATED"
       ],
       "acceptance_gates": [
@@ -7147,6 +7228,7 @@
       "slice": 3,
       "status": "done",
       "tests": [
+        "tests/acceptance/test_at05_e2e.py::<module>",
         "tests/acceptance/test_at05_wrong_gate_replay.py::<module>"
       ],
       "evidence": [
@@ -7161,6 +7243,7 @@
       "slice": 3,
       "status": "done",
       "tests": [
+        "tests/acceptance/test_at06_e2e.py::<module>",
         "tests/acceptance/test_at06_wan_down_72h.py::<module>"
       ],
       "evidence": [
@@ -7175,6 +7258,7 @@
       "slice": 3,
       "status": "done",
       "tests": [
+        "tests/acceptance/test_at07_e2e.py::<module>",
         "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>"
       ],
       "evidence": [
@@ -7190,6 +7274,7 @@
       "status": "done",
       "tests": [
         "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/acceptance/test_at08_e2e.py::<module>",
         "tests/integration/edge/test_clock.py:3"
       ],
       "evidence": [
@@ -7392,11 +7477,13 @@
       "id": "AT-37",
       "milestone": "M1",
       "slice": 5,
-      "status": "partial",
+      "status": "done",
       "tests": [
         "packages/dwaar-packs/tests/test_legal_rules.py::test_at37_interest_18_pct_exceeds_12_pct_cap"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/AT-37.json"
+      ],
       "evidence_failed": false,
       "scenario": "A Maharashtra pack has the general-body interest set to 18 percent"
     },
@@ -7444,11 +7531,13 @@
       "id": "AT-46",
       "milestone": "M1",
       "slice": 5,
-      "status": "partial",
+      "status": "done",
       "tests": [
         "packages/dwaar-packs/tests/test_ops_and_tax.py::test_at46_rs3000_net_of_mdr"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/AT-46.json"
+      ],
       "evidence_failed": false,
       "scenario": "A 3,000 rupee UPI payment settles net of the 0.4 percent MDR"
     },
