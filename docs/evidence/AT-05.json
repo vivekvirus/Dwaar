@@ -1,0 +1,66 @@
+{
+  "id": "AT-05",
+  "milestone": "M1",
+  "scenario": "A guest QR is consumed at one gate and then presented at a second, isolated gate",
+  "expected": "Rejected as wrong gate or replay, or sent to a supervised manual path; no silent global single-use claim",
+  "observed": {
+    "outcome": "passed",
+    "message": null
+  },
+  "commit": "efb25901b369d7758145ea4753a432567e23002c",
+  "environment": {
+    "python": "3.12.3",
+    "postgres": "not used in this run",
+    "postgres_mode": null,
+    "DWAAR_ENV": "unset",
+    "simulation": true,
+    "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+    "tree_dirty": true
+  },
+  "dataset": "edge-synthetic-v1: invented society, two gates (A main, B service), guard terminals A/B, one supervisor terminal, invented opaque credential refs (no names, no phones); injected clock; in-process FakeCloud implementing the edge contract",
+  "trace": {
+    "pytest_nodeids": [
+      "tests/acceptance/test_at05_wrong_gate_replay.py::test_gate_bound_qr_consumed_at_gate_a_is_not_silently_accepted_at_gate_b",
+      "tests/acceptance/test_at05_wrong_gate_replay.py::test_qr_for_another_society_or_forged_signature_is_denied_not_confirmed",
+      "tests/acceptance/test_at05_wrong_gate_replay.py::test_isolated_gates_gate_bound_pass_is_consumed_locally_and_rejected_at_the_other_gate",
+      "tests/acceptance/test_at05_wrong_gate_replay.py::test_isolated_gates_cannot_promise_global_single_use_for_an_unbound_pass",
+      "tests/acceptance/test_at05_wrong_gate_replay.py::test_gateway_arbitrates_an_unbound_single_use_pass_across_gates_while_the_lan_works",
+      "tests/acceptance/test_at05_wrong_gate_replay.py::test_expired_pass_requires_confirmation_never_silent_allow"
+    ],
+    "duration_s": 0.1388,
+    "tests": [
+      {
+        "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_gate_bound_qr_consumed_at_gate_a_is_not_silently_accepted_at_gate_b",
+        "outcome": "passed",
+        "duration_s": 0.0389
+      },
+      {
+        "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_qr_for_another_society_or_forged_signature_is_denied_not_confirmed",
+        "outcome": "passed",
+        "duration_s": 0.0178
+      },
+      {
+        "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_isolated_gates_gate_bound_pass_is_consumed_locally_and_rejected_at_the_other_gate",
+        "outcome": "passed",
+        "duration_s": 0.0155
+      },
+      {
+        "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_isolated_gates_cannot_promise_global_single_use_for_an_unbound_pass",
+        "outcome": "passed",
+        "duration_s": 0.0262
+      },
+      {
+        "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_gateway_arbitrates_an_unbound_single_use_pass_across_gates_while_the_lan_works",
+        "outcome": "passed",
+        "duration_s": 0.0233
+      },
+      {
+        "nodeid": "tests/acceptance/test_at05_wrong_gate_replay.py::test_expired_pass_requires_confirmation_never_silent_allow",
+        "outcome": "passed",
+        "duration_s": 0.0171
+      }
+    ]
+  },
+  "tester": "automated/claude-code",
+  "date": "2026-10-06T00:16:50+00:00"
+}

@@ -10,17 +10,17 @@
   },
   "test_run": null,
   "scan": {
-    "files_scanned": 555,
+    "files_scanned": 637,
     "files_ignored": 0,
-    "annotations": 856
+    "annotations": 1091
   },
   "summary": {
     "requirements_in_scope": 220,
     "by_status": {
-      "done": 23,
-      "partial": 36,
+      "done": 33,
+      "partial": 42,
       "blocked-external": 0,
-      "not-started": 161
+      "not-started": 145
     },
     "verified": {
       "verified": 0,
@@ -29,10 +29,10 @@
     },
     "by_priority": {
       "P0": {
-        "done": 15,
-        "partial": 26,
+        "done": 24,
+        "partial": 28,
         "blocked-external": 0,
-        "not-started": 97
+        "not-started": 86
       },
       "P1": {
         "done": 0,
@@ -41,17 +41,17 @@
         "not-started": 2
       },
       "none": {
-        "done": 8,
-        "partial": 10,
+        "done": 9,
+        "partial": 14,
         "blocked-external": 0,
-        "not-started": 62
+        "not-started": 57
       }
     },
     "acceptance_in_scope": 35,
     "acceptance_by_status": {
-      "done": 4,
+      "done": 8,
       "partial": 2,
-      "not-started": 29
+      "not-started": 25
     },
     "reference_items": {
       "decision": 24,
@@ -107,6 +107,11 @@
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/core/test_idempotency.py::<module>",
         "tests/integration/core/test_pagination.py::<module>",
+        "tests/integration/edge/test_auth.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
+        "tests/integration/edge/test_schema.py::<module>",
+        "tests/integration/edge/test_standing_rules.py:3",
+        "tests/integration/edge/test_sync.py:3",
         "tests/integration/identity/test_authz.py:111",
         "tests/integration/identity/test_authz.py:157",
         "tests/integration/identity/test_authz.py:22",
@@ -242,13 +247,27 @@
       "labels": [],
       "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/actuator.py",
+        "services/edge/dwaar_edge/decision.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/policy.py",
+        "services/edge/dwaar_edge/restricted.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "packages/dwaar-packs/tests/test_fix_round1.py:3",
+        "services/edge/tests/unit/test_decision.py::<module>",
+        "services/edge/tests/unit/test_gateway_flows.py::<module>",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
+        "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/integration/edge/test_standing_rules.py:3",
+        "tests/integration/edge/test_sync.py:3",
         "tests/integration/visits/test_decisions.py:3",
         "tests/integration/visits/test_decisions.py::test_a_decision_after_expiry_is_409_request_expired_and_issues_no_permission",
         "tests/integration/visits/test_exceptions.py:3",
@@ -264,8 +283,6 @@
         "AT-40"
       ],
       "gaps": [
-        "no-implementation",
-        "acceptance-untested:AT-06",
         "acceptance-untested:AT-40"
       ],
       "verification": null,
@@ -292,6 +309,7 @@
       "simulator_files": [],
       "tested_by": [
         "tests/acceptance/test_at02_nonresident_owner.py::<module>",
+        "tests/integration/edge/test_standing_rules.py:3",
         "tests/integration/identity/test_authz.py:81",
         "tests/integration/identity/test_authz.py::test_ownership_occupancy_and_role_are_independent",
         "tests/integration/visits/test_decisions.py::test_only_the_household_that_lives_there_may_decide",
@@ -378,15 +396,23 @@
         "apps/resident-mobile/src/domain/status.ts",
         "services/api/dwaar_api/modules/visits/routes_visits.py",
         "services/api/dwaar_api/modules/visits/visits.py",
-        "services/api/migrations/0204_access_events.sql"
+        "services/api/migrations/0204_access_events.sql",
+        "services/edge/dwaar_edge/gateway.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "apps/resident-mobile/__tests__/approvalScreen.test.tsx:1",
         "apps/resident-mobile/__tests__/status.test.ts:1",
+        "services/edge/tests/unit/test_gateway_flows.py::<module>",
         "tests/acceptance/test_at03_family_decision_race.py::<module>",
         "tests/acceptance/test_at04_expired_request.py::<module>",
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
+        "tests/integration/edge/test_sync.py:3",
+        "tests/integration/edge/test_sync.py::<module>",
+        "tests/integration/edge/test_transitions.py:3",
+        "tests/integration/edge/test_transitions.py::<module>",
         "tests/integration/visits/test_decisions.py:3",
         "tests/integration/visits/test_invitations.py:4",
         "tests/integration/visits/test_observations.py:4",
@@ -1067,8 +1093,7 @@
       ],
       "gaps": [
         "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-07"
+        "no-tests"
       ],
       "verification": null,
       "verified": null
@@ -1553,6 +1578,7 @@
         "tests/acceptance/test_seed_dataset.py::<module>",
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
         "tests/integration/identity/test_authz.py:111",
         "tests/integration/identity/test_authz.py::test_membership_in_a_does_not_reach_society_b_or_its_object_ids",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
@@ -1649,6 +1675,7 @@
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_openapi_export.py::<module>",
         "tests/integration/core/test_pagination.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/integration/visits/test_schema.py::test_every_visits_table_is_force_rls_with_a_society_policy",
         "tests/security/test_core_authz.py::<module>",
@@ -1785,6 +1812,7 @@
         "tests/integration/core/test_fix_round1.py::<module>",
         "tests/integration/core/test_migrations.py::<module>",
         "tests/integration/core/test_sql_helpers.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
         "tests/integration/organisation/test_flags_quotas_packs.py::test_every_organisation_table_is_rls_forced_with_society_policy",
         "tests/integration/visits/test_schema.py:5",
         "tests/integration/visits/test_schema.py::<module>",
@@ -2129,6 +2157,7 @@
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "tests/integration/edge/test_seed_edge.py:4",
         "tests/integration/visits/test_gates_devices.py:3",
         "tests/integration/visits/test_gates_devices.py::<module>",
         "tests/integration/visits/test_seed_visits.py:3",
@@ -2225,7 +2254,7 @@
       "slice": 2,
       "module": "services/api/modules/visits",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "apps/resident-mobile/src/api/endpoints.ts",
@@ -2241,13 +2270,16 @@
         "services/api/dwaar_api/modules/visits/schemas.py",
         "services/api/dwaar_api/modules/visits/tokens.py",
         "services/api/dwaar_api/seed/steps/s400_visits.py",
-        "services/api/migrations/0201_invitations.sql"
+        "services/api/migrations/0201_invitations.sql",
+        "services/edge/dwaar_edge/qr.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
         "apps/resident-mobile/__tests__/invite-visitors-profile.test.tsx:1",
         "apps/resident-mobile/__tests__/qr-real.test.tsx:1",
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/integration/edge/test_policy.py:3",
         "tests/integration/visits/test_invitations.py:4",
         "tests/integration/visits/test_invitations.py::<module>",
         "tests/integration/visits/test_schema.py::test_a_pass_cannot_be_open_ended",
@@ -2257,9 +2289,7 @@
       "acceptance_gates": [
         "AT-05"
       ],
-      "gaps": [
-        "acceptance-untested:AT-05"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2407,11 +2437,16 @@
         "services/api/dwaar_api/modules/visits/__init__.py",
         "services/api/dwaar_api/modules/visits/routes_visits.py",
         "services/api/dwaar_api/modules/visits/schemas.py",
-        "services/api/migrations/0204_access_events.sql"
+        "services/api/migrations/0204_access_events.sql",
+        "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/gateway.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "services/edge/tests/unit/test_gateway_flows.py::test_exit_is_recorded_at_the_real_time_and_unmatched_exits_are_flagged",
+        "services/edge/tests/unit/test_gateway_flows.py::test_inside_confidence_turns_stale_instead_of_inventing_an_exit",
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
         "tests/integration/visits/test_observations.py:4",
         "tests/integration/visits/test_observations.py::<module>",
         "tests/integration/visits/test_observations.py::test_an_exit_reconciled_as_unknown_never_gets_an_exit_time",
@@ -2435,20 +2470,32 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/routes_device.py",
+        "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/decision.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/policy_model.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/edge/tests/unit/test_decision.py::<module>",
+        "services/edge/tests/unit/test_gateway_flows.py::test_photo_or_ocr_match_alone_never_creates_entitlement",
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>",
+        "tests/integration/edge/test_movements.py::<module>",
+        "tests/integration/edge/test_policy.py:3",
+        "tests/integration/edge/test_policy.py::<module>",
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr02_decision_latency_50k_credentials_20_per_second_burst"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2463,7 +2510,7 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "services/api/dwaar_api/modules/visits/__init__.py",
@@ -2471,11 +2518,18 @@
         "services/api/dwaar_api/modules/visits/permissions.py",
         "services/api/dwaar_api/modules/visits/routes_visits.py",
         "services/api/dwaar_api/modules/visits/schemas.py",
-        "services/api/migrations/0205_exceptions.sql"
+        "services/api/migrations/0205_exceptions.sql",
+        "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/gateway.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
       "tested_by": [
+        "services/edge/tests/unit/test_api.py::<module>",
+        "services/edge/tests/unit/test_gateway_flows.py::test_emergency_entry_needs_defined_authority_and_reason_and_works_offline",
+        "services/edge/tests/unit/test_gateway_flows.py::test_override_expires_at_shift_end_and_needs_a_reason",
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/integration/edge/test_movements.py::<module>",
         "tests/integration/visits/test_exceptions.py:3",
         "tests/integration/visits/test_exceptions.py::<module>",
         "tests/integration/visits/test_observations.py:4",
@@ -2484,9 +2538,7 @@
       "acceptance_gates": [
         "AT-07"
       ],
-      "gaps": [
-        "acceptance-untested:AT-07"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2632,20 +2684,37 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/permissions.py",
+        "services/api/dwaar_api/modules/edge/routes_admin.py",
+        "services/api/dwaar_api/modules/edge/routes_device.py",
+        "services/api/dwaar_api/modules/edge/standing_rules.py",
+        "services/api/migrations/0301_standing_rules.sql",
+        "services/edge/dwaar_edge/decision.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/policy_model.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/edge/tests/unit/test_contract_shape.py::<module>",
+        "services/edge/tests/unit/test_decision.py::test_food_delivery_after_10pm_leave_at_gate_wraps_midnight",
+        "services/edge/tests/unit/test_decision.py::test_malformed_standing_rule_grants_nothing",
+        "services/edge/tests/unit/test_decision.py::test_milk_vendor_daily_6_to_7_allowed_only_in_window",
+        "services/edge/tests/unit/test_decision.py::test_standing_deny_beats_allow_and_clock_fault_blocks_automatic_allow",
+        "services/edge/tests/unit/test_decision.py::test_standing_rule_effective_window_respected",
+        "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/integration/edge/test_seed_edge.py:4",
+        "tests/integration/edge/test_seed_edge.py::<module>",
+        "tests/integration/edge/test_standing_rules.py:3",
+        "tests/integration/edge/test_standing_rules.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2660,21 +2729,31 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/config.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/store.py",
+        "services/edge/dwaar_edge/tokens.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/edge/tests/unit/test_api.py::<module>",
+        "services/edge/tests/unit/test_store.py::<module>",
+        "tests/integration/edge_gateway/test_crash.py::<module>",
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr04_lan_propagation_between_two_terminals_on_loopback"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -2690,27 +2769,30 @@
       "slice": 2,
       "module": "services/edge",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
         "apps/guard-android/core/src/main/kotlin/app/dwaar/guard/core/edge/Ed25519.kt",
         "packages/dwaar-common/dwaar_common/events.py",
-        "packages/dwaar-common/dwaar_common/signing.py"
+        "packages/dwaar-common/dwaar_common/signing.py",
+        "services/api/dwaar_api/modules/edge/__init__.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/outbox.py",
+        "services/edge/dwaar_edge/store.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/edge/tests/unit/test_gateway_flows.py::<module>",
+        "tests/integration/edge/test_sync.py:3",
+        "tests/integration/edge_gateway/test_crash.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-05",
         "AT-06",
         "AT-08"
       ],
-      "gaps": [
-        "no-tests",
-        "acceptance-untested:AT-05",
-        "acceptance-untested:AT-06",
-        "acceptance-untested:AT-08"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2725,20 +2807,39 @@
       "slice": 2,
       "module": "services/api/modules/edge_sync",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/__init__.py",
+        "services/api/dwaar_api/modules/edge/contiguity.py",
+        "services/api/dwaar_api/modules/edge/routes_admin.py",
+        "services/api/dwaar_api/modules/edge/routes_device.py",
+        "services/api/dwaar_api/modules/edge/sync.py",
+        "services/api/migrations/0310_edge_sync.sql",
+        "services/edge/dwaar_edge/outbox.py",
+        "services/edge/dwaar_edge/sync.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/edge/tests/unit/test_sync.py::<module>",
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/integration/edge/test_auth.py::<module>",
+        "tests/integration/edge/test_performance.py:3",
+        "tests/integration/edge/test_performance.py::<module>",
+        "tests/integration/edge/test_property.py:3",
+        "tests/integration/edge/test_property.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
+        "tests/integration/edge/test_schema.py::<module>",
+        "tests/integration/edge/test_sync.py:3",
+        "tests/integration/edge/test_sync.py::<module>",
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr09_72_hours_60000_events_with_restarts_no_loss",
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr10_reconcile_60000_events_at_5mbps_SIMULATED"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2753,17 +2854,40 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/__init__.py",
+        "services/api/dwaar_api/modules/edge/config.py",
+        "services/api/dwaar_api/modules/edge/localdev.py",
+        "services/api/dwaar_api/modules/edge/localkeys.py",
+        "services/api/dwaar_api/modules/edge/routes_admin.py",
+        "services/api/dwaar_api/modules/edge/routes_device.py",
+        "services/api/dwaar_api/modules/edge/snapshot.py",
+        "services/api/dwaar_api/seed/steps/s450_edge.py",
+        "services/api/migrations/0300_edge_policy_snapshots.sql",
+        "services/edge/dwaar_edge/config.py",
+        "services/edge/dwaar_edge/policy.py",
+        "services/edge/dwaar_edge/policy_model.py",
+        "services/edge/dwaar_edge/sync.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "services/edge/tests/unit/test_contract_shape.py::<module>",
+        "services/edge/tests/unit/test_policy.py::<module>",
+        "tests/integration/edge/test_config.py:3",
+        "tests/integration/edge/test_config.py::<module>",
+        "tests/integration/edge/test_policy.py:3",
+        "tests/integration/edge/test_policy.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
+        "tests/integration/edge/test_schema.py::<module>",
+        "tests/integration/edge/test_seed_edge.py:4",
+        "tests/integration/edge/test_seed_edge.py::<module>",
+        "tests/integration/edge/test_status.py:3"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2778,23 +2902,37 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "partial",
+      "status": "done",
       "blocked_by": [],
       "implemented_in": [
-        "apps/guard-android/core/src/main/kotlin/app/dwaar/guard/core/policy/Banner.kt"
+        "apps/guard-android/core/src/main/kotlin/app/dwaar/guard/core/policy/Banner.kt",
+        "services/api/dwaar_api/modules/edge/__init__.py",
+        "services/api/dwaar_api/modules/edge/clock.py",
+        "services/api/migrations/0311_edge_exception_kinds.sql",
+        "services/edge/dwaar_edge/clock.py",
+        "services/edge/dwaar_edge/decision.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/policy.py",
+        "services/edge/dwaar_edge/qr.py"
       ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "services/edge/tests/unit/test_clock.py::<module>",
+        "services/edge/tests/unit/test_decision.py::test_guest_offline_entitlement_max_two_hours_even_if_policy_says_more",
+        "services/edge/tests/unit/test_decision.py::test_guest_wrong_gate_requires_supervisor_confirmation",
+        "services/edge/tests/unit/test_gateway_flows.py::test_clock_going_backwards_disables_guest_automation_and_is_recorded",
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/integration/edge/test_clock.py:3",
+        "tests/integration/edge/test_clock.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-06",
         "AT-08"
       ],
-      "gaps": [
-        "no-tests",
-        "acceptance-untested:AT-06",
-        "acceptance-untested:AT-08"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2809,19 +2947,24 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/decision.py",
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/restricted.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>",
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-07"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-07"
+        "module-level-marks-only"
       ],
       "verification": null,
       "verified": null
@@ -2837,22 +2980,30 @@
       "slice": 2,
       "module": "services/api/modules/edge_sync",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/__init__.py",
+        "services/api/dwaar_api/modules/edge/routes_device.py",
+        "services/api/migrations/0313_edge_events_entity_index.sql",
+        "services/edge/dwaar_edge/gateway.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/edge/test_movements.py:4",
+        "tests/integration/edge/test_movements.py::<module>",
+        "tests/integration/edge/test_schema.py:4",
+        "tests/integration/edge/test_sync.py:3",
+        "tests/integration/edge/test_sync.py::<module>",
+        "tests/integration/edge/test_transitions.py:3",
+        "tests/integration/edge/test_transitions.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-05",
         "AT-06"
       ],
-      "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-05",
-        "acceptance-untested:AT-06"
-      ],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -2867,18 +3018,21 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
       "implemented_in": [],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr09_72_hours_60000_events_with_restarts_no_loss"
+      ],
       "acceptance_gates": [],
       "gaps": [
+        "no-adapter",
         "no-implementation",
-        "no-tests"
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -2894,21 +3048,37 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/__init__.py",
+        "services/api/dwaar_api/modules/edge/auth.py",
+        "services/api/dwaar_api/modules/edge/localdev.py",
+        "services/api/dwaar_api/modules/edge/routes_device.py",
+        "services/api/migrations/0312_edge_device_auth.sql",
+        "services/edge/dwaar_edge/actuator.py",
+        "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/store.py",
+        "services/edge/dwaar_edge/tokens.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/edge/test_auth.py:3",
+        "tests/integration/edge/test_auth.py::<module>",
+        "tests/integration/edge/test_seed_edge.py:4",
+        "tests/integration/edge/test_seed_edge.py::<module>",
+        "tests/integration/edge/test_status.py:3",
+        "tests/integration/edge/test_status.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -2924,18 +3094,22 @@
       "slice": 6,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/gateway.py",
+        "services/edge/dwaar_edge/sync.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>"
+      ],
       "acceptance_gates": [
         "AT-24"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
+        "module-level-marks-only",
         "acceptance-untested:AT-24"
       ],
       "verification": null,
@@ -4510,18 +4684,23 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:barrier-controller"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/actuator.py"
+      ],
       "adapter_files": [],
-      "simulator_files": [],
-      "tested_by": [],
+      "simulator_files": [
+        "services/edge/dwaar_edge/actuator.py"
+      ],
+      "tested_by": [
+        "services/edge/tests/unit/test_gateway_flows.py::test_no_actuator_command_on_boot_decision_or_restart"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter"
       ],
       "verification": null,
       "verified": null
@@ -5970,17 +6149,20 @@
       "slice": 3,
       "module": "services/api/core",
       "labels": [],
-      "status": "not-started",
+      "status": "done",
       "blocked_by": [],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/api/dwaar_api/modules/edge/metrics.py",
+        "services/api/dwaar_api/modules/edge/routes_admin.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
-      "acceptance_gates": [],
-      "gaps": [
-        "no-implementation",
-        "no-tests"
+      "tested_by": [
+        "tests/integration/edge/test_status.py:3",
+        "tests/integration/edge/test_status.py::<module>"
       ],
+      "acceptance_gates": [],
+      "gaps": [],
       "verification": null,
       "verified": null
     },
@@ -6129,18 +6311,22 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/gateway.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr02_decision_latency_50k_credentials_20_per_second_burst"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -6183,18 +6369,23 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/api.py",
+        "services/edge/dwaar_edge/gateway.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr04_lan_propagation_between_two_terminals_on_loopback"
+      ],
       "acceptance_gates": [],
       "gaps": [
-        "no-implementation",
-        "no-tests"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -6316,21 +6507,28 @@
       "slice": 3,
       "module": "services/edge",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/outbox.py",
+        "services/edge/dwaar_edge/store.py",
+        "services/edge/dwaar_edge/sync.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>",
+        "tests/integration/edge_gateway/test_crash.py::<module>",
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr09_72_hours_60000_events_with_restarts_no_loss"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -6346,21 +6544,26 @@
       "slice": 3,
       "module": "services/api/modules/edge_sync",
       "labels": [],
-      "status": "not-started",
+      "status": "partial",
       "blocked_by": [
         "hardware:edge-gateway"
       ],
-      "implemented_in": [],
+      "implemented_in": [
+        "services/edge/dwaar_edge/sync.py"
+      ],
       "adapter_files": [],
       "simulator_files": [],
-      "tested_by": [],
+      "tested_by": [
+        "tests/integration/edge/test_performance.py:3",
+        "tests/integration/edge/test_performance.py::<module>",
+        "tests/integration/edge_gateway/test_nfr_edge.py::test_nfr10_reconcile_60000_events_at_5mbps_SIMULATED"
+      ],
       "acceptance_gates": [
         "AT-06"
       ],
       "gaps": [
-        "no-implementation",
-        "no-tests",
-        "acceptance-untested:AT-06"
+        "no-adapter",
+        "no-simulator"
       ],
       "verification": null,
       "verified": null
@@ -6942,9 +7145,13 @@
       "id": "AT-05",
       "milestone": "M1",
       "slice": 3,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at05_wrong_gate_replay.py::<module>"
+      ],
+      "evidence": [
+        "docs/evidence/AT-05.json"
+      ],
       "evidence_failed": false,
       "scenario": "A guest QR is consumed at one gate and then presented at a second, isolated gate"
     },
@@ -6952,9 +7159,13 @@
       "id": "AT-06",
       "milestone": "M1",
       "slice": 3,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at06_wan_down_72h.py::<module>"
+      ],
+      "evidence": [
+        "docs/evidence/AT-06.json"
+      ],
       "evidence_failed": false,
       "scenario": "The WAN stays down for 72 hours including device and gateway restarts"
     },
@@ -6962,9 +7173,13 @@
       "id": "AT-07",
       "milestone": "M1",
       "slice": 3,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at07_gateway_failure_lan_split.py::<module>"
+      ],
+      "evidence": [
+        "docs/evidence/AT-07.json"
+      ],
       "evidence_failed": false,
       "scenario": "The gateway fails while the LAN is partitioned"
     },
@@ -6972,9 +7187,14 @@
       "id": "AT-08",
       "milestone": "M1",
       "slice": 3,
-      "status": "not-started",
-      "tests": [],
-      "evidence": [],
+      "status": "done",
+      "tests": [
+        "tests/acceptance/test_at08_clock_moved_backwards.py::<module>",
+        "tests/integration/edge/test_clock.py:3"
+      ],
+      "evidence": [
+        "docs/evidence/AT-08.json"
+      ],
       "evidence_failed": false,
       "scenario": "A device wall clock is moved backwards"
     },

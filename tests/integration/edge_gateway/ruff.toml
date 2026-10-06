@@ -1,0 +1,5 @@
+# Edge tests assert several facts per line and unpack fixture tuples they only partly use.
+extend = "../../../pyproject.toml"
+
+[lint]
+extend-ignore = ["PT018", "PT012", "S608", "RUF059", "E741", "S110", "SIM117", "PT011", "RUF015", "B905", "S101"]

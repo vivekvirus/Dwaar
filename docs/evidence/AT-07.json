@@ -1,0 +1,42 @@
+{
+  "id": "AT-07",
+  "milestone": "M1",
+  "scenario": "The gateway fails while the LAN is partitioned",
+  "expected": "Terminals run in restricted mode with correct single-use limits",
+  "observed": {
+    "outcome": "passed",
+    "message": null
+  },
+  "commit": "efb25901b369d7758145ea4753a432567e23002c",
+  "environment": {
+    "python": "3.12.3",
+    "postgres": "not used in this run",
+    "postgres_mode": null,
+    "DWAAR_ENV": "unset",
+    "simulation": true,
+    "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+    "tree_dirty": true
+  },
+  "dataset": "edge-synthetic-v1: invented society, two gates (A main, B service), guard terminals A/B, one supervisor terminal, invented opaque credential refs (no names, no phones); injected clock; in-process FakeCloud implementing the edge contract",
+  "trace": {
+    "pytest_nodeids": [
+      "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_restricted_mode_correct_single_use_limits_then_reconcile",
+      "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_a_gate_without_its_gateway_never_allows_on_timeout_or_unknown_state"
+    ],
+    "duration_s": 0.0704,
+    "tests": [
+      {
+        "nodeid": "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_restricted_mode_correct_single_use_limits_then_reconcile",
+        "outcome": "passed",
+        "duration_s": 0.0528
+      },
+      {
+        "nodeid": "tests/acceptance/test_at07_gateway_failure_lan_split.py::test_a_gate_without_its_gateway_never_allows_on_timeout_or_unknown_state",
+        "outcome": "passed",
+        "duration_s": 0.0175
+      }
+    ]
+  },
+  "tester": "automated/claude-code",
+  "date": "2026-10-06T00:16:50+00:00"
+}
