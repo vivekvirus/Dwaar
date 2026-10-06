@@ -253,3 +253,19 @@ def test_the_application_role_cannot_forge_a_snapshot_for_another_society(ew: Ed
             " VALUES (%s, 1, now(), now() + interval '1 day', 'k', %s, 'initial', '{}', %s)",
             (other.id, "sha256:" + "0" * 64, "ed25519:" + "A" * 86),
         )
+
+
+def test_a_purged_device_can_never_authenticate_again_and_nothing_is_deleted_from_the_directory(
+    ew: EdgeWorld,
+) -> None:
+    dev = ew.edge_device(approve=False)
+    with ew.idh.db.owner_conn() as conn:
+        conn.execute("SELECT set_config('app.society_id', %s, true)", (str(ew.soc.id),))
+        conn.execute(
+            "DELETE FROM devices WHERE id = %s", (dev.device_id,)
+        )  # the privacy purge path runs as the owner
+    assert ew.rows(
+        "SELECT state FROM edge.device_directory WHERE device_id = %s", (dev.device_id,)
+    ) == [("deleted",)]
+    r = dev.me()
+    assert r.status_code == 403 and r.json()["code"] == "not_authorised"

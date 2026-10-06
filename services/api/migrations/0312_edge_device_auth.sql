@@ -29,7 +29,8 @@ CREATE FUNCTION edge.index_device() RETURNS trigger
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog, edge, public AS $$
 BEGIN
     IF TG_OP = 'DELETE' THEN
-        DELETE FROM edge.device_directory WHERE device_id = OLD.id;
+        -- a purged device can never authenticate again; the directory row stays as a tombstone (RUN-01: nothing is deleted here)
+        UPDATE edge.device_directory SET state = 'deleted', updated_at = clock_timestamp() WHERE device_id = OLD.id;
         RETURN OLD;
     END IF;
     INSERT INTO edge.device_directory AS d (device_id, society_ref, kind, name, gate_id, state, public_key, key_id, simulation, updated_at)
